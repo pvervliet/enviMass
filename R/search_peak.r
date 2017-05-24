@@ -6,7 +6,7 @@
 #'
 #' @param peaklist Matrix or data.frame of peaks. 3 columns: m/z, intensity, RT.
 #' @param mz Numeric vector. Mass(es) to be matched.
-#' @param dmz Numeric. +/- m/z tolerance (precision)
+#' @param dmz Numeric. +/- m/z tolerance from masses in mz (precision).
 #' @param ppm Logical. \code{dmass} given in ppm?
 #' @param RT Numeric vector. Retention times to be matched; units equal to those of the input files
 #' @param dRT Numeric. RT tolerance window; units equal to those of the input files
@@ -17,7 +17,7 @@
 #'
 #' @return Vector of characters. For each code{mz,RT} input, the vector entry specifies the match indices in \code{peaklist}.
 #' 
-#' @details  enviMass workflow function
+#' @details  enviMass workflow function. If mz are measured instead of theoretical values, dmz should be doubled.
 #' 
 #' @seealso \code{screening}
 
@@ -43,11 +43,11 @@ search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT,onlymax=FALSE,int_ratio=
     deletes<-c();
     # calculate bounds per target mass #########################################
     if(ppm==TRUE){
-    	target_low<-as.numeric(mass[i])-(as.numeric(dmz[i])*(as.numeric(mass[i])/1e6)*2);
-    	target_up<-as.numeric(mass[i])+(as.numeric(dmz[i])*(as.numeric(mass[i])/1e6)*2);
+    	target_low<-as.numeric(mass[i])-(as.numeric(dmz[i])*(as.numeric(mass[i])/1e6));
+    	target_up<-as.numeric(mass[i])+(as.numeric(dmz[i])*(as.numeric(mass[i])/1e6));
     }else{
-    	target_low<-as.numeric(mass[i])-((as.numeric(dmz[i])/1000)*2);
-    	target_up<-as.numeric(mass[i])+((as.numeric(dmz[i])/1000)*2);
+    	target_low<-as.numeric(mass[i])-((as.numeric(dmz[i])/1000));
+    	target_up<-as.numeric(mass[i])+((as.numeric(dmz[i])/1000));
     }
     # reset k ##################################################################
     # decrease k ...    

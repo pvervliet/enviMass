@@ -1630,16 +1630,18 @@
 				######################################################################################################################
 				tabPanel("Grouping",	
 					HTML('<hr noshade="noshade" />'),
-					tags$p(align="justify","To show grouping results of this tab, please first specify the ID of the file. The ID associated with a file can be found in the second column of the files table in the Files tab."),											
+					tags$p(align="justify","To show nontarget grouping results of this tab, please first specify the ID of the file. The ID associated with a file can be found in the second column of the files table in the Files tab."),											
 					div(style = widget_style3,numericInput("sel_meas_comp", "Type in file ID:", 0, min=0)),
 					textOutput('sel_meas_comp_state'),
+					textOutput('sel_meas_comp_state1'),
+					textOutput('sel_meas_comp_state2'),
 					HTML('<hr noshade="noshade" />'),
 					conditionalPanel(
-					condition = "input.sel_meas_comp != '0'",
+					condition = "(output.sel_meas_comp_state != 'Invalid file ID') & (output.sel_meas_comp_state != '')",
 						tabsetPanel( 					
 							tabPanel("Components",	
 							conditionalPanel(			
-								condition = "(output.sel_meas_comp_state != 'No componentization results for this file available') & (output.sel_meas_comp_state != 'Invalid file ID')",
+								condition = "(output.sel_meas_comp_state1 != 'no nontarget components available ') & (output.sel_meas_comp_state != 'Invalid file ID')",
 									HTML('<hr noshade="noshade" />'),
 									bsCollapse(multiple = FALSE, open = "col3", id = "collapse3",	
 										bsCollapsePanel("Summary", 
@@ -1698,7 +1700,7 @@
 							),
 							tabPanel("Homologues",	
 							conditionalPanel(			
-								condition = "(output.sel_meas_comp_state != 'No componentization results for this file available') & (output.sel_meas_comp_state != 'Invalid file ID')",
+								condition = "(output.sel_meas_comp_state2 != ' no homologue series detection results available') & (output.sel_meas_comp_state != 'Invalid file ID')",
 									HTML('<hr noshade="noshade" />'),
 									bsCollapse(multiple = FALSE, open = "col4", id = "collapse4",
 										bsCollapsePanel("Series plot overview", 									

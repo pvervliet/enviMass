@@ -39,6 +39,7 @@ observe({
 				output$measurements<<-DT::renderDataTable(
 					measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 				); 
+				output$sel_meas_comp_state<-renderText("")
 				# SET DUMMY RESULTS ####################################################
 				enviMass:::reset_selections(session)
 				# (1) Peak picking #####################################################
@@ -207,6 +208,7 @@ maincalc2<-reactive({
 			output$measurements<<-DT::renderDataTable(
 				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 			); 
+			output$sel_meas_comp_state<-renderText("")
 			# RETRIEVE RESULTS #####################################################
 			enviMass:::reset_selections(session)
 			# (1) Peak picking & preprocessing #####################################

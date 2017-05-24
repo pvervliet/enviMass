@@ -14,157 +14,148 @@ observe({ # - A
 		do_addu<-(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes")
 		do_homol<-(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes")	
 		do_EIC<-(logfile$workflow[names(logfile$workflow)=="EIC_correlation"]=="yes")
-		if(
-			file.exists(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp))) &			
-			isolate(input$sel_meas_comp)!="" & # ... finds emtpy folder otherwise
-			( do_isot | do_addu | do_homol )
-		){
-			######################################################################		
-			if(do_isot){ # update selection entries for the atom bound estimations
-				updateSelectInput(session,inputId="atom_bound_addpeaks",
-					choices=c("(a) peaks in same isotopologue group","(b) all peaks with similar RT"),
-					selected="(a) peaks in same isotopologue group"
-				)			
-			}else{
-				updateSelectInput(session,inputId="atom_bound_addpeaks",
-					choices=c("(b) all peaks with similar RT"),
-					selected="(b) all peaks with similar RT"
-				)					
-			}
-			######################################################################
-			# load componentization results ######################################
-			load(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv"))
-			if(verbose){cat("\n in Comp_A_1")}
-			cat("\n Loaded file")
-			# output components summary table ####################################
-			if(!is.null(dim(component[["pattern peak list"]]))){
-				num_peaks_all<-dim(component[["pattern peak list"]])[1]
-			}else{
-				num_peaks_all<-dim(component[["adduct peak list"]])[1]
-			}
-			num_comp<-dim(component[[1]])[1]
-			reduc<-round((num_peaks_all/num_comp),digits=2)
-			num_isot_peaks<-rep(0,num_comp)
-			num_adduc_peaks<-rep(0,num_comp)
-			for(i in 1:num_comp){
-				if(component[[1]][i,3]!="-"){
-					num_isot_peaks[i]<-length(strsplit(component[[1]][i,3],",")[[1]])
-				}
-				if(component[[1]][i,5]!="-"){
-					num_adduc_peaks[i]<-length(strsplit(component[[1]][i,5],",")[[1]])
-				}
-			}
-			min2_size_comp<-round((sum((num_isot_peaks+num_adduc_peaks)>1)/num_comp),digits=2)
-			median_size_comp<-round(mean(num_isot_peaks+num_adduc_peaks),digits=2)
-			max_size_comp<-max(num_isot_peaks+num_adduc_peaks)
-			output$num_peaks_all<-renderText(paste("Number of peaks: ",as.character(num_peaks_all),sep=""))
-			output$num_comp<-renderText(paste("Number of components: ",as.character(num_comp),sep=""))
-			output$reduc<-renderText(paste("Reduction factor: ",as.character(reduc),sep=""))
-			output$min2_size_comp<-renderText(paste("Fraction of components with min. 2 peaks: ",as.character(min2_size_comp),sep=""))
-			output$median_size_comp<-renderText(paste("Mean number of peaks per component: ",as.character(median_size_comp),sep=""))
-			output$max_size_comp<-renderText(paste("Max number of peaks in a component: ",as.character(max_size_comp),sep=""))
-			# output component table #############################################
-			comp_table<-component[[1]][,c(1,15,13,14,16,3,5,6,7,11,12),drop=FALSE]
-			comp_table[,2]<-round(comp_table[,2],digits=1)
-			comp_table[,4]<-round(comp_table[,4],digits=5)			
-			output$comp_table <- DT::renderDataTable(
-				DT::datatable(
-					comp_table,
-					colnames=c(
-						"Component ID",
-						"Max. peak intens.","Max. peak ID","Max. peak m/z","Max. peak RT",
-						"ID(s) isot. peaks","ID(s) adduct peaks","ID(s) homol. series","ID(s) interfering peaks",
-						"Isot. peaks adducts","Adduct peak adducts"
-					),
-					rownames=FALSE,
-					extensions = c('Buttons'),
-					options = list(
-						lengthMenu = c(100,200,400),
-						ordering=F,
-						dom = 'Bfrtip',
-						buttons = c('excel')#buttons = c('excel', 'pdf', 'print', 'csv'),
-					)
-				),
-				server = FALSE
-			)
-			# output text summary ################################################
-			if((length(component[["pattern peak list"]])>1) & (do_isot)){found_isos<-TRUE}else{found_isos<-FALSE}
-			if((length(component[["adduct peak list"]])>1) & (do_addu)){found_addu<-TRUE}else{found_addu<-FALSE}
-			if((length(component[["homologue list"]])>1) & (do_homol)){found_homol<-TRUE}else{found_homol<-FALSE}
-			get_comp_state<-"Available components for this file:"
-			if(found_isos & found_addu & found_homol){
-				get_comp_state<-paste(get_comp_state," isotopologues, adducts and homologues",sep="")
-			}
-			if(found_isos & found_addu & !found_homol){
-				get_comp_state<-paste(get_comp_state," isotopologues and adducts",sep="")
-			}
-			if(found_isos & !found_addu & found_homol){
-				get_comp_state<-paste(get_comp_state," isotopologues and homologues",sep="")
-			}
-			if(!found_isos & found_addu & found_homol){
-				get_comp_state<-paste(get_comp_state," adducts and homologues",sep="")
-			}
-			if(found_isos & !found_addu & !found_homol){
-				get_comp_state<-paste(get_comp_state," only isotopologues",sep="")
-			}
-			if(!found_isos & found_addu & !found_homol){
-				get_comp_state<-paste(get_comp_state," only adducts",sep="")
-			}
-			if(!found_isos & !found_addu & found_homol){
-				get_comp_state<-paste(get_comp_state," only homologues homologues",sep="")
-			}
-			output$sel_meas_comp_state<-renderText(get_comp_state)
-		}else{
-			updateSelectInput(session,inputId="atom_bound_addpeaks",
-				choices=c("(b) all peaks with similar RT"),
-				selected="(b) all peaks with similar RT"
-			)								
-			if(!file.exists(file.path(logfile[[1]],"peaklist",isolate(input$sel_meas_comp)))){
-				output$sel_meas_comp_state<-renderText("Invalid file ID")			
-			}else{
-				output$sel_meas_comp_state<-renderText("No componentization results for this file available")
-			}
-			if(verbose){cat("\n in Comp_A_2")}
-		}
-		# load homologue results #############################################
-		if(
-			file.exists(file.path(logfile[[1]],"results","componentization","homologues",paste("full",isolate(input$sel_meas_comp),sep="_"))) &
-			do_homol 
-		){
-			if(verbose){cat("\n in Comp_A_3")}
-			load(file.path(logfile[[1]],"results","componentization","homologues",paste("full",isolate(input$sel_meas_comp),sep="_")),envir=as.environment(".GlobalEnv"))			
-			# output homol. series table #####################################
-			output$homol_table <- DT::renderDataTable(
-				datatable(
-					cbind(homol[[3]][,c(1,2,3)],round(homol[[3]][,4],digits=1)),
-					colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]"),
-					rownames=FALSE
-				)
-			)
-			# output homol. series plot ######################################
-			output$homol_plot <- renderPlot({					
-				nontarget:::plothomol(homol,
-					xlim = FALSE, ylim = FALSE
-				)
-			},res=100)	
-		}
-		######################################################################
-		#if(
-		#	file.exists(file.path(logfile[[1]],"results","componentization","EIC_corr",as.character(isolate(input$sel_meas_comp)))) &
-		#	do_EIC 
-		#){
-		#if(FALSE){
-		#	if(verbose){cat("\n in Comp_A_4")}
-			#load(file.path(logfile[[1]],"results","componentization","EIC_corr",as.character(isolate(input$sel_meas_comp)))) 
-			#load(file=file.path(logfile[[1]],"peaklist",as.character(isolate(input$sel_meas_comp))));   
-			#EIC_pairs			
-		#}
-		#}
-	}
-	##########################################################################
-	
-})	
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		if( 
+			(isolate(input$sel_meas_comp)!="") &
+			(any(measurements$ID==isolate(input$sel_meas_comp))) # check existence ...
+		){ # ... finds emtpy folder otherwise
 
+			output$sel_meas_comp_state<-renderText("For this file:")
+			#####################################################################
+			# on isotopologues & adducts ########################################
+			if( 
+				file.exists(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp))) &
+				(do_isot | do_addu) 
+			){
+				#################################################################
+				if(do_isot){ # update selection entries for the atom bound estimations
+					updateSelectInput(session,inputId="atom_bound_addpeaks",
+						choices=c("(a) peaks in same isotopologue group","(b) all peaks with similar RT"),
+						selected="(a) peaks in same isotopologue group"
+					)			
+				}else{
+					updateSelectInput(session,inputId="atom_bound_addpeaks",
+						choices=c("(b) all peaks with similar RT"),
+						selected="(b) all peaks with similar RT"
+					)					
+				}
+				##################################################################
+				# load componentization results ##################################
+				load(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv"))
+				if(verbose){cat("\n in Comp_A_1")}
+				cat("\n Loaded file")
+				# output components summary table ################################
+				if(!is.null(dim(component[["pattern peak list"]]))){
+					num_peaks_all<-dim(component[["pattern peak list"]])[1]
+				}else{
+					num_peaks_all<-dim(component[["adduct peak list"]])[1]
+				}
+				num_comp<-dim(component[[1]])[1]
+				reduc<-round((num_peaks_all/num_comp),digits=2)
+				num_isot_peaks<-rep(0,num_comp)
+				num_adduc_peaks<-rep(0,num_comp)
+				for(i in 1:num_comp){
+					if(component[[1]][i,3]!="-"){
+						num_isot_peaks[i]<-length(strsplit(component[[1]][i,3],",")[[1]])
+					}
+					if(component[[1]][i,5]!="-"){
+						num_adduc_peaks[i]<-length(strsplit(component[[1]][i,5],",")[[1]])
+					}
+				}
+				min2_size_comp<-round((sum((num_isot_peaks+num_adduc_peaks)>1)/num_comp),digits=2)
+				median_size_comp<-round(mean(num_isot_peaks+num_adduc_peaks),digits=2)
+				max_size_comp<-max(num_isot_peaks+num_adduc_peaks)
+				output$num_peaks_all<-renderText(paste("Number of peaks: ",as.character(num_peaks_all),sep=""))
+				output$num_comp<-renderText(paste("Number of components: ",as.character(num_comp),sep=""))
+				output$reduc<-renderText(paste("Reduction factor: ",as.character(reduc),sep=""))
+				output$min2_size_comp<-renderText(paste("Fraction of components with min. 2 peaks: ",as.character(min2_size_comp),sep=""))
+				output$median_size_comp<-renderText(paste("Mean number of peaks per component: ",as.character(median_size_comp),sep=""))
+				output$max_size_comp<-renderText(paste("Max number of peaks in a component: ",as.character(max_size_comp),sep=""))
+				# output component table #########################################
+				comp_table<-component[[1]][,c(1,15,13,14,16,3,5,6,7,11,12),drop=FALSE]
+				comp_table[,2]<-round(comp_table[,2],digits=1)
+				comp_table[,4]<-round(comp_table[,4],digits=5)			
+				output$comp_table <- DT::renderDataTable(
+					DT::datatable(
+						comp_table,
+						colnames=c(
+							"Component ID",
+							"Max. peak intens.","Max. peak ID","Max. peak m/z","Max. peak RT",
+							"ID(s) isot. peaks","ID(s) adduct peaks","ID(s) homol. series","ID(s) interfering peaks",
+							"Isot. peaks adducts","Adduct peak adducts"
+						),
+						rownames=FALSE,
+						extensions = c('Buttons'),
+						options = list(
+							lengthMenu = c(100,200,400),
+							ordering=F,
+							dom = 'Bfrtip',
+							buttons = c('excel')#buttons = c('excel', 'pdf', 'print', 'csv'),
+						)
+					),
+					server = FALSE
+				)
+				#################################################################
+				if((length(component[["pattern peak list"]])>1) & (do_isot)){found_isos<-TRUE}else{found_isos<-FALSE}
+				if((length(component[["adduct peak list"]])>1) & (do_addu)){found_addu<-TRUE}else{found_addu<-FALSE}
+				if( found_isos & !found_addu ){
+					output$sel_meas_comp_state1<-renderText("isotopologue grouping available ")
+				}
+				if( !found_isos & found_addu ){
+					output$sel_meas_comp_state1<-renderText("adduct grouping available ")
+				}
+				if( found_isos & found_addu ){
+					output$sel_meas_comp_state1<-renderText("isotopologue & adduct grouping available ")
+				}
+			}else{
+				output$sel_meas_comp_state1<-renderText("no nontarget components available ")
+			}
+			#####################################################################
+			# on homologues #####################################################			
+			if( 
+				file.exists(file.path(logfile[[1]],"results","componentization","homologues",isolate(input$sel_meas_comp))) &
+				do_homol
+			){
+				#################################################################
+				if(verbose){cat("\n in Comp_A_3")}
+				load(file.path(logfile[[1]],"results","componentization","homologues",paste("full",isolate(input$sel_meas_comp),sep="_")),envir=as.environment(".GlobalEnv"))			
+				# output homol. series table #####################################
+				output$homol_table <- DT::renderDataTable(
+					datatable(
+						cbind(homol[[3]][,c(1,2,3)],round(homol[[3]][,4],digits=1)),
+						colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]"),
+						rownames=FALSE
+					)
+				)
+				# output homol. series plot ######################################
+				output$homol_plot <- renderPlot({					
+					nontarget:::plothomol(homol,
+						xlim = FALSE, ylim = FALSE
+					)
+				},res=100)	
+				#################################################################
+				output$sel_meas_comp_state2<-renderText(" homologue series detection results available")
+			}else{
+				output$sel_meas_comp_state2<-renderText(" no homologue series detection results available")
+			}
+			#####################################################################
+		}else{
+			output$sel_meas_comp_state<-renderText("Invalid file ID")
+			output$sel_meas_comp_state1<-renderText("")
+			output$sel_meas_comp_state2<-renderText("")			
+			output$num_peaks_all<-renderText("")
+			output$num_comp<-renderText("")
+			output$reduc<-renderText("")
+			output$min2_size_comp<-renderText("")
+			output$median_size_comp<-renderText("")
+			output$max_size_comp<-renderText("")
+		}	
+	}
+})	
+##############################################################################
+  
+  
+############################################################################## 
 observe({ # - B
 	input$sel_meas_comp_peak 
 	if(verbose){cat("\n in Comp_B")}
@@ -330,7 +321,6 @@ observe({ # - D: generate outputs
 		
 	}
 })
-
 ##############################################################################
   
   
@@ -435,13 +425,13 @@ observe({ # - F: generate outputs
 						if(length(with_model)>0){						
 							use_LOD<<-10^(predict(LOD_splined[[with_model]],atom_peaks[1,"RT_corr"])$y[[1]])	
 						}else{
-							cat("\n Shouldn`t there be a LOD spline (case A)? Could not find it!")
-							use_LOD<<-logfile$parameters$tar_intcut			
+							cat("\n Shouldn`t there be a LOD spline? Could not find it! - using Lower intensity threshold set for target screening!")
+							use_LOD<<-as.numeric(logfile$parameters$tar_intcut)			
 						}					
 					}else{
 						if(verbose){cat("\n in Atoms_5")}
-						cat("\n Shouldn`t there be a LOD spline (case B)? Could not find it!")
-						use_LOD<<-logfile$parameters$tar_intcut
+						cat("\n No LOD interpolation in workflow included - using Lower intensity threshold set for target screening!")
+						use_LOD<<-as.numeric(logfile$parameters$tar_intcut)
 					}
 					##################################################################
 					# plot peaks #####################################################
@@ -517,10 +507,7 @@ observe({ # - F: generate outputs
 
 ##############################################################################
   
-  
-  
-  
-  
+   
   
   
   

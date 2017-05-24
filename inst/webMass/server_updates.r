@@ -5,7 +5,7 @@ if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.
 ########################################################################
 # package updates
 if(!any(names(resolution_list)==logfile$parameters$resolution)){
-	shinyjs:::info("Please specifiy your resolution again (Settings tab): their specifications have changed and had to be reset.");
+	shinyjs:::info(paste0("Please specifiy your Instrument/Resolution for your instrument ",logfile$parameters$resolution," again (Settings tab): such specifications have changed and had to be reset."));
 	logfile$parameters$resolution<<-"Elite_R240000@400";
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	

@@ -74,7 +74,7 @@ if((logfile$parameters$subtract_pos_bydate=="TRUE") || (logfile$parameters$subtr
 			getit <- search_peak( 
 				peaklist=peaks_blank, 
 				mz=peaks_sample[,1], 
-				dmz=dmz, # precheck for profiles
+				dmz=(dmz*2), # precheck for profiles
 				ppm=ppm, 
 				RT=peaks_sample[,3], 
 				dRT=dRT,
@@ -119,7 +119,7 @@ if( (logfile$parameters$subtract_pos_byfile=="TRUE") & any(logfile$Positive_subt
 					getit <- search_peak( 
 						peaklist=peaks_blank, 
 						mz=sam_peaklist[,12], 
-						dmz=dmz, # precheck for profiles
+						dmz=(dmz*2), # precheck for profiles
 						ppm=ppm, 
 						RT=sam_peaklist[,14], 
 						dRT=dRT,
@@ -169,7 +169,7 @@ if( (logfile$parameters$subtract_neg_byfile=="TRUE") & any(logfile$Negative_subt
 					getit <- search_peak( 
 						peaklist=peaks_blank, 
 						mz=sam_peaklist[,12], 
-						dmz=dmz, # precheck for profiles
+						dmz=(dmz*2), # precheck for profiles
 						ppm=ppm, 
 						RT=sam_peaklist[,14], 
 						dRT=dRT,

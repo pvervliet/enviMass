@@ -100,7 +100,7 @@
 		load(file=file.path(logfile[[1]],"results","patternDelRT_pos_IS"),envir=as.environment(".GlobalEnv"));
 		pattern_delRT<<-patternDelRT_pos_IS;rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"));
 		
-		mztol<-as.numeric(logfile$parameters$IS_dmz)				# m/z tolerance ...
+		mztol<-as.numeric(logfile$parameters$IS_dmz)				# +/- m/z tolerance ...
 		ppm<-as.logical(as.character(logfile$parameters$IS_ppm))	# ... given in pppm?
 		cutint<-as.numeric(logfile$parameters$IS_intcut)			# Lower intensity threhold
 		int_tol<-as.numeric(logfile$parameters$IS_inttol)			# Intensity tolerance %
@@ -140,7 +140,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*4, # precheck for profiles
+			dmz=mztol*2, # precheck for profiles
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT=centro_dRT
@@ -165,7 +165,7 @@
 							for(m in profileList_pos_cal[[7]][profs[k],1]:profileList_pos_cal[[7]][profs[k],2]){ # over their sample peaks			
 								delmass<-abs(profileList_pos_cal[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
-									if(delmass>mztol){next}
+									if(delmass>(mztol/1000)){next}
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
@@ -325,7 +325,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*4, # precheck for profiles
+			dmz=mztol*2, # precheck for profiles
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT=centro_dRT
@@ -350,7 +350,7 @@
 							for(m in profileList_pos_cal[[7]][profs[k],1]:profileList_pos_cal[[7]][profs[k],2]){ # over their sample peaks			
 								delmass<-abs(profileList_pos_cal[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
-									if(delmass>mztol){next}
+									if(delmass>(mztol/1000)){next}
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
@@ -582,7 +582,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*4, # precheck for profiles
+			dmz=mztol*2, # precheck for profiles
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT=centro_dRT
@@ -607,7 +607,7 @@
 							for(m in profileList_neg_cal[[7]][profs[k],1]:profileList_neg_cal[[7]][profs[k],2]){ # over their sample peaks			
 								delmass<-abs(profileList_neg_cal[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
-									if(delmass>mztol){next}
+									if(delmass>(mztol/1000)){next}
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
@@ -768,7 +768,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*4, # precheck for profiles
+			dmz=mztol*2, # precheck for profiles
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT=centro_dRT
@@ -793,7 +793,7 @@
 							for(m in profileList_neg_cal[[7]][profs[k],1]:profileList_neg_cal[[7]][profs[k],2]){ # over their sample peaks			
 								delmass<-abs(profileList_neg_cal[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
-									if(delmass>mztol){next}
+									if(delmass>(mztol/1000)){next}
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}

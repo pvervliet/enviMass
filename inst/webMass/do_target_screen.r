@@ -118,7 +118,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*4, # precheck
+			dmz=mztol*2, # precheck
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT=centro_dRT
@@ -145,7 +145,7 @@
 								if(retain_sample[profileList_pos[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?
 								delmass<-abs(profileList_pos[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
-									if(delmass>mztol){next}
+									if(delmass>(mztol/1000)){next}
 								}else{
 									if(delmass*1E6/pattern[[i]][j,1]>mztol){next}
 								}
@@ -417,7 +417,7 @@ cat("*")
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*4, # precheck
+			dmz=mztol*2, # precheck
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT=centro_dRT
@@ -443,7 +443,7 @@ cat("*")
 								if(retain_sample[profileList_neg[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?
 								delmass<-abs(profileList_neg[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
-									if(delmass>mztol){next}
+									if(delmass>(mztol/1000)){next}
 								}else{
 									if(delmass*1E6/pattern[[i]][j,1]>mztol){next}
 								}

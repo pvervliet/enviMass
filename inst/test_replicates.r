@@ -1,5 +1,5 @@
 ########################################################################
-# On blind subtraction #################################################
+
 cat("\n Checking replicate intersection ...")
 if(
 	(logfile$workflow[names(logfile$workflow)=="replicates"])=="yes"

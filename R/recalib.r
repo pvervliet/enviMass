@@ -102,16 +102,17 @@ recalib<-function(
   if(plotit==TRUE){
     if(what=="mass"){    
 		if(path_1!="FALSE"){png(filename = path_1, bg = "white")}
-		ylim<-c(min(getit3),max(getit3))
+		ylim<-c(min(getit3)*1000,max(getit3)*1000)
 		if(ylim[1]>0){ylim[1]<-0}
 		if(ylim[2]<0){ylim[2]<-0}
-		plot(getit2,getit3,pch=19,cex=0.5,xlab="m/z",ylab="Expected m/z - observed m/z",main="Recalibration results",ylim=ylim);
+		plot(getit2,getit3*1000,pch=19,cex=0.5,xlab="m/z",ylab="Expected m/z - observed m/z [mmu]",
+			main="Recalibration results",ylim=ylim);
 		abline(h=0,col="darkgreen");
-		points(getit2[order(getit2)],predict(model)[order(getit2)],col="red",type="l",lwd=2);
+		points(getit2[order(getit2)],predict(model)[order(getit2)]*1000,col="red",type="l",lwd=2);
 		if(plot_ppm[1]!="FALSE"){
 			ppm_mass<-seq(0,max(getit2),10)
 			for(k in 1:length(plot_ppm)){
-				ppm_ppm<-(ppm_mass*plot_ppm[k]/1E6)
+				ppm_ppm<-(ppm_mass*plot_ppm[k]/1E6*1000)
 				lines(ppm_mass,ppm_ppm,lty=2,col="gray")
 				lines(ppm_mass,-ppm_ppm,lty=2,col="gray")
 				plotmass<-median(ppm_mass)
@@ -130,7 +131,7 @@ recalib<-function(
 		if(max_recal!="FALSE"){
 			if(ppm){
 				ppm_mass<-seq(0,max(getit2),10)
-				ppm_ppm<-(ppm_mass*max_recal/1E6)
+				ppm_ppm<-(ppm_mass*max_recal/1E6*1000)
 				lines(ppm_mass,ppm_ppm,lty=2,lwd=1.5,col="red")
 				lines(ppm_mass,-ppm_ppm,lty=2,lwd=1.5,col="red")			
 			}else{
@@ -141,7 +142,8 @@ recalib<-function(
 		if(path_1!="FALSE"){dev.off()}   
     }else{
 		if(path_1!="FALSE"){png(filename = path_1, bg = "white")} 
-		plot(getit2,getit3,pch=19,cex=0.5,xlab="Retention time",ylab="Expected RT - observed RT",main="Recalibration results");
+		plot(getit2,getit3,pch=19,cex=0.5,xlab="Retention time",ylab="Expected RT - observed RT",
+			main="Recalibration results");
 		abline(h=0,col="red");
 		points(getit2[order(getit2)],predict(model)[order(getit2)],col="red",type="l",lwd=2);
 		if(path_1!="FALSE"){dev.off()}      

@@ -113,10 +113,10 @@
 					  peaklist[,c(12,13,14)]<-peak_recal
 					  save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_incl[i,"ID"])));   
 					  measurements_incl[i,"recal"]<-"FALSE";
-					  cat(paste("Mass recalibration ",i," of ",leng," done.\n",sep=""))            
+					  cat(paste("  Mass recalibration ",i," of ",leng," done.\n",sep=""))            
 					}else{
 					  cat(paste(peak_recal," \n",sep=""))
-					  cat(paste("Mass recalibration ",i," of ",leng," - infeasible.\n",sep=""))        
+					  cat(paste("  Mass recalibration ",i," of ",leng," - infeasible.\n",sep=""))        
 					}
 					measurements[
 						measurements[,"ID"]==measurements_incl[i,"ID"]
@@ -154,10 +154,10 @@
 				  peaklist[,c(12,13,14)]<-peak_recal
 				  save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_incl[i,"ID"])));   
 				  measurements_incl[i,"recal"]<-"FALSE";
-				  cat(paste("Mass recalibration ",i," of ",leng," done.\n",sep=""))
+				  cat(paste("  Mass recalibration ",i," of ",leng," done.\n",sep=""))
 				}else{
 				  cat(paste(peak_recal," \n",sep=""))
-				  cat(paste("Mass recalibration ",i," of ",leng," - infeasible.\n",sep=""))
+				  cat(paste("  Mass recalibration ",i," of ",leng," - infeasible.\n",sep=""))
 				}
 				measurements[
 						measurements[,"ID"]==measurements_incl[i,"ID"]
