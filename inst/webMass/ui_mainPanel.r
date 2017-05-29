@@ -1660,6 +1660,7 @@
 											textOutput('num_comp_ISTD'),
 											textOutput('num_comp_blind_any'),
 											textOutput('num_comp_blind_all'),
+											HTML('<hr noshade="noshade" />'),
 											textOutput('num_comp_nontarget')										
 										),
 										bsCollapsePanel("Individual components", 
@@ -1677,10 +1678,10 @@
 												tags$p(align="justify","The above mass spectrum shows all peaks grouped into the selected component (green) and all other non-component peaks that fall into the mass and RT range of the selected component."),											
 												HTML('<hr noshade="noshade" />'),
 												plotOutput("comp_plot_circ",height = "690px"),
-												tags$p(align="justify","The above circular plot shows all links (relations) that exist between peaks in the selected component, with individual peaks
-													positioned at an outer circle by increasing m/z, starting at the gray arrow.
-													Peaks are listed with their IDs and component-wise intensity ranking (in brackets). The most intense peak is marked by a circle.
-													Adduct links are shown in red, links between different isotopologues of the same adduct in blue."),													
+												tags$p(align="justify","The above circular plot shows all links (relations) that exist between peaks in the selected component, with 
+													individual peaks positioned at an outer circle by increasing m/z, starting at the gray arrow. The most intense peak is marked by a circle.
+													Peaks are listed with their IDs and component-wise intensity ranking (in brackets); those also present in blank/blind files are marked with
+													an asterisk. Adduct links are shown in red, links between different isotopologues of the same adduct in blue."),													
 												HTML('<hr noshade="noshade" />'),
 												textOutput('which_comp_tar'),
 												HTML('<hr noshade="noshade" />'),
@@ -1706,6 +1707,8 @@
 											)
 										),
 										bsCollapsePanel("Full component list", 
+											tags$p(align="justify","Peaks which are also present in blank/blind files are marked with
+													an asterisk in the below table."), 
 											DT::dataTableOutput('comp_table')					
 										)
 									)
