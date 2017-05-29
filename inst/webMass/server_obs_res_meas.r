@@ -352,7 +352,7 @@ observe({
 						( isolate(input$peaks_mz_RT_use_peaks) & (length(those)==0) & (length(use_these)>0) )
 					){
 						if(length(use_these)<=1E5){
-							if(verbose){cat("\n Plottin only peaks")}
+							if(verbose){cat("\n Plotting only peaks")}
 							sub_peaks<-as.data.frame(peaklist[use_these,c("m/z","RT","max_int"),drop=FALSE])
 							names(sub_peaks)<-c("m_z","RT","Intensity")				
 							sub_peaks[,"Intensity"]<-(sub_peaks[,"Intensity"]/2)
@@ -383,7 +383,7 @@ observe({
 						( isolate(input$peaks_mz_RT_use_raw) & (length(use_these)==0) & (length(those)>0) )
 					){
 						if(length(those)<=1E5){  # implies number of peaks is lower, too
-							if(verbose){cat("\n Plottin only raw data")}
+							if(verbose){cat("\n Plotting only raw data")}
 							sub_MSlist<-as.data.frame(MSlist[["Scans"]][[2]][those,c("m/z","RT","intensity","peakID"),drop=FALSE])
 							names(sub_MSlist)<-c("m_z","RT","Intensity","peakID")		
 							sub_MSlist[,"Intensity"]<-(sub_MSlist[,"Intensity"]/2)
@@ -445,7 +445,7 @@ observe({
 					# peaks & raw data? ########################################################
 					if( isolate(input$peaks_mz_RT_use_peaks) & isolate(input$peaks_mz_RT_use_raw) & (length(those)>0) & (length(use_these)>0) ){
 						if(length(those)<=1E5){ # implies number of peaks is lower, too
-							if(verbose){cat("\n Plottin peaks & raw data")}
+							if(verbose){cat("\n Plotting peaks & raw data")}
 							sub_MSlist<-as.data.frame(MSlist[["Scans"]][[2]][those,c("m/z","RT","intensity","peakID"),drop=FALSE])
 							names(sub_MSlist)<-c("m_z","RT","Intensity","peakID")		
 							sub_MSlist[,"Intensity"]<-(sub_MSlist[,"Intensity"]/2)

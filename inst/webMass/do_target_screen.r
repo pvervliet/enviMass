@@ -47,6 +47,10 @@
 	){
 
 		load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));	
+		load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"));	
+		if(dim(profileList_pos_copy[["peaks"]])[1]!=dim(profileList_pos[["peaks"]])[1]){
+			stop("Differing profileList dimensions_1 - report this issue immediately!")
+		}
 		load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","pattern_pos_target"),envir=as.environment(".GlobalEnv"));
 		pattern<<-pattern_pos_target;rm(pattern_pos_target,envir=as.environment(".GlobalEnv"));
@@ -290,15 +294,12 @@ cat("*")
 											links_peaks_pos[[at_entry]][[4]]<-list()	# isotop
 											links_peaks_pos[[at_entry]][[5]]<-list()	# adducts
 											links_peaks_pos[[at_entry]][[6]]<-list()	# homol	
-											profileList_pos[[2]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
-# REMOVE !!!!
-#profileList_pos[[2]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]<-at_entry
-#
-
+											profileList_pos[["peaks"]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],"links"]<<-at_entry
+											profileList_pos_copy[["peaks"]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],"links"]<<-at_entry											
 											links_peaks_pos[[at_entry]][[1]][[1]]<-names(pattern)[i]
 										# or expand existing entry
 										}else{
-											at_entry<-profileList_pos[[2]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]
+											at_entry<-profileList_pos[["peaks"]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]
 											at_list<-(length(links_peaks_pos[[at_entry]][[1]])+1)
 											links_peaks_pos[[at_entry]][[1]][[at_list]]<-names(pattern)[i]
 										}
@@ -310,6 +311,7 @@ cat("*")
 				}
 			}
 			save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE)
+			save(profileList_pos_copy,file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),compress=FALSE)
 			save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))
 			################################################################################################
 			save(results_screen_target_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
@@ -317,12 +319,14 @@ cat("*")
 		}
 		####################################################################################################
 		rm(getit,target_pos_screen_listed,res_target_pos_screen)
-		rm(pattern,pattern_RT,pattern_delRT,envir=as.environment(".GlobalEnv"))
+		rm(pattern,pattern_RT,pattern_delRT,profileList_pos,profileList_pos_copy,envir=as.environment(".GlobalEnv"))
 		####################################################################################################
 	}		
 	########################################################################################################
 	########################################################################################################
 	
+
+
 	########################################################################################################	
 	########################################################################################################
 	# target screening on negative ionization ##############################################################
@@ -348,6 +352,10 @@ cat("*")
 	){
 
 		load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));	
+		load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"));	
+		if(dim(profileList_neg_copy[["peaks"]])[1]!=dim(profileList_neg[["peaks"]])[1]){
+			stop("Differing profileList dimensions_2 - report this issue immediately!")
+		}
 		load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"),envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","pattern_neg_target"),envir=as.environment(".GlobalEnv"));
 		pattern<<-pattern_neg_target;rm(pattern_neg_target,envir=as.environment(".GlobalEnv"));
@@ -585,6 +593,7 @@ cat("*")
 											links_peaks_neg[[at_entry]][[5]]<-list()	# adducts
 											links_peaks_neg[[at_entry]][[6]]<-list()	# homol	
 											profileList_neg[[2]][res_target_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
+											profileList_neg_copy[[2]][res_target_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
 											links_peaks_neg[[at_entry]][[1]][[1]]<-names(pattern)[i]
 										# or expand existing entry
 										}else{
@@ -600,6 +609,7 @@ cat("*")
 				}
 			}
 			save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE)
+			save(profileList_neg_copy,file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),compress=FALSE)
 			save(links_peaks_neg,file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"))
 			################################################################################################
 			save(results_screen_target_neg,file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))
@@ -607,7 +617,7 @@ cat("*")
 		}
 		####################################################################################################
 		rm(getit,target_neg_screen_listed,res_target_neg_screen)
-		rm(pattern,pattern_RT,pattern_delRT,envir=as.environment(".GlobalEnv"))
+		rm(pattern,pattern_RT,pattern_delRT,profileList_neg,profileList_neg_copy,envir=as.environment(".GlobalEnv"))
 		####################################################################################################
 }		
 	########################################################################################################

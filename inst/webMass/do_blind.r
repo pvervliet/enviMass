@@ -66,7 +66,7 @@ if((logfile$parameters$subtract_pos_bydate=="TRUE") || (logfile$parameters$subtr
 			}
 			if(blank_ID!=blank_ID_last){ # only load, not reload
 				load(file=file.path(logfile[[1]],"peaklist",as.character(blank_ID)),verbose=FALSE);
-				peaks_blank<-peaklist[,c(12,13,14)]
+				peaks_blank<-peaklist[,c("m/z_corr","int_corr","RT_corr")]
 				rm(peaklist)
 			}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(sam_ID)),verbose=FALSE);

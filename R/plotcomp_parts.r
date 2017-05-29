@@ -8,21 +8,32 @@ function(
 			if(!any(c("circ","spec","table","check")==what)){stop("Wrong what in plotcomp_parts - debug me!")}
             ####################################################################
 			# get: all peaks concerned and subdataset ##########################
-            get1a<-as.numeric(strsplit(as.character(comp[[1]][compoID,3]),",")[[1]]);
-            if(as.character(comp[[1]][compoID,5])!="-"){
-				get1b<-as.numeric(strsplit(as.character(comp[[1]][compoID,5]),",")[[1]]);
+            get1a<-strsplit(as.character(comp[[1]][compoID,"ID pattern peaks |"]),",")[[1]];
+			get1a_blind<-sapply(get1a,grepl,pattern="*",fixed = TRUE, USE.NAMES = FALSE)
+			get1a<-as.numeric(sapply(get1a,gsub,pattern="*",replacement="",fixed = TRUE, USE.NAMES = FALSE))
+            if(as.character(comp[[1]][compoID,"ID adduct peaks |"])!="-"){
+	  			get1b<-strsplit(as.character(comp[[1]][compoID,"ID adduct peaks |"]),",")[[1]];
+				get1b_blind<-sapply(get1b,grepl,pattern="*",fixed = TRUE, USE.NAMES = FALSE)
+				get1b<-as.numeric(sapply(get1b,gsub,pattern="*",replacement="",fixed = TRUE, USE.NAMES = FALSE))
             }else{
 				get1b<-c()
+				get1b_blind<-c()
             }
-            if(as.character(comp[[1]][compoID,7])!="-"){
-				get1c<-as.numeric(strsplit(as.character(comp[[1]][compoID,7]),",")[[1]]);
+            if(as.character(comp[[1]][compoID,"ID interfering peaks |"])!="-"){
+	  			get1c<-strsplit(as.character(comp[[1]][compoID,"ID interfering peaks |"]),",")[[1]];
+				get1c_blind<-sapply(get1c,grepl,pattern="*",fixed = TRUE, USE.NAMES = FALSE)
+				get1c<-as.numeric(sapply(get1c,gsub,pattern="*",replacement="",fixed = TRUE, USE.NAMES = FALSE))
             }else{
 				get1c<-c()
+				get1c_blind<-c()
             }
             get1<-c(get1a,get1b);
             get1<-as.numeric(unique(get1));
             get3<-c(get1a,get1b,get1c);
-            get3<-as.numeric(unique(get3));
+            get3_blind<-c(get1a_blind,get1b_blind,get1c_blind);  
+			dub<-duplicated(get3)
+			get3<-get3[!dub]
+			get3_blind<-get3_blind[!dub]
             ####################################################################
 			if(what=="check"){
 				if(length(get3)<2){
@@ -98,10 +109,19 @@ function(
 					b=b+a;
 				}
 				rm(i);
-				text(coordx,coordy,labels=paste(get3,"(",ord,")"),cex=.8);
 				for(i in 1:length(get3)){
 					if(any(get3[i]==get1)){
-						text(coordx[i],coordy[i],labels=paste(get3[i],"(",ord[i],")"),col="darkgreen",cex=.8)
+						if(!get3_blind[i]){
+							text(coordx[i],coordy[i],labels=paste0(get3[i]," (",ord[i],")"),col="darkgreen",cex=.8)
+						}else{
+							text(coordx[i],coordy[i],labels=paste0(get3[i],"* (",ord[i],")"),col="darkgreen",cex=.8)
+						}
+					}else{
+						if(!get3_blind[i]){
+							text(coordx[i],coordy[i],labels=paste0(get3[i]," (",ord[i],")"),col="darkgrey",cex=.8)
+						}else{
+							text(coordx[i],coordy[i],labels=paste0(get3[i],"* (",ord[i],")"),col="darkgrey",cex=.8)
+						}
 					}
 				}
 				rm(i);
@@ -288,7 +308,7 @@ function(
 						}
 					}
 				}
-				relat1<-data.frame(these1,these2,these3,stringsAsFactors=FALSE);
+				relat1<-data.frame(these1,these2,these3,stringsAsFactors=FALSE);		
 				names(relat1)<-c("peaks","relation","intensity ratio");
 				if(comp[[1]][compoID,6]!="-"){
 					if(length(dat1)>1){
@@ -308,6 +328,9 @@ function(
 					}
 				}
 				names(relat)<-c("a","all peaks within range","relations","Part of homologue series:");
+				# add blind tag 
+				relat$a<-cbind(relat$a,get3_blind[match(relat$a[,"peak ID"],get3)])
+				names(relat$a)[6]<-"in blind?"
 				return(relat);
 			}
             ####################################################################

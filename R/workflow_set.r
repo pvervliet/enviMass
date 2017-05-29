@@ -8,7 +8,7 @@
 #' @param added Name of node (logfile$Tasks_to_redo) to be added - additionally
 #' @param except Name of node (logfile$Tasks_to_redo) to be excluded - dangerous
 #' @param check_node TRUE = resetting only evaluate when the concerned node is enabled in the workflow? = do not add parameters to dont scripts!
-#' @param single_file TRUE = surpress resetting of all files-wise handlers to FALSE for all affected nodes? Independent of single_node.
+#' @param single_file TRUE = surpress resetting of all file-wise handlers to FALSE for all affected nodes? Independent of single_node.
 #' @param single_node TRUE = resetting of files-wise handlers to FALSE only for the 'down' node? Independent of single_file.
 #' 
 #' @details enviMass workflow function. 

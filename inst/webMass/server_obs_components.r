@@ -21,6 +21,9 @@ observe({ # - A
 		){ # ... finds emtpy folder otherwise
 
 			output$sel_meas_comp_state<-renderText("For this file:")
+			output$comp_file_name<-renderText(paste("File name: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_comp)),"Name"],sep=""))
+			output$comp_file_type<-renderText(paste("File type: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_comp)),"Type"],sep=""))
+			output$comp_file_mode<-renderText(paste("Ionization mode: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_comp)),"Mode"],sep=""))
 			#####################################################################
 			# on isotopologues & adducts ########################################
 			if( 
@@ -42,6 +45,7 @@ observe({ # - A
 				##################################################################
 				# load componentization results ##################################
 				load(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv"))
+				#load(file.path(logfile[[1]],"results","componentization","components","3"))
 				if(verbose){cat("\n in Comp_A_1")}
 				cat("\n Loaded file")
 				# output components summary table ################################
@@ -50,45 +54,68 @@ observe({ # - A
 				}else{
 					num_peaks_all<-dim(component[["adduct peak list"]])[1]
 				}
-				num_comp<-dim(component[[1]])[1]
+				num_comp<-dim(component[["Components"]])[1]
+				num_comp_tar<-sum(component[["Components"]][,"Target peaks"]!="-")
+				num_comp_ISTD<-sum(component[["Components"]][,"ISTD peaks"]!="-")
+				blind_num<-as.numeric(component[["Components"]][,"Blind peak number"])
+				tot_num<-as.numeric(component[["Components"]][,"Total peak number"])
+				num_comp_blind_any<-sum(blind_num>0)
+				num_comp_blind_all<-sum((blind_num/tot_num)==1)
+				comp_nontarget<-sum(
+					((blind_num/tot_num)<1) & 
+					(component[["Components"]][,"Target peaks"]=="-") &
+					(component[["Components"]][,"ISTD peaks"]=="-")
+				)
 				reduc<-round((num_peaks_all/num_comp),digits=2)
 				num_isot_peaks<-rep(0,num_comp)
 				num_adduc_peaks<-rep(0,num_comp)
 				for(i in 1:num_comp){
-					if(component[[1]][i,3]!="-"){
-						num_isot_peaks[i]<-length(strsplit(component[[1]][i,3],",")[[1]])
+					if(component[["Components"]][i,3]!="-"){
+						num_isot_peaks[i]<-length(strsplit(component[["Components"]][i,3],",")[[1]])
 					}
-					if(component[[1]][i,5]!="-"){
-						num_adduc_peaks[i]<-length(strsplit(component[[1]][i,5],",")[[1]])
+					if(component[["Components"]][i,5]!="-"){
+						num_adduc_peaks[i]<-length(strsplit(component[["Components"]][i,5],",")[[1]])
 					}
 				}
 				min2_size_comp<-round((sum((num_isot_peaks+num_adduc_peaks)>1)/num_comp),digits=2)
 				median_size_comp<-round(mean(num_isot_peaks+num_adduc_peaks),digits=2)
 				max_size_comp<-max(num_isot_peaks+num_adduc_peaks)
 				output$num_peaks_all<-renderText(paste("Number of peaks: ",as.character(num_peaks_all),sep=""))
-				output$num_comp<-renderText(paste("Number of components: ",as.character(num_comp),sep=""))
+				output$num_comp<-renderText(paste("Total number of components: ",as.character(num_comp),sep=""))
 				output$reduc<-renderText(paste("Reduction factor: ",as.character(reduc),sep=""))
+				output$num_comp_tar<-renderText(paste("Components containing target or suspect compound peaks: ",as.character(num_comp_tar),sep=""))
+				output$num_comp_ISTD<-renderText(paste("Components containing ISTD peaks: ",as.character(num_comp_ISTD),sep=""))
+				output$num_comp_blind_any<-renderText(paste("Components containing any blank/blind peaks: ",as.character(num_comp_blind_any),sep=""))				
+				output$num_comp_blind_all<-renderText(paste("Components containing only blank/blind peaks: ",as.character(num_comp_blind_all),sep=""))			
 				output$min2_size_comp<-renderText(paste("Fraction of components with min. 2 peaks: ",as.character(min2_size_comp),sep=""))
 				output$median_size_comp<-renderText(paste("Mean number of peaks per component: ",as.character(median_size_comp),sep=""))
-				output$max_size_comp<-renderText(paste("Max number of peaks in a component: ",as.character(max_size_comp),sep=""))
+				output$max_size_comp<-renderText(paste("Max number of peaks in a component: ",as.character(max_size_comp),sep=""))				
+				output$num_comp_nontarget<-renderText(paste("Number of nontarget components with at least one non-blind peak: ",as.character(comp_nontarget),sep=""))
 				# output component table #########################################
-				comp_table<-component[[1]][,c(1,15,13,14,16,3,5,6,7,11,12),drop=FALSE]
+				comp_table<-component[["Components"]][,c(1,15,13,14,16,16,3,5,6,7,11,12,19,20,21,22),drop=FALSE]
+				comp_table[,5]<-round(comp_table[,5],digits=2)
+				comp_table[,6]<-(comp_table[,6]/60)
+				comp_table[,6]<-round(comp_table[,6],digits=2)				
 				comp_table[,2]<-round(comp_table[,2],digits=1)
-				comp_table[,4]<-round(comp_table[,4],digits=5)			
+				comp_table[,4]<-round(comp_table[,4],digits=5)	
 				output$comp_table <- DT::renderDataTable(
 					DT::datatable(
 						comp_table,
 						colnames=c(
 							"Component ID",
-							"Max. peak intens.","Max. peak ID","Max. peak m/z","Max. peak RT",
+							"Max. peak intens.",
+							"Max. peak ID","Max. peak m/z",
+							"Max. peak RT [s]","Max. peak RT [min]",
 							"ID(s) isot. peaks","ID(s) adduct peaks","ID(s) homol. series","ID(s) interfering peaks",
-							"Isot. peaks adducts","Adduct peak adducts"
+							"Isot. peaks adducts","Adduct peak adducts",
+							"Target peaks","ISTD peaks",
+							"Total peak number","Blind peak number"
 						),
 						rownames=FALSE,
 						extensions = c('Buttons'),
 						options = list(
 							lengthMenu = c(100,200,400),
-							ordering=F,
+							ordering=T,
 							dom = 'Bfrtip',
 							buttons = c('excel')#buttons = c('excel', 'pdf', 'print', 'csv'),
 						)
@@ -141,6 +168,9 @@ observe({ # - A
 			#####################################################################
 		}else{
 			output$sel_meas_comp_state<-renderText("Invalid file ID")
+			output$comp_file_name<-renderText("")		
+			output$comp_file_type<-renderText("")
+			output$comp_file_mode<-renderText("")
 			output$sel_meas_comp_state1<-renderText("")
 			output$sel_meas_comp_state2<-renderText("")			
 			output$num_peaks_all<-renderText("")
@@ -149,6 +179,9 @@ observe({ # - A
 			output$min2_size_comp<-renderText("")
 			output$median_size_comp<-renderText("")
 			output$max_size_comp<-renderText("")
+			output$num_comp_tar<-renderText("")	
+			output$num_comp_ISTD<-renderText("")	
+			output$num_comp_blind_any<-renderText("")	
 		}	
 	}
 })	
@@ -166,14 +199,17 @@ observe({ # - B
 			(isolate(input$sel_meas_comp_peak)>0)
 		){
 			# search in isotop. peaks
-			that<-which(!is.na(unlist(lapply(strsplit(component[[1]][,3],","), match, x=as.numeric(isolate(input$sel_meas_comp_peak))))))
+			those<-gsub("*", "", component[["Components"]][,"ID pattern peaks |"], fixed=TRUE)
+			that<-which(!is.na(unlist(lapply(strsplit(those,","), match, x=as.numeric(isolate(input$sel_meas_comp_peak))))))			
 			# search in adduct peaks
 			if(length(that)==0){
-				that<-which(!is.na(unlist(lapply(strsplit(component[[1]][,5],","), match, x=as.numeric(isolate(input$sel_meas_comp_peak))))))
+				those<-gsub("*", "", component[["Components"]][,"ID adduct peaks |"], fixed=TRUE)
+				that<-which(!is.na(unlist(lapply(strsplit(those,","), match, x=as.numeric(isolate(input$sel_meas_comp_peak))))))
 			}
 			# search in interfering peaks
 			if(length(that)==0){
-				that<-which(!is.na(unlist(lapply(strsplit(component[[1]][,7],","), match, x=as.numeric(isolate(input$sel_meas_comp_peak))))))
+				those<-gsub("*", "", component[["Components"]][,"ID interfering peaks |"], fixed=TRUE)
+				that<-which(!is.na(unlist(lapply(strsplit(those,","), match, x=as.numeric(isolate(input$sel_meas_comp_peak))))))
 			}
 			if(length(that)==1){
 				if(verbose){cat("\n in Comp_B_1")}
@@ -217,7 +253,7 @@ observe({ # - D: generate outputs
 	ee$entry 
 	if(isolate(ee$entry)>0){
 		if(verbose){cat("\n in Comp_D_1")}
-		got_comp<-enviMass:::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="check")
+		got_comp<-enviMass:::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="check")			
 		if(got_comp){
 			output$found_compo<-renderText("")
 			# output spectrum
@@ -239,6 +275,24 @@ observe({ # - D: generate outputs
 			if(length(do_these)>0){					
 				inser[do_these]<-"Different isotopologues of the same adduct"
 			}	
+			# output target peaks
+			if(component[[1]][as.numeric(isolate(ee$entry)),"Target peaks"]!="-"){
+				output$which_comp_tar<-renderText(paste0(
+					"Target/suspect peaks found for this component: ",
+					component[[1]][as.numeric(isolate(ee$entry)),"Target peaks"]
+				))
+			}else{
+				output$which_comp_tar<-renderText("No target or suspect peaks found for this component.")
+			}
+			# output ISTD peaks
+			if(component[[1]][as.numeric(isolate(ee$entry)),"ISTD peaks"]!="-"){
+				output$which_comp_ISTD<-renderText(paste0(
+					"ISTD peaks found for this component: ",
+					component[[1]][as.numeric(isolate(ee$entry)),"ISTD peaks"]
+				))
+			}else{
+				output$which_comp_ISTD<-renderText("No ISTD peaks found for this component.")
+			}
 			output$comp_table_a <- DT::renderDataTable(
 					datatable(
 					cbind(
@@ -256,9 +310,10 @@ observe({ # - D: generate outputs
 						round(comp_table$a[,1],digits=1),
 						round(comp_table$a[,2],digits=5),
 						format(comp_table$a[,3],scientific=TRUE,digits=2),
-						round(comp_table$a[,4],digits=2)						
+						round(comp_table$a[,4],digits=2),
+						comp_table$a[,6]					
 					),
-					colnames=c("Peak ID","m/z","Intensity","RT [s]")
+					colnames=c("Peak ID","m/z","Intensity","RT [s]","In blind?")
 				)
 			)
 			if(comp_table[[4]]=="Not part of a homologue series"){

@@ -407,7 +407,7 @@
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_pos_target<-c(patternDelRT_pos_target,as.numeric(as.character(tolrets[i]))*60)
 								}else{
-									patternDelRT_pos_target<-c(patternDelRT_pos_target,as.numeric(logfile$parameters$IS_drt1))
+									patternDelRT_pos_target<-c(patternDelRT_pos_target,as.numeric(logfile$parameters$tar_drt1))
 								}
 								if(rec[i]=="TRUE"){
 									if(takeall){
@@ -541,7 +541,7 @@
 								if(tolrets[i]!="FALSE"){
 									patternDelRT_neg_target<-c(patternDelRT_neg_target,as.numeric(as.character(tolrets[i]))*60)
 								}else{
-									patternDelRT_neg_target<-c(patternDelRT_neg_target,as.numeric(logfile$parameters$IS_drt1))
+									patternDelRT_neg_target<-c(patternDelRT_neg_target,as.numeric(logfile$parameters$tar_drt1))
 								}								
 								if(rec[i]=="TRUE"){
 									if(takeall){
