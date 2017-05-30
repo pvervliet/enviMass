@@ -1297,7 +1297,7 @@ observe({
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,-1,TRUE)
 		#logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,1,FALSE)
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		measurements[,c("checked","recal","align","norm", "LOD","IS_screen","tar_screen","isotopologues","adducts","homologues","EIC_correlation","blind","components_files")]<-"FALSE"
+		measurements[,c("qc","recal","align","norm", "LOD","isotopologues","adducts","homologues","EIC_correlation","blind","components_files")]<-"FALSE"
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		createAlert(session,anchorId = "reset", alertId="reset1", title = NULL, content="Project reset w/o peak picking",style = "warning",append=FALSE,dismiss=TRUE)
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
@@ -1311,7 +1311,7 @@ observe({
 		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,,TRUE)
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if(TRUE){
-			measurements[,c("peakpicking","checked","recal","align","norm", "LOD","IS_screen","tar_screen","isotopologues","adducts","homologues","EIC_correlation","blind","components_files")]<-"FALSE"
+			measurements[,c("peakpicking","qc","recal","align","norm", "LOD","isotopologues","adducts","homologues","EIC_correlation","blind","components_files")]<-"FALSE"
 		}
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		rm(measurements)

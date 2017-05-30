@@ -859,7 +859,9 @@
 					numericInput("peak_minint_log10", "Minimum log10(intensity) threshold", -10),
 					numericInput("peak_SN", "Minimum Signal/Noise", 5),
 					numericInput("peak_SB", "Minimum Signal/Base", 2),
-					numericInput("peak_recurs", "Maximum possible number of peaks within a single EIC", 3)
+					numericInput("peak_recurs", "Maximum possible number of peaks within a single EIC", 3),
+					HTML('<hr noshade="noshade" />') ,
+					selectInput("peak_which_intensity", "Peak intensity: use peak area or peak intensoid?", choices = c("intensoid"="maximum","area"="area"), selected="intensoid")
 				),
 				div(style = widget_style,
 					tags$h4("Advanced options"),
@@ -1707,8 +1709,8 @@
 											)
 										),
 										bsCollapsePanel("Full component list", 
-											tags$p(align="justify","Peaks which are also present in blank/blind files are marked with
-													an asterisk in the below table."), 
+											tags$p(align="justify","Each row in the below table corresponds to a component, sorted by decreasing maximum peak intensity. 
+												Peaks which are also present in blank/blind files are marked with an asterisk in the below table."), 
 											DT::dataTableOutput('comp_table')					
 										)
 									)

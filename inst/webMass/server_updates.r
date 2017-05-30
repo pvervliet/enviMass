@@ -597,7 +597,7 @@ if(logfile$version<3.102){
 
 if(logfile$version<3.103){
 
-		cat("\n Updating to version 3.103 ...")
+	cat("\n Updating to version 3.103 ...")
 	################################################################################################
 	# update Tasks_to_redo #########################################################################
 	old_Tasks_to_redo<-logfile$Tasks_to_redo
@@ -1626,6 +1626,54 @@ if(logfile$version<3.2){
 	}
 	################################################################################################	
 	logfile$version<<-3.2
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+
+}
+
+if(logfile$version<3.22){
+
+	cat("\n Updating to version 3.22 ...")
+	################################################################################################	
+	# update workflow ##############################################################################		
+	workflow_depend<-read.table(
+		file="workflow_depend"		
+	)
+	workflow_depend<-as.matrix(workflow_depend)
+	workflow_must<-read.table(
+		file="workflow_must"			
+	)
+	workflow_must<-as.matrix(workflow_must)
+	logfile[[11]]<<-workflow_depend
+	names(logfile)[11]<<-"workflow_depend"	
+	logfile[[12]]<<-workflow_must
+	names(logfile)[12]<<-"workflow_must"	
+	# -> no new nodes - only dependency screening -> file-wise compon. added #######################	
+	# reorder summary into workflow ################################################################
+	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	set_order<-match(schedule[,1],logfile$summary[,1])
+	logfile$summary<<-logfile$summary[set_order,]
+	################################################################################################	
+	if(!any(names(logfile$parameters)=="peak_which_intensity")){
+		logfile$parameters$peak_which_intensity<<-"maximum"	
+	}
+	################################################################################################	
+    measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+    if(any(names(measurements)=="checked")){
+		names(measurements)[names(measurements)=="checked"]<-"qc"
+    }
+    if(any(names(measurements)=="tar_screen")){
+    	measurements<-measurements[,-(which(names(measurements)=="tar_screen"))]
+    }
+    if(any(names(measurements)=="IS_screen")){
+    	measurements<-measurements[,-(which(names(measurements)=="IS_screen"))]
+    }
+	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+	rm(measurements)
+	################################################################################################	
+	logfile$version<<-3.22
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 

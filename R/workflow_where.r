@@ -14,6 +14,7 @@ workflow_where<-function(strings,check_mute=TRUE){
 
 	##########################################################################################
 	affected<-c()
+	affected_TF<-c()	
 	files<-list.files()
 	for(i in 1:length(files)){
 		if(	
@@ -40,15 +41,19 @@ workflow_where<-function(strings,check_mute=TRUE){
 									break;
 								}		
 							}
-							if(all_muted){next} # skip because parametes are muted
+							if(all_muted){next} # skip because parametes are all muted
 						}
 						if(grepl("do_",files[i])){
 							this<-strsplit(files[i],"do_")[[1]][2]
+							this<-strsplit(this,".",fixed=TRUE)[[1]][1]
+							affected<-c(affected,this)
+							affected_TF<-c(affected_TF,"TRUE")
 						}else{
-							this<-strsplit(files[i],"dont_")[[1]][2]		
+							this<-strsplit(files[i],"dont_")[[1]][2]
+							this<-strsplit(this,".",fixed=TRUE)[[1]][1]
+							affected<-c(affected,this)
+							affected_TF<-c(affected_TF,"FALSE")
 						}
-						this<-strsplit(this,".",fixed=TRUE)[[1]][1]
-						affected<-c(affected,this)
 						gotit<-TRUE;
 						break;
 					}
@@ -61,8 +66,10 @@ workflow_where<-function(strings,check_mute=TRUE){
 		}
 	}
 	##########################################################################################
-	affected<-unique(affected)
-	return(affected)	
+	affected_table<-cbind(as.character(affected),as.character(affected_TF))
+	colnames(affected_table)<-c("node","exec")
+	affected_table<-unique(affected_table)
+	return(affected_table)	
 	##########################################################################################
 	
 }

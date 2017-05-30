@@ -83,11 +83,11 @@
 		save(qc_pos,file=file.path(logfile[[1]],"results","qc_pos"))
 		# (2) mark measurements
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		measurements[,"checked"]<-"TRUE";
+		measurements[,"qc"]<-"TRUE";
 		filedcut<-filed[maxit1>cut2 & maxit2>cut1]
 		if(length(filedcut)>0){
 		  for(i in 1:length(filedcut)){
-			measurements[measurements[,"ID"]==filedcut[i],"checked"]<-"FALSE";
+			measurements[measurements[,"ID"]==filedcut[i],"qc"]<-"FALSE";
 			measurements[measurements[,"ID"]==filedcut[i],"include"]<-"FALSE";
 		  }
 		}
@@ -164,11 +164,11 @@
 		save(qc_neg,file=file.path(logfile[[1]],"results","qc_neg"))
 		# (2) mark measurements
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		measurements[,"checked"]<-"TRUE";
+		measurements[,"qc"]<-"TRUE";
 		filedcut<-filed[maxit1>cut2 & maxit2>cut1]
 		if(length(filedcut)>0){
 		  for(i in 1:length(filedcut)){
-			measurements[measurements[,"ID"]==filedcut[i],"checked"]<-"FALSE";
+			measurements[measurements[,"ID"]==filedcut[i],"qc"]<-"FALSE";
 			measurements[measurements[,"ID"]==filedcut[i],"include"]<-"FALSE";
 		  }
 		}

@@ -47,10 +47,10 @@ newproject<-function(pro_name,pro_dir,IS,targets){
   write.table(targets,file=file.path(pro_dir,pro_name,"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)      	  
   # write measurement table #################################################### 
   measurements<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
-    c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
+    c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
 	c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
   names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","peakpicking",
-  "checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3","date_end","time_end",
+  "qc","recal","align","norm","profiled","LOD","tag1","tag2","tag3","date_end","time_end",
   "isotopologues","adducts","homologues","EIC_correlation","blind","ID_2","components_files")
   write.csv(measurements,file=file.path(pro_dir,pro_name,"dataframes","measurements"),row.names=FALSE)
   ##############################################################################
@@ -257,12 +257,11 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		# Is this an example project? ##########################################
 		logfile$parameters$is_example<-"FALSE"			
 
-
-
-
 		# add custom parameters ################################################
 		source(file="workflow_parameters.r",local=TRUE)
-	if(any(duplicated(names(logfile$parameters)))){stop("Duplicated parameter names found - revise!")}	
+		if(any(duplicated(names(logfile$parameters)))){stop("Duplicated parameter names found - revise!")}	
+
+
 	# Workflow settings ########################################################
     logfile$workflow<-0    # based on above Tasks_to_redo
     names(logfile)[6]<-c("workflow")
@@ -311,7 +310,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     logfile[[9]]<-"";
     names(logfile)[9]<-c("isotopes")
 	# enviMass version number ##################################################
-    logfile[[10]]<-3.2
+    logfile[[10]]<-3.21
     names(logfile)[10]<-c("version")   
 	# subtraction files ########################################################
 	logfile[[13]]<-"FALSE"

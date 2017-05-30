@@ -1,11 +1,10 @@
-use_int<-logfile$parameters$peak_which_intensity
-
-
+	
+	use_int<-logfile$parameters$peak_which_intensity
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements<-measurements[measurements[,"include"]=="TRUE",]
+	measurements_incl<-measurements[measurements[,"include"]=="TRUE",,drop=FALSE]
 	# positive #################################################################
-	if(any(measurements[,"Mode"]=="positive")){
-		measurements_pos<-measurements[measurements[,"Mode"]=="positive",]
+	if(any(measurements_incl[,"Mode"]=="positive")){
+		measurements_pos<-measurements_incl[measurements_incl[,"Mode"]=="positive",,drop=FALSE]
 		leng<-length(measurements_pos[,8])
 		meanint<-c();
 		maxint<-c();
@@ -15,13 +14,13 @@ use_int<-logfile$parameters$peak_which_intensity
 			if(any(objects()=="peaklist")){rm(peaklist)}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_pos[i,1])),envir=as.environment(".GlobalEnv"));
 			if(use_int=="maximum"){
-				meanint<-c(meanint,median(peaklist[,3]));
-				maxint<-c(maxint,max(peaklist[,3]));
-				minint<-c(minint,min(peaklist[,3]));
-			}else{
-				meanint<-c(meanint,median(peaklist[,4]));
-				maxint<-c(maxint,max(peaklist[,4]));
-				minint<-c(minint,min(peaklist[,4]));
+				meanint<-c(meanint,median(peaklist[,"max_int"]));
+				maxint<-c(maxint,max(peaklist[,"max_int"]));
+				minint<-c(minint,min(peaklist[,"max_int"]));
+			}else{ # = area
+				meanint<-c(meanint,median(peaklist[,"sum_int"]));
+				maxint<-c(maxint,max(peaklist[,"sum_int"]));
+				minint<-c(minint,min(peaklist[,"sum_int"]));
 			}
 			rm(peaklist,envir=as.environment(".GlobalEnv"))
 		}
@@ -36,48 +35,53 @@ use_int<-logfile$parameters$peak_which_intensity
 			if(any(objects()=="peaklist")){rm(peaklist)}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_pos[i,"ID"])),envir=as.environment(".GlobalEnv"));
 			doneit<-FALSE
-			if(measurements_pos[i,3]=="sample"){
+			if(measurements_pos[i,"Type"]=="sample"){
 				abline(h=log10(atmean),col="red",lty=2)
 				if(use_int=="max_int"){
-					boxplot(log10(peaklist[,3]),add=TRUE,at=i,cex=0.5,col="green")
+					boxplot(log10(peaklist[,"max_int"]),add=TRUE,at=i,cex=0.5,col="green")
 				}else{
-					boxplot(log10(peaklist[,4]),add=TRUE,at=i,cex=0.5,col="green")				
+					boxplot(log10(peaklist[,"sum_int"]),add=TRUE,at=i,cex=0.5,col="green")				
 				}
 				doneit<-TRUE
 			}
-			if(measurements_pos[i,3]=="blank"){
+			if(measurements_pos[i,"Type"]=="blank"){
 				abline(h=log10(atmean),col="red",lty=2)
 				if(use_int=="max_int"){
-					boxplot(log10(peaklist[,3]),add=TRUE,at=i,cex=0.5,col="blue")
+					boxplot(log10(peaklist[,"max_int"]),add=TRUE,at=i,cex=0.5,col="blue")
 				}else{
-					boxplot(log10(peaklist[,4]),add=TRUE,at=i,cex=0.5,col="blue")				
+					boxplot(log10(peaklist[,"sum_int"]),add=TRUE,at=i,cex=0.5,col="blue")				
 				}
 				doneit<-TRUE
 			}
 			if(doneit==FALSE){
 				abline(h=log10(atmean),col="red",lty=2)
 				if(use_int=="max_int"){
-					boxplot(log10(peaklist[,3]),add=TRUE,at=i,cex=0.5,col="lightgrey")
+					boxplot(log10(peaklist[,"max_int"]),add=TRUE,at=i,cex=0.5,col="lightgrey")
 				}else{
-					boxplot(log10(peaklist[,4]),add=TRUE,at=i,cex=0.5,col="lightgrey")				
+					boxplot(log10(peaklist[,"sum_int"]),add=TRUE,at=i,cex=0.5,col="lightgrey")				
 				}				
 				doneit<-TRUE
 			}
 			if(use_int=="max_int"){
-				peaklist[,13]<-c(peaklist[,3]/median(peaklist[,3])*atmean)
+				peaklist[,"int_corr"]<-c(peaklist[,"max_int"]/median(peaklist[,"max_int"])*atmean)
 			}else{
-				peaklist[,13]<-c(peaklist[,4]/median(peaklist[,4])*atmean)			
+				peaklist[,"int_corr"]<-c(peaklist[,"sum_int"]/median(peaklist[,"sum_int"])*atmean)			
 			}
 			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_pos[i,"ID"])))
-			rm(peaklist,envir=as.environment(".GlobalEnv"))
+			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
+			if(any(objects()=="peaklist")){rm(peaklist)}
+			# although not done strictly file-wise, mark normalization:
+			measurements[measurements[,"ID"]==measurements_pos[i,"ID"],"norm"]<-"TRUE"
 		}
 		dev.off()
 		expr1p<-list(src=file.path(logfile[[1]],"pics","int_distr_pos"))
 		output$pic_int_distr_pos<-renderImage(expr1p, deleteFile = FALSE)
+		rm(measurements_pos)
+		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 	}	
 	# negative #################################################################	
-	if(any(measurements[,"Mode"]=="negative")){
-		measurements_neg<-measurements[measurements[,"Mode"]=="negative",]
+	if(any(measurements_incl[,"Mode"]=="negative")){
+		measurements_neg<-measurements_incl[measurements_incl[,"Mode"]=="negative",,drop=FALSE]
 		leng<-length(measurements_neg[,8])
 		meanint<-c();
 		maxint<-c();
@@ -86,14 +90,14 @@ use_int<-logfile$parameters$peak_which_intensity
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_neg[i,"ID"])),envir=as.environment(".GlobalEnv"));
-			if(use_int=="max_int"){
-				meanint<-c(meanint,median(peaklist[,3]));
-				maxint<-c(maxint,max(peaklist[,3]));
-				minint<-c(minint,min(peaklist[,3]));
+			if(use_int=="maximum"){
+				meanint<-c(meanint,median(peaklist[,"max_int"]));
+				maxint<-c(maxint,max(peaklist[,"max_int"]));
+				minint<-c(minint,min(peaklist[,"max_int"]));
 			}else{	
-				meanint<-c(meanint,median(peaklist[,4]));
-				maxint<-c(maxint,max(peaklist[,4]));
-				minint<-c(minint,min(peaklist[,4]));			
+				meanint<-c(meanint,median(peaklist[,"sum_int"]));
+				maxint<-c(maxint,max(peaklist[,"sum_int"]));
+				minint<-c(minint,min(peaklist[,"sum_int"]));			
 			}	
 			rm(peaklist,envir=as.environment(".GlobalEnv"))
 		}
@@ -108,44 +112,49 @@ use_int<-logfile$parameters$peak_which_intensity
 			if(any(objects()=="peaklist")){rm(peaklist)}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_neg[i,"ID"])),envir=as.environment(".GlobalEnv"));
 			doneit<-FALSE
-			if(measurements_neg[i,3]=="sample"){
+			if(measurements_neg[i,"Type"]=="sample"){
 				abline(h=log10(atmean),col="red",lty=2)
 				if(use_int=="max_int"){
-					boxplot(log10(peaklist[,3]),add=TRUE,at=i,cex=0.5,col="green")
+					boxplot(log10(peaklist[,"max_int"]),add=TRUE,at=i,cex=0.5,col="green")
 				}else{
-					boxplot(log10(peaklist[,4]),add=TRUE,at=i,cex=0.5,col="green")
+					boxplot(log10(peaklist[,"sum_int"]),add=TRUE,at=i,cex=0.5,col="green")
 				}
 				doneit<-TRUE
 			}
-			if(measurements_neg[i,3]=="blank"){
+			if(measurements_neg[i,"Type"]=="blank"){
 				abline(h=log10(atmean),col="red",lty=2)
 				if(use_int=="max_int"){
-					boxplot(log10(peaklist[,3]),add=TRUE,at=i,cex=0.5,col="blue")
+					boxplot(log10(peaklist[,"max_int"]),add=TRUE,at=i,cex=0.5,col="blue")
 				}else{
-					boxplot(log10(peaklist[,4]),add=TRUE,at=i,cex=0.5,col="blue")
+					boxplot(log10(peaklist[,"sum_int"]),add=TRUE,at=i,cex=0.5,col="blue")
 				}
 				doneit<-TRUE
 			}
 			if(doneit==FALSE){
 				abline(h=log10(atmean),col="red",lty=2)
 				if(use_int=="max_int"){
-					boxplot(log10(peaklist[,3]),add=TRUE,at=i,cex=0.5,col="lightgrey")
+					boxplot(log10(peaklist[,"max_int"]),add=TRUE,at=i,cex=0.5,col="lightgrey")
 				}else{
-					boxplot(log10(peaklist[,4]),add=TRUE,at=i,cex=0.5,col="lightgrey")
+					boxplot(log10(peaklist[,"sum_int"]),add=TRUE,at=i,cex=0.5,col="lightgrey")
 				}
 				doneit<-TRUE
 			}
 			if(use_int=="max_int"){
-				peaklist[,13]<-c(peaklist[,3]/median(peaklist[,3])*atmean)			
+				peaklist[,"int_corr"]<-c(peaklist[,"max_int"]/median(peaklist[,"max_int"])*atmean)			
 			}else{
-				peaklist[,13]<-c(peaklist[,4]/median(peaklist[,4])*atmean)
+				peaklist[,"int_corr"]<-c(peaklist[,"sum_int"]/median(peaklist[,"sum_int"])*atmean)
 			}
 			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_neg[i,"ID"])))
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}
+			# although not done strictly file-wise, mark normalization:
+			measurements[measurements[,"ID"]==measurements_neg[i,"ID"],"norm"]<-"TRUE"
 		}
 		dev.off()
 		expr1n<-list(src=file.path(logfile[[1]],"pics","int_distr_neg"))
 		output$pic_int_distr_neg<-renderImage(expr1n, deleteFile = FALSE)
+		rm(measurements_neg)
+		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 	}	
+	rm(measurements,measurements_incl)
 	############################################################################

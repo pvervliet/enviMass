@@ -4,7 +4,6 @@
     ############################################################################
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
     measurements_incl<-measurements[measurements[,"include"]=="TRUE",,drop=FALSE]
-	
     leng<-length(measurements_incl[,1])
 	mz_pos<-c();
 	RT_pos<-c();
@@ -129,7 +128,7 @@
 				dev.off();
 				measurements[
 					measurements[,"ID"]==measurements_incl[i,1]
-				,"recal"]<-FALSE;
+				,"recal"]<-TRUE;
 			}
 		  }
 		  if( (measurements_incl[i,"Mode"]=="negative")  & (measurements_incl[i,"include"]=="TRUE") ){
@@ -170,7 +169,7 @@
 				dev.off();
 				measurements[
 					measurements[,"ID"]==measurements_incl[i,"ID"]
-				,"recal"]<-FALSE;
+				,"recal"]<-TRUE;
 			}	
 		  }
 		}  

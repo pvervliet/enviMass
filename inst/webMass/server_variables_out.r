@@ -95,16 +95,21 @@ observe({
 				found<-found[found!="logfile$parameters$progressBar"]
 			}
 			if(length(found)){
-				affected<-enviMass:::workflow_where(found) # which scripts directly affected?
-				if(length(affected)>0){
-					cat("\nAdapt settings affecting nodes: ")
-					print(affected);cat("\n")
-					for(i in 1:length(affected)){
+				affected_table<-enviMass:::workflow_where(found) # which scripts directly affected?
+				if(dim(affected_table)[1]>0){
+					for(i in 1:dim(affected_table)[1]){
+						if( # just a message: 
+							((logfile$workflow[names(logfile$workflow)==affected_table[i,1]]=="yes") & (affected_table[i,2]=="TRUE")) |
+							((logfile$workflow[names(logfile$workflow)==affected_table[i,1]]=="no") & (affected_table[i,2]=="FALSE"))
+						){
+							cat("\nAdapt settings affecting nodes: ")
+							print(affected_table[i,1]);cat("\n")
+						}
 						enviMass:::workflow_set(
-							down=affected[i],
-							check_node=TRUE, 	# only applied if affected step switched on - only in 
-							single_file=FALSE,
-							single_node=FALSE
+							down=affected_table[i,1],
+							down_TF=affected_table[i,2],
+							check_node=TRUE, 	
+							single_file=FALSE
 						)
 					}
 				}
@@ -134,8 +139,8 @@ observe({
 				enviMass:::workflow_set(
 					down="pattern",
 					check_node=TRUE,
-					single_file=FALSE,
-					single_node=FALSE
+					down_TF="TRUE", # which is always the default
+					single_file=FALSE
 				)
 			}
 			if(do_debug){cat("\n at_3")}
@@ -153,8 +158,8 @@ observe({
 				enviMass:::workflow_set(
 					down="adducts",
 					check_node=TRUE,
-					single_file=FALSE,
-					single_node=FALSE
+					down_TF="TRUE",
+					single_file=FALSE
 				)
 			}
 			if(do_debug){cat("\n at_4")}
@@ -170,8 +175,8 @@ observe({
 				enviMass:::workflow_set(
 					down="blind",
 					check_node=TRUE,
-					single_file=FALSE,
-					single_node=FALSE
+					down_TF="TRUE",
+					single_file=FALSE
 				)
 			}	
 			at1<-logfile$Negative_subtraction_files
@@ -182,8 +187,8 @@ observe({
 				enviMass:::workflow_set(
 					down="blind",
 					check_node=TRUE,
-					single_file=FALSE,
-					single_node=FALSE
+					down_TF="TRUE",
+					single_file=FALSE
 				)
 			}		
 			if(do_debug){cat("\n at_8b")}
@@ -215,14 +220,13 @@ observe({
 			}
 			# any parameter changed ?
 			if(length(found)){
-					cat("\nAdapt settings affecting nodes: ")
+					cat("\nAdapt settings affecting workflow nodes: ")
 					print(found);cat("\n")
 					for(i in 1:length(found)){
 						enviMass:::workflow_set(
 							down=found[i],
 							check_node=FALSE,
-							single_file=FALSE,
-							single_node=FALSE
+							single_file=FALSE
 						) # do not change
 					}
 			}

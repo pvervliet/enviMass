@@ -147,7 +147,12 @@
 					stop("No peaks picked - wrong parameters (e.g., intensity thresholds too high)?")
 				}
 				##################################################################
-				peaklist<-cbind(peaklist,peaklist[,1],rep(0,length(peaklist[,4])),peaklist[,5])
+# REMOVE ->		#peaklist<-cbind(peaklist,peaklist[,1],rep(0,length(peaklist[,4])),peaklist[,5])
+				peaklist<-cbind(peaklist,
+					rep(0,length(peaklist[,4])),
+					rep(0,length(peaklist[,4])),
+					rep(0,length(peaklist[,4]))
+				)	
 				colnames(peaklist)[12]<-"m/z_corr";
 				colnames(peaklist)[13]<-"int_corr";
 				colnames(peaklist)[14]<-"RT_corr";      

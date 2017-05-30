@@ -886,10 +886,10 @@ observe({
 		# anything left? 
 		if(length(measurements1[measurements1[,"ID"]!=as.character(isolate(input$Measdel_ID)),"ID"])==0){
 			measurements1<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
-				c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
+				c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
 				c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
 			names(measurements1)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","peakpicking",
-			  "checked","recal","align","norm","profiled","LOD","IS_screen","tar_screen","tag1","tag2","tag3","date_end","time_end",
+			  "qc","recal","align","norm","profiled","LOD","tag1","tag2","tag3","date_end","time_end",
 			  "isotopologues","adducts","homologues","EIC_correlation","blind","ID_2","components_files")
 			adjustit<-"FALSE"
         }else{
