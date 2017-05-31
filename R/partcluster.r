@@ -76,6 +76,8 @@ partcluster<-function(
 			delmz<-(max(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),1])-min(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),1]))
 			if(ppm){
 				delmz<-(delmz/mean(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),1])*1E6)
+			}else{
+				delmz<-(delmz/1000)
 			}
 			delRT<-(max(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),3])-min(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),3]))
 			if( (delmz>(dmass*2)) || (delRT>dret) || (any(duplicated(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),6]))) 

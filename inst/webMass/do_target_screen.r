@@ -189,15 +189,9 @@
 		do_at<-1
 		if(length(target_pos_screen_listed)>0){
 			for(i in do_at:length(target_pos_screen_listed)){ # i - on compound_adduct
-# REMOVE ME:
-cat(paste0("\n",i))
-# 
 				if(length(target_pos_screen_listed[[i]])>0){	
 					res_target_pos_screen[[i]]<-list()
 					for(m in 1:length(target_pos_screen_listed[[i]])){ # m - sample		
-# REMOVE ME:
-cat("*")			
-# 
 						at_ID<-set_ID[profileList_pos[[4]]==colnames(target_pos_screen_listed[[i]][[m]])[1]]
 						if(length(target_pos_screen_listed[[i]][[m]])>0){
 							if(do_LOD){							
@@ -490,13 +484,13 @@ cat("*")
 		if(length(target_neg_screen_listed)>0){
 			for(i in 1:length(target_neg_screen_listed)){ # i - on compound_adduct
 # REMOVE ME:
-cat(paste0("\n",i))
+#cat(paste0("\n",i))
 # 
 				if(length(target_neg_screen_listed[[i]])>0){	
 					res_target_neg_screen[[i]]<-list()
 					for(m in 1:length(target_neg_screen_listed[[i]])){ # m - sample		
 # REMOVE ME:
-cat("*")			
+#cat("*")			
 # 		
 						at_ID<-set_ID[profileList_neg[[4]]==colnames(target_neg_screen_listed[[i]][[m]])[1]]	
 						if(length(target_neg_screen_listed[[i]][[m]])>0){

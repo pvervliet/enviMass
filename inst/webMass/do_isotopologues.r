@@ -50,35 +50,17 @@
 			}
 			##########################################################################	
 			cat("grouping - ")
-			peaklist2<-as.data.frame(peaklist[,c(12,13,14)])		
-
-		if(FALSE){	# check DIURON case
-			peaklist2<-peaklist2[
-				c(4146,4242,4349,4197,4296)
-			,]
+			peaklist2<-as.data.frame(peaklist[,c("m/z_corr","int_corr","RT_corr")])	
+			if(logfile$parameters$isotop_ppm=="TRUE"){
+				use_mztol<-as.numeric(logfile$parameters$isotop_mztol)
+			}else{ # mmu
+				use_mztol<-(as.numeric(logfile$parameters$isotop_mztol)/1000)
+			}
 			pattern<-try(
 				enviMass:::pattern_search3(
 					peaklist2,
 					quantiz,
-					mztol=as.numeric(logfile$parameters$isotop_mztol),
-					ppm=logfile$parameters$isotop_ppm,
-					inttol=(.5),
-					rttol=as.numeric(logfile$parameters$isotop_rttol),
-					use_isotopes=FALSE,
-					use_charges=logfile$parameters$isotop_use_charges,
-					use_marker=TRUE,
-					quick=TRUE,
-					isotopes,
-					exclude
-				)
-			)
-		}	
-			
-			pattern<-try(
-				enviMass:::pattern_search3(
-					peaklist2,
-					quantiz,
-					mztol=as.numeric(logfile$parameters$isotop_mztol),
+					mztol=use_mztol,
 					ppm=logfile$parameters$isotop_ppm,
 					inttol=(as.numeric(logfile$parameters$isotop_inttol)/100),
 					rttol=as.numeric(logfile$parameters$isotop_rttol),

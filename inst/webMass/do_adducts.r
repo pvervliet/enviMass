@@ -57,13 +57,18 @@
 				cat("\n Not enough adducts for this ionization mode specified - skipped ...")
 				next;
 			}			
-			peaklist2<-as.data.frame(peaklist[,c(12,13,14)])	
+			peaklist2<-as.data.frame(peaklist[,c("m/z_corr","int_corr","RT_corr")])	
+			if(logfile$parameters$adducts_mztol_ppm=="TRUE"){
+				use_mztol<-as.numeric(logfile$parameters$adducts_mztol)
+			}else{ # mmu
+				use_mztol<-(as.numeric(logfile$parameters$adducts_mztol)/1000)
+			}
 			adduct<-try(
 				enviMass:::adduct_search2( # dont name it "adducts" -> conflict
 					peaklist2, 
 					adducts, 
 					rttol = as.numeric(logfile$parameters$adducts_rttol), 
-					mztol = as.numeric(logfile$parameters$adducts_mztol),
+					mztol = use_mztol,
 					ppm = logfile$parameters$adducts_ppm, 
 					use_adducts = with_adducts, 
 					ion_mode = with_mode,

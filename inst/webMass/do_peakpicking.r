@@ -151,7 +151,7 @@
 				peaklist<-cbind(peaklist,
 					rep(0,length(peaklist[,4])),
 					rep(0,length(peaklist[,4])),
-					rep(0,length(peaklist[,4]))
+					peaklist[,5] # replace by rep(0) as soon as do_align.r is build!
 				)	
 				colnames(peaklist)[12]<-"m/z_corr";
 				colnames(peaklist)[13]<-"int_corr";

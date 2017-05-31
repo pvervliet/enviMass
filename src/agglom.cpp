@@ -391,7 +391,7 @@ SEXP correct_intens(
                     if(ppm2==1){
                         delmz=(dmz2*minmz/1e6);
                     }else{
-                        delmz=dmz2;
+                        delmz=(dmz2/1000);
                     }
                     clus[0]=(maxmz-(2*delmz));                          /* low mass boundary **************/
                     clus[(1*leng)]=(minmz+(2*delmz));                   /* high mass boundary *************/
@@ -465,7 +465,7 @@ SEXP correct_intens(
                                 if(ppm2==1){
                                     delmz=(dmz2*((clus[(11*leng)+m]+clus[(12*leng)+m])/2)/1e6);
                                 }else{
-                                    delmz=dmz2;
+                                    delmz=(dmz2/1000);
                                 }
                                 clus[m]=(clus[(12*leng)+m]-(2*delmz));          /* low mass boundary **************/
                                 clus[(1*leng)+m]=(clus[(11*leng)+m]+(2*delmz)); /* high mass boundary *************/
@@ -513,7 +513,7 @@ SEXP correct_intens(
                     if(ppm2==1){
                         delmz=(dmz2*minmz/1e6);
                     }else{
-                        delmz=dmz2;
+                        delmz=(dmz2/1000);
                     }
                     clus[0+clustnumb]=(maxmz-(2*delmz));                    /* low mass boundary **************/
                     clus[(1*leng)+clustnumb]=(minmz+(2*delmz));             /* high mass boundary *************/
@@ -797,7 +797,7 @@ SEXP neighbour(        SEXP mz, /* must be sorted */
                 if(ppm2 == 1){
                     lowmass=(*(mass+n)-((*(mass+n)*dmass)/1E6));
                 }else{
-                    lowmass=(*(mass+n)-(dmass));
+                    lowmass=(*(mass+n)-(dmass/1000));
                 }
                 lowret=(*(ret+n)-dret);
                 highret=(*(ret+n)+dret);
@@ -878,8 +878,8 @@ SEXP agglom(           SEXP mz, /* must be sorted */
                                    lowmass=(*(mass+these[m])-((*(mass+these[m])*dmass)/1E6));
                                    highmass=(*(mass+these[m])+((*(mass+these[m])*dmass)/1E6));
                                 }else{
-                                   lowmass=(*(mass+these[m])-(dmass));
-                                   highmass=(*(mass+these[m])+(dmass));
+                                   lowmass=(*(mass+these[m])-(dmass/1000));
+                                   highmass=(*(mass+these[m])+(dmass/1000));
                                 }
                                 lowret=(*(ret+these[m])-dret);
                                 highret=(*(ret+these[m])+dret);
@@ -928,8 +928,8 @@ SEXP agglom(           SEXP mz, /* must be sorted */
                                    lowmass=(*(mass+those[m])-((*(mass+those[m])*dmass)/1E6));
                                    highmass=(*(mass+those[m])+((*(mass+those[m])*dmass)/1E6));
                                 }else{
-                                   lowmass=(*(mass+those[m])-(dmass));
-                                   highmass=(*(mass+those[m])+(dmass));
+                                   lowmass=(*(mass+those[m])-(dmass/1000));
+                                   highmass=(*(mass+those[m])+(dmass/1000));
                                 }
                                 lowret=(*(ret+those[m])-dret);
                                 highret=(*(ret+those[m])+dret);

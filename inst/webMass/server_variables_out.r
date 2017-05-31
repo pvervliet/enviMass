@@ -199,7 +199,7 @@ observe({
 			cat("\n Checking workflow changes ... ")
 			found<-c()
 			for(i in 1:length(logfile$workflow)){	
-				if(names(logfile$workflow)[i]==""){next} # for any empty entries
+				if(names(logfile$workflow)[i]==""){next} # for any empty entries, ?
 				old_node<-logfile$workflow[i]
 				for_node<-names(logfile$workflow)[i]
 				eval(parse(text=paste("new_node<-","as.character(isolate(input$",for_node,"))",sep="")))
@@ -229,6 +229,12 @@ observe({
 							single_file=FALSE
 						) # do not change
 					}
+			}
+			# add exceptions manually here: ######################################## 
+			do_isot<-(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes")
+			do_addu<-(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes")
+			if( !do_isot & !do_addu ){ 
+				logfile$workflow[names(logfile$workflow)=="components_files"]<<-"no"
 			}
 			cat("Done checking of workflow changes.\n")
 			########################################################################

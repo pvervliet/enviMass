@@ -43,10 +43,15 @@
 			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); 
 			peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs 			
 			##########################################################################
-			cat("series extraction - ")					
+			cat("series extraction - ")		
+			if(logfile$parameters$homol_ppm=="TRUE"){
+				use_mztol<-as.numeric(logfile$parameters$homol_mztol)
+			}else{ # mmu
+				use_mztol<-(as.numeric(logfile$parameters$homol_mztol)/1000)
+			}
 			homol<-try(
 				nontarget:::homol.search(
-					peaklist=as.data.frame(peaklist[,c(12,13,14)]),
+					peaklist=as.data.frame(peaklist[,c("m/z_corr","int_corr","RT_corr")]),
 					isotopes,	
 					elements,
 					use_C=FALSE,
@@ -55,7 +60,7 @@
 					minrt=as.numeric(logfile$parameters$homol_minrt),
 					maxrt=as.numeric(logfile$parameters$homol_maxrt),
 					ppm=as.logical(logfile$parameters$homol_ppm),
-					mztol=as.numeric(logfile$parameters$homol_mztol),
+					mztol=use_mztol,
 					rttol=as.numeric(logfile$parameters$homol_rttol),
 					minlength=as.numeric(logfile$parameters$homol_minlength),
 					mzfilter,

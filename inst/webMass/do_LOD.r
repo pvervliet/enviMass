@@ -32,9 +32,7 @@ if(length(those)>0){
 		#peaklist<-peaklist[peaklist[,colnames(peaklist)=="keep"]==1,,drop=FALSE]
 		if(length(peaklist[,1])==0){next}
 		# LOD ###################################################################
-		
 		his<-hist(peaklist[,"RT"],breaks=100,plot=FALSE)
-
 		get_int<-c()
 		get_ret<-c()
 		get_w<-c()
@@ -74,5 +72,6 @@ if(length(those)>0){
 	save(LOD_splined,file=file.path(logfile$project_folder,"results","LOD","LOD_splined"))
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 }
+rm(measurements)
 #################################################################################
 

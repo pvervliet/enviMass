@@ -60,7 +60,7 @@
 		pattern_delRT<<-patternDelRT_pos_IS;rm(patternDelRT_pos_IS,envir=as.environment(".GlobalEnv"));
 		
 		mztol<-as.numeric(logfile$parameters$IS_dmz)				# m/z tolerance ...
-		ppm<-as.logical(as.character(logfile$parameters$IS_ppm))	# ... given in pppm?
+		ppm<-as.logical(as.character(logfile$parameters$IS_ppm))	# ... given in ppm or mmu?
 		cutint<-as.numeric(logfile$parameters$IS_intcut)			# Lower intensity threshold
 		int_tol<-as.numeric(logfile$parameters$IS_inttol)			# Intensity tolerance %
 		#RT_tol_outside<-as.numeric(logfile$parameters$IS_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s] - incorporated via pattern_delRT during isotopologue pattern generation

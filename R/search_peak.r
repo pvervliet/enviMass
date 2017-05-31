@@ -6,8 +6,8 @@
 #'
 #' @param peaklist Matrix or data.frame of peaks. 3 columns: m/z, intensity, RT.
 #' @param mz Numeric vector. Mass(es) to be matched.
-#' @param dmz Numeric. +/- m/z tolerance from masses in mz (precision).
-#' @param ppm Logical. \code{dmass} given in ppm?
+#' @param dmz Numeric. +/- m/z tolerance from masses in mz (precision), either ppm or mmu.
+#' @param ppm Logical. \code{dmass} given in ppm or absolute [mmu]?
 #' @param RT Numeric vector. Retention times to be matched; units equal to those of the input files
 #' @param dRT Numeric. RT tolerance window; units equal to those of the input files
 #' @param onlymax Logical. Return only the matched peak of highest intensity. 

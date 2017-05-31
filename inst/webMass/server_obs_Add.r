@@ -1374,11 +1374,13 @@ observe({
 					any_calibrated<-TRUE;
 				}
 			}			
+			############################################################################
 			if( any_include & any_calibrated ){ # included & calibration models exist? Changed time period only affects quantification, calibration models remain the same
-				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
-				enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)	
+				enviMass:::workflow_set(down="quantification",check_node=TRUE,check_TP=c("TRUE"))	
+				enviMass:::workflow_set(down="calibration")	
 				enviMass:::reset_selections(session)				
 			}	
+			############################################################################
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
 			output$measurements<<-DT::renderDataTable(
 				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
@@ -1510,8 +1512,11 @@ observe({
 					rm(cal_models_neg,envir=as.environment(".GlobalEnv"))
 				}
 			}
-			enviMass:::workflow_set(down="LOD",check_node=TRUE,single_file=TRUE)
-			enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)
+			############################################################################
+			enviMass:::workflow_set(down="LOD",single_file=TRUE)
+			enviMass:::workflow_set(down="calibration",single_file=TRUE)
+			enviMass:::reset_selections(session)
+			############################################################################
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
 			output$measurements<<-DT::renderDataTable(
 				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
@@ -1599,11 +1604,13 @@ observe({
 					file.remove(file.path(logfile[[1]],"quantification",paste("cal_models_neg_",isolate(input$Modif_cal_group),sep="")))					
 				}
 			}
-			if( any_include ){ # included & calibration models exist?
-				enviMass:::workflow_set(down="calibration",check_node=TRUE,single_file=FALSE)	# is this optional? after all, the sets are just removed ...
-				enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE)	
-				updateSelectInput(session,"Ion_mode_Cal",selected = "none") # stops, in combination with Tasks_to_redo, invalid selections in the calibration tab!
+			############################################################################
+			if(any_include){ # included & calibration models exist?
+				enviMass:::workflow_set(down="quantification",check_node=TRUE,check_TP=c("TRUE"))	# is this optional? after all, the sets are just removed ...
+				enviMass:::workflow_set(down="calibration")
+				enviMass:::reset_selections(session) # stops, in combination with Tasks_to_redo, invalid selections in the calibration tab!
 			}	
+			############################################################################
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
 			output$measurements<<-DT::renderDataTable(
 				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
@@ -1783,7 +1790,7 @@ impfolder<-reactive({
 				}
 			}
 			if(many>0){
-				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE) 
+				enviMass:::workflow_set(down="peakpicking",single_file=TRUE) 
 				logfile$summary[1,2]<<-"TRUE"
 				output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
 				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
@@ -1840,9 +1847,12 @@ observe({
 				rm(logfile_other,logfile_here,envir=as.environment(".GlobalEnv"))
 				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp")); 
 				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				###############################################################
 				source("server_variables_in.R", local=TRUE)
 				output$dowhat<<-renderText("Parameters imported.");
+				enviMass:::workflow_set(down="peakpicking",single_file=FALSE) # reset the whole workflow ... could be improved ...
 				enviMass:::reset_selections(session)
+				###############################################################
 				cat(" done. \n")
 			}else{
 				output$dowhat<<-renderText("Parameter import failed: incompatible enviMass versions.");

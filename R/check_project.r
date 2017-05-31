@@ -137,7 +137,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	filed<-list.files(file.path(logfile[[1]],"files"))
 	if(!length(filed) & ignorefiles=="FALSE"){say<-"No files available!"}
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-	if(length(names(measurements))!=30){
+	if(length(names(measurements))!=28){
 		say<-"Measurement table seems corrupted. Have you made any updates recently? Please report this issue!"
 	}
 	if(any(measurements[,"Mode"]=="positive")){

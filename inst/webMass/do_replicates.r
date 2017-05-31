@@ -43,8 +43,8 @@
 					low_mass<-(peaklist[,1]-(mz_tol/1E6*peaklist[,1]))
 					high_mass<-(peaklist[,1]+(mz_tol/1E6*peaklist[,1]))
 				}else{
-					low_mass<-(peaklist[,1]-(mz_tol))
-					high_mass<-(peaklist[,1]+(mz_tol))	
+					low_mass<-(peaklist[,1]-(mz_tol/1000))
+					high_mass<-(peaklist[,1]+(mz_tol/1000))	
 				}
 				low_rt<-(peaklist[,3]-rt_tol)
 				high_rt<-(peaklist[,3]+rt_tol)							
@@ -70,8 +70,8 @@
 						low_mass<-(peaklist[,1]-(mz_tol/1E6*peaklist[,1]))
 						high_mass<-(peaklist[,1]+(mz_tol/1E6*peaklist[,1]))
 					}else{
-						low_mass<-(peaklist[,1]-mz_tol)
-						high_mass<-(peaklist[,1]+mz_tol)	
+						low_mass<-(peaklist[,1]-(mz_tol/1000))
+						high_mass<-(peaklist[,1]+(mz_tol/1000))	
 					}
 					low_rt<-(peaklist[,3]-rt_tol)
 					high_rt<-(peaklist[,3]+rt_tol)		
