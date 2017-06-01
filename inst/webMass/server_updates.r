@@ -1633,9 +1633,9 @@ if(logfile$version<3.2){
 
 }
 
-if(logfile$version<3.23){
+if(logfile$version<3.25){
 
-	cat("\n Updating to version 3.23 ...")
+	cat("\n Updating to version 3.25 ...")
 	################################################################################################	
 	# update workflow ##############################################################################		
 	workflow_depend<-read.table(
@@ -1673,7 +1673,7 @@ if(logfile$version<3.23){
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 	rm(measurements)
 	################################################################################################	
-	logfile$version<<-3.23
+	logfile$version<<-3.25
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 

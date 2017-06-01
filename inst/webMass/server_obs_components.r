@@ -45,7 +45,7 @@ observe({ # - A
 				##################################################################
 				# load componentization results ##################################
 				load(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv"))
-				#load(file.path(logfile[[1]],"results","componentization","components","3"))
+				#load(file.path(logfile[[1]],"results","componentization","components","1"))
 				if(verbose){cat("\n in Comp_A_1")}
 				cat("\n Loaded file")
 				# output components summary table ################################
@@ -218,6 +218,11 @@ observe({ # - B
 				if(verbose){cat("\n in Comp_B_2")}
 				cat("\n Invalid peak selected!")
 				updateNumericInput(session,"sel_meas_comp_comp",value=0)
+				output$comp_plot_spec <- renderPlot({	
+					plot.new()
+					plot.window(xlim=c(0,1),ylim=c(0,1))
+					text(.5,.5,labels="No components for this peak ID. \n -> peak either removed during replicate intersection or peak ID invalid.")
+				},res=110)	
 			}
 		}
 	}
@@ -254,7 +259,7 @@ observe({ # - D: generate outputs
 	if(isolate(ee$entry)>0){
 		if(verbose){cat("\n in Comp_D_1")}
 		got_comp<-enviMass:::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="check")			
-		if(got_comp){
+		if(got_comp=="available"){
 			output$found_compo<-renderText("")
 			# output spectrum
 			output$comp_plot_spec <- renderPlot({	
@@ -348,12 +353,21 @@ observe({ # - D: generate outputs
 				)
 			)
 		}else{
-			output$found_compo<-renderText("The selected component contains only one peak.")
-			output$comp_plot_spec <- renderPlot({	
-				plot.new()
-				plot.window(xlim=c(0,1),ylim=c(0,1))
-				text(.5,.5,labels="The selected component contains only one peak.")
-			},res=110)				
+			if(got_comp=="single_peak"){
+				output$found_compo<-renderText("The selected component contains only one peak.") # for conditional panel
+				output$comp_plot_spec <- renderPlot({	
+					plot.new()
+					plot.window(xlim=c(0,1),ylim=c(0,1))
+					text(.5,.5,labels="The selected component contains only one peak.")
+				},res=110)			
+			}else{
+				output$found_compo<-renderText("The selected component contains only one peak.") # for conditional panel
+				output$comp_plot_spec <- renderPlot({	
+					plot.new()
+					plot.window(xlim=c(0,1),ylim=c(0,1))
+					text(.5,.5,labels="No components for this peak, \n peak removed during replicate intersection.")
+				},res=110)	
+			}	
 			# output circular plot
 			output$comp_plot_circ <- renderPlot({	
 				plot.new()
@@ -431,28 +445,30 @@ observe({ # - F: generate outputs
 					}	
 				}else{ # get peaks from components - only selectable if selectInput adapted accordingly
 					if(verbose){cat("\n in Atoms_3")}	
-					at_peak<<-which(!is.na(unlist(lapply(strsplit(component[[1]][,3],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
+					at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID pattern peaks |"],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
 					# search in adduct peaks
 					if(length(at_peak)==0){
-						at_peak<<-which(!is.na(unlist(lapply(strsplit(component[[1]][,5],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
+						at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID adduct peaks |"],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
 					}
 					# search in interfering peaks
 					if(length(at_peak)==0){
-						at_peak<<-which(!is.na(unlist(lapply(strsplit(component[[1]][,7],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
+						at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID interfering peaks |"],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
 					}				
-					if(length(at_peak)>0){	# at_peak = at which component		
+					if(length(at_peak)>0){	# at_peak = at which component	
+						if(verbose){cat("\n in Atoms_4")}	
 						get_peaks<<-c()
-						if(component[[1]][at_peak,3]!="-"){
-							get_peaks<<-c(get_peaks,strsplit(component[[1]][at_peak,3],",")[[1]])
+						if(component[["Components"]][at_peak,"ID pattern peaks |"]!="-"){
+							get_peaks<<-c(get_peaks,strsplit(component[["Components"]][at_peak,"ID pattern peaks |"],",")[[1]])
 						}
-						if(component[[1]][at_peak,5]!="-"){
-							get_peaks<<-c(get_peaks,strsplit(component[[1]][at_peak,5],",")[[1]])
+						if(component[["Components"]][at_peak,"ID adduct peaks |"]!="-"){
+							get_peaks<<-c(get_peaks,strsplit(component[["Components"]][at_peak,"ID adduct peaks |"],",")[[1]])
 						}			
-						if(component[[1]][at_peak,7]!="-"){
-							get_peaks<<-c(get_peaks,strsplit(component[[1]][at_peak,7],",")[[1]])
+						if(component[["Components"]][at_peak,"ID interfering peaks |"]!="-"){
+							get_peaks<<-c(get_peaks,strsplit(component[["Components"]][at_peak,"ID interfering peaks |"],",")[[1]])
 						}			
 						get_peaks<<-as.numeric(get_peaks)
-						peaklist<<-component[[2]][get_peaks,1:4,drop=FALSE]
+						matched<-match(get_peaks,component[["pattern peak list"]][,"peak ID"])
+						peaklist<<-component[["pattern peak list"]][matched,1:4,drop=FALSE]
 						at_peak<<-which(peaklist[,"peak ID"]==isolate(input$atom_bound_peak))
 						atom_peaks<<-peaklist[
 							(peaklist[,"m/z_corr"]>peaklist[at_peak,"m/z_corr"]) &

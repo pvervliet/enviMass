@@ -682,7 +682,7 @@ addmeasu<-reactive({
 							as.character(isolate(input$Measadd_incl)),
 							"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
 							use_profiling,
-							"FALSE","FALSE","FALSE",
+							"FALSE",
 							tag1,tag2,tag3,
 							end_date,end_time,
 							"FALSE","FALSE","FALSE","FALSE","FALSE",
@@ -781,7 +781,7 @@ addmeasu<-reactive({
 						as.character(isolate(input$Measadd_incl)),
 						"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
 						use_profiling,
-						"FALSE","FALSE","FALSE",
+						"FALSE",
 						tag1,tag2,tag3,
 						end_date,end_time,
 						"FALSE","FALSE","FALSE","FALSE","FALSE",
@@ -807,11 +807,54 @@ addmeasu<-reactive({
 						}						
 					}
 					#############################################################################			
-					measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+					measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
 					output$measurements<<-DT::renderDataTable(
-						measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
+						measurements3[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 					); 
-					save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
+					#########################################################################			
+					# subtraction files, positive: ##########################################
+					if(any( (measurements3[,"ID"]!="-") & (measurements3[,"Mode"]=="positive") & (measurements3[,"Type"]=="blank"))){
+						IDs_pos<-measurements3[
+							(measurements3[,"Mode"]=="positive") & (measurements3[,"Type"]=="blank")
+						,"ID"]
+						names_pos<-measurements3[
+							(measurements3[,"Mode"]=="positive") & (measurements3[,"Type"]=="blank")
+						,"Name"]
+						IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
+						if(any(logfile[["Positive_subtraction_files"]]!="FALSE")){
+							select_pos<-logfile[["Positive_subtraction_files"]]
+							select_pos<-select_pos[select_pos!="FALSE"]
+							# include changes from file additions / removals
+							select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
+							logfile[["Positive_subtraction_files"]]<<-c(select_pos,"FALSE")
+						}else{
+							select_pos<-NULL
+						}
+						updateCheckboxGroupInput(session,inputId="files_pos_select_subtract", label="", choices=IDs_pos, selected = select_pos)
+					}
+					# subtraction files, negative: ##########################################
+					if(any( (measurements3[,"ID"]!="-") & (measurements3[,"Mode"]=="negative") & (measurements3[,"Type"]=="blank"))){
+						IDs_neg<-measurements3[
+							(measurements3[,"Mode"]=="negative") & (measurements3[,"Type"]=="blank")
+						,"ID"]
+						names_neg<-measurements3[
+							(measurements3[,"Mode"]=="negative") & (measurements3[,"Type"]=="blank")
+						,"Name"]
+						IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
+						if(any(logfile[["Negative_subtraction_files"]]!="FALSE")){
+							select_neg<-logfile[["Negative_subtraction_files"]]
+							select_neg<-select_neg[select_neg!="FALSE"]
+							select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
+							logfile[["Negative_subtraction_files"]]<<-c(select_neg,"FALSE")
+						}else{
+							select_neg<-NULL
+						}
+						updateCheckboxGroupInput(session, inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
+					}
+					rm(measurements3)
+					#########################################################################
+					save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+					#########################################################################
 					output$dowhat<-renderText("Measurement added");
 					cat("Measurement added\n")
 					return("Measurement added\n")
@@ -821,51 +864,6 @@ addmeasu<-reactive({
 					return("File corrupted? - upload failed!")					
 				}
 			}
-			#########################################################################			
-			# subtraction files, positive: ##########################################
-			measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			if(any( (measurements3[,"ID"]!="-") & (measurements3[,"Mode"]=="positive") & (measurements3[,"Type"]!="sample"))){
-				IDs_pos<-measurements3[
-					(measurements3[,"Mode"]=="positive") & (measurements3[,"Type"]!="sample")
-				,"ID"]
-				names_pos<-measurements3[
-					(measurements3[,"Mode"]=="positive") & (measurements3[,"Type"]!="sample")
-				,"Name"]
-				IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
-				if(any(logfile[[13]]!="FALSE")){
-					select_pos<-logfile[[13]]
-					select_pos<-select_pos[select_pos!="FALSE"]
-					# include changes from file additions / removals
-					select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
-					logfile[[13]]<<-c(select_pos,"FALSE")
-				}else{
-					select_pos<-NULL
-				}
-				updateCheckboxGroupInput(session,inputId="files_pos_select_subtract", label="", choices=IDs_pos, selected = select_pos)
-			}
-			# subtraction files, negative: ##########################################
-			if(any( (measurements3[,"ID"]!="-") & (measurements3[,"Mode"]=="negative") & (measurements3[,"Type"]!="sample"))){
-				IDs_neg<-measurements3[
-					(measurements3[,"Mode"]=="negative") & (measurements3[,"Type"]!="sample")
-				,"ID"]
-				names_neg<-measurements3[
-					(measurements3[,"Mode"]=="negative") & (measurements3[,"Type"]!="sample")
-				,"Name"]
-				IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
-				if(any(logfile[[14]]!="FALSE")){
-					select_neg<-logfile[[14]]
-					select_neg<-select_neg[select_neg!="FALSE"]
-					select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
-					logfile[[14]]<<-c(select_neg,"FALSE")
-				}else{
-					select_neg<-NULL
-				}
-				updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
-			}
-			rm(measurements3)
-			#########################################################################
-			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-			#########################################################################
 		}else{
 			output$dowhat<-renderText("File must be reloaded");
 			return("File must be reloaded")
@@ -1691,7 +1689,7 @@ impfolder<-reactive({
 								"TRUE", # to be included?
 								"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
 								"TRUE", # to be profiled?
-								"FALSE","FALSE","FALSE",
+								"FALSE",
 								"FALSE","FALSE","FALSE",
 								at_date,
 								as.character("12:00:00"),
@@ -1754,7 +1752,7 @@ impfolder<-reactive({
 									"TRUE", # to be included?
 									"TRUE","FALSE","FALSE","FALSE","FALSE","FALSE",
 									"TRUE", # to be profiled?
-									"FALSE","FALSE","FALSE",
+									"FALSE",
 									"FALSE","FALSE","FALSE",
 									at_date,
 									as.character("12:00:00"),

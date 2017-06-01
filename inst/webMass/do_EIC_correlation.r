@@ -163,8 +163,8 @@
 			# FILTER & SAVE RESULTS ##################################################
 			cat("filtering: ")
 			EIC_pairs<-paired[paired[,4]>=0,,drop=FALSE]
-			EIC_pairs[,1]<-peaklist[EIC_pairs[,1],10] # insert peak ID! peaklist has been resorted here!
-			EIC_pairs[,2]<-peaklist[EIC_pairs[,2],10] # insert peak ID! peaklist has been resorted here!			
+			EIC_pairs[,1]<-peaklist[EIC_pairs[,1],"peak_ID"] # insert peak ID! peaklist has been resorted here!
+			EIC_pairs[,2]<-peaklist[EIC_pairs[,2],"peak_ID"] # insert peak ID! peaklist has been resorted here!			
 			if(length(EIC_pairs[,1])==0){
 				cat("nothing found; aborted.");next;
 			}

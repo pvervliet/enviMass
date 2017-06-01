@@ -41,7 +41,8 @@
 			}			
 			# Peaklist 
 			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); 
-			peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs 			
+			peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs 
+			peaklist2<-as.data.frame(peaklist[peaklist[,"keep"]==1,c("m/z_corr","int_corr","RT_corr","peak_ID")])
 			##########################################################################
 			cat("series extraction - ")		
 			if(logfile$parameters$homol_ppm=="TRUE"){
@@ -50,9 +51,9 @@
 				use_mztol<-(as.numeric(logfile$parameters$homol_mztol)/1000)
 			}
 			homol<-try(
-				nontarget:::homol.search(
-					peaklist=as.data.frame(peaklist[,c("m/z_corr","int_corr","RT_corr")]),
-					isotopes,	
+				enviMass:::homol.search2(
+					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
+					isotopes,
 					elements,
 					use_C=FALSE,
 					minmz=use_minmz,
@@ -76,7 +77,7 @@
 				cat("\n Homologue series detection failed - adapt parameters?");
 				next;
 			}	
-			if(length(homol[[3]][,1])==0){
+			if(length(homol[["Homologue Series"]][,1])==0){
 				cat("\n No homologue series detected for this file. Continue to next ...");
 				next;			
 			}
@@ -84,9 +85,10 @@
 			Homol_groups<-matrix(nrow=atby,ncol=3,0)
 			at<-atby
 			from<-0
-			for(i in 1:length(homol[[3]][,1])){
-				those<-as.numeric(strsplit(homol[[3]][i,2],",")[[1]])
-				those<-those[order(peaklist[those,1],decreasing=FALSE)] # by increasing mass!
+			for(i in 1:length(homol[["Homologue Series"]][,1])){
+				those<-as.numeric(strsplit(homol[["Homologue Series"]][i,2],",")[[1]])
+				these<-match(those,peaklist2[,"peak_ID"])
+				those<-those[order(peaklist2[those,1],decreasing=FALSE)] # by increasing mass!
 				for(j in 2:length(those)){
 					from<-(from+1)
 					if(from>at){
@@ -96,8 +98,8 @@
 						)
 						at<-dim(Homol_groups)[1]
 					}
-					Homol_groups[from,1]<-peaklist[those[j-1],"peak_ID"]
-					Homol_groups[from,2]<-peaklist[those[j],"peak_ID"]					
+					Homol_groups[from,1]<-those[j-1]
+					Homol_groups[from,2]<-those[j]					
 					Homol_groups[from,3]<-i	
 				}
 			}
@@ -108,11 +110,11 @@
 			}
 			Homol_groups<-Homol_groups[order(Homol_groups[,1],Homol_groups[,2],decreasing=FALSE),]
 			save(Homol_groups,file=(file.path(logfile[[1]],"results","componentization","homologues",paste(for_file,sep="_"))))
-			save(homol,file=(file.path(logfile[[1]],"results","componentization","homologues",paste("full",for_file,sep="_"))))			
-			rm(peaklist,homol,Homol_groups)
+			save(homol,file=(file.path(logfile[["project_folder"]],"results","componentization","homologues",paste("full",for_file,sep="_"))))			
+			rm(peaklist,peaklist2,homol,Homol_groups)
 			##########################################################################	
 			measurements[b,"homologues"]<-"TRUE"
-			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+			write.csv(measurements,file=file.path(logfile[["project_folder"]],"dataframes","measurements"),row.names=FALSE);
 			cat("done.")
 			##########################################################################		
 

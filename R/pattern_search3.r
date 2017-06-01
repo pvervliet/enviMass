@@ -22,6 +22,8 @@ pattern_search3<-function(
 	isotopes, 
 	exclude=FALSE
 ){
+
+    #########################################################################################################   
     size_deltamass <- quantiz[[5]][[1]]
     size_mass <- quantiz[[5]][[2]]
     size_intens <- quantiz[[5]][[3]]
@@ -46,14 +48,17 @@ pattern_search3<-function(
     if (!is.data.frame(peaklist)) {
         stop("peaklist must be a data.frame")
     }
-    if (length(peaklist[1, ]) > 3) {
-        stop("peaklist with > 3 columns not allowed")
+    if (length(peaklist[1, ]) > 4) {
+        stop("peaklist with > 4 columns not allowed")
+    }
+    if (length(peaklist[1, ]) < 4) {
+        stop("peaklist with < 4 columns not allowed")
     }
     if (!length(peaklist[, 1]) > 1) {
         stop("peaklist with one entry - doesn`t make sense ...")
     }
     if (!is.numeric(peaklist[, 1]) || !is.numeric(peaklist[, 
-        2]) || !is.numeric(peaklist[, 3])) {
+        2]) || !is.numeric(peaklist[, 3]) || !is.numeric(peaklist[, 3])) {
         stop("peaklist columns not numeric")
     }
     if (ppm == "TRUE") {
@@ -75,6 +80,12 @@ pattern_search3<-function(
             print(charge_key)
             stop()
         }
+    }
+    if(exclude[1]!=FALSE){ # adapt original peakIDs to place in peaklist - exclude otherwise contains peak IDs!
+        exclude[,1]<-match(exclude[,1],as.numeric(peaklist[,"peak_ID"]))
+        exclude[,2]<-match(exclude[,2],as.numeric(peaklist[,"peak_ID"]))
+        exclude<-exclude[!is.na(exclude[,1]) & !is.na(exclude[,2]),,drop=FALSE]
+        if(dim(exclude)[1]==0){exclude<-FALSE}
     }
     cat(" done.")
     cat("\n(2) Build peaklist kd-tree, screen slots, query quantized data: \n")
@@ -152,8 +163,7 @@ pattern_search3<-function(
                 1], 1]/1e+06))
             search_bounds[2] <- (del_mass + (2 * mztol * peaklist[relat_pairs[j, 
                 1], 1]/1e+06))
-        }
-        else {
+        } else {
             search_bounds[1] <- (del_mass - (2 * mztol))
             search_bounds[2] <- (del_mass + (2 * mztol))
         }
@@ -225,8 +235,7 @@ pattern_search3<-function(
                       got <- TRUE
                     }
                     retr_1 <- c(retr_1 + 1)
-                  }
-                  else {
+                  } else {
                     found <- .Call("search_boxtree", quantiz[[6]][[i]][, 
                       1:6], quantiz[[6]][[i]][, 16:20], as.numeric(search_bounds), 
                       as.integer(1), PACKAGE = "nontarget")
@@ -244,8 +253,7 @@ pattern_search3<-function(
                           marker_bounds[1, 2] <- (max(marker_delmass) + 
                             (2 * mztol * peaklist[relat_pairs[j, 1], 
                               1]/1e+06))
-                        }
-                        else {
+                        } else {
                           marker_bounds[1, 1] <- (min(marker_delmass) - 
                             (2 * mztol))
                           marker_bounds[1, 2] <- (max(marker_delmass) + 
@@ -364,9 +372,9 @@ pattern_search3<-function(
             getit6[i] <- substr(getit6[i], 3, nchar(getit6[i]))
         }
     }
-    grouped_peaks <- data.frame(peaklist, ID, getit5, getit6, 
+    grouped_peaks <- data.frame(peaklist[,c(1,2,3)], ID, getit5, getit6, 
         getit1, getit2, getit3, getit4, stringsAsFactors = FALSE)
-    names(grouped_peaks) <- c(names(peaklist), "peak ID", "group ID", 
+    names(grouped_peaks) <- c(names(peaklist)[1:3], "peak ID", "group ID", 
         "interaction level", "to ID", "isotope(s)", "mass tolerance", 
         "charge level")
     pattern[[1]] <- grouped_peaks
@@ -423,8 +431,7 @@ pattern_search3<-function(
     pattern[[8]] <- "no information"
     if (quick) {
         pattern[[9]] <- "no information using quick"
-    }
-    else {
+    } else {
         isos <- rep(isotope_key, length(charge_key))
         chrgs <- rep(charge_key, length(isotope_key))
         chrgs <- chrgs[order(chrgs)]
@@ -474,8 +481,7 @@ pattern_search3<-function(
     }
     if (quick) {
         pattern[[10]] <- "no information"
-    }
-    else {
+    } else {
         pattern[[10]] <- as.character(unique(counts[, 5]))
     }
     pattern[[11]] <- use_charges
@@ -485,6 +491,23 @@ pattern_search3<-function(
         "Atom counts", "Count of pattern groups", "Removals by rules", 
         "Number of peaks with pattern group overlapping", "Number of peaks per within-group interaction levels", 
         "Counts of isotopes", "Elements", "Charges", "Rule settings","Pairs")
+    #########################################################################
+    # insert peak IDs - peaks may have been removed by replicate filter ######
+    for(i in 1:dim(pattern[["Patterns"]])[1]){
+        pattern[["Patterns"]][i,"peak ID"]<-peaklist[as.numeric(pattern[["Patterns"]][i,"peak ID"]),"peak_ID"]
+        if(pattern[["Patterns"]][i,"to ID"]!="0"){
+            those<-as.numeric(strsplit(pattern[["Patterns"]][i,"to ID"],"/")[[1]])
+            pattern[["Patterns"]][i,"to ID"]<-paste0(as.character(peaklist[those,"peak_ID"]),collapse="/")
+        }
+    }
+    for(i in 1:dim(pattern[["Peaks in pattern groups"]])[1]){
+        those<-as.numeric(strsplit(pattern[["Peaks in pattern groups"]][i,"peak IDs"],",")[[1]])    
+        pattern[["Peaks in pattern groups"]][i,"peak IDs"]<-paste0(as.character(peaklist[those,"peak_ID"]),collapse=",")
+    }
+    for(i in 1:dim(pattern[["Pairs"]])[1]){
+        pattern[["Pairs"]][i,1]<-peaklist[pattern[["Pairs"]][i,1],"peak_ID"]
+        pattern[["Pairs"]][i,2]<-peaklist[pattern[["Pairs"]][i,2],"peak_ID"]
+    }
     cat(paste(" queries: ", retr_1, " - done.\n", sep = ""))
 	############################################################################################################
     return(pattern)

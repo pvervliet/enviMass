@@ -19,9 +19,18 @@ function(
 	for(i in 1:length(use_adducts)){if(any(adducts[,1]==use_adducts[i])!=TRUE&any(adducts[adducts[,1]==use_adducts[i],6]==ion_mode)){stop(paste("Adduct ",use_adducts[i]," not in adducts!",sep=""))}};
     for(i in 1:length(use_adducts)){if((adducts[adducts[,1]==use_adducts[i],6]!=ion_mode)){stop(paste(use_adducts[i]," not in ion mode ",ion_mode,sep=""))}};
 	if(!is.data.frame(peaklist)){stop("peaklist must be a data.frame")}
-	if(length(peaklist[1,])>3){stop("peaklist with > 3 columns not allowed")}
+	if(length(peaklist[1,])<4){stop("peaklist with < 4 columns not allowed")}
+	if(length(peaklist[1,])>4){stop("peaklist with > 4 columns not allowed")}
 	if(!length(peaklist[,1])>1){stop("peaklist with one entry - doesn`t make sense ...")}
-	if(!is.numeric(peaklist[,1])||!is.numeric(peaklist[,2])||!is.numeric(peaklist[,3])){stop("peaklist columns not numeric")}
+	if(!is.numeric(peaklist[,1])||!is.numeric(peaklist[,2])||!is.numeric(peaklist[,3])||!is.numeric(peaklist[,4])){stop("peaklist columns not numeric")}
+    ############################################################################
+	# adapt original peakIDs in exclude to places in peaklist ##################
+	if(exclude[1]!=FALSE){ 
+		exclude[,1]<-match(exclude[,1],as.numeric(peaklist[,"peak_ID"]))
+		exclude[,2]<-match(exclude[,2],as.numeric(peaklist[,"peak_ID"]))
+		exclude<-exclude[!is.na(exclude[,1]) & !is.na(exclude[,2]),,drop=FALSE]
+		if(dim(exclude)[1]==0){exclude<-FALSE}
+	}
     ############################################################################
     cat("\n(1) Combine adducts...");
     these<-match(use_adducts,adducts[,1]);
@@ -183,8 +192,24 @@ function(
     parameters<-data.frame(rttol,mztol,ppm,ion_mode,stringsAsFactors=FALSE);	
     adduct<-list(list_adducts,parameters,grouping,hits,overlaps,relat_pairs);
     names(adduct)<-c("adducts","Parameters","Peaks in adduct groups","Adduct counts","Overlaps","Pairs");
-    cat("done.\n\n");
+	# (3.4) insert peak IDs - peaks may have been removed by replicate filter ######
+	for(i in 1:dim(adduct[["adducts"]])[1]){
+		adduct[["adducts"]][i,"peak ID"]<-peaklist[as.numeric(adduct[["adducts"]][i,"peak ID"]),"peak_ID"]
+		if(adduct[["adducts"]][i,"to ID"]!="0"){
+			those<-as.numeric(strsplit(adduct[["adducts"]][i,"to ID"],"/")[[1]])
+			adduct[["adducts"]][i,"to ID"]<-paste0(as.character(peaklist[those,"peak_ID"]),collapse="/")
+		}
+	}
+	for(i in 1:dim(adduct[["Peaks in adduct groups"]])[1]){
+		those<-as.numeric(strsplit(adduct[["Peaks in adduct groups"]][i,"peak IDs"],",")[[1]])	
+		adduct[["Peaks in adduct groups"]][i,"peak IDs"]<-paste0(as.character(peaklist[those,"peak_ID"]),collapse=",")
+	}
+	for(i in 1:dim(adduct[["Pairs"]])[1]){
+		adduct[["Pairs"]][i,1]<-peaklist[adduct[["Pairs"]][i,1],"peak_ID"]
+		adduct[["Pairs"]][i,2]<-peaklist[adduct[["Pairs"]][i,2],"peak_ID"]
+	}
     ############################################################################
+    cat("done.\n\n");
     return(adduct);
     ############################################################################
 

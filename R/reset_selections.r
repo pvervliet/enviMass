@@ -18,6 +18,9 @@ reset_selections<-function(session){
 	updateSelectInput(session,"Pos_compound_select",selected = "Choose")	
 	updateSelectInput(session,"Neg_compound_select",selected = "Choose")	
 	updateNumericInput(session,"sel_meas_comp", value = 0)	
+	updateNumericInput(session,"sel_meas_comp_peak", value = 0)
+	updateNumericInput(session,"sel_meas_comp_comp", value = 0)
+	updateNumericInput(session,"atom_bound_peak", value = 0)
 	################################################################
 	
 }

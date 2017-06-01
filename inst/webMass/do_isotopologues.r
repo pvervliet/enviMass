@@ -30,6 +30,7 @@
 			}			
 			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); # Peaklist  
 			peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
+			##########################################################################
 			if((logfile$workflow[names(logfile$workflow)=="EIC_correlation"]=="yes") & TRUE){ # load EIC correlation results - removed, also in EIC -> isot. depends matrix!
 				if(file.exists(file.path(logfile[[1]],"results","componentization","EIC_corr",for_file))){
 					load(file.path(logfile[[1]],"results","componentization","EIC_corr",for_file))
@@ -50,7 +51,7 @@
 			}
 			##########################################################################	
 			cat("grouping - ")
-			peaklist2<-as.data.frame(peaklist[,c("m/z_corr","int_corr","RT_corr")])	
+			peaklist2<-as.data.frame(peaklist[peaklist[,"keep"]==1,c("m/z_corr","int_corr","RT_corr","peak_ID")])	
 			if(logfile$parameters$isotop_ppm=="TRUE"){
 				use_mztol<-as.numeric(logfile$parameters$isotop_mztol)
 			}else{ # mmu
@@ -58,7 +59,7 @@
 			}
 			pattern<-try(
 				enviMass:::pattern_search3(
-					peaklist2,
+					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
 					quantiz,
 					mztol=use_mztol,
 					ppm=logfile$parameters$isotop_ppm,
@@ -76,20 +77,17 @@
 				cat("\n Isotopologue detection failed - adapt parameters?");
 				next;
 			}				
-			if(length(pattern[[13]][,1])==0){
+			if(length(pattern[["Pairs"]][,1])==0){
 				cat("\n No adduct relations detected");
 				next;
 			}
-			Isot_pairs<-pattern[[13]]
-			pattern[[13]]<-0
+			Isot_pairs<-pattern[["Pairs"]]
+			pattern[["Pairs"]]<-0
 			those<-(Isot_pairs[,1]>Isot_pairs[,2])
 			if(any(those)){
 				Isot_pairs[those,]<-Isot_pairs[those,c(2,1)]
 			}
-			Isot_pairs<-Isot_pairs[order(Isot_pairs[,1],Isot_pairs[,2],decreasing=FALSE),]
-			# insert peak IDs - peaklist may have been reordered before! ##############
-			Isot_pairs[,1]<-peaklist[Isot_pairs[,1],"peak_ID"]
-			Isot_pairs[,2]<-peaklist[Isot_pairs[,2],"peak_ID"]				
+			Isot_pairs<-Isot_pairs[order(Isot_pairs[,1],Isot_pairs[,2],decreasing=FALSE),]				
 			save(Isot_pairs,file=(file.path(logfile[[1]],"results","componentization","isotopologues",paste(for_file,sep="_"))))
 			save(pattern,file=(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_"))))
 			##########################################################################	

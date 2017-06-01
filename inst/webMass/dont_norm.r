@@ -37,6 +37,5 @@
 		dev.off()
 		expr3n<-list(src=path)
 		output$pic_int_distr_neg<-renderImage(expr3n, deleteFile = FALSE)	
-	rm(measurements)
 
 

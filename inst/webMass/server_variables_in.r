@@ -22,18 +22,17 @@ updateTextInput(session,inputId="PWpath",value=logfile$PW)
 
 #########################################################################
 # subtraction files, positive: ##########################################
-if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="positive") & (measurements[,"Type"]!="sample"))){
+if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="positive") & (measurements[,"Type"]=="blank"))){
 	IDs_pos<-measurements[
-		(measurements[,"Mode"]=="positive") & (measurements[,"Type"]!="sample")
+		(measurements[,"Mode"]=="positive") & (measurements[,"Type"]=="blank")
 	,1]
 	names_pos<-measurements[
-		(measurements[,"Mode"]=="positive") & (measurements[,"Type"]!="sample")
+		(measurements[,"Mode"]=="positive") & (measurements[,"Type"]=="blank")
 	,2]
 	IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
 	if(any(logfile[["Positive_subtraction_files"]]!="FALSE")){
 		select_pos<-logfile[["Positive_subtraction_files"]]
 		select_pos<-select_pos[select_pos!="FALSE"]
-		# include changes from file additions / removals
 		select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
 	}else{
 		select_pos<-NULL
@@ -42,12 +41,12 @@ if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="positive") & (meas
 }
 #########################################################################
 # subtraction files, negative: ##########################################
-if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="negative") & (measurements[,"Type"]!="sample"))){
+if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="negative") & (measurements[,"Type"]=="blank"))){
 	IDs_neg<-measurements[
-		(measurements[,"Mode"]=="negative") & (measurements[,"Type"]!="sample")
+		(measurements[,"Mode"]=="negative") & (measurements[,"Type"]=="blank")
 	,1]
 	names_neg<-measurements[
-		(measurements[,"Mode"]=="negative") & (measurements[,"Type"]!="sample")
+		(measurements[,"Mode"]=="negative") & (measurements[,"Type"]=="blank")
 	,2]
 	IDs_neg<-paste(IDs_neg,names_neg,sep=" - ")
 	if(any(logfile[["Negative_subtraction_files"]]!="FALSE")){

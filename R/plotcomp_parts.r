@@ -37,21 +37,27 @@ function(
             ####################################################################
 			if(what=="check"){
 				if(length(get3)<2){
-					return(FALSE)
+					if(length(get3)<1){					
+						return("no_peak")
+					}else{
+						return("single_peak")
+					}
 				}else{
-					return(TRUE)
+					return("available")
 				}
 			}
-            if(length(comp[[2]])>1){
-				dat1<-comp[[2]][get3,];
+            if(length(comp[["pattern peak list"]])>1){
+				matched<-match(get3,comp[["pattern peak list"]][,"peak ID"])
+				dat1<-comp[["pattern peak list"]][matched,];
 				ord<-rank(1/dat1[,2]);
 				get3<-get3[order(dat1[,1],decreasing=FALSE)];
 				ord<-ord[order(dat1[,1],decreasing=FALSE)];
             }else{
 				dat1<-FALSE;
             }
-            if(length(comp[[3]])>1){
-				dat2<-comp[[3]][get3,];
+            if(length(comp[["adduct peak list"]])>1){
+            	matched<-match(get3,comp[["adduct peak list"]][,"peak ID"])
+				dat2<-comp[["adduct peak list"]][matched,];
 				ord<-rank(1/dat2[,2]);
 				get3<-get3[order(dat2[,1],decreasing=FALSE)];
 				ord<-ord[order(dat2[,1],decreasing=FALSE)];              
@@ -60,7 +66,7 @@ function(
             }
             ####################################################################
             # extract isotope pattern relations for all peaks ##################
-            if(length(comp[[2]])>1){
+            if(length(comp[["pattern peak list"]])>1){
                 relat1<-matrix(ncol=length(get3),nrow=length(get3),"");
                 rownames(relat1)<-get3;
 				colnames(relat1)<-get3;
@@ -78,7 +84,7 @@ function(
             }
             ####################################################################
             #extract adduct relations for all peaks ############################
-            if(length(comp[[3]])>1){
+            if(length(comp[["adduct peak list"]])>1){
                 relat2<-matrix(ncol=length(get3),nrow=length(get3),"");
                 rownames(relat2)<-get3;colnames(relat2)<-get3;
                 for(i in 1:length(get3)){
@@ -127,7 +133,7 @@ function(
 				rm(i);
 				coordx<-coordx*0.8;
 				coordy<-coordy*0.8;
-				if(length(comp[[2]])>1){
+				if(length(comp[["pattern peak list"]])>1){
 					for(i in 1:length(get3)){
 						for(j in 1:length(get3)){
 							if(relat1[i,j]!=""){
@@ -140,7 +146,7 @@ function(
 						}
 					}
 				}
-				if(length(comp[[3]])>1){
+				if(length(comp[["adduct peak list"]])>1){
 					for(i in 1:length(get3)){
 						for(j in 1:length(get3)){
 							if(relat2[i,j]!=""){
@@ -154,8 +160,9 @@ function(
 					}
 				}
 				# point on most intensive peak #####################################
-				if(length(comp[[2]])>1){
-					dat3<-comp[[2]][get1,];
+				if(length(comp[["pattern peak list"]])>1){
+					matched<-match(get1,comp[["pattern peak list"]][,"peak ID"])
+					dat3<-comp[["pattern peak list"]][matched,];
 					that<-dat3[dat3[,2]==max(dat3[,2]),][,4];
 					points(coordx[match(that,get3)],coordy[match(that,get3)],pch=21,cex=3);         
 				}
@@ -172,60 +179,60 @@ function(
             # plot peaks #######################################################
 			if(what=="spec"){
 				par(mar=c(4,4,1,1));
-				if(length(comp[[2]])>1 & length(comp[[3]])>1){
-					mintol<-c(min(dat1[,3],dat2[,3])-comp[[7]][1]);
-					maxtol<-c(max(dat1[,3],dat2[,3])+comp[[7]][1]);
-					if(comp[[7]][4]==TRUE){
-						minmz<-c(min(dat1[,1],dat2[,1])-(comp[[7]][2]*min(dat1[,1],dat2[,1])/1e6));
-						maxmz<-c(max(dat1[,1],dat2[,1])+(comp[[7]][2]*max(dat1[,1],dat2[,1])/1e6));
+				if(length(comp[["pattern peak list"]])>1 & length(comp[[3]])>1){
+					mintol<-c(min(dat1[,3],dat2[,3])-comp[["Parameters"]][1]);
+					maxtol<-c(max(dat1[,3],dat2[,3])+comp[["Parameters"]][1]);
+					if(comp[["Parameters"]][4]==TRUE){
+						minmz<-c(min(dat1[,1],dat2[,1])-(comp[["Parameters"]][2]*min(dat1[,1],dat2[,1])/1e6));
+						maxmz<-c(max(dat1[,1],dat2[,1])+(comp[["Parameters"]][2]*max(dat1[,1],dat2[,1])/1e6));
 					}else{
-						minmz<-c(min(dat1[,1],dat2[,1])-comp[[7]][2]);
-						maxmz<-c(max(dat1[,1],dat2[,1])+comp[[7]][2]);              
+						minmz<-c(min(dat1[,1],dat2[,1])-comp[["Parameters"]][2]);
+						maxmz<-c(max(dat1[,1],dat2[,1])+comp[["Parameters"]][2]);              
 					}
 				}else{
-					if(length(comp[[2]])>1){
-						mintol<-c(min(dat1[,3])-comp[[7]][1]);
-						maxtol<-c(max(dat1[,3])+comp[[7]][1]);
+					if(length(comp[["pattern peak list"]])>1){
+						mintol<-c(min(dat1[,3])-comp[["Parameters"]][1]);
+						maxtol<-c(max(dat1[,3])+comp[["Parameters"]][1]);
 						if(comp[[6]][4]==TRUE){
-							minmz<-c(min(dat1[,1])-(comp[[7]][2]*min(dat1[,1])/1e6));
-							maxmz<-c(max(dat1[,1])+(comp[[7]][2]*max(dat1[,1])/1e6));
+							minmz<-c(min(dat1[,1])-(comp[["Parameters"]][2]*min(dat1[,1])/1e6));
+							maxmz<-c(max(dat1[,1])+(comp[["Parameters"]][2]*max(dat1[,1])/1e6));
 						}else{
-							minmz<-c(min(dat1[,1])-comp[[7]][2]);
-							maxmz<-c(max(dat1[,1])+comp[[7]][2]);              
+							minmz<-c(min(dat1[,1])-comp[["Parameters"]][2]);
+							maxmz<-c(max(dat1[,1])+comp[["Parameters"]][2]);              
 						}
 					}
 					if(length(comp[[3]])>1){
-						mintol<-c(min(dat2[,3])-comp[[7]][1]);
-						maxtol<-c(max(dat2[,3])+comp[[7]][1]);
+						mintol<-c(min(dat2[,3])-comp[["Parameters"]][1]);
+						maxtol<-c(max(dat2[,3])+comp[["Parameters"]][1]);
 						if(comp[[6]][4]==TRUE){
-							minmz<-c(min(dat2[,1])-(comp[[7]][2]*min(dat2[,1])/1e6));
-							maxmz<-c(max(dat2[,1])+(comp[[7]][2]*max(dat2[,1])/1e6));
+							minmz<-c(min(dat2[,1])-(comp[["Parameters"]][2]*min(dat2[,1])/1e6));
+							maxmz<-c(max(dat2[,1])+(comp[["Parameters"]][2]*max(dat2[,1])/1e6));
 						}else{
-							minmz<-c(min(dat2[,1])-comp[[7]][2]);
-							maxmz<-c(max(dat2[,1])+comp[[7]][2]);              
+							minmz<-c(min(dat2[,1])-comp[["Parameters"]][2]);
+							maxmz<-c(max(dat2[,1])+comp[["Parameters"]][2]);              
 						}
 					}
 				}
-				if(length(comp[[2]])>1){
-					dat4<-comp[[2]][
-						comp[[2]][,3]>=mintol &
-						comp[[2]][,3]<=maxtol &
-						comp[[2]][,1]>=minmz &
-						comp[[2]][,1]<=maxmz
+				if(length(comp[["pattern peak list"]])>1){
+					dat4<-comp[["pattern peak list"]][
+						comp[["pattern peak list"]][,3]>=mintol &
+						comp[["pattern peak list"]][,3]<=maxtol &
+						comp[["pattern peak list"]][,1]>=minmz &
+						comp[["pattern peak list"]][,1]<=maxmz
 					,]
 				}else{
-					dat4<-comp[[3]][
-						comp[[3]][,3]>=mintol &
-						comp[[3]][,3]<=maxtol &
-						comp[[3]][,1]>=minmz &
-						comp[[3]][,1]<=maxmz
+					dat4<-comp[["adduct peak list"]][
+						comp[["adduct peak list"]][,3]>=mintol &
+						comp[["adduct peak list"]][,3]<=maxtol &
+						comp[["adduct peak list"]][,1]>=minmz &
+						comp[["adduct peak list"]][,1]<=maxmz
 					,]
 				}
 				plot(dat4[,1],dat4[,2],type="h",xlab="m/z",ylab="Intensity",lwd=1,col="lightgrey",cex.lab=.9,cex.axis=.9);
-				if(length(comp[[2]])>2){
+				if(length(comp[["pattern peak list"]])>2){
 					points(dat1[,1],dat1[,2],type="h",lwd=2,col="darkgreen");
 				}
-				if(length(comp[[3]])>2){
+				if(length(comp[["adduct peak list"]])>2){
 					points(dat2[,1],dat2[,2],type="h",lwd=2,col="darkgreen");
 				}
 			}
@@ -234,53 +241,53 @@ function(
             ####################################################################
             # generate relational table ########################################
 			if(what=="table"){
-				if(length(comp[[2]])>1 & length(comp[[3]])>1){
-					mintol<-c(min(dat1[,3],dat2[,3])-comp[[7]][1]);
-					maxtol<-c(max(dat1[,3],dat2[,3])+comp[[7]][1]);
-					if(comp[[7]][4]==TRUE){
-						minmz<-c(min(dat1[,1],dat2[,1])-(comp[[7]][2]*min(dat1[,1],dat2[,1])/1e6));
-						maxmz<-c(max(dat1[,1],dat2[,1])+(comp[[7]][2]*max(dat1[,1],dat2[,1])/1e6));
+				if(length(comp[["pattern peak list"]])>1 & length(comp[["adduct peak list"]])>1){
+					mintol<-c(min(dat1[,3],dat2[,3])-comp[["Parameters"]][1]);
+					maxtol<-c(max(dat1[,3],dat2[,3])+comp[["Parameters"]][1]);
+					if(comp[["Parameters"]][4]==TRUE){
+						minmz<-c(min(dat1[,1],dat2[,1])-(comp[["Parameters"]][2]*min(dat1[,1],dat2[,1])/1e6));
+						maxmz<-c(max(dat1[,1],dat2[,1])+(comp[["Parameters"]][2]*max(dat1[,1],dat2[,1])/1e6));
 					}else{
-						minmz<-c(min(dat1[,1],dat2[,1])-comp[[7]][2]);
-						maxmz<-c(max(dat1[,1],dat2[,1])+comp[[7]][2]);              
+						minmz<-c(min(dat1[,1],dat2[,1])-comp[["Parameters"]][2]);
+						maxmz<-c(max(dat1[,1],dat2[,1])+comp[["Parameters"]][2]);              
 					}
 				}else{
-					if(length(comp[[2]])>1){
-						mintol<-c(min(dat1[,3])-comp[[7]][1]);
-						maxtol<-c(max(dat1[,3])+comp[[7]][1]);
+					if(length(comp[["pattern peak list"]])>1){
+						mintol<-c(min(dat1[,3])-comp[["Parameters"]][1]);
+						maxtol<-c(max(dat1[,3])+comp[["Parameters"]][1]);
 						if(comp[[6]][4]==TRUE){
-							minmz<-c(min(dat1[,1])-(comp[[7]][2]*min(dat1[,1])/1e6));
-							maxmz<-c(max(dat1[,1])+(comp[[7]][2]*max(dat1[,1])/1e6));
+							minmz<-c(min(dat1[,1])-(comp[["Parameters"]][2]*min(dat1[,1])/1e6));
+							maxmz<-c(max(dat1[,1])+(comp[["Parameters"]][2]*max(dat1[,1])/1e6));
 						}else{
-							minmz<-c(min(dat1[,1])-comp[[7]][2]);
-							maxmz<-c(max(dat1[,1])+comp[[7]][2]);              
+							minmz<-c(min(dat1[,1])-comp[["Parameters"]][2]);
+							maxmz<-c(max(dat1[,1])+comp[["Parameters"]][2]);              
 						}
 					}
-					if(length(comp[[3]])>1){
-						mintol<-c(min(dat2[,3])-comp[[7]][1]);
-						maxtol<-c(max(dat2[,3])+comp[[7]][1]);
+					if(length(comp[["adduct peak list"]])>1){
+						mintol<-c(min(dat2[,3])-comp[["Parameters"]][1]);
+						maxtol<-c(max(dat2[,3])+comp[["Parameters"]][1]);
 						if(comp[[6]][4]==TRUE){
-							minmz<-c(min(dat2[,1])-(comp[[7]][2]*min(dat2[,1])/1e6));
-							maxmz<-c(max(dat2[,1])+(comp[[7]][2]*max(dat2[,1])/1e6));
+							minmz<-c(min(dat2[,1])-(comp[["Parameters"]][2]*min(dat2[,1])/1e6));
+							maxmz<-c(max(dat2[,1])+(comp[["Parameters"]][2]*max(dat2[,1])/1e6));
 						}else{
-							minmz<-c(min(dat2[,1])-comp[[7]][2]);
-							maxmz<-c(max(dat2[,1])+comp[[7]][2]);              
+							minmz<-c(min(dat2[,1])-comp[["Parameters"]][2]);
+							maxmz<-c(max(dat2[,1])+comp[["Parameters"]][2]);              
 						}
 					}
 				}
-				if(length(comp[[2]])>1){
-					dat4<-comp[[2]][
-						comp[[2]][,3]>=mintol &
-						comp[[2]][,3]<=maxtol &
-						comp[[2]][,1]>=minmz &
-						comp[[2]][,1]<=maxmz
+				if(length(comp[["pattern peak list"]])>1){
+					dat4<-comp[["pattern peak list"]][
+						comp[["pattern peak list"]][,3]>=mintol &
+						comp[["pattern peak list"]][,3]<=maxtol &
+						comp[["pattern peak list"]][,1]>=minmz &
+						comp[["pattern peak list"]][,1]<=maxmz
 					,]
 				}else{
-					dat4<-comp[[3]][
-						comp[[3]][,3]>=mintol &
-						comp[[3]][,3]<=maxtol &
-						comp[[3]][,1]>=minmz &
-						comp[[3]][,1]<=maxmz
+					dat4<-comp[["adduct peak list"]][
+						comp[["adduct peak list"]][,3]>=mintol &
+						comp[["adduct peak list"]][,3]<=maxtol &
+						comp[["adduct peak list"]][,1]>=minmz &
+						comp[["adduct peak list"]][,1]<=maxmz
 					,]
 				}
 				these1<-c();
@@ -288,7 +295,7 @@ function(
 				these3<-c();
 				for(i in 1:length(get3)){
 					for(j in 1:length(get3)){
-						if(length(comp[[2]])>1){
+						if(length(comp[["pattern peak list"]])>1){
 							if(relat1[i,j]!=""){
 								these1<-c(these1,paste(get3[i],"-",get3[j],sep=""));
 								these2<-c(these2,substr(relat1[i,j],2,nchar(relat1[i,j])));
@@ -299,7 +306,7 @@ function(
 				}
 				for(i in 1:length(get3)){
 					for(j in 1:length(get3)){
-						if(length(comp[[3]])>1){                
+						if(length(comp[["adduct peak list"]])>1){                
 							if(relat2[i,j]!=""){
 								these1<-c(these1,paste(get3[i],"-",get3[j],sep=""));
 								these2<-c(these2,substr(relat2[i,j],2,nchar(relat2[i,j])));

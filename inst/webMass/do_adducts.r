@@ -57,15 +57,15 @@
 				cat("\n Not enough adducts for this ionization mode specified - skipped ...")
 				next;
 			}			
-			peaklist2<-as.data.frame(peaklist[,c("m/z_corr","int_corr","RT_corr")])	
-			if(logfile$parameters$adducts_mztol_ppm=="TRUE"){
+			peaklist2<-as.data.frame(peaklist[peaklist[,"keep"]==1,c("m/z_corr","int_corr","RT_corr","peak_ID")])	
+			if(logfile$parameters$adducts_ppm=="TRUE"){
 				use_mztol<-as.numeric(logfile$parameters$adducts_mztol)
 			}else{ # mmu
 				use_mztol<-(as.numeric(logfile$parameters$adducts_mztol)/1000)
 			}
 			adduct<-try(
 				enviMass:::adduct_search2( # dont name it "adducts" -> conflict
-					peaklist2, 
+					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")], 
 					adducts, 
 					rttol = as.numeric(logfile$parameters$adducts_rttol), 
 					mztol = use_mztol,
@@ -79,20 +79,18 @@
 				cat("\n Adduct detection failed - adpat parameters?");
 				next;
 			}				
-			if(length(adduct[[6]][,1])==0){
+			if(length(adduct[["Pairs"]][,1])==0){
 				cat("\n No adduct relations detected");
 				next;
 			}
-			Adduct_pairs<-adduct[[6]][,c(1,2)]
+			Adduct_pairs<-adduct[["Pairs"]][,c(1,2)]
 			those<-(Adduct_pairs[,1]>Adduct_pairs[,2])
 			if(any(those)){
 				Adduct_pairs[those,]<-Adduct_pairs[those,c(2,1)]
 			}
 			Adduct_pairs<-Adduct_pairs[order(Adduct_pairs[,1],Adduct_pairs[,2],decreasing=FALSE),]
-			Adduct_pairs[,1]<-peaklist[Adduct_pairs[,1],"peak_ID"]	# although sorted above - just to be save
-			Adduct_pairs[,2]<-peaklist[Adduct_pairs[,2],"peak_ID"]	# although sorted above - just to be save				
 			save(Adduct_pairs,file=(file.path(logfile[[1]],"results","componentization","adducts",paste(for_file,sep=""))))
-			adduct[[6]]<-0
+			adduct[["Pairs"]]<-0
 			save(adduct,file=(file.path(logfile[[1]],"results","componentization","adducts",paste("full",for_file,sep="_"))))
 			rm(peaklist,peaklist2,those,Adduct_pairs,with_adducts,with_mode,for_file,adduct)
 			##########################################################################	
