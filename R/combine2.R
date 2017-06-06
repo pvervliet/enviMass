@@ -182,7 +182,7 @@ function(
         ######################################################################
         # on isotope pattern #################################################
         ######################################################################
-        if(length(pattern[["Patterns"]])>1){ # if available ...
+        if(length(pattern[[1]])>1){ # if available ...
             if(pattern[["Patterns"]][intord[i],"group ID"]!="0"){
                 allpeaks<-c(intord[i]);
                 get1<-as.numeric(strsplit(as.character(pattern[["Patterns"]][allpeaks,"group ID"]),"/")[[1]]); # group ID(s) of main peak

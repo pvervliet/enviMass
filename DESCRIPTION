@@ -17,5 +17,4 @@ Imports:
 	mgcv,
 	tcltk,
 	htmlTable,
-	networkD3,
-	largeVis
+	networkD3
