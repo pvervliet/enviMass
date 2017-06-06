@@ -1465,9 +1465,9 @@
 											HTML('<hr noshade="noshade" />'),
 											fluidRow(										
 												column(4, selectInput("selec_pos_x",label="x axis",
-													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "m/z", multiple = FALSE)),
 												column(4, selectInput("selec_pos_y",label="y axis",
-													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "Intensity", multiple = FALSE)),									
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "Intensity", multiple = FALSE)),									
 												column(4, radioButtons("selec_pos_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
 											),
 											HTML('<hr noshade="noshade" />'),						

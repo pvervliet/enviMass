@@ -1633,9 +1633,9 @@ if(logfile$version<3.2){
 
 }
 
-if(logfile$version<3.25){
+if(logfile$version<3.26){
 
-	cat("\n Updating to version 3.25 ...")
+	cat("\n Updating to version 3.26 ...")
 	################################################################################################	
 	# update workflow ##############################################################################		
 	workflow_depend<-read.table(
@@ -1659,6 +1659,12 @@ if(logfile$version<3.25){
 	if(!any(names(logfile$parameters)=="peak_which_intensity")){
 		logfile$parameters$peak_which_intensity<<-"maximum"	
 	}
+	if(!any(names(logfile$parameters)=="quant_files_included")){
+		logfile$parameters$quant_files_included<<-"100"
+	}
+	if(!any(names(logfile$parameters)=="recov_files_included")){
+		logfile$parameters$recov_files_included<<-"20"
+	}	
 	################################################################################################	
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
     if(any(names(measurements)=="checked")){
@@ -1673,7 +1679,7 @@ if(logfile$version<3.25){
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 	rm(measurements)
 	################################################################################################	
-	logfile$version<<-3.25
+	logfile$version<<-3.26
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 

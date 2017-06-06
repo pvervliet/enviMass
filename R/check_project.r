@@ -441,8 +441,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 				}
 			}
 		}else{	# not available on www.wnvimass.ch
-			say<-"The isotopologue grouping step is enabled in the workflow. We regret that no data set for the isotopologue space for the selected instrument and resolution is at present available for enviMass. 
-			Please remove the isotopologue grouping step from the workflow." 
+			say<-"The isotopologue grouping step is enabled in the workflow. We regret that no data set for the isotopologue space for the selected instrument and resolution is at present available for enviMass. Please remove the isotopologue grouping step from the workflow." 
 		} 
 	}
 	###############################################################################

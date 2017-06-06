@@ -228,6 +228,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$subtr_spiked<-"yes"; 		
 		# quantification #######################################################
 		logfile$parameters$quant_files_included<-"100"
+		logfile$parameters$recov_files_included<-"20"
 		# isotopologue grouping ################################################		
 		logfile$parameters$isotop_mztol<-"2.5"
 		logfile$parameters$isotop_ppm<-"TRUE"

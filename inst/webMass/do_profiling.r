@@ -33,7 +33,7 @@
 							selective=logfile$parameters$prof_select,
 							types=c("sample","blank","spiked")
 						)
-		if(any(profileList_pos[[2]][,2]==0)){stop("\n issue in do_profiling: zero intensities detected - resolve issue!")}
+		if(any(profileList_pos[[2]][,2]==0)){stop("\n issue in do_profiling: zero intensities detected. Try to rerun the workflow including the peakpicking, using -> Settings -> General -> Reset project including peak picking.")}
 		profileList_pos<-agglomer(
 							profileList_pos,
 							dmass=(as.numeric(logfile$parameters$prof_dmz)+1),
