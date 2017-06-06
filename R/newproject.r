@@ -117,7 +117,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     logfile[[3]]<-summar
     names(logfile)[3]<-c("summary")
     # ProteoWizard MSConvert path ##############################################
-    logfile[[4]]<-"C:/Program Files/ProteoWizard/ProteoWizard 3.0.10200/msconvert.exe"
+    logfile[[4]]<-"C:/Program Files/ProteoWizard/ProteoWizard 3.0.9283/msconvert.exe"
     names(logfile)[4]<-c("PW MSconvert path")
     # Parameters settings ######################################################
 		# order of entries not a sequence! #####################################
@@ -231,7 +231,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		# isotopologue grouping ################################################		
 		logfile$parameters$isotop_mztol<-"2.5"
 		logfile$parameters$isotop_ppm<-"TRUE"
-		logfile$parameters$isotop_inttol<-"0.5"
+		logfile$parameters$isotop_inttol<-"30"
 		logfile$parameters$isotop_rttol<-"5"
 		logfile$parameters$isotop_use_charges<-"FALSE"
 		# adduct grouping ######################################################

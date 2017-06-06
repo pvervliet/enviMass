@@ -468,7 +468,7 @@
 							these<-match(these,peaklist[,"peak_ID"])
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
-								if(these2[n]!=peaklist[these[n],"peakI_D"]){stop("Debug do_components.files.r - issue 5")} # TEST
+								if(these2[n]!=peaklist[these[n],"peak_ID"]){stop("Debug do_components.files.r - issue 5")} # TEST
 								if(peaklist[these[j],"keep_2"]==0){
 									those[j]<-paste0(those[j],"*")
 									len_blind<-(len_blind+1)
@@ -483,7 +483,7 @@
 							these<-match(these,peaklist[,"peak_ID"])
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
-								if(these2[n]!=peaklist[these[n],"peakI_D"]){stop("Debug do_components.files.r - issue 6")} # TEST
+								if(these2[n]!=peaklist[these[n],"peak_ID"]){stop("Debug do_components.files.r - issue 6")} # TEST
 								if(peaklist[these[j],"keep_2"]==0){
 									those[j]<-paste0(those[j],"*")
 									len_blind<-(len_blind+1)
@@ -498,7 +498,7 @@
 							these<-match(these,peaklist[,"peak_ID"])
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
-								if(these2[n]!=peaklist[these[n],"peakI_D"]){stop("Debug do_components.files.r - issue 7")} # TEST
+								if(these2[n]!=peaklist[these[n],"peak_ID"]){stop("Debug do_components.files.r - issue 7")} # TEST
 								if(peaklist[these[j],"keep_2"]==0){
 									those[j]<-paste0(those[j],"*")
 									len_blind<-(len_blind+1)

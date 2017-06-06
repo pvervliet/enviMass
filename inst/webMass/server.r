@@ -6,7 +6,7 @@ shinyServer(function(input, output, session){
 ################################################################################
 
   cat("\n I run in ");print(environment())
-  in_envir<<-environmentName(environment())
+  in_envir<<-environment()
   if(any(ls()=="logfile")){stop("\n illegal logfile detected in server.r #1")}  
   ##############################################################################
   # load data ##################################################################  
@@ -82,15 +82,15 @@ shinyServer(function(input, output, session){
     input$Restart
     if(input$Restart){
       output$textit<<-renderText("Waiting...")
-	  source("server_cleaner.R", local=TRUE);		
+      source("server_cleaner.R", local=TRUE);		
       cat("Restart\n")
     }
   })
   observe({ # Exit enviMass
     input$Exit
     if(input$Exit){
-		source("server_cleaner.R", local=TRUE);		
-		stopApp(returnValue="Quit enviMass browser session")
+		  source("server_cleaner.R", local=TRUE);		
+		  stopApp(returnValue="Quit enviMass browser session")
     }
   })
   ##############################################################################

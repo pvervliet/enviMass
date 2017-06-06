@@ -211,6 +211,7 @@ maincalc2<-reactive({
 			output$sel_meas_comp_state<-renderText("")
 			# RETRIEVE RESULTS #####################################################
 			enviMass:::reset_selections(session)
+			source("server_variables_in.R", local=TRUE)
 			# (1) Peak picking & preprocessing #####################################
 			#path=file.path(logfile$project_folder,"pics","EIC1");
 			#	png(filename = path, bg = "white", width = 1100, height= 300)
@@ -352,7 +353,7 @@ maincalc2<-reactive({
 			########################################################################  
 			cat(objects())
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #3b in server_startup.r!")}
-			source("server_variables_in.R", local=TRUE)
+			#source("server_variables_in.R", local=TRUE) - better use further up in script - if .png load fails, variables are not read in correctly!
 			if(isolate(init$a=="FALSE")){
 				isolate(init$a<-"TRUE")
 			}else{

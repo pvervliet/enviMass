@@ -47,7 +47,8 @@
 								column(width = 5, dateInput("Measadd_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
 								column(width = 5, textInput("Measadd_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
 								column(width = 5, dateInput("Measadd_cal_date2", "Date end", value="2018-01-01", min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5, textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
+								column(width = 5, textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00")),
+								column(width = 5, textInput("Measadd_cal_ID2", "Custom ID:", value = "FALSE"))					
 							)
 						),
 						conditionalPanel(
@@ -56,7 +57,8 @@
 							fluidRow(
 								column(width = 5, textInput("Measadd_spiked_tag2", "ID of reference file (tag2)", value = "FALSE")),
 								column(width = 5, dateInput("Measadd_recov_date", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5, textInput("Measadd_recov_time", "Time start (HH:MM:SS)", value = "12:00:00"))
+								column(width = 5, textInput("Measadd_recov_time", "Time start (HH:MM:SS)", value = "12:00:00")),
+								column(width = 5, textInput("Measadd_recov_ID2", "Custom ID:", value = "FALSE"))
 							)
 						),						
 						HTML('<hr noshade="noshade" />'),
@@ -110,7 +112,8 @@
 								column(width = 5, dateInput("Modif_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
 								column(width = 5, textInput("Modif_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
 								column(width = 5, dateInput("Modif_cal_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5, textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00"))							
+								column(width = 5, textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00")),
+								column(width = 5, textInput("Modif_cal_ID2", "Custom ID", value = "FALSE"))							
 							)
 						),
 						conditionalPanel(
@@ -119,7 +122,8 @@
 							fluidRow(
 								column(width = 5, textInput("Modif_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE")),
 								column(width = 5, dateInput("Modif_recov_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-								column(width = 5, textInput("Modif_recov_time", "Time:(HH:MM:SS)", value = "12:00:00"))
+								column(width = 5, textInput("Modif_recov_time", "Time:(HH:MM:SS)", value = "12:00:00")),
+								column(width = 5, textInput("Modif_recov_ID2", "Custom ID", value = "FALSE"))
 							)
 						),						
 						HTML('<hr noshade="noshade" />'),
@@ -1918,7 +1922,7 @@
 			tags$h4("Contact, author, maintainer:"),
 			helpText( a("Martin Loos, mloos@looscomputing.ch", href="http://looscomputing.ch/eng/contact.htm",target="_blank") ),
 			tags$h4("Contributors:"),
-			helpText("Rheinüberwachungsstation Basel, Eawag Dübendorf, SCIEX"),
+			helpText("Rhine monitoring station CH-Basel, Eawag CH-Duebendorf, SCIEX"),
 			HTML('<hr noshade="noshade" />'),	
 			helpText( a("Licensing", href="http://www.looscomputing.ch/eng/enviMass/about.htm",target="_blank") )
 		)

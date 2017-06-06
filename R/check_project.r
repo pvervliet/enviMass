@@ -210,14 +210,14 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
   	# check calibration files
   measurements_cal<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE] 
   if(length(measurements_cal[,1])>0){
-	  a<-try({as.Date(c(measurements_cal[,22]))},silent=TRUE)
+	  a<-try({as.Date(c(measurements_cal[,"date_end"]))},silent=TRUE)
 	  if(any(class(a)=="try-error" | is.na(a))){
 			these<-which(class(a)=="try-error" | is.na(a))
 			these<-measurements_cal[these,1]
 			say<-paste("Invalid end date format found for calibration file(s) with ID(s) ",
 			paste(these,collapse=", "),". Please revise concerned calibration file(s) in the files tab!",sep="")
 	  }
-	  b<-try({as.Date(paste("2014-03-13",measurements_cal[,23]),format= "%Y-%m-%d %H:%M:%S")},silent=TRUE)  
+	  b<-try({as.Date(paste("2014-03-13",measurements_cal[,"time_end"]),format= "%Y-%m-%d %H:%M:%S")},silent=TRUE)  
 	  if(any(class(b)=="try-error" | is.na(b))){
 			these<-which(class(b)=="try-error" | is.na(b))
 			these<-measurements_cal[these,1]
@@ -237,7 +237,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		cal_files<-measurements[(measurements[,"Mode"]=="positive")&(measurements[,"Type"]=="calibration"),,drop=FALSE]
 		if(length(cal_files[,1])>0){
 			# do calibration sets overlap in periods?
-			cal_files2<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
+			cal_files2<-unique(cal_files[,c("tag3","Date","Time","date_end","time_end"),drop=FALSE])
 			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2]);
 			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
 			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4]);
@@ -280,7 +280,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		cal_files<-measurements[(measurements[,"Mode"]=="negative")&(measurements[,"Type"]=="calibration"),,drop=FALSE]	
 		if(length(cal_files[,1])>0){
 			# do calibration sets overlap in periods?
-			cal_files2<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
+			cal_files2<-unique(cal_files[,c("tag3","Date","Time","date_end","time_end"),drop=FALSE])
 			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2]);
 			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
 			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4]);
@@ -366,7 +366,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		(logfile$parameters$subtract_neg_bydate==FALSE) &
 		(logfile$parameters$subtract_neg_byfile==FALSE) 
 	){
-		say<-"Blind detection enabled but blind settings disabled? Please adjust."
+		say<-"Blind detection enabled in the workflow - but no blind files selected in the Settings->Blind tab? Please adjust."
 	}
 	##############################################################################
 	# Isotopologue grouping - quantiz data set available? ######################## 
@@ -411,10 +411,10 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_280K@200/quantiz"
 			}			
-			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R140K@200"){
+			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R140000@200"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R140K@200/quantiz"
 			}				
-			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R70K@200"){
+			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R70000@200"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R70K@200/quantiz"
 			}				
 			if(logfile$parameters$resolution=="Sciex_TripleTOF5600_R25000@200"){

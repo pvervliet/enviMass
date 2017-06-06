@@ -42,7 +42,7 @@
 		measurements<-measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
 		latest_ID<-get_latestID(measurements)
 		cal_files<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
-		cal_files<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
+		cal_files<-unique(cal_files[,c("tag2","Date","Time","date_end","time_end"),drop=FALSE])
 		starttime<-as.difftime(cal_files[,3]);startdate<-as.Date(cal_files[,2]);
 		numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
 		endtime<-as.difftime(cal_files[,5]);enddate<-as.Date(cal_files[,4]);
@@ -473,7 +473,7 @@
 		save(target_quant_table_pos,file=file.path(logfile[[1]],"quantification","target_quant_table_pos"))
 		save(target_quant_table_pos_warn,file=file.path(logfile[[1]],"quantification","target_quant_table_pos_warn"))
 	
-}	
+	}	
 	
 
 	
@@ -495,7 +495,7 @@
 		measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
 		latest_ID<-get_latestID(measurements)
 		cal_files<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
-		cal_files<-unique(cal_files[,c(20,6,7,22,23),drop=FALSE])
+		cal_files<-unique(cal_files[,c("tag2","Date","Time","date_end","time_end"),drop=FALSE])
 		starttime<-as.difftime(cal_files[,3]);startdate<-as.Date(cal_files[,2]);
 		numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
 		endtime<-as.difftime(cal_files[,5]);enddate<-as.Date(cal_files[,4]);
@@ -924,7 +924,7 @@
 		save(target_quant_table_neg,file=file.path(logfile[[1]],"quantification","target_quant_table_neg"))
 		save(target_quant_table_neg_warn,file=file.path(logfile[[1]],"quantification","target_quant_table_neg_warn"))
 	
-}	
+	}	
 	
 
 
