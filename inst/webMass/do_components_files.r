@@ -55,7 +55,7 @@
 				##########################################################################
 				# build components #######################################################
 				cat("combine: ")
-				component<-enviMass::combine2(
+				component<-enviMass:::combine2(
 					pattern, 
 					adduct, 
 					homol, 
