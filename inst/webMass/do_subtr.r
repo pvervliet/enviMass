@@ -140,6 +140,10 @@ if(
 							IDs
 						)
 	}
+	###################################################################################################
+# > BAUSTELLE: clean links_peaks_pos for removed links!
+
+# <
 	profileList_pos<<-enviMass:::in_blind(profileList_pos)
 	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
 	profpeaks_pos<<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters$progressBar)		
@@ -292,6 +296,10 @@ if(
 							IDs
 						)
 	}
+	###################################################################################################
+# > BAUSTELLE: clean links_peaks_neg for removed peak links!
+
+# <
 	profileList_neg<<-enviMass:::in_blind(profileList_neg)
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
 	profpeaks_neg<<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters$progressBar)		

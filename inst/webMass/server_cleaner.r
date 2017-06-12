@@ -1,5 +1,7 @@
 	###############################################################################	
 	those_objects<-c(
+		"logfile_here",    
+		"logfile_other",
 		"measurements",
 		"measurements2",
 		"measurements3",
