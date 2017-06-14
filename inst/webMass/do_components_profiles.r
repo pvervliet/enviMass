@@ -14,7 +14,7 @@ if(file.exists(file.path(as.character(logfile[[1]]),"results","componentization"
 if( 
 	file.exists(file.path(logfile[[1]],"results","profileList_pos")) 
 ){
-system.time({
+#system.time({
 	##############################################################################	
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="profileList_pos")){rm(profileList_pos)}	
@@ -36,7 +36,7 @@ system.time({
 
 	##############################################################################	
 	# (1) ANNOTATE TARGET & ISTD SCREENING MACTHES stored in links_peaks_pos #####
-	if(	
+	if(
 		(
 			(logfile$workflow[names(logfile$workflow)=="subtr"]=="no") |	
 			(
@@ -138,7 +138,7 @@ system.time({
 	# (2) INSERT EIC and CO-OCCURRENCE INFORMATION ###############################
 	if(logfile$workflow[names(logfile$workflow)=="EIC_correlation"]=="yes"){
 		cat("\n Retrieving EIC correlation links ")
-		# (2) INSERT EIC LINKS ###################################################
+		# (2.1) INSERT EIC LINKS #################################################
 		##########################################################################
 		forIDs<-profileList_pos[["sampleID"]]
 		for_files<-list.files(file.path(logfile[[1]],"results","componentization","EIC_corr"))
@@ -154,7 +154,9 @@ system.time({
 			for(i in 1:length(forIDs)){
 				setTxtProgressBar(pBar, i, title = NULL, label = NULL)
 				load(file=file.path(logfile[[1]],"results","componentization","EIC_corr",forIDs[i]))
-				EIC_pairs<-EIC_pairs[EIC_pairs[,4]>=logfile$parameters$EICor_mincor,,drop=FALSE]		
+				#
+				#EIC_pairs<-EIC_pairs[EIC_pairs[,4]>=logfile$parameters$EICor_mincor,,drop=FALSE]		
+				#
 				if(length(EIC_pairs[,1])==0){next}
 				# find profiles for first peak
 				get1<-cbind(
@@ -183,48 +185,72 @@ system.time({
 					if(profileList_pos[["index_prof"]][prof1,"profile_ID"]!=prof1){stop("\nComponentization: debug me, #1!")}				
 					if(profileList_pos[["index_prof"]][prof1,"links"]==0){ 	# establish a new link ...
 						if(length(use_entries_profiles)>0){
-							at_entry<-use_entries_profiles[1]
+							at_entry_1<-use_entries_profiles[1]
 							use_entries<-use_entries_profiles[-1]
 						}else{
-							at_entry<-(length(links_profiles_pos)+1)
+							at_entry_1<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
-						names(links_profiles_pos)[at_entry]<-as.character(prof1)
-						profileList_pos[["index_prof"]][prof1,"links"]<-at_entry						
+						links_profiles_pos[[at_entry_1]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						names(links_profiles_pos)[at_entry_1]<-as.character(prof1)
+						profileList_pos[["index_prof"]][prof1,"links"]<-at_entry_1						
 					}else{
-						at_entry<-profileList_pos[["index_prof"]][prof1,"links"]
+						at_entry_1<-profileList_pos[["index_prof"]][prof1,"links"]
 					}
-					here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof2)
-					if(length(here)==0){			
-						links_profiles_pos[[at_entry]][["EIC"]]<-rbind(
-							links_profiles_pos[[at_entry]][["EIC"]], c(prof2,1,0,0,0,0)
+					here1<-which(links_profiles_pos[[at_entry_1]][["EIC"]][,"linked profile"]==prof2)
+					if(length(here1)==0){			
+						links_profiles_pos[[at_entry_1]][["EIC"]]<-rbind(
+							links_profiles_pos[[at_entry_1]][["EIC"]], c(prof2,1,0,0,0,0,1,NA)
 						)
+						here1<-dim(links_profiles_pos[[at_entry_1]][["EIC"]])[1]
 					}else{
-						links_profiles_pos[[at_entry]][["EIC"]][here,"link counts"]<-(links_profiles_pos[[at_entry]][["EIC"]][here,"link counts"]+1)
+						links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"]<-(links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"]+1)
 					}
 					# (2) insert link to first profile for the second profile
 					if(profileList_pos[["index_prof"]][prof2,"profile_ID"]!=prof2){stop("\nCross-profile componentization: debug me, EIC_1!")}				
 					if(profileList_pos[["index_prof"]][prof2,"links"]==0){ 	# establish a new link ...
 						if(length(use_entries_profiles)>0){
-							at_entry<-use_entries_profiles[1]
+							at_entry_2<-use_entries_profiles[1]
 							use_entries<-use_entries_profiles[-1]
 						}else{
-							at_entry<-(length(links_profiles_pos)+1)
+							at_entry_2<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])		
-						names(links_profiles_pos)[at_entry]<-as.character(prof2)
-						profileList_pos[["index_prof"]][prof2,"links"]<-at_entry						
+						links_profiles_pos[[at_entry_2]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])		
+						names(links_profiles_pos)[at_entry_2]<-as.character(prof2)
+						profileList_pos[["index_prof"]][prof2,"links"]<-at_entry_2						
 					}else{
-						at_entry<-profileList_pos[["index_prof"]][prof2,"links"]
+						at_entry_2<-profileList_pos[["index_prof"]][prof2,"links"]
 					}
-					here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
-					if(length(here)==0){
-						links_profiles_pos[[at_entry]][["EIC"]]<-rbind(
-							links_profiles_pos[[at_entry]][["EIC"]], c(prof1,1,0,0,0,0)
+					here2<-which(links_profiles_pos[[at_entry_2]][["EIC"]][,"linked profile"]==prof1)
+					if(length(here2)==0){
+						links_profiles_pos[[at_entry_2]][["EIC"]]<-rbind(
+							links_profiles_pos[[at_entry_2]][["EIC"]], c(prof1,1,0,0,0,0,0,NA)
 						)
+						here2<-dim(links_profiles_pos[[at_entry_2]][["EIC"]])[1]
 					}else{
-						links_profiles_pos[[at_entry]][["EIC"]][here,"link counts"]<-(links_profiles_pos[[at_entry]][["EIC"]][here,"link counts"]+1)
+						links_profiles_pos[[at_entry_2]][["EIC"]][here2,"link counts"]<-(links_profiles_pos[[at_entry_2]][["EIC"]][here2,"link counts"]+1)
 					}				
+					# insert EIC correlation
+					if(links_profiles_pos[[at_entry_1]][["EIC"]][here1,"use"]==1){
+						if(length(links_profiles_pos[[at_entry_1]]$EIC_cor)<here1){
+							links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]]<-EIC_pairs[j,4]
+						}else{
+							if(is.null(links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]])){
+								links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]]<-EIC_pairs[j,4]
+							}else{
+								links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]]<-c(links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]],EIC_pairs[j,4])
+							}
+						}
+					}else{
+						if(length(links_profiles_pos[[at_entry_2]]$EIC_cor)<here2){
+							links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]]<-EIC_pairs[j,4]
+						}else{
+							if(is.null(links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]])){
+								links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]]<-EIC_pairs[j,4]
+							}else{
+								links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]]<-c(links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]],EIC_pairs[j,4])
+							}
+						}
+					}
 					# insert PEAK LINKS ##########################################
 				}
 			}
@@ -232,118 +258,121 @@ system.time({
 			if(any(objects()=="EIC_pairs")){rm(EIC_pairs)}	
 		}
 		##########################################################################				
-		# (3) INSERT EIC NON-LINKS ###############################################
-		forIDs<-profileList_pos[["sampleID"]]
-		for_files<-list.files(file.path(logfile[[1]],"results","componentization","EIC_corr"))
-		keep<-match(forIDs,for_files) # which files are available?
-		if(any(is.na(keep))){cat("\n Just note: not all files found in profiles have EIC correlation results (2). \n")}
-		TRUE_IDs<-(measurements$ID[measurements$adducts=="TRUE"]) # for files which have run through that step
-		keep2<-match(forIDs,for_files)
-		forIDs<-forIDs[!is.na(keep) & !is.na(keep2)]
-		not_found2<-0
-		inserted2<-0
-		if(length(forIDs)>0){
-			pBar <- txtProgressBar(min = 0, max = length(forIDs), style = 3)
-			for(i in 1:length(forIDs)){
-				setTxtProgressBar(pBar, i, title = NULL, label = NULL)
-				load(file=file.path(logfile[[1]],"results","componentization","EIC_corr",forIDs[i]))
-				EIC_pairs<-EIC_pairs[EIC_pairs[,4]<logfile$parameters$EICor_mincor,,drop=FALSE]		
-				if(length(EIC_pairs[,1])==0){next}
-				# find profiles for first peak
-				get1<-cbind(
-					rep(as.numeric(forIDs[i]),length(EIC_pairs[,1])),EIC_pairs[,1] # first column sorted correctly
-				)
-				found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
-				# find profiles for second peak
-				get2<-cbind(
-					rep(as.numeric(forIDs[i]),length(EIC_pairs[,2])),EIC_pairs[,2] # second column requires sorting
-				)
-				found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
-				for(j in 1:length(found1)){ # insert links
-					# insert PROFILE LINKS #######################################
-					if(found1[j]==0){not_found2<-(not_found2+1);next} # e.g., peak blind-removed 
-					if(found2[j]==0){not_found2<-(not_found2+1);next}			
-					# (1) insert link to second profile for the first profile
-					prof1<-peaks[found1[j],"profileIDs"][[1]]
-					prof2<-peaks[found2[j],"profileIDs"][[1]]
-					# profiles have to have positive entries from above
-					if(profileList_pos[["index_prof"]][prof1,"links"]==0) next
-					if(profileList_pos[["index_prof"]][prof2,"links"]==0) next
-					inserted2<-(inserted2+1);
-					# enable check ... pairs musst have very similar retention times
-					if(FALSE){
-						cat("\n");
-						cat(peaks[found1[j],"RT"]);cat(" - ")
-						cat(peaks[found2[j],"RT"])
+		# (2.2) INSERT EIC NON-LINKS #############################################
+		if(FALSE){
+			forIDs<-profileList_pos[["sampleID"]]
+			for_files<-list.files(file.path(logfile[[1]],"results","componentization","EIC_corr"))
+			keep<-match(forIDs,for_files) # which files are available?
+			if(any(is.na(keep))){cat("\n Just note: not all files found in profiles have EIC correlation results (2). \n")}
+			TRUE_IDs<-(measurements$ID[measurements$adducts=="TRUE"]) # for files which have run through that step
+			keep2<-match(forIDs,for_files)
+			forIDs<-forIDs[!is.na(keep) & !is.na(keep2)]
+			not_found2<-0
+			inserted2<-0
+			if(length(forIDs)>0){
+				pBar <- txtProgressBar(min = 0, max = length(forIDs), style = 3)
+				for(i in 1:length(forIDs)){
+					setTxtProgressBar(pBar, i, title = NULL, label = NULL)
+					load(file=file.path(logfile[[1]],"results","componentization","EIC_corr",forIDs[i]))
+					EIC_pairs<-EIC_pairs[EIC_pairs[,4]<logfile$parameters$EICor_mincor,,drop=FALSE]		
+					if(length(EIC_pairs[,1])==0){next}
+					# find profiles for first peak
+					get1<-cbind(
+						rep(as.numeric(forIDs[i]),length(EIC_pairs[,1])),EIC_pairs[,1] # first column sorted correctly
+					)
+					found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+					# find profiles for second peak
+					get2<-cbind(
+						rep(as.numeric(forIDs[i]),length(EIC_pairs[,2])),EIC_pairs[,2] # second column requires sorting
+					)
+					found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+					for(j in 1:length(found1)){ # insert links
+						# insert PROFILE LINKS #######################################
+						if(found1[j]==0){not_found2<-(not_found2+1);next} # e.g., peak blind-removed 
+						if(found2[j]==0){not_found2<-(not_found2+1);next}			
+						# (1) insert link to second profile for the first profile
+						prof1<-peaks[found1[j],"profileIDs"][[1]]
+						prof2<-peaks[found2[j],"profileIDs"][[1]]
+						# profiles have to have positive entries from above
+						if(profileList_pos[["index_prof"]][prof1,"links"]==0) next
+						if(profileList_pos[["index_prof"]][prof2,"links"]==0) next
+						inserted2<-(inserted2+1);
+						# enable check ... pairs musst have very similar retention times
+						if(FALSE){
+							cat("\n");
+							cat(peaks[found1[j],"RT"]);cat(" - ")
+							cat(peaks[found2[j],"RT"])
+						}
+						if(profileList_pos[["index_prof"]][prof1,"profile_ID"]!=prof1){stop("\nComponentization: debug me, #1!")}				
+						at_entry<-profileList_pos[["index_prof"]][prof1,"links"]
+						#if( # no non-link required if no link inserted before
+						#	!any(links_profiles_pos[[at_entry]]$EIC[,1]==prof2) 
+						#){ next }	
+						here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof2)
+						links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]<-(links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]+1)
+						# (2) insert link to first profile for the second profile
+						if(profileList_pos[["index_prof"]][prof2,4]!=prof2){stop("\nComponentization: debug me, #1!")}				
+						at_entry<-profileList_pos[["index_prof"]][prof2,"links"] # must exist already - see above no non-link "next"
+						# GAPPED?
+						here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
+						links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]<-(links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]+1)		
+						# insert PEAK LINKS ? ########################################
 					}
-					if(profileList_pos[["index_prof"]][prof1,"profile_ID"]!=prof1){stop("\nComponentization: debug me, #1!")}				
-					at_entry<-profileList_pos[["index_prof"]][prof1,"links"]
-					#if( # no non-link required if no link inserted before
-					#	!any(links_profiles_pos[[at_entry]]$EIC[,1]==prof2) 
-					#){ next }	
-					here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof2)
-					links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]<-(links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]+1)
-					# (2) insert link to first profile for the second profile
-					if(profileList_pos[["index_prof"]][prof2,4]!=prof2){stop("\nComponentization: debug me, #1!")}				
-					at_entry<-profileList_pos[["index_prof"]][prof2,"links"] # must exist already - see above no non-link "next"
-					# GAPPED?
-					here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
-					links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]<-(links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]+1)		
-					# insert PEAK LINKS ? ########################################
 				}
-			}
-			close(pBar)
-			if(any(objects()=="EIC_pairs")){rm(EIC_pairs)}
+				close(pBar)
+				if(any(objects()=="EIC_pairs")){rm(EIC_pairs)}
+		}
 		}
 		##########################################################################				
-		# (4) INSERT CO-OCCURENCES ###############################################
-		if(length(forIDs)>0){ # from above
-			pBar <- txtProgressBar(min = 0, max = length(forIDs), style = 3)
-			for(i in 1:length(links_profiles_pos)){
-				setTxtProgressBar(pBar, i, title = NULL, label = NULL)
-				if(dim(links_profiles_pos[[i]]$EIC)[1]>0){
-					for(m in 1:dim(links_profiles_pos[[i]]$EIC)[1]){
-						if(links_profiles_pos[[i]]$EIC[m,c("ref_1")]!=0) next; # done via linked profile
-						prof1<-as.numeric(names(links_profiles_pos)[i])
-						prof2<-links_profiles_pos[[i]]$EIC[m,"linked profile"]
-						del1<-profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]]
-						del2<-profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]]
-						summed<-sum(links_profiles_pos[[i]]$EIC[m,c("link counts","no-link counts")])
-						at_entry<-profileList_pos[["index_prof"]][prof2,"links"]
-						here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
-						# which peaks co-occur in the same sample?
-						these<-profileList_pos[["peaks"]][
-							profileList_pos[["index_prof"]][prof1,"start_ID"]:profileList_pos[["index_prof"]][prof1,"end_ID"]
-						,"sampleIDs"]
-						those<-profileList_pos[["peaks"]][
-							profileList_pos[["index_prof"]][prof2,"start_ID"]:profileList_pos[["index_prof"]][prof2,"end_ID"]
-						,"sampleIDs"]
-						matched<-match(these,those)
-						links_profiles_pos[[i]]$EIC[m,"ref_1"]<-sum(!is.na(matched))
-						RT_1<-(profileList_pos[["peaks"]][
-								(profileList_pos[["index_prof"]][prof1,"start_ID"]:profileList_pos[["index_prof"]][prof1,"end_ID"])
-								[!is.na(matched)]
-							,"RT"])
-						RT_2<-(profileList_pos[["peaks"]][
-								(profileList_pos[["index_prof"]][prof2,"start_ID"]:profileList_pos[["index_prof"]][prof2,"end_ID"])
-								[matched[!is.na(matched)]]
-							,"RT"])
-						del_RT<-abs(RT_1-RT_2)
-						links_profiles_pos[[i]]$EIC[m,"ref_2"]<-sum(del_RT<=as.numeric(logfile$parameters$isotop_rttol))
-						links_profiles_pos[[i]]$EIC[m,"ref_3"]<-sum(del_RT<=as.numeric(logfile$parameters$adducts_rttol))
-						# insert values in other linked profile
-						at_entry<-profileList_pos[["index_prof"]][prof2,"links"]
-						here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
-						links_profiles_pos[[at_entry]]$EIC[here,c("ref_1","ref_2","ref_3")]<-links_profiles_pos[[i]]$EIC[m,c("ref_1","ref_2","ref_3")]
+		# (2.3) INSERT CO-OCCURENCES #############################################
+		if(FALSE){
+			if(length(forIDs)>0){ # from above
+				pBar <- txtProgressBar(min = 0, max = length(forIDs), style = 3)
+				for(i in 1:length(links_profiles_pos)){
+					setTxtProgressBar(pBar, i, title = NULL, label = NULL)
+					if(dim(links_profiles_pos[[i]]$EIC)[1]>0){
+						for(m in 1:dim(links_profiles_pos[[i]]$EIC)[1]){
+							if(links_profiles_pos[[i]]$EIC[m,c("ref_1")]!=0) next; # done via linked profile
+							prof1<-as.numeric(names(links_profiles_pos)[i])
+							prof2<-links_profiles_pos[[i]]$EIC[m,"linked profile"]
+							del1<-profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]]
+							del2<-profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]]
+							summed<-sum(links_profiles_pos[[i]]$EIC[m,c("link counts","no-link counts")])
+							at_entry<-profileList_pos[["index_prof"]][prof2,"links"]
+							here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
+							# which peaks co-occur in the same sample?
+							these<-profileList_pos[["peaks"]][
+								profileList_pos[["index_prof"]][prof1,"start_ID"]:profileList_pos[["index_prof"]][prof1,"end_ID"]
+							,"sampleIDs"]
+							those<-profileList_pos[["peaks"]][
+								profileList_pos[["index_prof"]][prof2,"start_ID"]:profileList_pos[["index_prof"]][prof2,"end_ID"]
+							,"sampleIDs"]
+							matched<-match(these,those)
+							links_profiles_pos[[i]]$EIC[m,"ref_1"]<-sum(!is.na(matched))
+							RT_1<-(profileList_pos[["peaks"]][
+									(profileList_pos[["index_prof"]][prof1,"start_ID"]:profileList_pos[["index_prof"]][prof1,"end_ID"])
+									[!is.na(matched)]
+								,"RT"])
+							RT_2<-(profileList_pos[["peaks"]][
+									(profileList_pos[["index_prof"]][prof2,"start_ID"]:profileList_pos[["index_prof"]][prof2,"end_ID"])
+									[matched[!is.na(matched)]]
+								,"RT"])
+							del_RT<-abs(RT_1-RT_2)
+							links_profiles_pos[[i]]$EIC[m,"ref_2"]<-sum(del_RT<=as.numeric(logfile$parameters$isotop_rttol))
+							links_profiles_pos[[i]]$EIC[m,"ref_3"]<-sum(del_RT<=as.numeric(logfile$parameters$adducts_rttol))
+							# insert values in other linked profile
+							at_entry<-profileList_pos[["index_prof"]][prof2,"links"]
+							here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
+							links_profiles_pos[[at_entry]]$EIC[here,c("ref_1","ref_2","ref_3")]<-links_profiles_pos[[i]]$EIC[m,c("ref_1","ref_2","ref_3")]
+						}
 					}
 				}
+				close(pBar)
 			}
-			close(pBar)
 		}
 		##########################################################################
-		cat("\n done.")
 	}
-	# (5) INSERT ISOTOPOLOGUE LINKS ##############################################
+	# (3) INSERT ISOTOPOLOGUE LINKS ##############################################
 	if(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes"){	
 		forIDs<-profileList_pos[["sampleID"]]
 		for_files<-list.files(file.path(logfile[[1]],"results","componentization","isotopologues"))
@@ -402,7 +431,7 @@ system.time({
 					here1<-which(links_profiles_pos[[at_entry_1]][["isot"]][,"linked profile"]==prof2)
 					if(length(here1)==0){
 						links_profiles_pos[[at_entry_1]][["isot"]]<-rbind(
-							links_profiles_pos[[at_entry_1]][["isot"]], c(prof2,1,0)
+							links_profiles_pos[[at_entry_1]][["isot"]], c(prof2,1,0,1,NA)
 						)
 						here1<-dim(links_profiles_pos[[at_entry_1]][["isot"]])[1]
 					}else{
@@ -426,7 +455,7 @@ system.time({
 					here2<-which(links_profiles_pos[[at_entry_2]][["isot"]][,"linked profile"]==prof1)
 					if(length(here2)==0){
 						links_profiles_pos[[at_entry_2]][["isot"]]<-rbind(
-							links_profiles_pos[[at_entry_2]][["isot"]], c(prof1,1,0)
+							links_profiles_pos[[at_entry_2]][["isot"]], c(prof1,1,0,0,NA)
 						)
 						here2<-dim(links_profiles_pos[[at_entry_2]][["isot"]])[1]
 					}else{
@@ -434,15 +463,15 @@ system.time({
 					}				
 					# INSERT ref_1: total number of co-occurences ################
 					got_entry<-FALSE
-					if(dim(links_profiles_pos[[at_entry_1]]$EIC)[1]!=0){ # already dealed with during EIC correlation?
-						here3<-which(links_profiles_pos[[at_entry_1]]$EIC[,"linked profile"]==prof2)
-						if(length(here3)>0){
-							got_entry<-TRUE
-							if(length(here3)>1){
-								stop("\n DEBUG ME !")
-							}
-						}
-					}
+					#if(dim(links_profiles_pos[[at_entry_1]]$EIC)[1]!=0){ # already dealed with during EIC correlation?
+					#	here3<-which(links_profiles_pos[[at_entry_1]]$EIC[,"linked profile"]==prof2)
+					#	if(length(here3)>0){
+					#		got_entry<-TRUE
+					#		if(length(here3)>1){
+					#			stop("\n DEBUG ME !")
+					#		}
+					#	}
+					#}
 					if(got_entry){ # use value of existing entry ...
 						links_profiles_pos[[at_entry_1]]$isot[here1,"ref_1"]<-links_profiles_pos[[at_entry_1]]$EIC[here3,"ref_1"]
 						links_profiles_pos[[at_entry_2]]$isot[here2,"ref_1"]<-links_profiles_pos[[at_entry_1]]$EIC[here3,"ref_1"]
@@ -468,7 +497,7 @@ system.time({
 			cat(" done.")
 		}
 	}
-	# (6) INSERT ADDUCT LINKS ####################################################
+	# (4) INSERT ADDUCT LINKS ####################################################
 	if(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes"){
 		forIDs<-profileList_pos[["sampleID"]]
 		for_files<-list.files(file.path(logfile[[1]],"results","componentization","adducts"))
@@ -527,9 +556,9 @@ system.time({
 					here1<-which(links_profiles_pos[[at_entry_1]][["adduc"]][,"linked profile"]==prof2)
 					if(length(here1)==0){
 						links_profiles_pos[[at_entry_1]][["adduc"]]<-rbind(
-							links_profiles_pos[[at_entry_1]][["adduc"]], c(prof2,1,0)
+							links_profiles_pos[[at_entry_1]][["adduc"]], c(prof2,1,0,1,NA)
 						)
-						here1<-dim(links_profiles_pos[[at_entry_1]][["isot"]])[1]
+						here1<-dim(links_profiles_pos[[at_entry_1]][["adduc"]])[1]
 					}else{
 						links_profiles_pos[[at_entry_1]][["adduc"]][here1,"link counts"]<-(links_profiles_pos[[at_entry_1]][["adduc"]][here1,"link counts"]+1)
 					}
@@ -551,20 +580,20 @@ system.time({
 					here2<-which(links_profiles_pos[[at_entry_2]][["adduc"]][,"linked profile"]==prof1)
 					if(length(here2)==0){
 						links_profiles_pos[[at_entry_2]][["adduc"]]<-rbind(
-							links_profiles_pos[[at_entry_2]][["adduc"]], c(prof1,1,0)
+							links_profiles_pos[[at_entry_2]][["adduc"]], c(prof1,1,0,0,NA)
 						)
-						here2<-dim(links_profiles_pos[[at_entry_2]][["isot"]])[1]
+						here2<-dim(links_profiles_pos[[at_entry_2]][["adduc"]])[1]
 					}else{
 						links_profiles_pos[[at_entry_2]][["adduc"]][here2,"link counts"]<-(links_profiles_pos[[at_entry_2]][["adduc"]][here2,"link counts"]+1)
 					}		
 					# INSERT ref_1: total number of co-occurences ################
 					got_entry<-FALSE
-					if(dim(links_profiles_pos[[at_entry_1]]$EIC)[1]!=0){ # already dealed with during EIC correlation?
-						here3<-which(links_profiles_pos[[at_entry_1]]$EIC[,"linked profile"]==prof2)
-						if(length(here3)>0){
-							got_entry<-TRUE
-						}
-					}
+					#if(dim(links_profiles_pos[[at_entry_1]]$EIC)[1]!=0){ # already dealed with during EIC correlation?
+					#	here3<-which(links_profiles_pos[[at_entry_1]]$EIC[,"linked profile"]==prof2)
+					#	if(length(here3)>0){
+					#		got_entry<-TRUE
+					#	}
+					#}
 					if(got_entry){ # use value of existing entry ...
 						links_profiles_pos[[at_entry_1]]$adduc[here1,"ref_1"]<-links_profiles_pos[[at_entry_1]]$EIC[here3,"ref_1"]
 						links_profiles_pos[[at_entry_2]]$adduc[here2,"ref_1"]<-links_profiles_pos[[at_entry_1]]$EIC[here3,"ref_1"]
@@ -590,7 +619,7 @@ system.time({
 			cat(" done.")
 		}	
 	}
-	# (7) INSERT HOMOLOGUE SERIES LINKS ##########################################
+	# (5) INSERT HOMOLOGUE SERIES LINKS ##########################################
 	if(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes"){
 		forIDs<-profileList_pos[["sampleID"]]
 		for_files<-list.files(file.path(logfile[[1]],"results","componentization","homologues"))
@@ -691,7 +720,45 @@ system.time({
 		}
 	}
 	##############################################################################	
-})	
+
+	##############################################################################	
+	# (6) filter #################################################################
+	# (6.1) by ISTD - first get their characteristics on delRT and correl. #######
+	fil1<-enviMass:::analyseA_links_profiles(
+			links_profiles=links_profiles_pos, profileList=profileList_pos, 
+			min_rat=.7, 	# isot, adduc: "link counts"/"ref_1"
+			min_count=.4, 	# isot, adduc:  "ref_1">=(min_count*number_samples)
+			for_which="ISTD"
+		)
+	# clean isotopologues ########################################################
+	cut_delRT_isot<-median(fil1$delRT_isot)
+	cut_cor_isot<-(boxplot.stats(c(fil1$int_cor_isot))$conf[1])
+	links_profiles_pos<-enviMass:::cleanA_links_profiles(
+		links_profiles=links_profiles_pos, profileList=profileList_pos,
+		cut_delRT_isot = cut_delRT_isot, 
+		cut_cor_isot = cut_cor_isot, 
+		cut_frac_iso = .9
+	)
+	# clean adducts ##############################################################
+	cut_delRT_adduc<-median(fil1$delRT_adduc)
+	links_profiles_pos<-enviMass:::cleanB_links_profiles( 
+		links_profiles=links_profiles_pos, profileList=profileList_pos,
+		cut_delRT_adduc = cut_delRT_adduc, 
+		cut_frac_adduc = .9
+	)
+	# (6.2) by ISTD - check their EIC correlation ################################
+	fil2<-enviMass:::analyseB_links_profiles(
+			links_profiles=links_profiles_pos,  
+			min_count=.4, 	# isot, adduc:  "ref_1">=(min_count*number_samples)
+			for_which="ISTD"
+		)
+	use_EIC<-c(fil2$EIC_cor_isot,fil2$EIC_cor_adduc)
+	cut_EIC<-(boxplot.stats(use_EIC)$stats[1])
+
+
+
+#})	
+
 	##############################################################################
 	# save! ######################################################################
 	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
