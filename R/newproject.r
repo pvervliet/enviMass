@@ -152,11 +152,18 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		# isotope patterns #####################################################
 		logfile$parameters$resolution<-"Elite_R240000@400";
 		# recalibration ########################################################
-		logfile$parameters$recal_use<-"Internal standards"; 	
-		logfile$parameters$recal_dmz<-"3"; 					
-		logfile$parameters$recal_ppm<-"TRUE"; 				
-		logfile$parameters$recal_drt<-"30"; 					
-		logfile$parameters$recal_maxdmz<-"30";						
+		logfile$parameters$recal_include_pos<-"TRUE"
+		logfile$parameters$recal_use_pos<-"Internal standards"; 	
+		logfile$parameters$recal_dmz_pos<-"3"; 					
+		logfile$parameters$recal_ppm_pos<-"TRUE"; 				
+		logfile$parameters$recal_drt_pos<-"30"; 					
+		logfile$parameters$recal_maxdmz_pos<-"30";					
+		logfile$parameters$recal_include_neg<-"TRUE"		
+		logfile$parameters$recal_use_neg<-"Internal standards"; 	
+		logfile$parameters$recal_dmz_neg<-"3"; 					
+		logfile$parameters$recal_ppm_neg<-"TRUE"; 				
+		logfile$parameters$recal_drt_neg<-"30"; 					
+		logfile$parameters$recal_maxdmz_neg<-"30";			
 		# replicate intersection ################################################
 		logfile$parameters$replicate_dmz<-"3";						
 		logfile$parameters$replicate_ppm<-"TRUE";						

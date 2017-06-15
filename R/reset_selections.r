@@ -1,8 +1,8 @@
-#' @title Reset selection ins the enviMass UI
+#' @title Reset selection in the enviMass UI
 #'
 #' @export
 #'
-#' @description Reset selection ins the enviMass UI
+#' @description Reset selection in the enviMass UI
 #'
 #' @param session shiny session ID
 #' 
@@ -21,6 +21,20 @@ reset_selections<-function(session){
 	updateNumericInput(session,"sel_meas_comp_peak", value = 0)
 	updateNumericInput(session,"sel_meas_comp_comp", value = 0)
 	updateNumericInput(session,"atom_bound_peak", value = 0)
+	################################################################
+	#output$recal_pic<-renderImage({
+	#	outfile <- tempfile(fileext='.png')
+	#	png(outfile, width=400, height=400)
+	#		plot.new();
+	#		plot.window(xlim=c(1,1),ylim=c(1,1));
+	#		box();
+	#	text(1,1,label="not available",cex=1.5,col="darkred")
+	#	dev.off()
+	#	list(src = outfile,
+	#		 alt = "")
+	#}, deleteFile = TRUE)
+
+
 	################################################################
 	
 }

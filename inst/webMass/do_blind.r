@@ -28,12 +28,12 @@ if(FALSE){ # debug parameters - ignore
 
 # clean old entries ####################################################################################
 for(i in 1:length(IDs)){
-	if(incl[i]!="FALSE"){next}	
-	if(filetypus[i]!="sample"){next}
+	if(incl[i]=="FALSE"){next}	
+	if(filetypus[i]=="blank"){next}
 	if(old_samplewise[i]=="TRUE"){next}
 	load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-	keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
-	peaklist[,colnames(peaklist)=="keep_2"]<-keep_2
+	#keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
+	peaklist[,"keep_2"]<-1
 	save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 	rm(peaklist)
 }
@@ -114,7 +114,7 @@ if( (logfile$parameters$subtract_pos_byfile=="TRUE") & any(logfile$Positive_subt
 					subID<-strsplit(selec_pos[j]," - ")[[1]][1]
 					load(file=file.path(logfile[[1]],"peaklist",as.character(subID)),verbose=FALSE)
 					peaks_blank<-peaklist[,c("m/z_corr","int_corr","RT_corr")];rm(peaklist);
-					getit <- search_peak( 
+					getit <- search_peak(
 						peaklist=peaks_blank, 
 						mz=sam_peaklist[,"m/z_corr"], 
 						dmz=(dmz*2), # precheck for profiles
@@ -126,7 +126,7 @@ if( (logfile$parameters$subtract_pos_byfile=="TRUE") & any(logfile$Positive_subt
 						int=sam_peaklist[,"int_corr"],
 						get_matches=FALSE
 					)	
-					sam_peaklist[getit=="TRUE",colnames(sam_peaklist)=="keep_2"]<-0
+					sam_peaklist[getit=="TRUE","keep_2"]<-0
 					rm(peaks_blank)
 				}
 				peaklist<-sam_peaklist

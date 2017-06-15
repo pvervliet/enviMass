@@ -1,5 +1,6 @@
 	###############################################################################	
 	those_objects<-c(
+		"in_envir",
 		"logfile_here",    
 		"logfile_other",
 		"measurements",

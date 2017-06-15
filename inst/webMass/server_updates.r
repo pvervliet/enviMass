@@ -1361,7 +1361,6 @@ if(logfile$version<3.121){
 
 }
 
-
 if(logfile$version<3.122){
 
 	cat("\n Updating to version 3.122 ...")
@@ -1428,7 +1427,6 @@ if(logfile$version<3.123){
 
 }
 
-
 if(logfile$version<3.124){
 
 	cat("\n Updating to version 3.124 ...")
@@ -1451,7 +1449,6 @@ if(logfile$version<3.124){
 	################################################################################################
 
 }
-
 
 if(logfile$version<3.125){
 
@@ -1477,7 +1474,6 @@ if(logfile$version<3.125){
 
 }
 
-
 if(logfile$version<3.126){
 
 	cat("\n Updating to version 3.126 ...")
@@ -1498,7 +1494,6 @@ if(logfile$version<3.126){
 	################################################################################################
 
 }
-
 
 if(logfile$version<3.127){
 
@@ -1685,6 +1680,39 @@ if(logfile$version<3.26){
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
 	################################################################################################
 
+}
+
+if(logfile$version<3.27){
+
+	cat("\n Updating to version 3.27 ...")
+	################################################################################################	
+	if(!any(names(logfile$parameters)=="recal_use_pos")){
+		logfile$parameters$recal_include_pos<<-"TRUE"
+		logfile$parameters$recal_use_pos<<-logfile$parameters$recal_use 	
+		logfile$parameters$recal_dmz_pos<<-logfile$parameters$recal_dmz			
+		logfile$parameters$recal_ppm_pos<<-logfile$parameters$recal_ppm				
+		logfile$parameters$recal_drt_pos<<-logfile$parameters$recal_drt 					
+		logfile$parameters$recal_maxdmz_pos<<-logfile$parameters$recal_maxdmz	
+		logfile$parameters$recal_include_neg<<-"TRUE"		
+		logfile$parameters$recal_use_neg<<-logfile$parameters$recal_use 	
+		logfile$parameters$recal_dmz_neg<<-logfile$parameters$recal_dmz					
+		logfile$parameters$recal_ppm_neg<<-logfile$parameters$recal_ppm 				
+		logfile$parameters$recal_drt_neg<<-logfile$parameters$recal_drt	
+		logfile$parameters$recal_maxdmz_neg<<-logfile$parameters$recal_maxdmz	
+		#
+		logfile$parameters$recal_use<<-"NA"
+		logfile$parameters$recal_dmz<<-"NA"
+		logfile$parameters$recal_ppm<<-"NA"
+		logfile$parameters$recal_drt<<-"NA"
+		logfile$parameters$recal_maxdmz<<-"NA"
+	}
+	################################################################################################	
+	logfile$version<<-3.27
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+	
 }
 
 ########################################################################

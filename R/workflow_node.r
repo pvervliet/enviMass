@@ -50,8 +50,8 @@ workflow_node<-function(name_workflow,name_summary,name_redo,name_output,path_do
 			){
 				if(!is.logical(path_undo)){
 					source(path_undo,local=TRUE)
-					summa[(logfile$summary[,1]==name_summary),2]<-"removed"
-					summa[(logfile$summary[,1]==name_summary),2]<<-"removed"
+					summa[(logfile$summary[,1]==name_summary),2]<-"excluded"
+					summa[(logfile$summary[,1]==name_summary),2]<<-"excluded"
 					output$summa_html<-renderText(enviMass:::summary_html(summa));		
 					cat(paste(name_output,"removed \n"));
 					output$dowhat<-renderText(paste(name_output,"removed .... wait"))

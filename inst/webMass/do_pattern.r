@@ -22,15 +22,12 @@
 		    ######################################################################
 
             ######################################################################
-            measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[measurements[,8]=="TRUE",]
-            ######################################################################
 			# on IS ##############################################################
  			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 			if(length(intstand$Formula[intstand$Formula!="-"])>0){ # any IS formulas available?
 
 				##################################################################
-				if(any(measurements[,"Mode"]=="positive") & any(intstand[,7]=="positive") ){
+				if( any(intstand[,7]=="positive") ){
 					pattern_pos_IS<-list(0);
 					counter<-c(1);
 					finform<-c();
@@ -164,7 +161,7 @@
 				###################################################################
 				
 				##################################################################
-				if(any(measurements[,"Mode"]=="negative") & any(intstand[,7]=="negative")){
+				if( any(intstand[,7]=="negative") ){
 					pattern_neg_IS<-list(0);
 					counter<-c(1);
 					finform<-c();
@@ -309,7 +306,7 @@
 			if(length(targets$Formula[targets$Formula!="-"])>0){ # any target formulas available?
 
 				##################################################################
-				if(any(measurements[,"Mode"]=="positive") & any(targets[,8]=="positive") ){
+				if( any(targets[,8]=="positive") ){
 					pattern_pos_target<-list(0);
 					counter<-c(1);
 					finform<-c();
@@ -443,7 +440,7 @@
 				###################################################################
 				
 				##################################################################
-				if( any(measurements[,"Mode"]=="negative")  & any(targets[,8]=="negative")  ){
+				if( any(targets[,8]=="negative") ){
 					pattern_neg_target<-list(0);
 					counter<-c(1);
 					finform<-c();

@@ -11,7 +11,7 @@
 #' @param RT Numeric vector. Retention times to be matched; units equal to those of the input files
 #' @param dRT Numeric. RT tolerance window; units equal to those of the input files
 #' @param onlymax Logical. Return only the matched peak of highest intensity. 
-#' @param intratio. Logical FALSE or numeric. Only matching peaks >= this intensity ratio are returned.  
+#' @param int_ratio. Logical FALSE or numeric. Only matching peaks >= this intensity ratio are returned.  
 #' @param int. Logical FALSE or numeric vector. Intensities of the peaks to be matched; required when using intratio.
 #' @param get_matches. Logical. Return all matches (TRUE, default) or only indicate if any have been found.
 #'

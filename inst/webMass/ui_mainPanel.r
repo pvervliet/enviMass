@@ -13,7 +13,7 @@
 				bsCollapse(multiple = FALSE, open = "files_open", id = "files",
 					# ADD FILE #################################################
 					bsCollapsePanel("Add LC-MS file", 		
-						helpText("To add a new file.mzXML, set its specifications below and upload it."),
+						helpText("To add a new file.mzXML, first set its specifications below and upload it."),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(
 							column(width = 5, textInput("Measadd_name", "Name:", value = "File XY")),
@@ -886,14 +886,24 @@
             tabPanel("Mass recalibration",
       		  HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/recalibration.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),				
               HTML('<hr noshade="noshade" />'),
-              div(
-                style = widget_style3,
-                selectInput("recal_use", "Reference compounds:", c("Internal standards","Target compounds","both"),"Internal standards",multiple=FALSE),                
-                numericInput("recal_dmz", "+/- m/z tolerance ...", 3),            
-                numericInput("recal_maxdmz", "Maximum allowable m/z correction ...", 30),  				
-                selectInput("recal_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),
-                numericInput("recal_drt", "RT tolerance [s]", 30)   
-              )
+              div(style = widget_style3,
+				tags$h4("Positive ionization:"),
+                selectInput("recal_include_pos", "Inlude mass recalibration for positive ionization ode files?", c("Yes"="TRUE","No"="FALSE"),"TRUE",multiple=FALSE),                
+                selectInput("recal_use_pos", "Reference compounds:", c("Internal standards","Target compounds","both"),"Internal standards",multiple=FALSE),                
+                numericInput("recal_dmz_pos", "+/- m/z tolerance ...", 3),            
+                numericInput("recal_maxdmz_pos", "Maximum allowable m/z correction ...", 30),  				
+                selectInput("recal_ppm_pos", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),
+                numericInput("recal_drt_pos", "RT tolerance [s]", 30)   
+              ),
+              div(style = widget_style3,
+				tags$h4("Negative ionization:"),
+                selectInput("recal_include_neg", "Inlude mass recalibration for positive ionization ode files?", c("Yes"="TRUE","No"="FALSE"),"TRUE",multiple=FALSE),                
+                selectInput("recal_use_neg", "Reference compounds:", c("Internal standards","Target compounds","both"),"Internal standards",multiple=FALSE),                
+                numericInput("recal_dmz_neg", "+/- m/z tolerance ...", 3),            
+                numericInput("recal_maxdmz_neg", "Maximum allowable m/z correction ...", 30),  				
+                selectInput("recal_ppm_neg", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),
+                numericInput("recal_drt_neg", "RT tolerance [s]", 30)   
+              )		  
             ),
 			# REPLICATES #######################################################
             tabPanel("Replicates",
@@ -904,7 +914,7 @@
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),	
 				#selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
 				numericInput("replicate_delRT", "RT tolerance window of peaks caused by the same analyte across replicate samples [s]", 30),
-				numericInput("replicate_IS_dInt", "Intensity tolerance X (log 10 scale, 10^X):", 9)
+				numericInput("replicate_IS_dInt", "Absolute log intensity tolerance X (log 10 scale, 10^X):", 9)
 			),	
             # ALLIGNMENT #######################################################
             #tabPanel("Alignment",
@@ -1037,7 +1047,7 @@
 				#tags$h5("Blind subtraction:"),
 				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
 				HTML('<hr noshade="noshade" />'),
-				numericInput("blind_threshold", "Intensity threshold ratio sample/blind <", 100),
+				numericInput("blind_threshold", "Factor by which the sample peak intensity must exceed the blank/blind peak intensity to not be subtracted/marked", 100),
 				numericInput("blind_dmz", "+/- m/z tolerance ...", 3), 
                 selectInput("blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
                 numericInput("blind_drt", "RT tolerance [s]:", 60),       

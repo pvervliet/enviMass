@@ -10,7 +10,7 @@
 	mz_neg<-c();
 	RT_neg<-c();
     if(any(measurements_incl[,"Mode"]=="positive")){ # positive ##########################
-      if(logfile$parameters$recal_use=="Internal standards"){
+      if(logfile$parameters$recal_use_pos=="Internal standards"){
         if(file.exists(file.path(logfile[[1]],"results","intmass_pos_IS"))){
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="intmass_pos_IS")){rm(intmass_pos_IS,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="intmass_pos_IS")){rm(intmass_pos_IS)}
@@ -19,7 +19,7 @@
 			RT_pos<-c(RT_pos,intmass_pos_IS[,2]);
 		}else{cat("\n IS recalibration masses not found ... recalibration skipped!")}
 	  }
-      if(logfile$parameters$recal_use=="Target compounds"){
+      if(logfile$parameters$recal_use_pos=="Target compounds"){
         if(file.exists(file.path(logfile[[1]],"results","intmass_pos_target"))){	  
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="intmass_pos_target")){rm(intmass_pos_target,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="intmass_pos_target")){rm(intmass_pos_target)}
@@ -28,7 +28,7 @@
 			RT_pos<-c(RT_pos,intmass_pos_target[,2]);
 		}else{cat("\n Target recalibration masses not found ... recalibration skipped!")}      
 	  }
-      if(logfile$parameters$recal_use=="both"){
+      if(logfile$parameters$recal_use_pos=="both"){
         if(file.exists(file.path(logfile[[1]],"results","intmass_pos_IS"))){	  
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="intmass_pos_IS")){rm(intmass_pos_IS,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="intmass_pos_IS")){rm(intmass_pos_IS)}
@@ -48,7 +48,7 @@
       RT_pos<-c(as.numeric(as.character(RT_pos)));
     }
     if(any(measurements_incl[,"Mode"]=="negative")){ # negative ##########################
-      if(logfile$parameters$recal_use=="Internal standards"){
+      if(logfile$parameters$recal_use_neg=="Internal standards"){
         if(file.exists(file.path(logfile[[1]],"results","intmass_neg_IS"))){	
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="intmass_neg_IS")){rm(intmass_neg_IS,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="intmass_neg_IS")){rm(intmass_neg_IS)}				
@@ -57,7 +57,7 @@
 			RT_neg<-c(RT_neg,intmass_neg_IS[,2]);
 		}else{cat("\n IS recalibration masses not found ... recalibration skipped!")}		
       }
-      if(logfile$parameters$recal_use=="Target compounds"){
+      if(logfile$parameters$recal_use_neg=="Target compounds"){
         if(file.exists(file.path(logfile[[1]],"results","intmass_neg_target"))){		  
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="intmass_neg_target")){rm(intmass_neg_target,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="intmass_neg_target")){rm(intmass_neg_target)}				
@@ -66,7 +66,7 @@
 			RT_neg<-c(RT_neg,intmass_neg_target[,2]);
 		}else{cat("\n target recalibration masses not found ... recalibration skipped!")}   		
       }
-      if(logfile$parameters$recal_use=="both"){
+      if(logfile$parameters$recal_use_neg=="both"){
         if(file.exists(file.path(logfile[[1]],"results","intmass_neg_IS"))){		  
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="intmass_neg_IS")){rm(intmass_neg_IS,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="intmass_neg_IS")){rm(intmass_neg_IS)}				
@@ -90,15 +90,15 @@
 		  if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		  if(any(objects()=="peaklist")){rm(peaklist)}
 		  load(file=file.path(logfile[[1]],"peaklist","",as.character(measurements_incl[i,"ID"])),envir=as.environment(".GlobalEnv"));   
-		  if( (measurements_incl[i,"Mode"]=="positive") & (measurements_incl[i,"include"]=="TRUE") ){  
+		  if( (measurements_incl[i,"Mode"]=="positive") & (measurements_incl[i,"include"]=="TRUE") & (logfile$parameters$recal_include_pos=="TRUE") ){  
 			if( length(mz_pos)>0 ){
 				  peak_recal<-recalib(
 						peaklist=peaklist[,c("m/z","max_int","RT")],
 						mz=mz_pos,
-						tolmz=as.numeric(logfile$parameters$recal_dmz),
-						ppm=as.character(logfile$parameters$recal_ppm),
+						tolmz=as.numeric(logfile$parameters$recal_dmz_pos),
+						ppm=as.character(logfile$parameters$recal_ppm_pos),
 						ret=RT_pos,
-						tolret=as.numeric(logfile$parameters$recal_drt),
+						tolret=as.numeric(logfile$parameters$recal_drt_pos),
 						what="mass",
 						one=TRUE,
 						knot=5,
@@ -106,7 +106,7 @@
 						path_1=file.path(logfile[[1]],"pics",paste("recal_",as.character(measurements_incl[i,"ID"]),sep="")),
 						path_2=file.path(logfile[[1]],"results","recalibration",paste("recal_gam_",as.character(measurements_incl[i,"ID"]),sep="")),
 						plot_ppm=c(2,5,10),
-						max_recal=as.numeric(logfile$parameters$recal_maxdmz)
+						max_recal=as.numeric(logfile$parameters$recal_maxdmz_pos)
 					)
 					if(length(peak_recal)>1){
 					  peaklist[,c(12,13,14)]<-peak_recal
@@ -131,15 +131,15 @@
 				,"recal"]<-TRUE;
 			}
 		  }
-		  if( (measurements_incl[i,"Mode"]=="negative")  & (measurements_incl[i,"include"]=="TRUE") ){
+		  if( (measurements_incl[i,"Mode"]=="negative") & (measurements_incl[i,"include"]=="TRUE") & (logfile$parameters$recal_include_neg=="TRUE") ){
 			if(length(mz_neg)>0){
 				peak_recal<-recalib(
 					peaklist=peaklist[,c(1,4,5)],
 					mz=mz_neg,
-					tolmz=as.numeric(logfile$parameters$recal_dmz),
-					ppm=as.character(logfile$parameters$recal_ppm),
+					tolmz=as.numeric(logfile$parameters$recal_dmz_neg),
+					ppm=as.character(logfile$parameters$recal_ppm_neg),
 					ret=RT_neg,
-					tolret=as.numeric(logfile$parameters$recal_drt),
+					tolret=as.numeric(logfile$parameters$recal_drt_neg),
 					what="mass",
 					one=TRUE,
 					knot=5,
@@ -147,7 +147,7 @@
 					path_1=file.path(logfile[[1]],"pics",paste("recal_",as.character(measurements_incl[i,"ID"]),sep="")),
 					path_2=file.path(logfile[[1]],"results","recalibration",paste("recal_gam_",as.character(measurements_incl[i,"ID"]),sep="")),
 					plot_ppm=c(2,5,10),
-					max_recal=as.numeric(logfile$parameters$recal_maxdmz)					  
+					max_recal=as.numeric(logfile$parameters$recal_maxdmz_neg)					  
 				)
 				if(length(peak_recal)>1){
 				  peaklist[,c(12,13,14)]<-peak_recal

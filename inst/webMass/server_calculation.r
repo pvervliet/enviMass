@@ -80,7 +80,7 @@ maincalc<-reactive({
 			})	
 			if(class(try_flow)=="try-error"){
 				do_flow<<-1000
-				try_flow_message<-paste("Workflow problem encoutered at project node ",at_node,". Revise settings or report the problem.",sep="");
+				try_flow_message<-paste0("Workflow problem encoutered at project node ",at_node,". Revise settings or report the problem. Details: ",try_flow[1]);
 				shinyjs:::info(try_flow_message);			
 			}
 		}
