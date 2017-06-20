@@ -1709,11 +1709,44 @@ if(logfile$version<3.27){
 	################################################################################################	
 	logfile$version<<-3.27
 	################################################################################################		
-	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
 	################################################################################################
 	
 }
+
+
+if(logfile$version<3.28){
+
+	cat("\n Updating to version 3.28 ...")
+	################################################################################################	
+	IDs<-list.files(file.path(logfile[["project_folder"]],"peaklist"))
+	if(length(IDs)>0){
+		for(i in 1:length(IDs)){
+			load(file=file.path(logfile[["project_folder"]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+			peaklist[,"keep_2"]<-Inf;
+			save(peaklist,file=file.path(logfile[["project_folder"]],"peaklist",as.character(IDs[i])))
+			rm(peaklist)
+		}
+	}
+	enviMass:::workflow_set(
+		down="peakpicking",
+		except="peakpicking",
+		down_TF=c("TRUE","FALSE"),
+		check_node=TRUE, 	
+		single_file=FALSE
+	)
+	shinyjs:::info(paste0("Sample peaklists now contain intensity ratios above blind - please press the Calculate button any time soon to make these changes permanent to your project results (entails a project recalculation except peakpicking)!"));
+	################################################################################################	
+	logfile$version<<-3.28
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+
 
 ########################################################################
 

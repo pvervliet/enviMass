@@ -14,7 +14,7 @@ if(file.exists(file.path(as.character(logfile[[1]]),"results","componentization"
 if( 
 	file.exists(file.path(logfile[[1]],"results","profileList_pos")) 
 ){
-#system.time({
+system.time({
 	##############################################################################	
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="profileList_pos")){rm(profileList_pos)}	
@@ -257,120 +257,6 @@ if(
 			close(pBar)			
 			if(any(objects()=="EIC_pairs")){rm(EIC_pairs)}	
 		}
-		##########################################################################				
-		# (2.2) INSERT EIC NON-LINKS #############################################
-		if(FALSE){
-			forIDs<-profileList_pos[["sampleID"]]
-			for_files<-list.files(file.path(logfile[[1]],"results","componentization","EIC_corr"))
-			keep<-match(forIDs,for_files) # which files are available?
-			if(any(is.na(keep))){cat("\n Just note: not all files found in profiles have EIC correlation results (2). \n")}
-			TRUE_IDs<-(measurements$ID[measurements$adducts=="TRUE"]) # for files which have run through that step
-			keep2<-match(forIDs,for_files)
-			forIDs<-forIDs[!is.na(keep) & !is.na(keep2)]
-			not_found2<-0
-			inserted2<-0
-			if(length(forIDs)>0){
-				pBar <- txtProgressBar(min = 0, max = length(forIDs), style = 3)
-				for(i in 1:length(forIDs)){
-					setTxtProgressBar(pBar, i, title = NULL, label = NULL)
-					load(file=file.path(logfile[[1]],"results","componentization","EIC_corr",forIDs[i]))
-					EIC_pairs<-EIC_pairs[EIC_pairs[,4]<logfile$parameters$EICor_mincor,,drop=FALSE]		
-					if(length(EIC_pairs[,1])==0){next}
-					# find profiles for first peak
-					get1<-cbind(
-						rep(as.numeric(forIDs[i]),length(EIC_pairs[,1])),EIC_pairs[,1] # first column sorted correctly
-					)
-					found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
-					# find profiles for second peak
-					get2<-cbind(
-						rep(as.numeric(forIDs[i]),length(EIC_pairs[,2])),EIC_pairs[,2] # second column requires sorting
-					)
-					found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
-					for(j in 1:length(found1)){ # insert links
-						# insert PROFILE LINKS #######################################
-						if(found1[j]==0){not_found2<-(not_found2+1);next} # e.g., peak blind-removed 
-						if(found2[j]==0){not_found2<-(not_found2+1);next}			
-						# (1) insert link to second profile for the first profile
-						prof1<-peaks[found1[j],"profileIDs"][[1]]
-						prof2<-peaks[found2[j],"profileIDs"][[1]]
-						# profiles have to have positive entries from above
-						if(profileList_pos[["index_prof"]][prof1,"links"]==0) next
-						if(profileList_pos[["index_prof"]][prof2,"links"]==0) next
-						inserted2<-(inserted2+1);
-						# enable check ... pairs musst have very similar retention times
-						if(FALSE){
-							cat("\n");
-							cat(peaks[found1[j],"RT"]);cat(" - ")
-							cat(peaks[found2[j],"RT"])
-						}
-						if(profileList_pos[["index_prof"]][prof1,"profile_ID"]!=prof1){stop("\nComponentization: debug me, #1!")}				
-						at_entry<-profileList_pos[["index_prof"]][prof1,"links"]
-						#if( # no non-link required if no link inserted before
-						#	!any(links_profiles_pos[[at_entry]]$EIC[,1]==prof2) 
-						#){ next }	
-						here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof2)
-						links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]<-(links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]+1)
-						# (2) insert link to first profile for the second profile
-						if(profileList_pos[["index_prof"]][prof2,4]!=prof2){stop("\nComponentization: debug me, #1!")}				
-						at_entry<-profileList_pos[["index_prof"]][prof2,"links"] # must exist already - see above no non-link "next"
-						# GAPPED?
-						here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
-						links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]<-(links_profiles_pos[[at_entry]][["EIC"]][here,"no-link counts"]+1)		
-						# insert PEAK LINKS ? ########################################
-					}
-				}
-				close(pBar)
-				if(any(objects()=="EIC_pairs")){rm(EIC_pairs)}
-		}
-		}
-		##########################################################################				
-		# (2.3) INSERT CO-OCCURENCES #############################################
-		if(FALSE){
-			if(length(forIDs)>0){ # from above
-				pBar <- txtProgressBar(min = 0, max = length(forIDs), style = 3)
-				for(i in 1:length(links_profiles_pos)){
-					setTxtProgressBar(pBar, i, title = NULL, label = NULL)
-					if(dim(links_profiles_pos[[i]]$EIC)[1]>0){
-						for(m in 1:dim(links_profiles_pos[[i]]$EIC)[1]){
-							if(links_profiles_pos[[i]]$EIC[m,c("ref_1")]!=0) next; # done via linked profile
-							prof1<-as.numeric(names(links_profiles_pos)[i])
-							prof2<-links_profiles_pos[[i]]$EIC[m,"linked profile"]
-							del1<-profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]]
-							del2<-profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]]
-							summed<-sum(links_profiles_pos[[i]]$EIC[m,c("link counts","no-link counts")])
-							at_entry<-profileList_pos[["index_prof"]][prof2,"links"]
-							here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
-							# which peaks co-occur in the same sample?
-							these<-profileList_pos[["peaks"]][
-								profileList_pos[["index_prof"]][prof1,"start_ID"]:profileList_pos[["index_prof"]][prof1,"end_ID"]
-							,"sampleIDs"]
-							those<-profileList_pos[["peaks"]][
-								profileList_pos[["index_prof"]][prof2,"start_ID"]:profileList_pos[["index_prof"]][prof2,"end_ID"]
-							,"sampleIDs"]
-							matched<-match(these,those)
-							links_profiles_pos[[i]]$EIC[m,"ref_1"]<-sum(!is.na(matched))
-							RT_1<-(profileList_pos[["peaks"]][
-									(profileList_pos[["index_prof"]][prof1,"start_ID"]:profileList_pos[["index_prof"]][prof1,"end_ID"])
-									[!is.na(matched)]
-								,"RT"])
-							RT_2<-(profileList_pos[["peaks"]][
-									(profileList_pos[["index_prof"]][prof2,"start_ID"]:profileList_pos[["index_prof"]][prof2,"end_ID"])
-									[matched[!is.na(matched)]]
-								,"RT"])
-							del_RT<-abs(RT_1-RT_2)
-							links_profiles_pos[[i]]$EIC[m,"ref_2"]<-sum(del_RT<=as.numeric(logfile$parameters$isotop_rttol))
-							links_profiles_pos[[i]]$EIC[m,"ref_3"]<-sum(del_RT<=as.numeric(logfile$parameters$adducts_rttol))
-							# insert values in other linked profile
-							at_entry<-profileList_pos[["index_prof"]][prof2,"links"]
-							here<-which(links_profiles_pos[[at_entry]][["EIC"]][,"linked profile"]==prof1)
-							links_profiles_pos[[at_entry]]$EIC[here,c("ref_1","ref_2","ref_3")]<-links_profiles_pos[[i]]$EIC[m,c("ref_1","ref_2","ref_3")]
-						}
-					}
-				}
-				close(pBar)
-			}
-		}
-		##########################################################################
 	}
 	# (3) INSERT ISOTOPOLOGUE LINKS ##############################################
 	if(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes"){	
@@ -721,43 +607,102 @@ if(
 	}
 	##############################################################################	
 
+	for_which<-"ISTD"	# add to logfile$parameters
 	##############################################################################	
 	# (6) filter #################################################################
 	# (6.1) by ISTD - first get their characteristics on delRT and correl. #######
 	fil1<-enviMass:::analyseA_links_profiles(
-			links_profiles=links_profiles_pos, profileList=profileList_pos, 
+			links_profiles = links_profiles_pos, 
+			profileList = profileList_pos, 
 			min_rat=.7, 	# isot, adduc: "link counts"/"ref_1"
 			min_count=.4, 	# isot, adduc:  "ref_1">=(min_count*number_samples)
-			for_which="ISTD"
+			perc =.9,
+			for_which=for_which
 		)
 	# clean isotopologues ########################################################
-	cut_delRT_isot<-median(fil1$delRT_isot)
-	cut_cor_isot<-(boxplot.stats(c(fil1$int_cor_isot))$conf[1])
-	links_profiles_pos<-enviMass:::cleanA_links_profiles(
-		links_profiles=links_profiles_pos, profileList=profileList_pos,
-		cut_delRT_isot = cut_delRT_isot, 
-		cut_cor_isot = cut_cor_isot, 
-		cut_frac_iso = .9
-	)
+	#cut_delRT_isot<-median(fil1$delRT_isot)
+	cut_delRT_isot<-boxplot.stats(c(fil1$delRT_isot))$stats[5]
+	cut_cor_isot<-(boxplot.stats(c(fil1$int_cor_isot))$stats[1])
+	if(!is.na(cut_delRT_isot)&!is.na(cut_cor_isot)){
+		links_profiles_pos<-enviMass:::cleanA_links_profiles(
+			links_profiles = links_profiles_pos, 
+			profileList = profileList_pos,
+			cut_delRT_isot = cut_delRT_isot, 
+			cut_cor_isot = cut_cor_isot, 
+			cut_frac_iso = .85
+		)
+	}else{cat("\n No isotopologue linkage filtering feasible")}
 	# clean adducts ##############################################################
-	cut_delRT_adduc<-median(fil1$delRT_adduc)
-	links_profiles_pos<-enviMass:::cleanB_links_profiles( 
-		links_profiles=links_profiles_pos, profileList=profileList_pos,
-		cut_delRT_adduc = cut_delRT_adduc, 
-		cut_frac_adduc = .9
-	)
+	#cut_delRT_adduc<-median(fil1$delRT_adduc)
+	cut_delRT_adduc<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
+	if(!is.na(cut_delRT_adduc)){
+		links_profiles_pos<-enviMass:::cleanB_links_profiles( 
+			links_profiles = links_profiles_pos, 
+			profileList = profileList_pos,
+			cut_delRT_adduc = cut_delRT_adduc, 
+			cut_frac_adduc = .85
+		)
+	}else{cat("\n No adduct linkage filtering feasible")}
 	# (6.2) by ISTD - check their EIC correlation ################################
 	fil2<-enviMass:::analyseB_links_profiles(
-			links_profiles=links_profiles_pos,  
+			links_profiles = links_profiles_pos,  
 			min_count=.4, 	# isot, adduc:  "ref_1">=(min_count*number_samples)
-			for_which="ISTD"
+			for_which=for_which
 		)
 	use_EIC<-c(fil2$EIC_cor_isot,fil2$EIC_cor_adduc)
 	cut_EIC<-(boxplot.stats(use_EIC)$stats[1])
+	cut_delRT_EIC<-max(cut_delRT_isot,cut_delRT_adduc)
+	if(!is.na(cut_EIC)&!is.na(cut_delRT_EIC)){	
+		links_profiles_pos<-cleanC_links_profiles(
+			links_profiles = links_profiles_pos, 
+			profileList = profileList_pos,
+			cut_EIC = cut_EIC, 
+			cut_frac_EIC = .9, 
+			cut_delRT_EIC = cut_delRT_EIC
+		)
+	}else{cat("\n No EIC linkage filtering feasible")}
+	# (6.3) Clean lists ############################################################
+	for(n in 1:length(links_profiles_pos)){
+		is_empty<-analyseC_links_profiles(links_profiles_pos, at_entry = n)
+		if(is_empty){
+			links_profiles_pos[[n]]<-NA
+			profileList_pos[["index_prof"]][as.numeric(names(links_profiles_pos)[n]),"links"]<-0
+		}
+	}
+	##############################################################################		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	res<-analyseC_links_profiles(links_profiles = links_profiles_pos, profileList = profileList_pos, for_which="all")
+	
+	
+	
+	
+	
+	
 
 
+	hist(res[res[,"cor"]>.8,"del_m/z"],breaks=100000,xlim=c(0,100))	
+	
+	hist(res[res[,"cor"]>.95,"del_m/z"],breaks=200000,xlim=c(0.95,1.01))
 
-#})	
+	
+	
+	
+	
+	hist(res[res[,"cor"]>.95,"int_rat"],breaks=1000,xlim=c(0,20))
+	
+	
+	
+})	
 
 	##############################################################################
 	# save! ######################################################################

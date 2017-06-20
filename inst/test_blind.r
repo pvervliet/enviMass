@@ -38,8 +38,8 @@ if(
 			############################################################
 			# check peaks found in blinds = must be present in #########
 			# ANY blind measurement	####################################
-			if(any(peaks_sam[,colnames(peaks_sam)=="keep_2"]==0)){
-				those<-which(peaks_sam[,colnames(peaks_sam)=="keep_2"]==0)
+			if(any(peaks_sam[,colnames(peaks_sam)=="keep_2"]!=Inf)){
+				those<-which(peaks_sam[,colnames(peaks_sam)=="keep_2"]!=Inf)
 				if(length(those)>sam){
 					those<-sample(those,sam,replace=FALSE)
 				}

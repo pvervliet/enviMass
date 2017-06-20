@@ -42,22 +42,24 @@ exported_2<-reactive({
 			(peaklistID!=0)&(file.exists(file.path(logfile[[1]],"peaklist",as.character(peaklistID))))
 		){
 			load(file=file.path(logfile[[1]],"peaklist",as.character(peaklistID)),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-			peaklist<-peaklist[
-				peaklist[,colnames(peaklist)=="keep"]==1
-			,,drop=FALSE]
-			peaklist<-peaklist[
-				peaklist[,colnames(peaklist)=="keep_2"]==1
-			,,drop=FALSE]		
-			peaklist<-peaklist[,c(12,13,14),drop=FALSE]
+			#peaklist<-peaklist[
+			#	peaklist[,colnames(peaklist)=="keep"]==1
+			#,,drop=FALSE]
+			#peaklist<-peaklist[
+			#	peaklist[,colnames(peaklist)=="keep_2"]>=as.numeric(logfile$parameters$blind_threshold)
+			#,,drop=FALSE]		
+			peaklist<-peaklist[,-c(8,9,11),drop=FALSE]
+			colnames(peaklist)<-c("m/z","var_m/z","max_int","sum_int","RT","minRT","maxRT","peak_ID", 
+				"m/z_corr","int_corr","RT_corr","in_replicates","int_ratio_blind" )
 			write.csv(
 				peaklist,
 				file=file.path(logfile[[1]],"exports",paste("peaklist",as.character(peaklistID),".csv",sep="")),
 				row.names=FALSE
 			);
 			rm(peaklist)	
-			return("Latest export finished")	
+			return("Peaklist export finished")	
 		}else{
-			return("No export conducted")
+			return("No peaklist export conducted")
 		}
 	}
 })	

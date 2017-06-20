@@ -469,7 +469,7 @@
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
 								if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 5")} # TEST
-								if(peaklist[these[j],"keep_2"]==0){
+								if(peaklist[these[j],"keep_2"]<as.numeric(logfile$parameters$blind_threshold)){
 									those[j]<-paste0(those[j],"*")
 									len_blind<-(len_blind+1)
 								}
@@ -484,7 +484,7 @@
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
 								if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 6")} # TEST
-								if(peaklist[these[j],"keep_2"]==0){
+								if(peaklist[these[j],"keep_2"]<as.numeric(logfile$parameters$blind_threshold)){
 									those[j]<-paste0(those[j],"*")
 									len_blind<-(len_blind+1)
 								}
@@ -499,7 +499,7 @@
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
 								if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 7")} # TEST
-								if(peaklist[these[j],"keep_2"]==0){
+								if(peaklist[these[j],"keep_2"]<as.numeric(logfile$parameters$blind_threshold)){
 									those[j]<-paste0(those[j],"*")
 									len_blind<-(len_blind+1)
 								}

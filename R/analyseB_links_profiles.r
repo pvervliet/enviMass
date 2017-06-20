@@ -28,6 +28,7 @@ analyseB_links_profiles<-function(links_profiles, min_count=.4, for_which="ISTD"
 	if(for_which=="all"){
 		for_profs<-(1:length(links_profiles))
 	}	
+	################################################################
 	EIC_cor_isot<-c()
 	EIC_cor_adduc<-c()
 	for(n in 1:length(for_profs)){
@@ -41,7 +42,7 @@ analyseB_links_profiles<-function(links_profiles, min_count=.4, for_which="ISTD"
 			if(any(!is.na(those))){
 				for(i in 1:length(those)){
 					if(is.na(those[i])) next
-					if(links_profiles[[for_profs[n]]]$isot[i,"use"]==0) next
+					if(links_profiles[[for_profs[n]]]$EIC[those[i],"use"]==0) next # regardless of whether $isot->use==1
 					EIC_cor_isot<-c(EIC_cor_isot,links_profiles[[for_profs[n]]]$EIC_cor[[those[i]]])
 				}
 			}
@@ -52,7 +53,7 @@ analyseB_links_profiles<-function(links_profiles, min_count=.4, for_which="ISTD"
 			if(any(!is.na(those))){
 				for(i in 1:length(those)){
 					if(is.na(those[i])) next
-					if(links_profiles[[for_profs[n]]]$adduc[i,"use"]==0) next
+					if(links_profiles[[for_profs[n]]]$EIC[those[i],"use"]==0) next  # regardless of whether $adduc->use==1
 					EIC_cor_adduc<-c(EIC_cor_adduc,links_profiles[[for_profs[n]]]$EIC_cor[[those[i]]])
 				}
 			}

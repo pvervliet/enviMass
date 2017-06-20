@@ -156,8 +156,9 @@
 				colnames(peaklist)[12]<-"m/z_corr";
 				colnames(peaklist)[13]<-"int_corr";
 				colnames(peaklist)[14]<-"RT_corr";      
-				keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
-				peaklist<-cbind(peaklist,keep,keep) # replicate & blind indicators
+				keep1<-rep(1,length(peaklist[,1])) 		# replicates, 1 == TRUE
+				keep2<-rep(Inf,length(peaklist[,1])) 	# blind indicators, Inf == not affected
+				peaklist<-cbind(peaklist,keep1,keep2) 	
 				colnames(peaklist)[15]<-"keep";
 				colnames(peaklist)[16]<-"keep_2";
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,"ID"])));   

@@ -58,6 +58,7 @@ shinyUI(
 	################################################################################
 	################################################################################
 		useShinyjs(),
+		useToastr(),
 		##############################################################################
 		conditionalPanel( 
 			condition = "output.textit == 'Waiting...'", 
@@ -67,7 +68,7 @@ shinyUI(
 					<font color="#FFFFFF" size="6">
 					&nbsp enviMass v3.2
 					</font><br/></p>'),
-					windowTitle="enviMass v3.2"
+					windowTitle="enviMass v3.28"
 				)
 		),
 		sidebarLayout(

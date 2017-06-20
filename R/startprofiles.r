@@ -145,7 +145,7 @@ startprofiles<-function(
 			}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
 			if(logfile$parameters$blind_omit=="yes"){
-				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]==1),,drop=FALSE]
+				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]>=as.numeric(logfile$parameters$blind_threshold)),,drop=FALSE]
 			}
 			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE] # replicates
 			if(length(peaklist[,1])==0){next}
@@ -184,7 +184,7 @@ startprofiles<-function(
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),
 				verbose=FALSE,envir=as.environment(".GlobalEnv"));
 			if(logfile$parameters$blind_omit=="yes"){
-				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]==1),,drop=FALSE]
+				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]>=as.numeric(logfile$parameters$blind_threshold)),,drop=FALSE]
 			}
 			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE] # replicates
 			if(length(peaklist[,1])==0){next}		

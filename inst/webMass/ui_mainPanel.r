@@ -607,7 +607,7 @@
 					fluidRow(
 						column(width = 2, radioButtons("recal", "Include?", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Theoretical masses of internal standard compounds are used to correct systematic offsets in measured masses."),
+							tags$p(align="justify","Theoretical masses of internal standard compounds are used to correct systematic offsets in measured masses. This step can also be included separately for the different ionization modes in the Settings -> Mass recalibration tab."),
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/recalibration.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),
@@ -888,7 +888,7 @@
               HTML('<hr noshade="noshade" />'),
               div(style = widget_style3,
 				tags$h4("Positive ionization:"),
-                selectInput("recal_include_pos", "Inlude mass recalibration for positive ionization ode files?", c("Yes"="TRUE","No"="FALSE"),"TRUE",multiple=FALSE),                
+                selectInput("recal_include_pos", "Inlude mass recalibration for positive ion. mode files?", c("Yes"="TRUE","No"="FALSE"),"TRUE",multiple=FALSE),                
                 selectInput("recal_use_pos", "Reference compounds:", c("Internal standards","Target compounds","both"),"Internal standards",multiple=FALSE),                
                 numericInput("recal_dmz_pos", "+/- m/z tolerance ...", 3),            
                 numericInput("recal_maxdmz_pos", "Maximum allowable m/z correction ...", 30),  				
@@ -897,7 +897,7 @@
               ),
               div(style = widget_style3,
 				tags$h4("Negative ionization:"),
-                selectInput("recal_include_neg", "Inlude mass recalibration for positive ionization ode files?", c("Yes"="TRUE","No"="FALSE"),"TRUE",multiple=FALSE),                
+                selectInput("recal_include_neg", "Inlude mass recalibration for negative ion. mode files?", c("Yes"="TRUE","No"="FALSE"),"TRUE",multiple=FALSE),                
                 selectInput("recal_use_neg", "Reference compounds:", c("Internal standards","Target compounds","both"),"Internal standards",multiple=FALSE),                
                 numericInput("recal_dmz_neg", "+/- m/z tolerance ...", 3),            
                 numericInput("recal_maxdmz_neg", "Maximum allowable m/z correction ...", 30),  				
@@ -1425,11 +1425,34 @@
 							column(4,tags$h5("% of peaks removed by replicate filter: "),textOutput('file_repl_rem'))										
 						),					
 						HTML('<hr noshade="noshade" />'),
-						imageOutput("recal_pic", height="auto"),
+						textOutput('showblank'),
+						conditionalPanel(			
+							condition = "output.showblank == 'Blank/blind peak tagging (subtraction) results:'",	
+							plotOutput("blind_boxplot", height = "200px"),
+							radioButtons("blind_boxplot_log", "Plot intensity ratio on log scale?", c("no"="FALSE","yes"="TRUE"),inline=TRUE),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')								
+						),
 						HTML('<hr noshade="noshade" />'),
-						imageOutput("peakhist_pic", height="auto"),
+						textOutput('showrecal'),
+						conditionalPanel(			
+							condition = "output.showrecal == 'Mass recalibration results:'",	
+							imageOutput("recal_pic", height="auto"),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/recalibration.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')
+						),
 						HTML('<hr noshade="noshade" />'),
-						imageOutput("LOD_pic", height="auto"),
+						textOutput('showintensitydistrib'),
+						conditionalPanel(			
+							condition = "output.showintensitydistrib == 'Centroid & peak intensity distribution:'",	
+							imageOutput("peakhist_pic", height="auto"),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peakpicking.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')	
+						),
+						HTML('<hr noshade="noshade" />'),
+						textOutput('showLOD'),
+						conditionalPanel(			
+							condition = "output.showLOD == 'LOD interpolation results:'",									
+							imageOutput("LOD_pic", height = "280px"),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/lod.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')	
+						),
 						HTML('<hr noshade="noshade" />'),
 						div(style = widget_style3,
 							bsButton("expo_peaklist","Export peaklist in .csv format",style="info"),
@@ -1437,7 +1460,8 @@
 							bsPopover("expo_peaklist", 
 								title = "Export peaklist of above selected file",
 								content = "Export as peaklist.csv to the export folder of this project, with three columns of mass, intensity and RT. Peaklists are affected by blind and replicate filters contained in the workflow.", 
-								placement = "right", trigger = "hover")),
+								placement = "right", trigger = "hover"),
+								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peaklist_export.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')),
 						HTML('<hr noshade="noshade" />')		
 					)
 				),

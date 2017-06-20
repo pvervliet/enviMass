@@ -3,6 +3,7 @@
 ##############################################################################
 observe({
     input$sel_meas
+	input$blind_boxplot_log
 	if(!is.na(isolate(input$sel_meas))){
     if(isolate(input$sel_meas)!=0){
 		##########################################################################	
@@ -16,7 +17,7 @@ observe({
 				load(file=file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"),verbose=FALSE);			
 				output$file_peak_number<-renderText(as.character(length(peaklist[,1])));	
 				blind_rem<-round(
-					(sum(peaklist[,colnames(peaklist)=="keep_2"]==0))/length(peaklist[,1])*100
+					(sum(peaklist[,colnames(peaklist)=="keep_2"]<as.numeric(logfile$parameters$blind_threshold)))/length(peaklist[,1])*100
 				,digits=3)
 				output$file_blind_rem<-renderText(as.character(blind_rem));
 				repl_rem<-round(
@@ -28,39 +29,76 @@ observe({
 				cat("\n no peaklist for processing view found")
 			}
 			##########################################################################		
-			pics<-list.files(file.path(logfile[[1]],"pics"))
+			# blind/blank peak tagging ###############################################
+			if(
+				(logfile$workflow[names(logfile$workflow)=="blind"]=="yes") & (measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Type"]!="blank")
+			){			
+				output$showblank<-renderText("Blank/blind peak tagging (subtraction) results:")			
+				load(file=file.path(logfile[[1]],"peaklist",as.character(isolate(input$sel_meas))),verbose=FALSE);
+				if(isolate(input$blind_boxplot_log)=="TRUE"){
+					output$blind_boxplot <- renderPlot({				
+						par(mar=c(4.2,4.2,0.8,0.8))
+						boxplot(log10(peaklist[peaklist[,"keep_2"]<Inf,"keep_2"]),horizontal=TRUE)
+						title(xlab=expression(log[10]*paste(" intensity ratio sample vs. blind",sep=" ")))
+					})
+				}else{
+					output$blind_boxplot <- renderPlot({		
+						par(mar=c(4.2,4.2,0.8,0.8))					
+						boxplot(peaklist[peaklist[,"keep_2"]<Inf,"keep_2"],horizontal=TRUE)
+						title(xlab="Intensity ratio sample vs. blind")
+					})				
+				}
+				rm(peaklist)				
+			}else{
+				output$showblank<-renderText("No blank/blind subtraction results available.")
+			}
+			##########################################################################
+			pics<-list.files(file.path(logfile[[1]],"pics"))			
 			# recalibration ##########################################################
 			if(
 				any(pics==paste("recal_",as.character(isolate(input$sel_meas)),sep="")) & (logfile$workflow[names(logfile$workflow)=="recal"]=="yes")
 			){
+				output$showrecal<-renderText("Mass recalibration results:")
 				expr1<-list(src=file.path(logfile[[1]],"pics",paste("recal_",as.character(isolate(input$sel_meas)),sep="")))
 				output$recal_pic<-renderImage(expr1, deleteFile = FALSE)
 				cat("\n Found recal_pic")
 			}else{
+				output$showrecal<-renderText("No mass recalibration results available.")
 				cat("\n Not found recal_pic")			
 			}
 			##########################################################################
 			# intensity distribution #################################################
 			if(
-				any(pics==paste("peakhist_",as.character(isolate(input$sel_meas)),sep="")) & (logfile$workflow[names(logfile$workflow)=="recal"]=="yes")
+				any(pics==paste("peakhist_",as.character(isolate(input$sel_meas)),sep=""))
 			){			
+				output$showintensitydistrib<-renderText("Centroid & peak intensity distribution:")
 				expr_peakhist<-list(src=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(isolate(input$sel_meas)),sep="")))			
 				output$peakhist_pic<-renderImage(expr_peakhist, deleteFile = FALSE)			
 				cat("\n Found peakhist_ pic")				
 			}else{
+				output$showintensitydistrib<-renderText("No centroid/peak intensity distribution available.")
 				cat("\n Not found peakhist_ pic")				
 			}
 			##########################################################################
 			# LOD  ###################################################################
-			if( file.exists( file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="") ) ) ){
+			if( 
+				file.exists( file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="") ) ) 
+			){
+				output$showLOD<-renderText("LOD interpolation results:")
 				expr_LOD<-list( src=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="")) )
 				output$LOD_pic<-renderImage(expr_LOD, deleteFile = FALSE)	
+				cat("\n LOD pic file found")
 			}else{
+				output$showLOD<-renderText("No LOD interpolation available.")
 				cat("\n LOD pic file not found")
 			}
 			##########################################################################			
 			output$dowhat<-renderText("Processing per file viewed.");	
 		}else{
+			output$showblank<-renderText("FALSE")
+			output$showrecal<-renderText("FALSE")
+			output$showintensitydistrib<-renderText("FALSE")
+			output$showLOD<-renderText("FALSE")
 			output$dowhat<-renderText("Invalid ID chosen to view processing results.");		
 		}
     }
@@ -134,7 +172,7 @@ observe({
 						(peaklist[,"max_int"]<=isolate(10^input$plot_filter_intensity[2])) 
 					)
 					if((length(use_these)>0) & isolate(input$plot_filter_blind)){
-						use_these<-use_these[peaklist[use_these,"keep_2"]==1]
+						use_these<-use_these[peaklist[use_these,"keep_2"]>=as.numeric(logfile$parameters$blind_threshold)]
 					}
 					if((length(use_these)>0) & isolate(input$plot_filter_replicates)){
 						use_these<-use_these[peaklist[use_these,"keep"]==1]

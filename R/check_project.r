@@ -64,57 +64,61 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	# enough compounds for recalibration available? ##############################
 	if(logfile$workflow[names(logfile$workflow)=="recal"]=="yes"){
 		# check for positive mode
-		if(logfile$parameters$recal_use_pos=="Internal standards"){
-			IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			IS<-IS[IS[,"ion_mode"]=="positive",,drop=FALSE]
-			if(length(IS[IS[,"use_for_recalibration"]=="TRUE",1])<10){
-				say<-"Not enough internal standards available for mass recalibration in positive mode ... revise!"    
+		if(logfile$parameters$recal_include_pos=="TRUE"){
+			if(logfile$parameters$recal_use_pos=="Internal standards"){
+				IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+				IS<-IS[IS[,"ion_mode"]=="positive",,drop=FALSE]
+				if(length(IS[IS[,"use_for_recalibration"]=="TRUE",1])<10){
+					say<-"Not enough internal standards available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"   
+				}
 			}
-		}
-		if(logfile$parameters$recal_use_pos=="Target compounds"){
-			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			targets<-targets[targets[,"ion_mode"]=="positive",,drop=FALSE]
-			if(length(targets[targets[,"use_for_recalibration"]=="TRUE",1])<10){
-				say<-"Not enough target compounds available for mass recalibration in positive mode ... revise!"    
+			if(logfile$parameters$recal_use_pos=="Target compounds"){
+				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+				targets<-targets[targets[,"ion_mode"]=="positive",,drop=FALSE]
+				if(length(targets[targets[,"use_for_recalibration"]=="TRUE",1])<10){
+					say<-"Not enough target compounds available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"    
+				}
 			}
-		}
-		if(logfile$parameters$recal_use_pos=="both"){
-			IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");	  
-			IS<-IS[IS[,"ion_mode"]=="positive",,drop=FALSE]
-			a<-length(IS[IS[,8]=="TRUE",1])
-			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");  
-			targets<-targets[targets[,"ion_mode"]=="positive",,drop=FALSE]
-			b<-length(targets[targets[,9]=="TRUE",1])
-			if((a<10)||(b<10)){
-				say<-"Not enough target compounds + internal standards available for mass recalibration in positive mode ... revise!"    
+			if(logfile$parameters$recal_use_pos=="both"){
+				IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");	  
+				IS<-IS[IS[,"ion_mode"]=="positive",,drop=FALSE]
+				a<-length(IS[IS[,8]=="TRUE",1])
+				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");  
+				targets<-targets[targets[,"ion_mode"]=="positive",,drop=FALSE]
+				b<-length(targets[targets[,9]=="TRUE",1])
+				if((a<10)||(b<10)){
+					say<-"Not enough target compounds + internal standards available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"    
+				}
 			}
 		}
 		# check for negative mode
-		if(logfile$parameters$recal_use_neg=="Internal standards"){
-			IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			IS<-IS[IS[,"ion_mode"]=="negative",,drop=FALSE]
-			if(length(IS[IS[,"use_for_recalibration"]=="TRUE",1])<10){
-				say<-"Not enough internal standards available for mass recalibration in negative mode ... revise!"    
+		if(logfile$parameters$recal_include_neg=="TRUE"){		
+			if(logfile$parameters$recal_use_neg=="Internal standards"){
+				IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+				IS<-IS[IS[,"ion_mode"]=="negative",,drop=FALSE]
+				if(length(IS[IS[,"use_for_recalibration"]=="TRUE",1])<10){
+					say<-"Not enough internal standards available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
+				}
 			}
+			if(logfile$parameters$recal_use_neg=="Target compounds"){
+				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+				targets<-targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
+				if(length(targets[targets[,"use_for_recalibration"]=="TRUE",1])<10){
+					say<-"Not enough target compounds available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
+				}
+			}
+			if(logfile$parameters$recal_use_neg=="both"){
+				IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");	  
+				IS<-IS[IS[,"ion_mode"]=="positive",,drop=FALSE]
+				a<-length(IS[IS[,8]=="TRUE",1])
+				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");  
+				targets<-targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
+				b<-length(targets[targets[,9]=="TRUE",1])
+				if((a<10)||(b<10)){
+					say<-"Not enough target compounds + internal standards available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
+				}
+			}	
 		}
-		if(logfile$parameters$recal_use_neg=="Target compounds"){
-			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			targets<-targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
-			if(length(targets[targets[,"use_for_recalibration"]=="TRUE",1])<10){
-				say<-"Not enough target compounds available for mass recalibration in negative mode ... revise!"    
-			}
-		}
-		if(logfile$parameters$recal_use_neg=="both"){
-			IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");	  
-			IS<-IS[IS[,"ion_mode"]=="positive",,drop=FALSE]
-			a<-length(IS[IS[,8]=="TRUE",1])
-			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");  
-			targets<-targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
-			b<-length(targets[targets[,9]=="TRUE",1])
-			if((a<10)||(b<10)){
-				say<-"Not enough target compounds + internal standards available for mass recalibration in negative mode ... revise!"    
-			}
-		}	
 	}
 	##############################################################################
 	# parameters ok? #############################################################

@@ -8,12 +8,13 @@
 #' @param profileList profileList_pos or profileList_neg
 #' @param min_rat
 #' @param min_count
+#' @param perc
 #' @param for_which
 #' 
 #' @details enviMass workflow function. 
 #' 
 
-analyseA_links_profiles<-function(links_profiles, profileList, min_rat=.7, min_count=.4, for_which="ISTD"){
+analyseA_links_profiles<-function(links_profiles, profileList, min_rat=.7, min_count=.4, perc =.9, for_which="ISTD"){
 
 	################################################################
 	num_sam<-(length(profileList[["sampleID"]])*min_count)
@@ -31,6 +32,7 @@ analyseA_links_profiles<-function(links_profiles, profileList, min_rat=.7, min_c
 	if(for_which=="all"){
 		for_profs<-(1:length(links_profiles))
 	}	
+	################################################################
 	delRT_isot<-c()
 	delRT_adduc<-c()
 	int_cor_isot<-c()
@@ -61,8 +63,9 @@ analyseA_links_profiles<-function(links_profiles, profileList, min_rat=.7, min_c
 						[matched[!is.na(matched)]]
 					,"RT"])
 				dRT<-abs(RT_1-RT_2)
-				delRT_isot<-c(delRT_isot,(boxplot.stats(dRT)$conf[2]))				
-				#delRT_isot<-c(delRT_isot,quantile(dRT, c(.99))[[1]])
+				#delRT_isot<-c(delRT_isot,(boxplot.stats(dRT)$stats[5]))
+				#delRT_isot<-c(delRT_isot,(boxplot.stats(dRT)$conf[2]))				
+				delRT_isot<-c(delRT_isot,quantile(dRT, perc)[[1]])
 				int_1<-(profileList[["peaks"]][
 						(profileList[["index_prof"]][prof1,"start_ID"]:profileList[["index_prof"]][prof1,"end_ID"])
 						[!is.na(matched)]
@@ -97,8 +100,9 @@ analyseA_links_profiles<-function(links_profiles, profileList, min_rat=.7, min_c
 						[matched[!is.na(matched)]]
 					,"RT"])
 				dRT<-abs(RT_1-RT_2)
-				delRT_adduc<-c(delRT_adduc,(boxplot.stats(dRT)$conf[2]))
-				#delRT_adduc<-c(delRT_adduc,quantile(dRT, c(.99))[[1]])
+				#delRT_adduc<-c(delRT_adduc,(boxplot.stats(dRT)$stats[5]))
+				#delRT_adduc<-c(delRT_adduc,(boxplot.stats(dRT)$conf[2]))
+				delRT_adduc<-c(delRT_adduc,quantile(dRT, perc)[[1]])
 				int_1<-(profileList[["peaks"]][
 						(profileList[["index_prof"]][prof1,"start_ID"]:profileList[["index_prof"]][prof1,"end_ID"])
 						[!is.na(matched)]

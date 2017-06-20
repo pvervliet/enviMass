@@ -13,6 +13,7 @@ reset_selections<-function(session){
 
 	################################################################
 	updateSelectInput(session,"Ion_mode_Cal",selected = "none")
+	updateSelectInput(session,inputId="Cal_file_set",selected = "none")
 	updateNumericInput(session,"sel_meas_ID", value = 0)
 	updateNumericInput(session,"sel_meas", value = 0)
 	updateSelectInput(session,"Pos_compound_select",selected = "Choose")	

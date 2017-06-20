@@ -53,9 +53,9 @@ if(length(those)>0){
 		at<-(at+1)
 		if(TRUE){
 			png(file=file.path(logfile$project_folder,"results","LOD",paste("plot_LOD_",those[i],".png",sep="")),
-				width = 550, height = 250)
-				par(mar=c(4.2,4.2,0.2,0.2))
-				plot(peaklist[,5],log10(peaklist[,13]),pch=19,cex=0.6,col="darkgrey",xlab="RT",
+				width = 720, height = 250)
+				par(mar=c(4.2,4.2,0.8,0.8))
+				plot(peaklist[,5],log10(peaklist[,13]),pch=19,cex=0.6,col="darkgrey",xlab="RT [s]",
 					ylab=expression(log[10]*paste(" Intensity",sep=" "))
 				)
 				his<-hist(peaklist[,5],breaks=100,plot=FALSE)

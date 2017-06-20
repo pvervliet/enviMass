@@ -33,7 +33,7 @@ for(i in 1:length(IDs)){
 	if(old_samplewise[i]=="TRUE"){next}
 	load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
 	#keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
-	peaklist[,"keep_2"]<-1
+	peaklist[,"keep_2"]<-Inf
 	save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 	rm(peaklist)
 }
@@ -78,16 +78,18 @@ if((logfile$parameters$subtract_pos_bydate=="TRUE") || (logfile$parameters$subtr
 				onlymax=TRUE,
 				int_ratio=int_ratio,
 				int=peaks_sample[,"int_corr"],
-				get_matches=FALSE
+				get_matches=FALSE,
+				get_ratio=TRUE
 			)	
-			peaklist[getit=="TRUE","keep_2"]<-0
+			which_affected<-(peaklist[,"keep_2"]>getit) # if subtraction run over multiple blank files!
+			peaklist[which_affected,"keep_2"]<-getit[which_affected]
 			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(sam_ID)))
 			blank_ID_last<-blank_ID
 			cat(paste("\n",
-				round(sum(peaklist[,"keep_2"]==0)/length(peaklist[,1])*100,digits=1),
+				round(sum(peaklist[,"keep_2"]==Inf)/length(peaklist[,1])*100,digits=1),
 				" % of ",
 				length(peaklist[,1]),
-				" peaks blind filtered (files ",
+				" peaks not found in blank/blind files (files ",
 				sam_ID," vs. ",blank_ID,", ",ionmode[ord[i]],", by date & time)."
 			,sep=""))
 			rm(peaklist);
@@ -124,18 +126,20 @@ if( (logfile$parameters$subtract_pos_byfile=="TRUE") & any(logfile$Positive_subt
 						onlymax=TRUE,
 						int_ratio=int_ratio,
 						int=sam_peaklist[,"int_corr"],
-						get_matches=FALSE
+						get_matches=FALSE,
+						get_ratio=TRUE
 					)	
-					sam_peaklist[getit=="TRUE","keep_2"]<-0
+					which_affected<-(sam_peaklist[,"keep_2"]>getit) # if subtraction run over multiple blank files!
+					sam_peaklist[which_affected,"keep_2"]<-getit[which_affected]
 					rm(peaks_blank)
 				}
 				peaklist<-sam_peaklist
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 				cat(paste("\n",
-					round(sum(peaklist[,colnames(peaklist)=="keep_2"]==0)/length(peaklist[,1])*100,digits=1),
+					round(sum(peaklist[,colnames(peaklist)=="keep_2"]==Inf)/length(peaklist[,1])*100,digits=1),
 					" % of ",
 					length(peaklist[,1]),
-					" peaks blind filtered (selective, file ",
+					" peaks not found in blank/blind file(s) (selective, file ",
 					as.character(IDs[i]),"). "
 				,sep=""))
 				rm(peaklist,sam_peaklist);
@@ -175,18 +179,20 @@ if( (logfile$parameters$subtract_neg_byfile=="TRUE") & any(logfile$Negative_subt
 						onlymax=TRUE,
 						int_ratio=int_ratio,
 						int=sam_peaklist[,"int_corr"],
-						get_matches=FALSE
+						get_matches=FALSE,
+						get_ratio=TRUE
 					)	
-					sam_peaklist[getit=="TRUE",colnames(sam_peaklist)=="keep_2"]<-0
+					which_affected<-(sam_peaklist[,"keep_2"]>getit) # if subtraction run over multiple blank files!
+					sam_peaklist[which_affected,"keep_2"]<-getit[which_affected]
 					rm(peaks_blank)
 				}
 				peaklist<-sam_peaklist
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 				cat(paste("\n",
-					round(sum(peaklist[,colnames(peaklist)=="keep_2"]==0)/length(peaklist[,1])*100,digits=1),
+					round(sum(peaklist[,colnames(peaklist)=="keep_2"]==Inf)/length(peaklist[,1])*100,digits=1),
 					" % of ",
 					length(peaklist[,1]),
-					" peaks blind filtered (selective, file ",
+					" peaks not found in blank/blind file(s) (selective, file ",
 					as.character(IDs[i]),"). "
 				,sep=""))
 				rm(peaklist,sam_peaklist);

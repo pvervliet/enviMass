@@ -6,27 +6,29 @@ if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_pos")){rm(links
 if(any(objects()=="links_peaks_pos")){rm(links_peaks_pos)}
 
 if(
-	file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos")) 
+	file.exists(file.path(as.character(logfile[["project_folder"]]),"results","profileList_pos")) 
 ){
 
-	load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));	
+	load(file=file.path(as.character(logfile[["project_folder"]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));	
 	###################################################################################################
 	# blind peak subtraction ##########################################################################
 	if(
 		(logfile$parameters$subtr_blind=="yes") &	
-		(any(profileList_pos[[2]][,"in_blind"]==0)) # if any blind peaks exist
+		(any(profileList_pos[["peaks"]][,"in_blind"]!=Inf)) # if any blind peaks exist
 	){
-		keep_peaks<-rep(TRUE,length(profileList_pos[[2]][,1]))
+		keep_peaks<-rep(TRUE,dim(profileList_pos[["peaks"]])[1])
 		# sample peaks found in blind
-		keep_peaks[profileList_pos[[2]][,"in_blind"]==0]<-FALSE
+		keep_peaks[profileList_pos[["peaks"]][,"in_blind"]<as.numeric(logfile$parameters$blind_threshold)]<-FALSE
 		# blind peaks themselves
-		these<-as.numeric(profileList_pos[[4]][profileList_pos[[9]]=="blank"])
+		these<-as.numeric(profileList_pos[["sampleID"]][profileList_pos[["type"]]=="blank"])
+		#system.time({# replace by match()?		
 		if(length(these)>0){
 			for(i in 1:length(these)){
-				keep_peaks[profileList_pos[[2]][,"sampleIDs"]==these[i]]<-FALSE
+				keep_peaks[profileList_pos[["peaks"]][,"sampleIDs"]==these[i]]<-FALSE
 			}
 		}		
-		profileList_pos[[2]]<<-profileList_pos[[2]][keep_peaks,]
+		#})		
+		profileList_pos[["peaks"]]<<-profileList_pos[["peaks"]][keep_peaks,]
 		cat(paste("\nBlind in profile subtraction, positive: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 	}else{
 		cat("\nblind peak subtraction nothing to subtract, positive ioniz.")
@@ -34,13 +36,13 @@ if(
 	###################################################################################################
 	# spike file peak subtraction #####################################################################
 	if( logfile$parameters$subtr_spiked=="yes" ){
-		these<-as.numeric(profileList_pos[[4]][profileList_pos[[9]]=="spiked"])
+		these<-as.numeric(profileList_pos[["sampleID"]][profileList_pos[["type"]]=="spiked"])
 		if(length(these)>0){
-			keep_peaks<-rep(TRUE,length(profileList_pos[[2]][,1]))
+			keep_peaks<-rep(TRUE,dim(profileList_pos[["peaks"]])[1])
 			for(i in 1:length(these)){
-				keep_peaks[profileList_pos[[2]][,"sampleIDs"]==these[i]]<-FALSE
+				keep_peaks[profileList_pos[["peaks"]][,"sampleIDs"]==these[i]]<-FALSE
 			}
-			profileList_pos[[2]]<<-profileList_pos[[2]][keep_peaks,]
+			profileList_pos[["peaks"]]<<-profileList_pos[["peaks"]][keep_peaks,]
 		}else{
 			cat("\nNo peaks from files to remove peaks for, positive.")
 		}	
@@ -53,16 +55,16 @@ if(
 	){
 		load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));
 		if(length(links_peaks_pos)>0){
-			keep_peaks<-rep(TRUE,length(profileList_pos[[2]][,1]))
-			for(i in 1:length(profileList_pos[[2]][,1])){
-				if(profileList_pos[[2]][i,"links"]!=0){
-					if(length(links_peaks_pos[[profileList_pos[[2]][i,"links"]]][[2]])>0){
+			keep_peaks<-rep(TRUE,dim(profileList_pos[["peaks"]])[1])
+			for(i in 1:length(profileList_pos[["peaks"]][,1])){
+				if(profileList_pos[["peaks"]][i,"links"]!=0){
+					if(length(links_peaks_pos[[profileList_pos[["peaks"]][i,"links"]]][[2]])>0){
 						keep_peaks[i]<-FALSE
-						links_peaks_pos[[profileList_pos[[2]][i,"links"]]][[2]]<-list() # = IS entry[[2]] in links_peaks_pos
+						links_peaks_pos[[profileList_pos[["peaks"]][i,"links"]]][[2]]<-list() # = IS entry[[2]] in links_peaks_pos
 					}
 				}
 			}
-			profileList_pos[[2]]<<-profileList_pos[[2]][keep_peaks,]
+			profileList_pos[["peaks"]]<<-profileList_pos[["peaks"]][keep_peaks,]
 			save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));
 			rm(links_peaks_pos)		
 			cat(paste("\nIS subtraction: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
@@ -78,16 +80,16 @@ if(
 	){
 		load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));
 		if(length(links_peaks_pos)>0){
-			keep_peaks<-rep(TRUE,length(profileList_pos[[2]][,1]))
-			for(i in 1:length(profileList_pos[[2]][,1])){
-				if(profileList_pos[[2]][i,"links"]!=0){
-					if(length(links_peaks_pos[[profileList_pos[[2]][i,"links"]]][[1]])>0){
+			keep_peaks<-rep(TRUE,dim(profileList_pos[["peaks"]])[1])
+			for(i in 1:length(profileList_pos[["peaks"]][,1])){
+				if(profileList_pos[["peaks"]][i,"links"]!=0){
+					if(length(links_peaks_pos[[profileList_pos[["peaks"]][i,"links"]]][[1]])>0){
 						keep_peaks[i]<-FALSE
-						links_peaks_pos[[profileList_pos[[2]][i,"links"]]][[1]]<-list() # = target entry[[1]] in links_peaks_pos
+						links_peaks_pos[[profileList_pos[["peaks"]][i,"links"]]][[1]]<-list() # = target entry[[1]] in links_peaks_pos
 					}
 				}
 			}
-			profileList_pos[[2]]<<-profileList_pos[[2]][keep_peaks,]
+			profileList_pos[["peaks"]]<<-profileList_pos[["peaks"]][keep_peaks,]
 			save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));	
 			rm(links_peaks_pos)	
 			cat(paste("\nTarget subtraction: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
@@ -145,10 +147,10 @@ if(
 
 # <
 	profileList_pos<<-enviMass:::in_blind(profileList_pos)
-	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
+	save(profileList_pos,file=file.path(as.character(logfile[["project_folder"]]),"results","profileList_pos"),compress=FALSE);
 	profpeaks_pos<<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters$progressBar)		
 	profpeaks_pos<<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),];
-	save(profpeaks_pos,file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"));	
+	save(profpeaks_pos,file=file.path(as.character(logfile[["project_folder"]]),"results","profpeaks_pos"));	
 	###################################################################################################
 
 }
@@ -163,26 +165,26 @@ if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_neg")){rm(links
 if(any(objects()=="links_peaks_neg")){rm(links_peaks_neg)}
 
 if(
-	file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg")) 
+	file.exists(file.path(as.character(logfile[["project_folder"]]),"results","profileList_neg")) 
 ){
 
-	load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));	
+	load(file=file.path(as.character(logfile[["project_folder"]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));	
 	###################################################################################################
 	# blind peak subtraction ##########################################################################
 	if(
 		(logfile$parameters$subtr_blind=="yes") &	
-		(any(profileList_neg[[2]][,9]==0)) # if any blind peaks exist
+		(any(profileList_neg[["peaks"]][,9]!=Inf)) # if any blind peaks exist
 	){
-		keep_peaks<-rep(TRUE,length(profileList_neg[[2]][,1]))
-		keep_peaks[profileList_neg[[2]][,9]==0]<-FALSE
+		keep_peaks<-rep(TRUE,dim(profileList_neg[["peaks"]])[1])
+		keep_peaks[profileList_pos[["peaks"]][,"in_blind"]<as.numeric(logfile$parameters$blind_threshold)]<-FALSE
 		# blind peaks themselves
-		these<-as.numeric(profileList_neg[[4]][profileList_neg[[9]]=="blank"])
+		these<-as.numeric(profileList_neg[["sampleID"]][profileList_neg[["type"]]=="blank"])
 		if(length(these)>0){
 			for(i in 1:length(these)){
-				keep_peaks[profileList_neg[[2]][,6]==these[i]]<-FALSE
+				keep_peaks[profileList_neg[["peaks"]][,6]==these[i]]<-FALSE
 			}
 		}		
-		profileList_neg[[2]]<<-profileList_neg[[2]][keep_peaks,]
+		profileList_neg[["peaks"]]<<-profileList_neg[["peaks"]][keep_peaks,]
 		cat(paste("\nBlind in profile subtraction, negative: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 	}else{
 		cat("\nblind peak subtraction: nothing to subtract, negative ioniz.")
@@ -190,13 +192,13 @@ if(
 	###################################################################################################
 	# spike file peak subtraction #####################################################################
 	if( logfile$parameters$subtr_spiked=="yes" ){
-		these<-as.numeric(profileList_neg[[4]][profileList_neg[[9]]=="spiked"])
+		these<-as.numeric(profileList_neg[["sampleID"]][profileList_neg[["type"]]=="spiked"])
 		if(length(these)>0){
-			keep_peaks<-rep(TRUE,length(profileList_neg[[2]][,1]))
+			keep_peaks<-rep(TRUE,dim(profileList_neg[["peaks"]])[1])
 			for(i in 1:length(these)){
-				keep_peaks[profileList_neg[[2]][,6]==these[i]]<-FALSE
+				keep_peaks[profileList_neg[["peaks"]][,6]==these[i]]<-FALSE
 			}
-			profileList_neg[[2]]<<-profileList_neg[[2]][keep_peaks,]
+			profileList_neg[["peaks"]]<<-profileList_neg[["peaks"]][keep_peaks,]
 		}else{
 			cat("\nNo peaks from files to remove peaks for, negative.")
 		}	
@@ -205,21 +207,21 @@ if(
 	# IS peak subtraction #############################################################################
 	if(
 		(logfile$parameters$subtr_IS=="yes") &
-		(file.exists(file.path(as.character(logfile[[1]]),"results","links_peaks_neg")))
+		(file.exists(file.path(as.character(logfile[["project_folder"]]),"results","links_peaks_neg")))
 	){
-		load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"));
+		load(file=file.path(as.character(logfile[["project_folder"]]),"results","links_peaks_neg"));
 		if(length(links_peaks_neg)>0){
-			keep_peaks<-rep(TRUE,length(profileList_neg[[2]][,1]))
-			for(i in 1:length(profileList_neg[[2]][,1])){
-				if(profileList_neg[[2]][i,5]!=0){
-					if(length(links_peaks_neg[[profileList_neg[[2]][i,5]]][[2]])>0){
+			keep_peaks<-rep(TRUE,dim(profileList_neg[["peaks"]])[1])
+			for(i in 1:length(profileList_neg[["peaks"]][,1])){
+				if(profileList_neg[["peaks"]][i,5]!=0){
+					if(length(links_peaks_neg[[profileList_neg[["peaks"]][i,5]]][[2]])>0){
 						keep_peaks[i]<-FALSE
-						links_peaks_neg[[profileList_neg[[2]][i,5]]][[2]]<-list() # = IS entry[[2]] in links_peaks_neg
+						links_peaks_neg[[profileList_neg[["peaks"]][i,5]]][[2]]<-list() # = IS entry[[2]] in links_peaks_neg
 					}
 				}
 			}
-			profileList_neg[[2]]<<-profileList_neg[[2]][keep_peaks,]
-			save(links_peaks_neg,file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"));
+			profileList_neg[["peaks"]]<<-profileList_neg[["peaks"]][keep_peaks,]
+			save(links_peaks_neg,file=file.path(as.character(logfile[["project_folder"]]),"results","links_peaks_neg"));
 			rm(links_peaks_neg)		
 			cat(paste("\nIS subtraction: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 		}else{
@@ -230,20 +232,20 @@ if(
 	# target peak subtraction #########################################################################
 	if(
 		(logfile$parameters$subtr_target=="yes")  &
-		(file.exists(file.path(as.character(logfile[[1]]),"results","links_peaks_neg")))
+		(file.exists(file.path(as.character(logfile[["project_folder"]]),"results","links_peaks_neg")))
 	){
-		load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"));
+		load(file=file.path(as.character(logfile[["project_folder"]]),"results","links_peaks_neg"));
 		if(length(links_peaks_neg)>0){
-			keep_peaks<-rep(TRUE,length(profileList_neg[[2]][,1]))
-			for(i in 1:length(profileList_neg[[2]][,1])){
-				if(profileList_neg[[2]][i,5]!=0){
-					if(length(links_peaks_neg[[profileList_neg[[2]][i,5]]][[1]])>0){
+			keep_peaks<-rep(TRUE,dim(profileList_neg[["peaks"]])[1])
+			for(i in 1:length(profileList_neg[["peaks"]][,1])){
+				if(profileList_neg[["peaks"]][i,5]!=0){
+					if(length(links_peaks_neg[[profileList_neg[["peaks"]][i,5]]][[1]])>0){
 						keep_peaks[i]<-FALSE
-						links_peaks_neg[[profileList_neg[[2]][i,5]]][[1]]<-list() # = target entry[[1]] in links_peaks_neg
+						links_peaks_neg[[profileList_neg[["peaks"]][i,5]]][[1]]<-list() # = target entry[[1]] in links_peaks_neg
 					}
 				}
 			}
-			profileList_neg[[2]]<<-profileList_neg[[2]][keep_peaks,]
+			profileList_neg[["peaks"]]<<-profileList_neg[["peaks"]][keep_peaks,]
 			save(links_peaks_neg,file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"));	
 			rm(links_peaks_neg)	
 			cat(paste("\nTarget subtraction: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
@@ -301,10 +303,10 @@ if(
 
 # <
 	profileList_neg<<-enviMass:::in_blind(profileList_neg)
-	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
+	save(profileList_neg,file=file.path(as.character(logfile[["project_folder"]]),"results","profileList_neg"),compress=FALSE);
 	profpeaks_neg<<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters$progressBar)		
 	profpeaks_neg<<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),];
-	save(profpeaks_neg,file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"));	
+	save(profpeaks_neg,file=file.path(as.character(logfile[["project_folder"]]),"results","profpeaks_neg"));	
 	###################################################################################################
 
 }

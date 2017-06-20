@@ -6,7 +6,7 @@
 #'
 #' @param links_profiles links_profiles_pos or links_profiles_neg
 #' @param profileList profileList_pos or profileList_neg
-#' @param cut_delRT_adduc Maximum RT deviation among same-sample adduct peaks in a profile
+#' @param cut_delRT_adduc Maximum RT deviation [s] among same-sample adduct peaks in a profile
 #' @param cut_frac_adduc Minimum co-occurence fraction of peaks within cut_delRT_adduc 
 #' 
 #' @details enviMass workflow function. 

@@ -21,10 +21,11 @@ new_entry_links_profiles<-function(a){
 		# counts for peaks with correlated EICs /
 		# counts for peaks with non-correlated EICs / 
 		# ref_1: number of peaks co-occuring over samples
-		# ref_2: number of peaks co-occuring, within delRT used for isotopologues
-		# ref_3: number of peaks co-occuring, within delRT used for adducts		
+		# ref_2: number of peaks co-occuring, within delRT used for isotopologues/adducts
+		# int_ratio: mean intensitiy ratio
 		# use: use this profile to store EICs or to compare relations? avoid redundant and dispersed entries!
-		colnames(list_entry[[3]])<-c("linked profile","link counts","no-link counts","ref_1","ref_2","ref_3","use","correl")
+		# ccorrel: intensity correlation for n>=2
+		colnames(list_entry[[3]])<-c("linked profile","link counts","no-link counts","ref_1","ref_2","int_ratio","use","correl")
 	list_entry[[4]]<-list()	# isotop
 		list_entry[[4]]<-matrix(ncol=5,nrow=0)
 		colnames(list_entry[[4]])<-c("linked profile","link counts","ref_1","use","correl")					

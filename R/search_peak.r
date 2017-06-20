@@ -4,16 +4,17 @@
 #'
 #' @description \code{search_peak} searchs for a peak with a certain mass and RT in a peaklist.
 #'
-#' @param peaklist Matrix or data.frame of peaks. 3 columns: m/z, intensity, RT.
-#' @param mz Numeric vector. Mass(es) to be matched.
+#' @param peaklist Matrix or data.frame of (e.g., blank) peaks to be searched for matches. 3 columns: m/z, intensity, RT.
+#' @param mz Numeric vector. Mass(es) to be matched (e.g., sample peaks).
 #' @param dmz Numeric. +/- m/z tolerance from masses in mz (precision), either ppm or mmu.
 #' @param ppm Logical. \code{dmass} given in ppm or absolute [mmu]?
 #' @param RT Numeric vector. Retention times to be matched; units equal to those of the input files
 #' @param dRT Numeric. RT tolerance window; units equal to those of the input files
 #' @param onlymax Logical. Return only the matched peak of highest intensity. 
 #' @param int_ratio. Logical FALSE or numeric. Only matching peaks >= this intensity ratio are returned.  
-#' @param int. Logical FALSE or numeric vector. Intensities of the peaks to be matched; required when using intratio.
+#' @param int. Logical FALSE or numeric vector. Intensities of the peaks to be matched; required when using int_ratio.
 #' @param get_matches. Logical. Return all matches (TRUE, default) or only indicate if any have been found.
+#' @param get_ratio Logical. If TRUE, return the (minimum) intensity ratio to (the) matched peak(s).
 #'
 #' @return Vector of characters. For each code{mz,RT} input, the vector entry specifies the match indices in \code{peaklist}.
 #' 
@@ -23,18 +24,22 @@
 
 
 
-search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT,onlymax=FALSE,int_ratio=FALSE,int=FALSE,get_matches=TRUE){
+search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT,onlymax=FALSE,int_ratio=FALSE,int=FALSE,get_matches=TRUE,get_ratio=FALSE){
 
   ##############################################################################
   # redefine order of peaklist & mz, keep ord1 and ord2 to resort
-  peaks<-peaklist[order(peaklist[,1],decreasing=TRUE),];
   ord1<-order(peaklist[,1],decreasing=TRUE);
-  mass<-mz[order(mz,decreasing=TRUE)];
+  peaks<-peaklist[ord1,];
   ord2<-order(mz,decreasing=TRUE);
+  mass<-mz[ord2];
   ##############################################################################
   if(length(dmz)==1){dmz<-rep(dmz,length(mz))}
   if(length(dRT)==1){dRT<-rep(dRT,length(mz))}
-  result<-rep("FALSE",length(mz));
+  if(!get_ratio){
+	result<-rep("FALSE",length(mz));
+  }else{
+ 	result<-rep(Inf,length(mz)); 
+  }
   leng<-length(peaks[,1]);
   k<-c(1);
   options(digits=10)
@@ -84,34 +89,39 @@ search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT,onlymax=FALSE,int_ratio=
         }
     }
     # save results #############################################################
-    if(length(deletes)>0){
-		if(is.numeric(int_ratio)){
-			deletes<-deletes[
-				int_ratio>=(int[ord2[i]]/peaklist[ord1[deletes],2])
-			]
-		}
+    if(is.numeric(int_ratio) & length(deletes)>0){
+		deletes<-deletes[
+			int_ratio>=(int[ord2[i]]/peaklist[ord1[deletes],2])
+		]
 	}
 	if(length(deletes)>0){
-		if(!get_matches){
-			result[ord2[i]]<-"TRUE"
-			next;
-		}
-		if(onlymax){ # only save matched peak with highest intensity
-			if(length(deletes)==1){
-				result[ord2[i]]<-as.character(ord1[deletes]);
-			}else{
-				result[ord2[i]]<-as.character(
-					(ord1[deletes])[which.max(peaklist[ord1[deletes],2])]
-				)
+		if(get_ratio){
+			if(length(deletes)>1){ # get maximum intensity peak
+				deletes<-deletes[which.max(peaklist[ord1[deletes],2])]
 			}
+			result[ord2[i]]<-(int[ord2[i]]/peaklist[ord1[deletes],2])
 		}else{
-			result[ord2[i]]<-as.character(ord1[deletes[1]]);
-			if(length(deletes)>1){
-				for(j in 2:length(deletes)){
-					result[ord2[i]]<-paste(result[ord2[i]],"/",as.character(ord1[deletes[j]]))
-				}
+			if(!get_matches){
+				result[ord2[i]]<-"TRUE"
+				next;
 			}
-		}	
+			if(onlymax){ # only save matched peak with highest intensity
+				if(length(deletes)==1){
+					result[ord2[i]]<-as.character(ord1[deletes]);
+				}else{
+					result[ord2[i]]<-as.character(
+						(ord1[deletes])[which.max(peaklist[ord1[deletes],2])]
+					)
+				}
+			}else{
+				result[ord2[i]]<-as.character(ord1[deletes[1]]);
+				if(length(deletes)>1){
+					for(j in 2:length(deletes)){
+						result[ord2[i]]<-paste(result[ord2[i]],"/",as.character(ord1[deletes[j]]))
+					}
+				}
+			}	
+		}
 	}
   }
   ##############################################################################
