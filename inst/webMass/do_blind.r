@@ -8,7 +8,7 @@ ionmode<-(measurements[,"Mode"])
 atdate<-(measurements[,"Date"])
 attime<-(measurements[,"Time"])
 attime2<-as.difftime(attime);
-atdate<-as.Date(atdate);
+atdate<-as.Date(atdate, tz="GMT");
 sampleID<-(measurements[,"ID"])
 old_samplewise<-(measurements[,"blind"])
 new_samplewise<-old_samplewise

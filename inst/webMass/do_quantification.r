@@ -43,14 +43,14 @@
 		latest_ID<-get_latestID(measurements)
 		cal_files<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
 		cal_files<-unique(cal_files[,c("tag2","Date","Time","date_end","time_end"),drop=FALSE])
-		starttime<-as.difftime(cal_files[,3]);startdate<-as.Date(cal_files[,2]);
+		starttime<-as.difftime(cal_files[,3]);startdate<-as.Date(cal_files[,2], tz="GMT");
 		numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
-		endtime<-as.difftime(cal_files[,5]);enddate<-as.Date(cal_files[,4]);
+		endtime<-as.difftime(cal_files[,5]);enddate<-as.Date(cal_files[,4], tz="GMT");
 		numend<-(as.numeric(enddate)+as.numeric(endtime/(24*60*60)))		
 		use_files<-measurements[(measurements[,"Type"]!="calibration"),,drop=FALSE] # MUST retain spiked files!
 		use_group<-c()
 		for(i in 1:length(use_files[,1])){ # determine which file belongs to which calibration group
-			attime<-as.difftime(use_files[i,7]);atdate<-as.Date(use_files[i,6]);
+			attime<-as.difftime(use_files[i,7]);atdate<-as.Date(use_files[i,6], tz="GMT");
 			numuse<-(as.numeric(atdate)+as.numeric(attime/(24*60*60)))		
 			if(any((numuse>=numstart) & (numuse<=numend))){
 				use_group<-c(use_group,
@@ -88,7 +88,7 @@
 		}
 		# sort those files by decreasing date!
 		atdate<-those_files[,6]
-		atdate<-as.Date(atdate);
+		atdate<-as.Date(atdate, tz="GMT");
 		attime<-those_files[,7]
 		attime<-as.difftime(attime);
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
@@ -496,14 +496,14 @@
 		latest_ID<-get_latestID(measurements)
 		cal_files<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
 		cal_files<-unique(cal_files[,c("tag2","Date","Time","date_end","time_end"),drop=FALSE])
-		starttime<-as.difftime(cal_files[,3]);startdate<-as.Date(cal_files[,2]);
+		starttime<-as.difftime(cal_files[,3]);startdate<-as.Date(cal_files[,2], tz="GMT");
 		numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
-		endtime<-as.difftime(cal_files[,5]);enddate<-as.Date(cal_files[,4]);
+		endtime<-as.difftime(cal_files[,5]);enddate<-as.Date(cal_files[,4], tz="GMT");
 		numend<-(as.numeric(enddate)+as.numeric(endtime/(24*60*60)))		
 		use_files<-measurements[(measurements[,"Type"]!="calibration"),,drop=FALSE] # MUST retain spiked files!
 		use_group<-c()
 		for(i in 1:length(use_files[,1])){ # determine which file belongs to which calibration group
-			attime<-as.difftime(use_files[i,7]);atdate<-as.Date(use_files[i,6]);
+			attime<-as.difftime(use_files[i,7]);atdate<-as.Date(use_files[i,6], tz="GMT");
 			numuse<-(as.numeric(atdate)+as.numeric(attime/(24*60*60)))		
 			if(any((numuse>=numstart) & (numuse<=numend))){
 				use_group<-c(use_group,
@@ -541,7 +541,7 @@
 		}
 		# sort those files by decreasing date!
 		atdate<-those_files[,6]
-		atdate<-as.Date(atdate);
+		atdate<-as.Date(atdate, tz="GMT");
 		attime<-those_files[,7]
 		attime<-as.difftime(attime);
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);

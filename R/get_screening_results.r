@@ -120,7 +120,7 @@
 									at_matrix[at_len:(at_len+local_len-1),6]<-1
 								}		
 								at_matrix[at_len:(at_len+local_len-1),7]<-(
-									as.numeric(as.Date(measurements_table[at_ID,"Date"]))+
+									as.numeric(as.Date(measurements_table[at_ID,"Date"], tz="GMT"))+
 									as.numeric(as.difftime(measurements_table[at_ID,"Time"])/(24*60*60))
 								)
 								at_matrix[at_len:(at_len+local_len-1),8]<-at_RT[i]							

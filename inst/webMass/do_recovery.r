@@ -23,7 +23,7 @@
 		load(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
 		those_files<-measurements[(measurements[,"Mode"]=="positive" & measurements[,"Type"]=="spiked" & measurements[,"include"]=="TRUE"),,drop=FALSE]
 		atdate<-those_files[,6]
-		atdate<-as.Date(atdate);
+		atdate<-as.Date(atdate, tz="GMT");
 		attime<-those_files[,7]
 		attime<-as.difftime(attime);
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
@@ -101,7 +101,7 @@
 		load(file.path(logfile[[1]],"quantification","target_quant_table_neg"))
 		those_files<-measurements[(measurements[,"Mode"]=="negative" & measurements[,"Type"]=="spiked" & measurements[,"include"]=="TRUE"),,drop=FALSE]
 		atdate<-those_files[,6]
-		atdate<-as.Date(atdate);
+		atdate<-as.Date(atdate, tz="GMT");
 		attime<-those_files[,7]
 		attime<-as.difftime(attime);
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);

@@ -27,7 +27,7 @@ plot_measurements<-function(
 		}
 		atPOSIX<-as.POSIXct(datetime);
 		attime2<-as.difftime(timed);
-		atdate<-as.Date(dated);
+		atdate<-as.Date(dated, tz="GMT");
 		ord<-order(as.numeric(atdate),as.numeric(attime2));
 		atPOSIXsort<-atPOSIX[ord];
 		dated<-as.POSIXct(atPOSIXsort)

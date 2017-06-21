@@ -228,14 +228,14 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		say<-paste("Missing mzXML file for files with ID: ", paste(these,collapse=", "),". Revise - best delete the concerned file from enviMass file table and reload it.",sep="")
 	}
 	# check date  & time formats
-	a<-try({as.Date(measurements[,"Date"])},silent=TRUE)
+	a<-try({as.Date(measurements[,"Date"], tz="GMT")},silent=TRUE)
 	if(any(class(a)=="try-error" | is.na(a))){
 		these<-which(class(a)=="try-error" | is.na(a))
 		these<-measurements[these,1]
 		say<-paste("Invalid date format found for file(s) with ID(s) ",
 		paste(these,collapse=", "),". Please revise concerned file(s) in the files tab!",sep="")
 	}
-	b<-try({as.Date(paste("2014-03-13",measurements[,"Time"]),format= "%Y-%m-%d %H:%M:%S")},silent=TRUE)  
+	b<-try({as.Date(paste("2014-03-13",measurements[,"Time"]),format= "%Y-%m-%d %H:%M:%S", tz="GMT")},silent=TRUE)  
 	if(any(class(b)=="try-error" | is.na(b))){
 		these<-which(class(b)=="try-error" | is.na(b))
 		these<-measurements[these,1]
@@ -245,14 +245,14 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
   	# check calibration files
   measurements_cal<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE] 
   if(length(measurements_cal[,1])>0){
-	  a<-try({as.Date(c(measurements_cal[,"date_end"]))},silent=TRUE)
+	  a<-try({as.Date(c(measurements_cal[,"date_end"]), tz="GMT")},silent=TRUE)
 	  if(any(class(a)=="try-error" | is.na(a))){
 			these<-which(class(a)=="try-error" | is.na(a))
 			these<-measurements_cal[these,1]
 			say<-paste("Invalid end date format found for calibration file(s) with ID(s) ",
 			paste(these,collapse=", "),". Please revise concerned calibration file(s) in the files tab!",sep="")
 	  }
-	  b<-try({as.Date(paste("2014-03-13",measurements_cal[,"time_end"]),format= "%Y-%m-%d %H:%M:%S")},silent=TRUE)  
+	  b<-try({as.Date(paste("2014-03-13",measurements_cal[,"time_end"]),format= "%Y-%m-%d %H:%M:%S", tz="GMT")},silent=TRUE)  
 	  if(any(class(b)=="try-error" | is.na(b))){
 			these<-which(class(b)=="try-error" | is.na(b))
 			these<-measurements_cal[these,1]
@@ -273,9 +273,9 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		if(length(cal_files[,1])>0){
 			# do calibration sets overlap in periods?
 			cal_files2<-unique(cal_files[,c("tag3","Date","Time","date_end","time_end"),drop=FALSE])
-			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2]);
+			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2], tz="GMT");
 			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
-			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4]);
+			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4], tz="GMT");
 			numend<-(as.numeric(enddate)+as.numeric(endtime/(24*60*60)))
 			if(length(starttime)>1){			
 				for(i in 1:(length(starttime)-1)){
@@ -316,9 +316,9 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		if(length(cal_files[,1])>0){
 			# do calibration sets overlap in periods?
 			cal_files2<-unique(cal_files[,c("tag3","Date","Time","date_end","time_end"),drop=FALSE])
-			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2]);
+			starttime<-as.difftime(cal_files2[,3]);startdate<-as.Date(cal_files2[,2], tz="GMT");
 			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))		
-			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4]);
+			endtime<-as.difftime(cal_files2[,5]);enddate<-as.Date(cal_files2[,4], tz="GMT");
 			numend<-(as.numeric(enddate)+as.numeric(endtime/(24*60*60)))	
 			if(length(starttime)>1){
 				for(i in 1:(length(starttime)-1)){

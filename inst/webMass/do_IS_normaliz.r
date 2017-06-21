@@ -59,7 +59,7 @@
 				  attime<-c(attime, strsplit(atPOSIX[i]," ")[[1]][2]);
 		}
 		attime<-as.difftime(attime);
-		atdate<-as.Date(atdate);
+		atdate<-as.Date(atdate, tz="GMT");
 		ord<-order(as.numeric(atdate),as.numeric(attime),sampleID);
 		atPOSIXsort<-atPOSIX[ord];
 		atdate<-atdate[ord];
@@ -456,7 +456,7 @@
 				  attime<-c(attime, strsplit(atPOSIX[i]," ")[[1]][2]);
 		}
 		attime<-as.difftime(attime);
-		atdate<-as.Date(atdate);
+		atdate<-as.Date(atdate, tz="GMT");
 		ord<-order(as.numeric(atdate),as.numeric(attime),sampleID);
 		atPOSIXsort<-atPOSIX[ord];
 		atdate<-atdate[ord];

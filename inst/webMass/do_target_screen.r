@@ -74,7 +74,7 @@
 			measurements<-measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
 			measurements<-measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
 			starttime<-as.difftime(measurements[,"Time"]);
-			startdate<-as.Date(measurements[,"Date"]);
+			startdate<-as.Date(measurements[,"Date"], tz="GMT");
 			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
 			if(length(numstart)>as.numeric(logfile$parameters$screen_target_restrict_many)){	
 				retain_sample<-rep(FALSE,max(as.numeric(measurements[,"ID"])))			
@@ -371,7 +371,7 @@
 			measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
 			measurements<-measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
 			starttime<-as.difftime(measurements[,"Time"]);
-			startdate<-as.Date(measurements[,"Date"]);
+			startdate<-as.Date(measurements[,"Date"], tz="GMT");
 			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
 			if(length(numstart)>as.numeric(logfile$parameters$screen_IS_restrict_many)){	
 				retain_sample<-rep(FALSE,max(as.numeric(measurements[,"ID"])))			

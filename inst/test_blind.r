@@ -22,7 +22,7 @@ if(
 		atdate<-(measurements[,"Date"])
 		attime<-(measurements[,"Time"])
 		attime2<-as.difftime(attime);
-		atdate<-as.Date(atdate);
+		atdate<-as.Date(atdate, tz="GMT");
 		sampleID<-(measurements[,"ID"])
 		ord<-order(as.numeric(atdate),as.numeric(attime2),sampleID);	
 		measurements<-measurements[ord,]

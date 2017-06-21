@@ -73,7 +73,7 @@ plotaprofile<-function(
           attime<-c(attime, strsplit(atPOSIX[i]," ")[[1]][2]);
     }
     attime2<-as.difftime(attime);
-    atdate<-as.Date(atdate);
+    atdate<-as.Date(atdate, tz="GMT");
     ord<-order(as.numeric(atdate),as.numeric(attime2),sampleID);
     atPOSIXsort<-atPOSIX[ord];
     atdate<-atdate[ord];
