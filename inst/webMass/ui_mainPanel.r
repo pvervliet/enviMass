@@ -1420,7 +1420,7 @@
 						),									
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(										
-							column(4,tags$h5("Number of peaks: "),textOutput('file_peak_number') ),
+							column(4,tags$h5("Total number of peaks: "),textOutput('file_peak_number') ),
 							column(4,tags$h5("% of peaks affected by blind filter: "),textOutput('file_blind_rem')),										
 							column(4,tags$h5("% of peaks removed by replicate filter: "),textOutput('file_repl_rem'))										
 						),					
@@ -1459,7 +1459,7 @@
 							textOutput("expo2"),
 							bsPopover("expo_peaklist", 
 								title = "Export peaklist of above selected file",
-								content = "Export as peaklist.csv to the export folder of this project, with three columns of mass, intensity and RT. Peaklists are affected by blind and replicate filters contained in the workflow.", 
+								content = "Export as peaklist.csv to the export folder of this project.", 
 								placement = "right", trigger = "hover"),
 								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peaklist_export.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')),
 						HTML('<hr noshade="noshade" />')		

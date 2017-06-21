@@ -15,7 +15,9 @@ observe({ # - A
 		do_homol<-(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes")	
 		do_EIC<-(logfile$workflow[names(logfile$workflow)=="EIC_correlation"]=="yes")
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		
 		if( 
+			(!is.na(isolate(input$sel_meas_comp))) &
 			(isolate(input$sel_meas_comp)!="") &
 			(any(measurements$ID==isolate(input$sel_meas_comp))) # check existence ...
 		){ # ... finds emtpy folder otherwise
@@ -80,7 +82,7 @@ observe({ # - A
 				min2_size_comp<-round((sum((num_isot_peaks+num_adduc_peaks)>1)/num_comp),digits=2)
 				median_size_comp<-round(mean(num_isot_peaks+num_adduc_peaks),digits=2)
 				max_size_comp<-max(num_isot_peaks+num_adduc_peaks)
-				output$num_peaks_all<-renderText(paste("Number of peaks: ",as.character(num_peaks_all),sep=""))
+				output$num_peaks_all<-renderText(paste("Remaining number of peaks: ",as.character(num_peaks_all),sep=""))
 				output$num_comp<-renderText(paste("Total number of components: ",as.character(num_comp),sep=""))
 				output$reduc<-renderText(paste("Reduction factor: ",as.character(reduc),sep=""))
 				output$num_comp_tar<-renderText(paste("Components containing target or suspect compound peaks: ",as.character(num_comp_tar),sep=""))
@@ -415,7 +417,7 @@ observe({ # - F: generate outputs
 	input$atom_bounds_calculate
 	if(isolate(init$a)=="TRUE"){
 		
-		if(file.exists(file.path(logfile[[1]],"peaklist",isolate(input$sel_meas_comp)))){
+		if(file.exists(file.path(logfile[[1]],"peaklist",as.character(isolate(input$sel_meas_comp))))){
 			found_peaklist<-TRUE	
 		}else{
 			found_peaklist<-FALSE
@@ -431,12 +433,15 @@ observe({ # - F: generate outputs
 				# get additional peaks ###############################################
 				if(isolate(input$atom_bound_addpeaks)=="(b) all peaks with similar RT"){ # load peaklist 
 					if(verbose){cat("\n in Atoms_2")}		
-					load(file.path(logfile[[1]],"peaklist",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv"))
-					at_peak<<-which(peaklist[,"peak_ID"]==isolate(input$atom_bound_peak))
+					load(file.path(logfile[[1]],"peaklist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv"))
+			#load(file.path(logfile[[1]],"peaklist","2"),envir=as.environment(".GlobalEnv"))		
+					at_peak<<-which(peaklist[,"peak_ID"]==as.numeric(isolate(input$atom_bound_peak)))
+			#at_peak<<-which(peaklist[,"peak_ID"]==as.numeric(1743))		
 					if(length(at_peak)>0){
 						atom_peaks<<-peaklist[
 							(peaklist[,"m/z_corr"]>peaklist[at_peak,"m/z_corr"]) &
 							((abs(peaklist[,"RT_corr"]-peaklist[at_peak,"RT_corr"]))<=logfile$parameters$isotop_rttol) &
+							(peaklist[,"keep"]==1) & # omit replicate peaks
 							(abs(peaklist[,"m/z_corr"]-peaklist[at_peak,"m/z_corr"])<=10)
 						,,drop=FALSE]
 						atom_peaks<<-rbind(
@@ -446,9 +451,11 @@ observe({ # - F: generate outputs
 				}else{ # get peaks from components - only selectable if selectInput adapted accordingly
 					if(verbose){cat("\n in Atoms_3")}	
 					at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID pattern peaks |"],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
+			#at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID pattern peaks |"],","), match, x=as.numeric(1743)))))	
 					# search in adduct peaks
 					if(length(at_peak)==0){
 						at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID adduct peaks |"],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
+			#at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID adduct peaks |"],","), match, x=as.numeric(1743)))))		
 					}
 					# search in interfering peaks
 					if(length(at_peak)==0){
@@ -466,6 +473,7 @@ observe({ # - F: generate outputs
 						if(component[["Components"]][at_peak,"ID interfering peaks |"]!="-"){
 							get_peaks<<-c(get_peaks,strsplit(component[["Components"]][at_peak,"ID interfering peaks |"],",")[[1]])
 						}			
+						get_peaks<<-sapply(get_peaks,gsub,pattern="*",replacement="",fixed = TRUE, USE.NAMES = FALSE)
 						get_peaks<<-as.numeric(get_peaks)
 						matched<-match(get_peaks,component[["pattern peak list"]][,"peak ID"])
 						peaklist<<-component[["pattern peak list"]][matched,1:4,drop=FALSE]
