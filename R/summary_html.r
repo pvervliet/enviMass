@@ -54,7 +54,7 @@ summary_html<-function(use_summary){
 	use_summary[use_summary[,1]=="LOD",1]<-"LOD interpolation"
 	use_summary[use_summary[,1]=="calibration",1]<-"Calibration"
 	use_summary[use_summary[,1]=="quantification",1]<-"Quantification"	
-	use_summary[use_summary[,1]=="blind",1]<-"Blind subtraction #1"	
+	use_summary[use_summary[,1]=="blind",1]<-"Blind detection #1"	
 	use_summary[use_summary[,1]=="replicates",1]<-"Replicate filter"	
 	use_summary[use_summary[,1]=="IS_screen",1]<-"IS screening"
 	use_summary[use_summary[,1]=="target_screen",1]<-"Target screening"
@@ -64,7 +64,9 @@ summary_html<-function(use_summary){
 	use_summary[use_summary[,1]=="homologues",1]<-"Homologue detection"		
 	use_summary[use_summary[,1]=="recovery",1]<-"Recovery"			
 	use_summary[use_summary[,1]=="components_files",1]<-"File componentization"		
-	use_summary[use_summary[,1]=="components_profiles",1]<-"-"		
+	use_summary[use_summary[,1]=="components_profiles",1]<-"Profile componentiz."
+	use_summary[use_summary[,1]=="profblind",1]<-"Blind detection #2"
+	
 
 	for(i in 1:len_init){
 		if(i%%2==0){

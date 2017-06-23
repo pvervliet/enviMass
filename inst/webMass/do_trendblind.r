@@ -1,4 +1,15 @@
-
+	##################################################################################
+	# CLEAN!
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_pos")){rm(profpeaks_pos,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="profpeaks_pos")){rm(profpeaks_pos)}		
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_neg")){rm(profpeaks_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="profpeaks_neg")){rm(profpeaks_neg)}		
+	if(file.exists(file.path(as.character(logfile[[1]]),"results","profpeaks_pos"))){file.remove(file.path(as.character(logfile[[1]]),"results","profpeaks_pos"))}
+	if(file.exists(file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))){file.remove(file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))}
+	##################################################################################	
+	
+	##################################################################################
+	# POSITIVE #######################################################################
     if( file.exists(file.path(logfile[[1]],"results","profileList_pos")) ){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="profileList_pos")){rm(profileList_pos)}				
@@ -10,7 +21,7 @@
 			blindsubtract<-FALSE
 		}
 		profileList_pos<-intensup(
-				profileList_pos,
+				profileList=profileList_pos,
 				from=FALSE,
 				to=FALSE,
 				progbar=logfile$parameters$progressBar,
@@ -23,7 +34,7 @@
 		profileList_pos<<-profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
 		png(filename = file.path(as.character(logfile[[1]]),"pics","boxprofile_pos"), width = 800, bg = "white")    
-		enviMass:::profiledist(profileList_pos)	
+		enviMass:::profiledist(profileList_pos)	# generate the trend boxplots
 		dev.off()
 		expr4p<-list(src=file.path(logfile[[1]],"pics","boxprofile_pos"))
 		output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)
@@ -36,7 +47,10 @@
 			profpeaks<<-profpeaks_pos;
 		}
 	}
+	##################################################################################
 	
+	##################################################################################
+	# NEGATIVE #######################################################################	
     if( file.exists(file.path(logfile[[1]],"results","profileList_neg")) ){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="profileList_neg")){rm(profileList_neg)}				
@@ -74,5 +88,5 @@
 			profpeaks<<-profpeaks_neg;
 		}
 	}
-
+	##################################################################################
 	

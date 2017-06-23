@@ -790,25 +790,35 @@
 							radioButtons("subtr_spiked", "Subtract?", c("yes"="yes","no"="no"),inline=TRUE)
 						)
 					),	
-					HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection </font></p> '),
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Profile blind detection </font></p> '),
+					fluidRow(
+						column(width = 2, radioButtons("profblind", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Calculate median intensity ratio of sample vs. blank/blind peaks across each profile?"),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
+						)
+					),						
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Trend detection </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("trendblind", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","Detects and ranks profile intensities which increase over time.
 							Depending on settings, this can contain a separate blind detection step. Herein, intensities of blind/blank peaks are interpolated over the time series.
 							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps and the preceding red step)."),
-							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/trends" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/trends.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
-					)#,							            
-				#HTML('<h1 align="center"> &#x21e9; </h1> '), 
-				#HTML('<p style="background-color:blue"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
-				#	fluidRow(
-				#		column(width = 2, radioButtons("components_profiles", "Include?", c("yes"="yes","no"="no"))),
-				#		column(width = 10, offset = 0.3,
-				#			tags$p(align="justify","Exports screening and profiling results."),
-				#			HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/trends" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
-				#		)
-				#	),
+					),							            
+				HTML('<hr noshade="noshade" />'),
+				HTML('<h1 align="center"> &#x21e9; </h1> '),  				
+				# block 6 ######################################################					
+				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
+					fluidRow(
+						column(width = 2, radioButtons("components_profiles", "Include?", c("yes"="yes","no"="no"))),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Aggregate and filter filewise componentization results across profiles."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profile_components.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
+						)
+					)#,
 				#HTML('<hr noshade="noshade" />') 
 				################################################################
 	
@@ -1047,7 +1057,7 @@
 				#tags$h5("Blind subtraction:"),
 				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
 				HTML('<hr noshade="noshade" />'),
-				numericInput("blind_threshold", "Factor by which the sample peak intensity must exceed the blank/blind peak intensity to not be subtracted/marked", 100),
+				numericInput("blind_threshold", "Factor by which the sample peak intensity must exceed the blank/blind peak intensity to not be subtracted", 100),
 				numericInput("blind_dmz", "+/- m/z tolerance ...", 3), 
                 selectInput("blind_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
                 numericInput("blind_drt", "RT tolerance [s]:", 60),       
@@ -1821,19 +1831,33 @@
 					tabsetPanel( 					
 						tabPanel("Summary",										
 								tags$h5("Filter profile list:"),
+								HTML('<hr noshade="noshade" />'),
 								div(style = widget_style3,numericInput("filterProf_minmass", "Minimum m/z:", 0, min=0)),
 								div(style = widget_style3,numericInput("filterProf_maxmass", "Maximum m/z:", 3000, min=0)),
 								div(style = widget_style3,numericInput("filterProf_minrt", "Minimum RT [s]:", 0, min=0)),
-								div(style = widget_style3,numericInput("filterProf_maxrt", "Maximum RT [s]:", 100000, min=0)),			
-								div(style = widget_style3,radioButtons("filterProf_meanblind", "Use mean above blind?", c("no"="no","yes"="yes"))),
-								bsPopover("filterProf_meanblind", 
-									title = "Replicates, not time series ...",
-									content = "Get profiles with mean sample intensity x times above mean blank intensities (set Sort profile list by: maximum or mean intensity; x = to be set in blind settings panel). Useful if all your sample files are replicates and not a time sequences.", 
-									placement = "top", trigger = "hover"),
-								div(style = widget_style3,radioButtons("filterProf_notblind", "Not in blind?", c("no"="no","yes"="yes"))),
+								div(style = widget_style3,numericInput("filterProf_maxrt", "Maximum RT [s]:", 100000, min=0)),	
+								HTML('<hr noshade="noshade" />'),				
+								div(style = widget_style3,radioButtons("filterProf_notblind", "Filter out profiles which contain any blind peaks?", c("no"="no","yes"="yes"))),								
+								HTML('<hr noshade="noshade" />'),
+								div(style = widget_style3,
+									fluidRow(									
+										column(4,
+											radioButtons("filterProf_medianblind", "Filter by median sample vs. blind intensity ratio?", c("no"="no","yes"="yes")),
+											bsPopover("filterProf_medianblind", 
+												title = "Filter profiles by the specified value for their median sample vs. blind/blank intensity ratio across all peaks?",
+												content = "This filter is only available if blind/blank peaks have not been removed from the profiles yet. Indivual intensity ratios for peaks calculated according to Settings -> Blind.", 
+												placement = "top", trigger = "hover")
+										),
+										column(4,
+											numericInput("filterProf_medianblind_value", "Median sample vs. blind intensity ratio:", 0, min=NA, max=NA)	
+										)
+									)
+								),
+								HTML('<hr noshade="noshade" />'),
 								div(style = widget_style3,selectInput("filterProf_sort", "Sort profile list by:", 
 									choices = c("ID","mean m/z","mean RT","maximum intensity","mean intensity","global trend intensity","current trend intensity","total peak number"), selected="current trend intensity")),
-								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size:", 500, min=0)),
+								HTML('<hr noshade="noshade" />'),
+								div(style = widget_style3,numericInput("filterProf_count", "Restrict list size (only for export and below table):", 500, min=1)),
 								#conditionalPanel( # IS filter				
 								#		condition = "input.screen_IS == 'yes'",
 								#		tags$h5("IS compounds filter:"),										
@@ -1856,6 +1880,9 @@
 									bsCollapsePanel("Intensity histogram", 
 										imageOutput("profilehisto", height="auto"),
 										value="test5"),
+									#bsCollapsePanel("Blind intensity ratio", 
+									#	imageOutput("profileboxplot", height="auto"),
+									#	value="test5"),
 									bsCollapsePanel("Profile list", 		
 										tableOutput("allproftable"),
 										value="test5")

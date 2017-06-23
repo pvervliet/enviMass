@@ -18,31 +18,31 @@ profiletopeak<-function(profileList,progbar){
     if(!profileList[[1]][[3]]){stop("profileList not profiled; aborted.")}
 	############################################################################
 	# define "fake" peaklist ###################################################
-	peaklist<-matrix(ncol=17,nrow=length(profileList[[7]][,8]),0)
+	peaklist<-matrix(ncol=17,nrow=length(profileList[["index_prof"]][,1]),0)
 	colnames(peaklist)<-c(
 		"mean_m/z","mean_intensity","mean_RT","max_intensity", #1
 		"in_blind?","above_blind?","var_mz","min_RT","max_RT", #5
 		"profileID","number_peaks_total","past_incident","current_incident", #10
 		"current_intensity","Component","Homologue","Mass defect" #14
 	)
-    if(progbar==TRUE){  prog<-winProgressBar("Convert profiles to peaklist",min=1,max=length(profileList[[7]][,8]));
+    if(progbar==TRUE){  prog<-winProgressBar("Convert profiles to peaklist",min=1,max=length(profileList[["index_prof"]][,8]));
 						setWinProgressBar(prog, 0, title = "Convert profiles to peaklist...", label = NULL);}
-	for(k in 1:length(profileList[[7]][,8])){
+	for(k in 1:length(profileList[["index_prof"]][,1])){
 		if(progbar==TRUE){setWinProgressBar(prog, k, title = "Convert profiles to peaklist...", label = NULL)}
-		peaklist[k,1]<-profileList[[7]][k,14]
-		peaklist[k,2]<-mean(profileList[[2]][(profileList[[7]][k,1]:profileList[[7]][k,2]),2])		
-		peaklist[k,3]<-profileList[[7]][k,15]
-		peaklist[k,4]<-max(profileList[[2]][(profileList[[7]][k,1]:profileList[[7]][k,2]),2])	
-		peaklist[k,5]<-profileList[[7]][k,8] # in blind
-		peaklist[k,6]<-profileList[[7]][k,9] # mean sample above mean blind?
-		peaklist[k,7]<-var(profileList[[2]][(profileList[[7]][k,1]:profileList[[7]][k,2]),1])	
-		peaklist[k,8]<-min(profileList[[2]][(profileList[[7]][k,1]:profileList[[7]][k,2]),3])	
-		peaklist[k,9]<-max(profileList[[2]][(profileList[[7]][k,1]:profileList[[7]][k,2]),3])	
-		peaklist[k,10]<-profileList[[7]][k,4]	
-		peaklist[k,11]<-profileList[[7]][k,3]	
-		peaklist[k,12]<-profileList[[7]][k,6] 	# overall trend
-		peaklist[k,13]<-profileList[[7]][k,5] 	# current trend
-		peaklist[k,14]<-profileList[[7]][k,17] 	# current intensity
+		peaklist[k,"mean_m/z"]<-profileList[["index_prof"]][k,"mean_mz"]
+		peaklist[k,"mean_intensity"]<-mean(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"intensity"])		
+		peaklist[k,"mean_RT"]<-profileList[["index_prof"]][k,"mean_RT"]
+		peaklist[k,"max_intensity"]<-max(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"intensity"])	
+		peaklist[k,"in_blind?"]<-profileList[["index_prof"]][k,"blind?"] 
+		peaklist[k,"above_blind?"]<-profileList[["index_prof"]][k,"above_blind?"] 
+		peaklist[k,"var_mz"]<-var(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"m/z"])	
+		peaklist[k,"min_RT"]<-min(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"RT"])	
+		peaklist[k,"max_RT"]<-max(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"RT"])	
+		peaklist[k,"profileID"]<-profileList[["index_prof"]][k,"profile_ID"]	
+		peaklist[k,"number_peaks_total"]<-profileList[["index_prof"]][k,"number_peaks_total"]	
+		peaklist[k,"past_incident"]<-profileList[["index_prof"]][k,"deltaint_global"] 	
+		peaklist[k,"current_incident"]<-profileList[["index_prof"]][k,"deltaint_newest"] 
+		peaklist[k,"current_intensity"]<-profileList[["index_prof"]][k,"newest_intensity"] 	
 	}
 	if(progbar==TRUE){ close(prog); }
     ############################################################################

@@ -29,13 +29,17 @@ observe({
 				found_it<-try(eval(parse(text=paste("new_param<-","as.character(isolate(input$",for_param,"))",sep=""))))
 				if(class(found_it)=="try-error"){	# present in UI?
 					cat("\n Error for parameter input detected: ");cat(for_param);					
-					shinyjs:::info(paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
+					#shinyjs:::info(paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
+					mess<-paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep="")
+					shinytoastr:::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut=0);
 					all_ok<-FALSE
 				}else{
 					found_it<-eval(parse(text=paste("new_param<-","as.character(isolate(input$",for_param,"))",sep="")))
 					if(is.na(found_it) || length(found_it)==0){
 						cat("\n Invalid parameter input detected: ");cat(for_param);					
-						shinyjs:::info(paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
+						#shinyjs:::info(paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
+						mess<-paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep="")
+						shinytoastr:::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut=0);
 						all_ok<-FALSE
 					}
 				}
