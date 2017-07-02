@@ -1812,12 +1812,30 @@ if(logfile$version<3.29){
 		schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 		set_order<-match(schedule[,1],logfile$summary[,1])
 		logfile$summary<<-logfile$summary[set_order,]
-		
+		############################################################################################		
 	}
 	################################################################################################
-	
-	
-	
+	if(logfile$parameters$blind_omit=="yes"){
+		logfile$parameters$blind_omit<<-"TRUE"
+	}
+	if(logfile$parameters$blind_omit=="no"){
+		logfile$parameters$blind_omit<<-"FALSE"
+	}
+	if(!any(names(logfile$parameters)=="dofile_latest_profcomp")){
+		logfile$parameters$dofile_latest_profcomp<<-"FALSE" 	
+		logfile$parameters$numfile_latest_profcomp<<-"100" 		
+		logfile$parameters$filter_profcomp_pos<<-"TRUE"			
+		logfile$parameters$filter_profcomp_neg<<-"TRUE"			
+		logfile$parameters$for_which_profcomp_pos<<-"all"		
+		logfile$parameters$for_which_profcomp_neg<<-"all"		
+		logfile$parameters$prof_comp_link_only<<-"FALSE"		
+		logfile$parameters$corr_min_peaks<<-"5"					
+		logfile$parameters$comp_corr<<-"0.9"					
+		logfile$parameters$corr_del_RT<<-"5"					
+		logfile$parameters$corr_skip_peaks<<-"TRUE"	
+	}
+	################################################################################################
+
 	
 	
 	################################################################################################	

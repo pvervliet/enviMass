@@ -264,7 +264,20 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$EICor_mincor<-".95"
 		# Is this an example project? ##########################################
 		logfile$parameters$is_example<-"FALSE"			
+		# Profile componentization #############################################
+		logfile$parameters$dofile_latest_profcomp<-"FALSE" 	
+		logfile$parameters$numfile_latest_profcomp<-"100" 		
+		logfile$parameters$filter_profcomp_pos<-"TRUE"			
+		logfile$parameters$filter_profcomp_neg<-"TRUE"			
+		logfile$parameters$for_which_profcomp_pos<-"all"		
+		logfile$parameters$for_which_profcomp_neg<-"all"		
+		logfile$parameters$prof_comp_link_only<-"FALSE"		
+		logfile$parameters$corr_min_peaks<-"5"					
+		logfile$parameters$comp_corr<-"0.9"					
+		logfile$parameters$corr_del_RT<-"5"					
+		logfile$parameters$corr_skip_peaks<-"TRUE"					
 
+		
 		# add custom parameters ################################################
 		source(file="workflow_parameters.r",local=TRUE)
 		if(any(duplicated(names(logfile$parameters)))){stop("Duplicated parameter names found - revise!")}	

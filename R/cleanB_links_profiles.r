@@ -67,7 +67,7 @@ cleanB_links_profiles<-function(links_profiles, profileList, cut_delRT_adduc = 5
 					}else{ # insert correlation
 						int_cor<-as.integer(round(int_cor*1000))
 						links_profiles[[for_profs[n]]]$adduc[m,"correl"]<-int_cor
-						at_entry_2<-profileList_pos[["index_prof"]][prof2,"links"]
+						at_entry_2<-profileList[["index_prof"]][prof2,"links"]
 						at<-which(links_profiles[[at_entry_2]]$adduc[,"linked profile"]==prof1)
 						links_profiles[[at_entry_2]]$adduc[at,"correl"]<-int_cor
 					}
@@ -80,7 +80,7 @@ cleanB_links_profiles<-function(links_profiles, profileList, cut_delRT_adduc = 5
 				those<-links_profiles[[for_profs[n]]]$adduc[!keep,"linked profile"]
 				for(prof2 in those){
 					# get link of prof2
-					at_entry_2<-profileList_pos[["index_prof"]][prof2,"links"]
+					at_entry_2<-profileList[["index_prof"]][prof2,"links"]
 					at<-which(links_profiles[[at_entry_2]]$adduc[,"linked profile"]==prof1)
 					links_profiles[[at_entry_2]]$adduc<-links_profiles[[at_entry_2]]$adduc[-at,,drop=FALSE]
 				}

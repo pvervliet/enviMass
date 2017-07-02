@@ -18,13 +18,13 @@ new_entry_links_profiles<-function(a){
 	list_entry[[3]]<-list()	# EIC_correl
 		list_entry[[3]]<-matrix(ncol=8,nrow=0) 
 		# ID of linked profile / 
-		# counts for peaks with correlated EICs /
-		# counts for peaks with non-correlated EICs / 
-		# ref_1: number of peaks co-occuring over samples
+		# link counts: counts for peaks with correlated EICs
+		# no-link counts: counts for peaks with non-correlated EICs 
+		# ref_1: number of peaks co-occuring over all files
 		# ref_2: number of peaks co-occuring, within delRT used for isotopologues/adducts
 		# int_ratio: mean intensitiy ratio
 		# use: use this profile to store EICs or to compare relations? avoid redundant and dispersed entries!
-		# ccorrel: intensity correlation for n>=2
+		# correl: intensity correlation for n>=2
 		colnames(list_entry[[3]])<-c("linked profile","link counts","no-link counts","ref_1","ref_2","int_ratio","use","correl")
 	list_entry[[4]]<-list()	# isotop
 		list_entry[[4]]<-matrix(ncol=5,nrow=0)

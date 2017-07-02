@@ -1,4 +1,4 @@
-
+export(profiles_to_matrix)
 export(PWfile)
 export(agglomer)
 export(find_raw)

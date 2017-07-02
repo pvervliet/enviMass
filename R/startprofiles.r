@@ -12,6 +12,7 @@
 #' @param until Integer, ID of file. All peaks of files up to the date of this file will be included.
 #' @param selective Logical. Should only peaklist with measurements$profiled==TRUE be inluded?
 #' @param types. File types to include in profiling, e.g., "sample", "blind", "calibration" or "spiked". For "spiked", all related files to subtract from are also included.
+#' @param blind_omit. Omit blind peaks?
 #'
 #' @return profile list
 #' 
@@ -27,7 +28,8 @@ startprofiles<-function(
 	ion_mode="positive",
 	until=FALSE,
 	selective=FALSE,
-	types=FALSE
+	types=FALSE,
+	blind_omit=FALSE
 ){
 
     ############################################################################
@@ -144,7 +146,7 @@ startprofiles<-function(
 				setWinProgressBar(prog, progi, title = "Retrieve matrix length", label = NULL)
 			}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-			if(logfile$parameters$blind_omit=="yes"){
+			if(blind_omit==TRUE){
 				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]>=as.numeric(logfile$parameters$blind_threshold)),,drop=FALSE]
 			}
 			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE] # replicates
@@ -183,7 +185,7 @@ startprofiles<-function(
 			}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),
 				verbose=FALSE,envir=as.environment(".GlobalEnv"));
-			if(logfile$parameters$blind_omit=="yes"){
+			if(blind_omit==TRUE){
 				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]>=as.numeric(logfile$parameters$blind_threshold)),,drop=FALSE]
 			}
 			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE] # replicates

@@ -18,7 +18,7 @@
 #' @details enviMass workflow function. 
 #' 
 
-get_isotopol<-function(
+get_all<-function(
 		profileList,
 		prof_ID,
 		links_profiles,
@@ -31,7 +31,7 @@ get_isotopol<-function(
 		omit_profiles=FALSE
 	){
 
-	prof_isot_IDs<-c()
+	prof_linked_IDs<-c()
 	################################################################
 	if(omit_profiles[1]!="FALSE"){
 		if(length(omit_profiles)!=length(profileList[["index_prof"]][,"links"])){stop("omit_profiles not equal to number of profiles")}
@@ -41,72 +41,168 @@ get_isotopol<-function(
 	if(profileList[["index_prof"]][prof_ID,"links"]==0){ # no links?
 		return(prof_ID) # only main profile
 	}
+	if(skip_peaks & (profileList[["index_prof"]][prof_ID,"number_peaks_total"][[1]]<min_peaks)){
+		return(prof_ID) # only main profile
+	} # all below can be skipped if main profile has not enough peaks.
 	################################################################
 	# collect direct isotopologue links of main peak ###############
 	in_link<-profileList[["index_prof"]][prof_ID,"links"][[1]]	
 	inter_links<-c()
 	not_inter_links<-c()
-	if(length(links_profiles[[in_link]]$isot[,1])>0){
-		if(skip_peaks){
-			those<-which(
+	those1<-c();those2<-c();those3<-c();
+	not_those1<-c();not_those2<-c();not_those3<-c();
+	if(skip_peaks){
+		# for isotopologues ####################################
+		if(length(links_profiles[[in_link]]$isot[,1])>0){
+			those1<-which(
 				((links_profiles[[in_link]]$isot[,"correl"]/1000)>=min_cor) &
 				(links_profiles[[in_link]]$isot[,"ref_1"]>=min_peaks)
 			)
-			if(length(those)>0){
-				those<-links_profiles[[in_link]]$isot[those,"linked profile"]
+			if(length(those1)>0){
+				those1<-links_profiles[[in_link]]$isot[those1,"linked profile"]
 				if(omit_profiles[1]!="FALSE"){
-					those<-those[omit_profiles[those]==0]
+					those1<-those1[omit_profiles[those1]==0]
 				}
 			}
-			not_those<-which(
+			not_those1<-which(
 				((links_profiles[[in_link]]$isot[,"correl"]/1000)<min_cor) |
 				(links_profiles[[in_link]]$isot[,"ref_1"]<min_peaks)
 			)
-			if(length(not_those)>0){
-				not_those<-links_profiles[[in_link]]$isot[not_those,"linked profile"]
+			if(length(not_those1)>0){
+				not_those1<-links_profiles[[in_link]]$isot[not_those1,"linked profile"]
 			}
-		}else{
-			those<-which(
+		}
+		# for adducts ##########################################
+		if(length(links_profiles[[in_link]]$adduc[,1])>0){				
+			those2<-which(
+				((links_profiles[[in_link]]$adduc[,"correl"]/1000)>=min_cor) &
+				(links_profiles[[in_link]]$adduc[,"ref_1"]>=min_peaks)
+			)
+			if(length(those2)>0){
+				those2<-links_profiles[[in_link]]$adduc[those2,"linked profile"]
+				if(omit_profiles[1]!="FALSE"){
+					those2<-those2[omit_profiles[those2]==0]
+				}
+			}	
+			not_those2<-which(
+				((links_profiles[[in_link]]$adduc[,"correl"]/1000)<min_cor) |
+				(links_profiles[[in_link]]$adduc[,"ref_1"]<min_peaks)
+			)
+			if(length(not_those2)>0){
+				not_those2<-links_profiles[[in_link]]$adduc[not_those2,"linked profile"]
+			}			
+		}
+		# for EIC ##############################################
+		if(length(links_profiles[[in_link]]$EIC[,1])>0){				
+			those3<-which(
+				((links_profiles[[in_link]]$EIC[,"correl"]/1000)>=min_cor) &
+				(links_profiles[[in_link]]$EIC[,"ref_2"]>=min_peaks)
+			)
+			if(length(those3)>0){
+				those3<-links_profiles[[in_link]]$EIC[those3,"linked profile"]
+				if(omit_profiles[1]!="FALSE"){
+					those3<-those3[omit_profiles[those3]==0]
+				}
+			}			
+			not_those3<-which(
+				((links_profiles[[in_link]]$EIC[,"correl"]/1000)<min_cor) |
+				(links_profiles[[in_link]]$EIC[,"ref_2"]<min_peaks)
+			)
+			if(length(not_those3)>0){
+				not_those3<-links_profiles[[in_link]]$EIC[not_those3,"linked profile"]
+			}	
+		}	
+		########################################################
+	}else{
+		# for isotopologues ####################################
+		if(length(links_profiles[[in_link]]$isot[,1])>0){
+			those1<-which(
 				((links_profiles[[in_link]]$isot[,"correl"]/1000)>=min_cor) |
 				(links_profiles[[in_link]]$isot[,"ref_1"]<min_peaks)
 			)		
-			if(length(those)>0){
-				those<-links_profiles[[in_link]]$isot[those,"linked profile"]
+			if(length(those1)>0){
+				those1<-links_profiles[[in_link]]$isot[those1,"linked profile"]
 				if(omit_profiles[1]!="FALSE"){
-					those<-those[omit_profiles[those]==0]
+					those1<-those1[omit_profiles[those1]==0]
 				}
-			}
-			not_those<-which(
+				}
+			not_those1<-which(
 				((links_profiles[[in_link]]$isot[,"correl"]/1000)<min_cor) &
 				(links_profiles[[in_link]]$isot[,"ref_1"]>min_peaks)
 			)		
-			if(length(not_those)>0){
-				not_those<-links_profiles[[in_link]]$isot[not_those,"linked profile"]
-			}			
+			if(length(not_those1)>0){
+				not_those1<-links_profiles[[in_link]]$isot[not_those1,"linked profile"]
+			}	
 		}
-		if(length(those)==0){
-			return(prof_ID) # only main profile
-		}else{
-			inter_links<-c(inter_links,those)
-			not_inter_links<-c(not_inter_links,not_those)		
-			if(only_direct){return(c(prof_ID,inter_links))} # omit below indirectly related links
-		}
-	}else{
-		return(prof_ID) # only main profile
+		# for adducts ##########################################
+		if(length(links_profiles[[in_link]]$adduc[,1])>0){			
+			those2<-which(
+				((links_profiles[[in_link]]$adduc[,"correl"]/1000)>=min_cor) |
+				(links_profiles[[in_link]]$adduc[,"ref_1"]<min_peaks)
+			)		
+			if(length(those2)>0){
+				those2<-links_profiles[[in_link]]$adduc[those2,"linked profile"]
+				if(omit_profiles[1]!="FALSE"){
+					those2<-those2[omit_profiles[those2]==0]
+				}
+			}
+			not_those2<-which(
+				((links_profiles[[in_link]]$adduc[,"correl"]/1000)<min_cor) &
+				(links_profiles[[in_link]]$adduc[,"ref_1"]>min_peaks)
+			)		
+			if(length(not_those2)>0){
+				not_those2<-links_profiles[[in_link]]$adduc[not_those2,"linked profile"]
+			}	
+		}	
+		# for EIC ##############################################
+		if(length(links_profiles[[in_link]]$EIC[,1])>0){			
+			those3<-which(
+				((links_profiles[[in_link]]$EIC[,"correl"]/1000)>=min_cor) |
+				(links_profiles[[in_link]]$EIC[,"ref_2"]<min_peaks)
+			)		
+			if(length(those3)>0){
+				those3<-links_profiles[[in_link]]$EIC[those3,"linked profile"]
+				if(omit_profiles[1]!="FALSE"){
+					those3<-those3[omit_profiles[those3]==0]
+				}
+			}
+			not_those3<-which(
+				((links_profiles[[in_link]]$EIC[,"correl"]/1000)<min_cor) &
+				(links_profiles[[in_link]]$EIC[,"ref_2"]>min_peaks)
+			)		
+			if(length(not_those3)>0){
+				not_those3<-links_profiles[[in_link]]$EIC[not_those3,"linked profile"]
+			}					
+		}	
+		########################################################					
 	}
-	prof_isot_IDs<-c(prof_ID) # claimed all links for main profile
-	# all below can be skipped if main profile has not enough peaks.
+	those<-c(those1,those2,those3)
+	not_those<-c(not_those1,not_those2,not_those3)
+	if(length(those)==0){
+		return(prof_ID) # only main profile
+	}else{
+		inter_links<-c(inter_links,those)
+		not_inter_links<-c(not_inter_links,not_those)		
+		if(only_direct){return(c(prof_ID,inter_links))} # omit below indirectly related links
+	}
 	################################################################
 	# collect all indirect links ###################################
-	if(skip_peaks & (profileList[["index_prof"]][prof_ID,"number_peaks_total"][[1]]<min_peaks)){
-		return(prof_isot_IDs)
-	} # all below can be skipped if main profile has not enough peaks.
+	prof_linked_IDs<-c(prof_ID) # claimed all links for main profile
 	while(length(inter_links)>0){
 		in_link<-profileList[["index_prof"]][inter_links[1],"links"][[1]]
-		if(length(links_profiles[[in_link]]$isot[,1])>0){
-			those<-links_profiles[[in_link]]$isot[,"linked profile"]
+		if(length(links_profiles[[in_link]]$isot[,1])>0){		
+			those1<-links_profiles[[in_link]]$isot[,"linked profile"]
+		}else{those1<-c()}
+		if(length(links_profiles[[in_link]]$adduc[,1])>0){		
+			those2<-links_profiles[[in_link]]$adduc[,"linked profile"]
+		}else{those2<-c()}
+		if(length(links_profiles[[in_link]]$EIC[,1])>0){			
+			those3<-links_profiles[[in_link]]$EIC[,"linked profile"]
+		}else{those3<-c()}
+		those<-c(those1,those2,those3)
+		if(length(those)>0){
 			# remove: finished or intermediate links ############
-			those<-those[is.na(match(those,c(inter_links,prof_isot_IDs)))]
+			those<-those[is.na(match(those,c(inter_links,prof_linked_IDs)))]
 			# remove: rejected links ############################
 			if(length(those)>0){
 				those<-those[is.na(match(those,c(not_inter_links)))]
@@ -167,16 +263,16 @@ get_isotopol<-function(
 				}			
 			}
 		}
-		prof_isot_IDs<-c(prof_isot_IDs,inter_links[1])
+		prof_linked_IDs<-c(prof_linked_IDs,inter_links[[1]])
 		inter_links<-inter_links[-1]
 	}
 	################################################################	
 	if(with_test){
-		if(any(profileList[["index_prof"]][prof_isot_IDs,"profile_ID"]!=prof_isot_IDs)){
+		if(any(profileList[["index_prof"]][prof_linked_IDs,"profile_ID"]!=prof_linked_IDs)){
 			stop("\n Debug get_isotopol _3!")
 		}
 	}
 	################################################################
-	return(prof_isot_IDs)
+	return(prof_linked_IDs)
 	
 }

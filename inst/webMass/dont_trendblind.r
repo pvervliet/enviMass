@@ -14,6 +14,20 @@
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="profileList_pos")){rm(profileList_pos)}				
 		load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"))
+		profileList_pos<-intensup(
+				profileList=profileList_pos,
+				from=FALSE,
+				to=FALSE,
+				progbar=logfile$parameters$progressBar,
+				blindsub=FALSE,
+				blindfold=as.numeric(logfile$parameters$blind_threshold), 	# dummy
+				lags=10, 													# dummy
+				threshold=3,												# dummy
+				notrend=FALSE,												# dummy
+				omit_trend=TRUE	# OMITTING TREND DETECTION!
+		)
+		profileList_pos<<-profileList_pos
+		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
 		profpeaks_pos<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters$progressBar)
 		profpeaks_pos<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),]
 		profpeaks_pos<<-profpeaks_pos;
@@ -31,6 +45,20 @@
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="profileList_neg")){rm(profileList_neg)}				
 		load(file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"))
+		profileList_neg<-intensup(
+				profileList=profileList_neg,
+				from=FALSE,
+				to=FALSE,
+				progbar=logfile$parameters$progressBar,
+				blindsub=FALSE,
+				blindfold=as.numeric(logfile$parameters$blind_threshold), 	# dummy
+				lags=10, 													# dummy
+				threshold=3,												# dummy
+				notrend=FALSE,												# dummy
+				omit_trend=TRUE	# OMITTING TREND DETECTION!
+		)
+		profileList_neg<<-profileList_neg
+		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
 		profpeaks_neg<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters$progressBar)
 		profpeaks_neg<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),]
 		profpeaks_neg<<-profpeaks_neg;

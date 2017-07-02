@@ -35,8 +35,8 @@ get_adducts<-function(
 	if(length(links_profiles[[in_link]]$adduc[,1])>0){
 		if(skip_peaks){
 			those<-which(
-				(links_profiles[[in_link]]$adduc[,"ref"]>=min_cor) &
-				(links_profiles[[in_link]]$adduc[,"link counts"]>=min_peaks)
+				((links_profiles[[in_link]]$adduc[,"correl"]/1000)>=min_cor) &
+				(links_profiles[[in_link]]$adduc[,"ref_1"]>=min_peaks)
 			)
 			if(length(those)>0){
 				those<-links_profiles[[in_link]]$adduc[those,"linked profile"]
@@ -46,8 +46,8 @@ get_adducts<-function(
 			}			
 		}else{
 			those<-which(
-				(links_profiles[[in_link]]$adduc[,"ref"]>=min_cor) |
-				(links_profiles[[in_link]]$adduc[,"link counts"]<min_peaks)
+				((links_profiles[[in_link]]$adduc[,"correl"]/1000)>=min_cor) |
+				(links_profiles[[in_link]]$adduc[,"ref_1"]<min_peaks)
 			)		
 			if(length(those)>0){
 				those<-links_profiles[[in_link]]$adduc[those,"linked profile"]

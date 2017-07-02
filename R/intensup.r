@@ -13,6 +13,7 @@
 #' @param lags Vector of numericals.
 #' @param threshold Numerical. A trend is reported if its intensity is \code{threshold} above the mean intensity plus the intensity deviation of other trends.
 #' @param notrend Logical. Report global trend intensity as maximum intensity after blind subtraction.
+#' @param omit_trend Logical. Omit trend detection altogether? Used in dont_trendblind.r
 #'
 #' @return Updated \code{profileList[[7]]}.
 #' 
@@ -28,7 +29,8 @@ intensup<-function(
 	blindfold=100, # how much higher in intensity than blind?
 	lags=c(5,14),  # time lags
 	threshold=3,   # trend threshold: 
-	notrend=FALSE  # no global threshold, but global maximum above blind	
+	notrend=FALSE,  # no global threshold, but global maximum above blind	
+	omit_trend=FALSE
 ){
 
     ############################################################################
@@ -39,6 +41,7 @@ intensup<-function(
     if(blindsub!=FALSE){subit=1;subrat=blindfold;}else{subit=2;subrat=0;}
 	if(!is.numeric(lags)){stop("lags argument must be numeric; aborted.")}
 	if(!is.logical(notrend)){stop("notrend must be logical.")}
+	if(!is.logical(omit_trend)){stop("notrend must be logical.")}
 	############################################################################
     # set matrix to sort & store data from a profile ###########################
     atPOSIX<-profileList[["datetime"]];
@@ -114,18 +117,20 @@ intensup<-function(
         ########################################################################
         if(any(timeset[,4]>0)){ # any non-blind peak present?
 			what<-1 # !=1 -> get raw output, i.e., peak series
-			that<-.Call("meandel",
-				as.numeric(timeset),
-				as.integer(subit),
-				as.numeric(subrat),
-				as.numeric(numtime),
-				as.integer(what),
-				as.numeric(lags),
-				as.numeric(threshold),
-				as.integer(notrend),
-				PACKAGE="enviMass"
-			)
-			if(what!=1){ 
+			if(!omit_trend){
+				that<-.Call("meandel",
+					as.numeric(timeset),
+					as.integer(subit),
+					as.numeric(subrat),
+					as.numeric(numtime),
+					as.integer(what),
+					as.numeric(lags),
+					as.numeric(threshold),
+					as.integer(notrend),
+					PACKAGE="enviMass"
+				)
+			}
+			if( (what!=1) & (!omit_trend)){ 
 				that<-matrix(nrow=length(atPOSIX),ncol=(5+(4*length(lags))),that);
 				colnames(that)<-c("above blank?","sampleID","blankID","sample_int","blank_int",rep("lag_int",length(lags)),rep("del_int",length(lags)),rep("max_time",length(lags)),rep("blind_int",length(lags)))			
 				# plot smoothed series ... and abort ###########################
@@ -140,17 +145,21 @@ intensup<-function(
 				}
 				stop(" YOU wanted the smoothed series...\n")
 			}else{		
-				profileList[["index_prof"]][k,"deltaint_newest"]<-max(that[4,]); # current>abs.dev
-				profileList[["index_prof"]][k,"deltaint_global"]<-max(that[5,]); # global>abs.dev
-				profileList[["index_prof"]][k,"absolute_mean_dev"]<-max(that[3,]); # abs.dev
+				if(!omit_trend){
+					profileList[["index_prof"]][k,"deltaint_newest"]<-max(that[4,]); # current>abs.dev
+					profileList[["index_prof"]][k,"deltaint_global"]<-max(that[5,]); # global>abs.dev
+					profileList[["index_prof"]][k,"absolute_mean_dev"]<-max(that[3,]); # abs.dev
+				}
 				if(any(timeset[,5]>0)){ 			  # in blind?
 					profileList[["index_prof"]][k,"blind?"]<-1 # in blind
 					profileList[["index_prof"]][k,"number_peaks_blind"]<-length(timeset[timeset[,5]!=0,5]) 	# number_peaks_blind
 					profileList[["index_prof"]][k,"mean_int_blind"]<-mean(timeset[timeset[,5]!=0,5]) 	# mean_int_blind
+					profileList[["index_prof"]][k,"max_int_blind"]<-max(timeset[timeset[,5]!=0,5]) 	# mean_int_blind					
 				}else{
 					profileList[["index_prof"]][k,"blind?"]<-0 # in blind
 					profileList[["index_prof"]][k,"number_peaks_blind"]<-0 # number_peaks_blind
-					profileList[["index_prof"]][k,"mean_int_blind"]<-0 # mean_int_blind					
+					profileList[["index_prof"]][k,"mean_int_blind"]<-0 # mean_int_blind		
+					profileList[["index_prof"]][k,"max_int_blind"]<-0 # mean_int_blind						
 				}
 				#############################################
 				# Replicates: mean sample above mean blind ? <- TO BE DELETED -> now in script do_profblind.r
@@ -166,6 +175,7 @@ intensup<-function(
 				#############################################
 				profileList[["index_prof"]][k,"number_peaks_sample"]<-length(timeset[timeset[,4]!=0,4]) 	# number_peaks_sample
 				profileList[["index_prof"]][k,"mean_int_sample"]<-mean(timeset[timeset[,4]!=0,4]) 	# mean_int_sample	
+				profileList[["index_prof"]][k,"max_int_sample"]<-max(timeset[timeset[,4]!=0,4]) 						
 			}
 		}else{
 			# profileList[[7]][k,7]<-() # abs.dev = not of interest for blind
@@ -174,7 +184,9 @@ intensup<-function(
 			profileList[["index_prof"]][k,"number_peaks_sample"]<-0 # number_peaks_sample
 			profileList[["index_prof"]][k,"number_peaks_blind"]<-length(timeset[timeset[,5]!=0,5])# number_peaks_blind
 			profileList[["index_prof"]][k,"mean_int_sample"]<-0 # mean_int_sample
-			profileList[["index_prof"]][k,"mean_int_blind"]<-mean(timeset[timeset[,5]!=0,5]) # mean_int_blind								
+			profileList[["index_prof"]][k,"max_int_sample"]<-0 
+			profileList[["index_prof"]][k,"mean_int_blind"]<-mean(timeset[timeset[,5]!=0,5]) # mean_int_blind			
+			profileList[["index_prof"]][k,"max_int_blind"]<-max(timeset[timeset[,5]!=0,5])			
 		}
 		profileList[["index_prof"]][k,"newest_intensity"]<-timeset[leng,4]
 		########################################################################
@@ -186,7 +198,9 @@ intensup<-function(
 			profileList[["index_prof"]][k,"number_peaks_sample"]<-0 # number_peaks_sample
 			profileList[["index_prof"]][k,"number_peaks_blind"]<-1 # number_peaks_blind
 			profileList[["index_prof"]][k,"mean_int_sample"]<-0 # mean_int_sample
-			profileList[["index_prof"]][k,"mean_int_blind"]<-(profileList[[2]][profileList[[7]][k,1],2]) # mean_int_blind						
+			profileList[["index_prof"]][k,"max_int_sample"]<-0 
+			profileList[["index_prof"]][k,"mean_int_blind"]<-(profileList[[2]][profileList[[7]][k,1],2]) # mean_int_blind	
+			profileList[["index_prof"]][k,"max_int_blind"]<-(profileList[[2]][profileList[[7]][k,1],2])			
 		}else{ # only in sample
 			profileList[["index_prof"]][k,"blind?"]<-0 
 			#profileList[["index_prof"]][k,"above_blind?"]<-1 # not in blind = above (single peak) <- TO BE DELETED -> now in script do_profblind.r	
@@ -198,7 +212,9 @@ intensup<-function(
 			profileList[["index_prof"]][k,"number_peaks_sample"]<-1 # number_peaks_sample
 			profileList[["index_prof"]][k,"number_peaks_blind"]<-0 # number_peaks_blind
 			profileList[["index_prof"]][k,"mean_int_sample"]<-(profileList[["peaks"]][profileList[["index_prof"]][k,1],2]) # mean_int_sample
-			profileList[["index_prof"]][k,"mean_int_blind"]<-0 # mean_int_blind							
+			profileList[["index_prof"]][k,"max_int_sample"]<-(profileList[["peaks"]][profileList[["index_prof"]][k,1],2]) 
+			profileList[["index_prof"]][k,"mean_int_blind"]<-0 # mean_int_blind		
+			profileList[["index_prof"]][k,"max_int_blind"]<-0				
 		}
       }
     }

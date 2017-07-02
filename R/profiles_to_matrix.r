@@ -3,31 +3,52 @@
 #'
 #' @description Converts profileList peak table to matrix of peak intensities. 
 #'
-#' @param profileList A profile list.
-#' @param n_profiles Integer. How many of the most intense profiles to include?
-#' @param only_sample. Logical. TRUE = should peaks of sample files (and not, e.g., blank files) be included only?
-#' @param n_latest. NULL or Integer. If integer, number of latest file peaks to include.
+#' @param profileList A profile list, i.e., profileList_pos or profileList_neg.
+#' @param links_profiles List of links among profiles, i.e., links_profiles_pos or links_profiles_neg. Only used if reduce_comp=TRUE.
+#' @param reduce_comp. Logical. Reduce profiles by their components. See details.
+#' @param sort_by. Vector of character strings. One or several of colnames(profileList[["index_prof"]]) to prioritize profiles with.
+#' @param n_profiles Integer. How many of the most sort_by profiles to include? Set to NULL to include all.
+#' @param only_sample_peaks. Logical. TRUE = should peaks of sample files (and not, e.g., blank files) be included only?
+#' @param n_latest_peaks. NULL or Integer. If integer, number of latest file peaks to include.
+#' @param median_above_blind. NULL or Integer. If integer, only profiles with a median sample-to-blank intensity >= median_above_blind are used. Set to Inf to only retain profiles entirely unaffected by blind/blank signals.
 #' @param normalize. Logical. TRUE = should intensities of each profile be divided by their maximum to range in [0,1]?
 #'
-#' @return Matrix with intensities.
+#' @return Matrix with intensities, cp. value section.
 #' 
-#' @details The function writes the sample peak intensities of the most intense (= maximum peak intensity per profile) n_profiles 
-#' into a non-sparse matrix. Columns contain profiles, rows sample peaks. Missing peak intensities are set to 0.
-#' Rows are ordered by date and time, columns by decreasing amximum profile intensity.  
-#' 
+#' @details The function writes the (sample) peak intensities of the sorted n_profiles into a non-sparse matrix, cp. value section.
+#'
+#'
+#'
+#'
+#' @value Matrix with peak intensities, with the following properties: 
+#' Columns refer to profiles, rows to files.
+#' Rows are ordered by date and time and named by file IDs.  
+#' Columns are ordered by decreasing maximum profile intensity and named with profile IDs. 
+#' Missing peak intensities (<LOD) are set to 0.
+#'
+#'
+#'
+#'
+#'
 
 profiles_to_matrix<-function(
 	profileList,
+	links_profiles=NULL,
+	sort_by=c("number_peaks_sample","mean_int"),
+	reduce_comp=FALSE,
 	n_profiles=NULL,
-    only_sample=FALSE,
-    n_latest=NULL,
+    only_sample_peaks=FALSE,
+    n_latest_peaks=NULL,
+	median_above_blind=NULL,
     normalize=FALSE
 ){
 
 	############################################################################
-    if(!profileList[[1]][[3]]){stop("profileList not profiled; aborted.")}
+	if(any(is.na(match(sort_by,colnames(profileList[["index_prof"]]))))){stop("Argument sort_by not matching column names - abort.")}
+    if(!profileList[["state"]]["profiling"][[1]]){stop("\nprofileList not profiled - abort.")}
     len<-dim(profileList[["index_prof"]])[1]
-    if(!is.logical(normalize)){stop("normalize must be logical")}
+    if(!is.logical(normalize)){stop("\nArgument normalize must be logical - abort.")}
+	if((reduce_comp)&(!is.list(links_profiles))){stop("\n Either set reduce_comp=FALSE or provide a valid links_profiles list - abort.")}
 	############################################################################
 
     ############################################################################    
@@ -35,44 +56,44 @@ profiles_to_matrix<-function(
     ord<-order(as.POSIXct(profileList[["datetime"]]),decreasing=TRUE)
     type<-profileList[["type"]][ord]
     file_ID<-profileList[["sampleID"]][ord]
-    if(!is.null(n_latest)[1]){
-        type<-type[1:n_latest]
-		file_ID<-file_ID[1:n_latest]
+	if(only_sample_peaks){	
+		file_ID<-file_ID[type=="sample"]
+	}
+    if(!is.null(n_latest_peaks)[1]){
+        type<-type[1:n_latest_peaks]
+		file_ID<-file_ID[1:n_latest_peaks]
     }
 	keep<-rep(TRUE,len)
 	profile_IDs<-profileList[["index_prof"]][,"profile_ID"]
-    if(only_sample){
-        file_ID<-file_ID[type=="sample"]
-		# filter out profiles which do not contain sample peaks
-		for(i in 1:len){
-			if(
-				all(is.na(match(
-					profileList[["peaks"]][
-							profileList[["index_prof"]][i,"start_ID"]:profileList[["index_prof"]][i,"end_ID"]
-						,"sampleIDs"],
-					file_ID
-				)))
-			){
-				keep[i]<-FALSE
-			}
-		}	
+    # filter out profiles which do not contain sample peaks ####################
+	if(only_sample_peaks){	
+		keep[profileList[["index_prof"]][,"number_peaks_sample"]==0]<-FALSE
+	}
+	# filter out profiles which range not above blind intensities ##############
+	if(!is.null(median_above_blind)[1]){
+		keep[profileList[["index_prof"]][,"above_blind?"]<median_above_blind]<-FALSE
 	}
     ############################################################################ 
 
     ############################################################################    
-    # get maximum intensity of each profile ####################################
-    max_int<-rep(0,len)
-    for(i in 1:len){
-        if(!keep[i]){next}
-        max_int[i]<-
-            max(profileList[["peaks"]][
-                    profileList[["index_prof"]][i,"start_ID"]:profileList[["index_prof"]][i,"end_ID"]
-                ,"intensity"]
-            )
-    }
+	# based on sorting, remove correlated components files with a lower rank ###
+	if(reduce_comp){
+		# BEWARE: must include use_profiles argument to account for above filtering
+		keep_IDs<-enviMass:::analyseE_links_profiles(
+				profileList, 
+				links_profiles, 
+				sort_what=sort_by, 	# internally sorted in function - again sorted below
+				use_profile=keep,	# omit/skip filtered profiles ab initio
+				return_excl = TRUE) # returns IDs of excluded profiles 	
+		if(length(keep_IDs)){
+			keep[match(keep_IDs,profile_IDs)]<-FALSE
+		}
+	}
+    # sort #####################################################################	
+	max_ord<-profileList[["index_prof"]][,sort_by,drop=FALSE]
 	profile_IDs<-profile_IDs[keep]
-	max_int<-max_int[keep]
-    max_int_ord<-order(max_int,decreasing=TRUE)
+	max_ord<-max_ord[keep,,drop=FALSE]
+	max_int_ord<-rev(do.call(order,as.data.frame(max_ord))) # ordering for multiple columns
 	profile_IDs<-profile_IDs[max_int_ord]
     ############################################################################    
 

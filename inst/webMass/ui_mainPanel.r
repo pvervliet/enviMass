@@ -625,11 +625,11 @@
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind peak detection </font></p> '),				
 					fluidRow(
 						column(width = 2, radioButtons("blind", "Detect?", c("yes"="yes","no"="no")) ),
-						column(width = 2, radioButtons("blind_omit", "Remove?", c("yes"="yes","no"="no")) ),
+						column(width = 2, radioButtons("blind_omit", "Remove?", c("yes"="TRUE","no"="FALSE")) ),
 						column(width = 8, offset = 0.3,
-							tags$p(align="justify","Detects sample peaks which are also present in blind/blank files. Check Settings Blind Tab for file selection. 
-							Optionally, affected peaks can early be removed before downstream processing. Recommended for e.g. effect on compound screening - otherwise
-							later removal (cp. red steps) recommended."),
+							tags$p(align="justify","Tags sample peaks which are also present in blind/blank files. Check Settings -> Blind tab for selecting the latter. 
+							By also enabling 'Remove?', affected peaks are fully excluded (not just tagged) from being assorted into profiles (but not from, e.g., nontargeted componentization), 
+							which may be useful for e.g. its effect on compound screening (relies on profiling) - otherwise a later removal of such peaks is recommended (cp. red steps) ."),
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),				
@@ -815,7 +815,7 @@
 					fluidRow(
 						column(width = 2, radioButtons("components_profiles", "Include?", c("yes"="yes","no"="no"))),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Aggregate and filter filewise componentization results across profiles."),
+							tags$p(align="justify","Aggregate and filter filewise componentization results across profiles; Group profiles with similar intensity patterns."),
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profile_components.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					)#,
@@ -1073,54 +1073,92 @@
 				checkboxGroupInput("files_neg_select_subtract", label="", choices=c("FALSE"), selected = NULL)
             ),			
             # Componentization #################################################
-            tabPanel("Componentization",			
-            	tags$h5("File-wise componentization"),
-				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/components.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on filewise componentization.</a></p>'),	
-				HTML('<hr noshade="noshade" />'),
-				tabsetPanel(
-					tabPanel("Isotopologue grouping",	
-						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/isotopologues.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on isotopologue grouping parameters.</a></p>'),	
+            tabPanel("Componentization",		
+				tabsetPanel(			
+					tabPanel("File-wise componentization",
+						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/file_components.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on filewise componentization.</a></p>'),	
 						HTML('<hr noshade="noshade" />'),
-						numericInput("isotop_mztol", "+/- m/z tolerance ...", 3), 
-						selectInput("isotop_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
-						numericInput("isotop_rttol", "RT tolerance [s]:", 60),       
-						sliderInput("isotop_inttol", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2)
+						tabsetPanel(
+							tabPanel("Isotopologue grouping",	
+								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/isotopologues.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on isotopologue grouping parameters.</a></p>'),	
+								HTML('<hr noshade="noshade" />'),
+								numericInput("isotop_mztol", "+/- m/z tolerance ...", 3), 
+								selectInput("isotop_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
+								numericInput("isotop_rttol", "RT tolerance [s]:", 60),       
+								sliderInput("isotop_inttol", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2)
+							),
+							tabPanel("Adduct grouping",	
+								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/adducts.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on adduct grouping parameters.</a></p>'),	
+								HTML('<hr noshade="noshade" />'),
+								numericInput("adducts_mztol", "+/- m/z tolerance ...", 3), 
+								selectInput("adducts_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
+								numericInput("adducts_rttol", "RT tolerance [s]:", 60),       
+								HTML('<hr noshade="noshade" />'),
+								div(style = widget_style3,checkboxGroupInput("adducts_pos_group", "Positive mode:", "none")),
+								div(style = widget_style3,checkboxGroupInput("adducts_neg_group", "Negative mode:", "none"))						
+							),
+							tabPanel("Homologue series detection",	
+								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/homol.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on homologue detection parameters.</a></p>'),	
+								HTML('<hr noshade="noshade" />'),
+								textInput("homol_units", label="Homologue units (comma seperated, no empty spaces; insert FALSE to detect all series with m/z differences in between 10 and 120)", value = "CH2,CH4O", width = '100%', placeholder = "CH2,CH4O"),
+								textInput("homol_charges", label="Charges z (comma seperated, no empty spaces)", value = "1,2", width = NULL, placeholder = "1,2"),
+								HTML('<hr noshade="noshade" />'),
+								numericInput("homol_minrt", "Minimum change in RT from one homologue to the next [s]", 10),       
+								numericInput("homol_maxrt", "Maximum change in RT from one homologue to the next [s]", 60),   
+								numericInput("homol_rttol", "Tolerance by which the RT differences between two adjacent homologue pairs are allowed to change [s]", 20), 
+								HTML('<hr noshade="noshade" />'),
+								numericInput("homol_mztol", "+/- m/z tolerance ...", 3), 
+								selectInput("homol_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
+								numericInput("homol_minlength", "Minimum number of homologues in a series:", 6),						
+								HTML('<hr noshade="noshade" />'),						
+								numericInput("homol_vec_size", "Ignore unless a relevant error message is printed (then try to increase size): ", 1E8)
+							),
+							tabPanel("EIC correlation",	
+								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/eic.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on EIC correlation parameter.</a></p>'),	
+								HTML('<hr noshade="noshade" />'),
+								numericInput("EICor_delRT", "RT tolerance window for candidate peak pairs [s]:", 5),
+								numericInput("EICor_minpeaks", "Min. number of data points (scans) shared by EIC pairs to check for their correlation:", 15),
+								numericInput("EICor_mincor", "Min. Pearson correlation [0,1] coefficient:", 0.95)
+							)						
+						), style = "color: #123123;"
 					),
-					tabPanel("Adduct grouping",	
-						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/adducts.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on adduct grouping parameters.</a></p>'),	
+					tabPanel("Profile componentization",		
+						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profile_components.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on profile componentization.</a></p>'),						
+						HTML('<hr noshade="noshade" />'), 
+						fluidRow(
+							column(5,numericInput("corr_min_peaks", "Minimum number of files over which peaks of different profiles have to co-occur to check their intensity correlation:", value = 5, min = 0, max = NA)),
+							column(3,numericInput("comp_corr", "Minimum Pearson profile intensity correlation:", value = 0.9, min = 0, max = 1)),
+							column(4,numericInput("corr_del_RT", "RT tolerance window for co-occuring peaks of different profiles [s]:", value = 5, min = 0, max = NA))
+						),		
+#logfile$parameters$corr_skip_peaks<<-"TRUE"
+						HTML('<hr noshade="noshade" />'), 
+						selectInput("prof_comp_link_only",label="Restrict profile componentization to isotopologue and selected adduct relations only?",choices=c("TRUE","FALSE"),selected = "FALSE", multiple = FALSE),
 						HTML('<hr noshade="noshade" />'),
-						numericInput("adducts_mztol", "+/- m/z tolerance ...", 3), 
-						selectInput("adducts_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
-						numericInput("adducts_rttol", "RT tolerance [s]:", 60),       
 						HTML('<hr noshade="noshade" />'),
-						div(style = widget_style3,checkboxGroupInput("adducts_pos_group", "Positive mode:", "none")),
-						div(style = widget_style3,checkboxGroupInput("adducts_neg_group", "Negative mode:", "none"))						
-					),
-					tabPanel("Homologue series detection",	
-						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/homol.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on homologue detection parameters.</a></p>'),	
-						HTML('<hr noshade="noshade" />'),
-						textInput("homol_units", label="Homologue units (comma seperated, no empty spaces; insert FALSE to detect all series with m/z differences in between 10 and 120)", value = "CH2,CH4O", width = '100%', placeholder = "CH2,CH4O"),
-						textInput("homol_charges", label="Charges z (comma seperated, no empty spaces)", value = "1,2", width = NULL, placeholder = "1,2"),
-						HTML('<hr noshade="noshade" />'),
-						numericInput("homol_minrt", "Minimum change in RT from one homologue to the next [s]", 10),       
-						numericInput("homol_maxrt", "Maximum change in RT from one homologue to the next [s]", 60),   
-						numericInput("homol_rttol", "Tolerance by which the RT differences between two adjacent homologue pairs are allowed to change [s]", 20), 
-						HTML('<hr noshade="noshade" />'),
-						numericInput("homol_mztol", "+/- m/z tolerance ...", 3), 
-						selectInput("homol_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
-						numericInput("homol_minlength", "Minimum number of homologues in a series:", 6),						
-						HTML('<hr noshade="noshade" />'),						
-						numericInput("homol_vec_size", "Ignore unless a relevant error message is printed (then try to increase size): ", 1E8)
-					),
-					tabPanel("EIC correlation",	
-						HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/eic.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on EIC correlation parameter.</a></p>'),	
-						HTML('<hr noshade="noshade" />'),
-						numericInput("EICor_delRT", "RT tolerance window for candidate peak pairs [s]:", 5),
-						numericInput("EICor_minpeaks", "Min. number of data points (scans) shared by EIC pairs to check for their correlation:", 15),
-						numericInput("EICor_mincor", "Min. Pearson correlation [0,1] coefficient:", 0.95)
-					)						
+						tags$h4("File restrictions:"),
+						fluidRow(
+							column(5, selectInput("dofile_latest_profcomp",label="Restrict profile componentization to a set of latest files only?",choices=c("TRUE","FALSE"),selected = "TRUE", multiple = FALSE)),
+							column(4, numericInput("numfile_latest_profcomp", "Number of latest files to include:", 50))
+						),						
+						HTML('<hr noshade="noshade" />'), 
+						tags$h4("Filtering of outliers in profile component relations:"),
+						fluidRow(
+							column(5, 
+								tags$h5("Positive ionization mode"),
+								selectInput("filter_profcomp_pos",label="Filter positive mode components?",choices=c("TRUE","FALSE"),selected = "TRUE", multiple = FALSE),
+								selectInput("for_which_profcomp_pos",label="Set standard profiles by:",
+									choices=c("Internal standard profiles"="ISTD","Target compound profiles"="target","Internal standard and target profiles"="both","All profiles"="all"),selected = "all", multiple = FALSE)
+							),			
+							column(5, 
+								tags$h5("Negative ionization mode"),
+								selectInput("filter_profcomp_neg",label="Filter negative mode components?",choices=c("TRUE","FALSE"),selected = "TRUE", multiple = FALSE),
+								selectInput("for_which_profcomp_neg",label="Set standard profiles by:",
+									choices=c("Internal standard profiles"="ISTD","Target compound profiles"="target","Internal standard and target profiles"="both","All profiles"="all"),selected = "all", multiple = FALSE)							
+							)
+						),
+						HTML('<hr noshade="noshade" />')
+					)
 				)
-				, style = "color: #123123;"
             ),			
             # GENERAL SETTINGS #################################################
             tabPanel("General",
