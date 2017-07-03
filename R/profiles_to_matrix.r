@@ -1,7 +1,7 @@
-#' @title Converts profileList peak table to matrix
+#' @title Converts profileList to a matrix
 #'
 #'
-#' @description Converts profileList peak table to matrix of peak intensities. 
+#' @description Converts profileList peak list to a matrix of peak intensities. 
 #'
 #' @param profileList A profile list, i.e., profileList_pos or profileList_neg.
 #' @param links_profiles List of links among profiles, i.e., links_profiles_pos or links_profiles_neg. Only used if reduce_comp=TRUE.
