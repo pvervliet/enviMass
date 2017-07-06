@@ -843,10 +843,6 @@ if(
 
 }
 
-#system.time({
-#	those<-enviMass:::analyseE_links_profiles(profileList_pos, links_profiles_pos, sort_what="number_peaks_total",with_bar=FALSE)
-#})		
-
 
 ##################################################################################
 # NEGATIVE #######################################################################

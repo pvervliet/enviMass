@@ -544,7 +544,9 @@ if(logfile$version<3.102){
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}	
-	if(!any(logfile$summary[,1]=="recovery")){	
+	if(!any(logfile$summary[,1]=="recovery",na.rm=TRUE)){	
+		logfile$summary[,1]<<-as.character(logfile$summary[,1])
+		logfile$summary[,2]<<-as.character(logfile$summary[,2])
 		logfile$summary[24,1]<<-"recovery"
 		logfile$summary[24,2]<<-"FALSE"	
 		first_ext<-TRUE;
@@ -1645,7 +1647,42 @@ if(logfile$version<3.26){
 	names(logfile)[11]<<-"workflow_depend"	
 	logfile[[12]]<<-workflow_must
 	names(logfile)[12]<<-"workflow_must"	
-	# -> no new nodes - only dependency screening -> file-wise compon. added #######################	
+	# update logfile$Tasks_to_redo #################################################################
+	old_Tasks_to_redo<-logfile$Tasks_to_redo
+	logfile[[2]]<<-rep(FALSE,length(colnames(workflow_must)));
+	names(logfile[[2]])<<-colnames(workflow_must)
+	names(logfile)[2]<<-c("Tasks_to_redo");    
+	for(i in 1:length(old_Tasks_to_redo)){
+		if(any(names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i])){
+			logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)==names(old_Tasks_to_redo)[i]]<<-old_Tasks_to_redo[i]
+		}
+	}
+	# update workflow ##############################################################################
+	old_workflow<-logfile$workflow
+    logfile$workflow<<-0    # based on above Tasks_to_redo
+    names(logfile)[6]<<-c("workflow")
+	for(i in 1:length(names(logfile[[2]]))){
+		logfile$workflow[i]<<-"yes"; 
+		names(logfile$workflow)[i]<<-names(logfile[[2]])[i]
+	}
+	for(i in 1:length(old_workflow)){
+		if(any(names(logfile$workflow)==names(old_workflow)[i])){
+			logfile$workflow[names(logfile$workflow)==names(old_workflow)[i]]<<-old_workflow[i]
+		}
+	}	
+	# update summary ###############################################################################
+	old_summary<-logfile$summary
+    tasks<-names(logfile[[2]]) # based on above Tasks_to_redo
+    doneit<-rep(FALSE,length(tasks))
+    summar<-data.frame(tasks,doneit,stringsAsFactors = FALSE)
+    names(summar)<-c("Tasks","Done?")
+    logfile[[3]]<<-summar
+    names(logfile)[3]<<-c("summary")
+	for(i in 1:length(old_summary[,1])){	
+		if(any(logfile$summary[,1]==as.character(old_summary[i,1]))){
+			logfile$summary[logfile$summary[,1]==as.character(old_summary[i,1]),2]<<-as.character(old_summary[i,2])
+		}
+	}
 	# reorder summary into workflow ################################################################
 	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	set_order<-match(schedule[,1],logfile$summary[,1])
@@ -1834,12 +1871,8 @@ if(logfile$version<3.29){
 		logfile$parameters$corr_del_RT<<-"5"					
 		logfile$parameters$corr_skip_peaks<<-"TRUE"	
 	}
-	################################################################################################
-
-	
-	
 	################################################################################################	
-#logfile$version<<-3.29
+	logfile$version<<-3.29
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
@@ -1848,7 +1881,32 @@ if(logfile$version<3.29){
 }
 	
 	
+if(logfile$version<3.3){
+
+	cat("\n Updating to version 3.3 ...")
+	################################################################################################
+	if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"))){
+		file.remove(file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"))
+	}
+	if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))){
+		file.remove(file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))
+	}
+	enviMass:::workflow_set(
+		down="profiling",
+		except=FALSE,
+		down_TF=c("TRUE","FALSE"),
+		check_node=TRUE, 	
+		single_file=FALSE
+	)
+	shinyjs:::info(paste0("Profile list structure has been modified for profile componentization &  new filtering functionalities - please press the Calculate button any time soon to make these changes permanent to your project results (entails a project recalculation except peakpicking)!"));
+	################################################################################################	
+	logfile$version<<-3.3
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
 	
+}
 	
 	
 

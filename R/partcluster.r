@@ -339,20 +339,39 @@ partcluster<-function(
 	index <- .Call("indexed",
 		as.integer(profileList[[2]][,"profileIDs"]),
 		as.integer(startat),
-		as.integer(21),
+		as.integer(26),
 		PACKAGE="enviMass"
 	)
 	index<-index[index[,1]!=0,]
 	index[,4]<-seq(length(index[,4]))
 	colnames(index)<-c(
-		"start_ID","end_ID","number_peaks_total", #1
-		"profile_ID","deltaint_newest","deltaint_global", #4
-		"absolute_mean_dev","blind?","above_blind?", #7
-		"number_peaks_sample","number_peaks_blind", #10
-		"mean_int_sample","mean_int_blind", #12
-		"mean_mz","mean_RT","mean_int", #14
-		"newest_intensity","links","component",#17
-		"max_int_sample","max_int_blind"
+		"start_ID",
+		"end_ID",
+		"number_peaks_total", #1
+		"profile_ID",
+		"deltaint_newest", #"current_incident"
+		"deltaint_global", #4 #"past_incident"
+		"absolute_mean_dev",
+		"in_blind?",
+		"above_blind?", #7
+		"number_peaks_sample",
+		"number_peaks_blind", #10
+		"mean_int_sample",
+		"mean_int_blind", #12
+		"mean_mz",
+		"mean_RT",
+		"mean_int", #14
+		"newest_intensity", #"newest_intensity"
+		"links",
+		"component", #17
+		"max_int_sample",
+		"max_int_blind",
+		# new:
+		"max_int",
+		"var_mz",
+		"min_RT",
+		"max_RT",
+		"Mass defect"
 	)
 	profileList[[7]]<-index
 	if(with_test){
@@ -375,9 +394,14 @@ partcluster<-function(
 						setWinProgressBar(prog, 0, title = "Extract profile data...", label = NULL);}
     for(k in m:n){
 		if(progbar==TRUE){setWinProgressBar(prog, k, title = "Extract profile data...", label = NULL)}
-			profileList[["index_prof"]][k,14]<-mean(profileList[["peaks"]][(profileList[["index_prof"]][k,1]:profileList[["index_prof"]][k,2]),1])
-			profileList[["index_prof"]][k,15]<-mean(profileList[["peaks"]][(profileList[["index_prof"]][k,1]:profileList[["index_prof"]][k,2]),3])	  
-			profileList[["index_prof"]][k,16]<-mean(profileList[["peaks"]][(profileList[["index_prof"]][k,1]:profileList[["index_prof"]][k,2]),2])	
+			profileList[["index_prof"]][k,"mean_mz"]<-mean(profileList[["peaks"]][(profileList[["index_prof"]][k,1]:profileList[["index_prof"]][k,2]),"m/z"])
+			profileList[["index_prof"]][k,"mean_RT"]<-mean(profileList[["peaks"]][(profileList[["index_prof"]][k,1]:profileList[["index_prof"]][k,2]),"RT"])	  
+			profileList[["index_prof"]][k,"mean_int"]<-mean(profileList[["peaks"]][(profileList[["index_prof"]][k,1]:profileList[["index_prof"]][k,2]),"intensity"])	
+			profileList[["index_prof"]][k,"max_int"]<-max(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"intensity"])
+			profileList[["index_prof"]][k,"var_mz"]<-var(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"m/z"])
+			profileList[["index_prof"]][k,"min_RT"]<-min(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"RT"])	
+			profileList[["index_prof"]][k,"max_RT"]<-max(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"RT"])	
+			profileList[["index_prof"]][k,"Mass defect"]<-(round(profileList[["index_prof"]][k,"mean_mz"])-profileList[["index_prof"]][k,"mean_mz"])
 	}
 	if(progbar==TRUE){close(prog);}
 	profileList[[1]][[3]]<-TRUE

@@ -20,10 +20,23 @@ profiletopeak<-function(profileList,progbar){
 	# define "fake" peaklist ###################################################
 	peaklist<-matrix(ncol=17,nrow=length(profileList[["index_prof"]][,1]),0)
 	colnames(peaklist)<-c(
-		"mean_m/z","mean_intensity","mean_RT","max_intensity", #1
-		"in_blind?","above_blind?","var_mz","min_RT","max_RT", #5
-		"profileID","number_peaks_total","past_incident","current_incident", #10
-		"current_intensity","Component","Homologue","Mass defect" #14
+		#"mean_m/z",
+		#"mean_intensity",
+		#"mean_RT",
+		#"max_intensity", #1
+		#"in_blind?",
+		#"above_blind?",
+		"var_mz",
+		#"min_RT",
+		#"max_RT", #5
+		"profileID",
+		"number_peaks_total",
+		"past_incident",
+		"current_incident", #10
+		"current_intensity",
+		"Component",
+		"Homologue",
+		"Mass defect" #14
 	)
     if(progbar==TRUE){  prog<-winProgressBar("Convert profiles to peaklist",min=1,max=length(profileList[["index_prof"]][,8]));
 						setWinProgressBar(prog, 0, title = "Convert profiles to peaklist...", label = NULL);}

@@ -148,9 +148,6 @@ if(
 # <
 	profileList_pos<<-enviMass:::in_blind(profileList_pos)
 	save(profileList_pos,file=file.path(as.character(logfile[["project_folder"]]),"results","profileList_pos"),compress=FALSE);
-	profpeaks_pos<<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters$progressBar)		
-	profpeaks_pos<<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),];
-	save(profpeaks_pos,file=file.path(as.character(logfile[["project_folder"]]),"results","profpeaks_pos"));	
 	###################################################################################################
 
 }
@@ -304,9 +301,6 @@ if(
 # <
 	profileList_neg<<-enviMass:::in_blind(profileList_neg)
 	save(profileList_neg,file=file.path(as.character(logfile[["project_folder"]]),"results","profileList_neg"),compress=FALSE);
-	profpeaks_neg<<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters$progressBar)		
-	profpeaks_neg<<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),];
-	save(profpeaks_neg,file=file.path(as.character(logfile[["project_folder"]]),"results","profpeaks_neg"));	
 	###################################################################################################
 
 }

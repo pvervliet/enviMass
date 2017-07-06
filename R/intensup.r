@@ -82,12 +82,14 @@ intensup<-function(
 	latestID<-timeset[leng,2][[1]]
 	############################################################################
 	# check & adjust lags ######################################################
-	if(any(lags>(max(numtime)-min(numtime)+1))){
-		lags<-lags[lags<=(max(numtime)-min(numtime)+1)]
-		cat("WARNING: at least one lag longer than covered time period - omitted!\n")
-		if(length(lags)==0){
-			stop("...no lags left; aborted.")
-		}		
+	if(!omit_trend){
+		if(any(lags>(max(numtime)-min(numtime)+1))){
+			lags<-lags[lags<=(max(numtime)-min(numtime)+1)]
+			cat("WARNING: at least one lag longer than covered time period - omitted!\n")
+			if(length(lags)==0){
+				stop("...no lags left; aborted.")
+			}		
+		}
 	}
 	# INSERT ... also check any of the inter-sample distances ##################
 	if(max(diff(numtime[timeset[,2]!=0],lag=1))>max(lags)){
@@ -151,12 +153,12 @@ intensup<-function(
 					profileList[["index_prof"]][k,"absolute_mean_dev"]<-max(that[3,]); # abs.dev
 				}
 				if(any(timeset[,5]>0)){ 			  # in blind?
-					profileList[["index_prof"]][k,"blind?"]<-1 # in blind
+					profileList[["index_prof"]][k,"in_blind?"]<-1 # in blind
 					profileList[["index_prof"]][k,"number_peaks_blind"]<-length(timeset[timeset[,5]!=0,5]) 	# number_peaks_blind
 					profileList[["index_prof"]][k,"mean_int_blind"]<-mean(timeset[timeset[,5]!=0,5]) 	# mean_int_blind
 					profileList[["index_prof"]][k,"max_int_blind"]<-max(timeset[timeset[,5]!=0,5]) 	# mean_int_blind					
 				}else{
-					profileList[["index_prof"]][k,"blind?"]<-0 # in blind
+					profileList[["index_prof"]][k,"in_blind?"]<-0 # in blind
 					profileList[["index_prof"]][k,"number_peaks_blind"]<-0 # number_peaks_blind
 					profileList[["index_prof"]][k,"mean_int_blind"]<-0 # mean_int_blind		
 					profileList[["index_prof"]][k,"max_int_blind"]<-0 # mean_int_blind						
@@ -179,7 +181,7 @@ intensup<-function(
 			}
 		}else{
 			# profileList[[7]][k,7]<-() # abs.dev = not of interest for blind
-			profileList[["index_prof"]][k,"blind?"]<-1 # only in blind = not above (single peak)
+			profileList[["index_prof"]][k,"in_blind?"]<-1 # only in blind = not above (single peak)
 			#profileList[["index_prof"]][k,"above_blind?"]<-0	# mean sample above mean blind ? <- TO BE DELETED -> now in script do_profblind.r
 			profileList[["index_prof"]][k,"number_peaks_sample"]<-0 # number_peaks_sample
 			profileList[["index_prof"]][k,"number_peaks_blind"]<-length(timeset[timeset[,5]!=0,5])# number_peaks_blind
@@ -193,7 +195,7 @@ intensup<-function(
       }else{ # single-peaked profile
 		profileList[["index_prof"]][k,"absolute_mean_dev"]<-0;
 		if( any( timeset[,3]== (profileList[[2]][profileList[["index_prof"]][k,1],6]) ) ){ # only in blind
-			profileList[["index_prof"]][k,"blind?"]<-1 # in blind = not above (single peak)
+			profileList[["index_prof"]][k,"in_blind?"]<-1 # in blind = not above (single peak)
 			#profileList[["index_prof"]][k,"above_blind?"]<-0	# mean sample above mean blind ? <- TO BE DELETED -> now in script do_profblind.r
 			profileList[["index_prof"]][k,"number_peaks_sample"]<-0 # number_peaks_sample
 			profileList[["index_prof"]][k,"number_peaks_blind"]<-1 # number_peaks_blind
@@ -202,7 +204,7 @@ intensup<-function(
 			profileList[["index_prof"]][k,"mean_int_blind"]<-(profileList[[2]][profileList[[7]][k,1],2]) # mean_int_blind	
 			profileList[["index_prof"]][k,"max_int_blind"]<-(profileList[[2]][profileList[[7]][k,1],2])			
 		}else{ # only in sample
-			profileList[["index_prof"]][k,"blind?"]<-0 
+			profileList[["index_prof"]][k,"in_blind?"]<-0 
 			#profileList[["index_prof"]][k,"above_blind?"]<-1 # not in blind = above (single peak) <- TO BE DELETED -> now in script do_profblind.r	
 			profileList[["index_prof"]][k,"deltaint_global"]<-(profileList[[2]][profileList[["index_prof"]][k,1],2])
 			if(any(profileList[[2]][profileList[["index_prof"]][k,1],6]==latestID)){

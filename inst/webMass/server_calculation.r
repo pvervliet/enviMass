@@ -95,21 +95,11 @@ maincalc<-reactive({
 			if(any(objects()=="profileList_pos")){rm(profileList_pos)}
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="profileList_neg")){rm(profileList_neg)}
-			if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_pos")){rm(profpeaks_pos,envir=as.environment(".GlobalEnv"))}
-			if(any(objects()=="profpeaks_pos")){rm(profpeaks_pos)}
-			if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_neg")){rm(profpeaks_neg,envir=as.environment(".GlobalEnv"))}
-			if(any(objects()=="profpeaks_neg")){rm(profpeaks_neg)}    
 			if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))){
 				load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"),verbose=TRUE)
 			}
 			if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg"))){
 				load(file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"),verbose=TRUE)
-			}
-			if(file.exists(file.path(as.character(logfile[[1]]),"results","profpeaks_pos"))){
-				load(file.path(as.character(logfile[[1]]),"results","profpeaks_pos"),envir=as.environment(".GlobalEnv"),verbose=TRUE)
-			}
-			if(file.exists(file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))){
-				load(file.path(as.character(logfile[[1]]),"results","profpeaks_neg"),envir=as.environment(".GlobalEnv"),verbose=TRUE)
 			}
 # BAUSTELLE - complete!			
 	

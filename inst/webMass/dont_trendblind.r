@@ -1,11 +1,5 @@
 	##################################################################################
 	# CLEAN!
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_pos")){rm(profpeaks_pos,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="profpeaks_pos")){rm(profpeaks_pos)}		
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_neg")){rm(profpeaks_neg,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="profpeaks_neg")){rm(profpeaks_neg)}		
-	if(file.exists(file.path(as.character(logfile[[1]]),"results","profpeaks_pos"))){file.remove(file.path(as.character(logfile[[1]]),"results","profpeaks_pos"))}
-	if(file.exists(file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))){file.remove(file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))}
 	##################################################################################	
 
 	##################################################################################		
@@ -28,13 +22,8 @@
 		)
 		profileList_pos<<-profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
-		profpeaks_pos<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters$progressBar)
-		profpeaks_pos<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),]
-		profpeaks_pos<<-profpeaks_pos;
-		save(profpeaks_pos,file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"));
 		if(isolate(input$Ion_mode)=="positive"){
 			profileList<<-profileList_pos;
-			profpeaks<<-profpeaks_pos;
 		}
 	}
 	##################################################################################
@@ -59,13 +48,8 @@
 		)
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
-		profpeaks_neg<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters$progressBar)
-		profpeaks_neg<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),]
-		profpeaks_neg<<-profpeaks_neg;
-		save(profpeaks_neg,file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"));
 		if(isolate(input$Ion_mode)=="negative"){
 			profileList<<-profileList_neg;
-			profpeaks<<-profpeaks_neg;
 		}
 	}
 	##################################################################################	

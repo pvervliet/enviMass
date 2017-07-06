@@ -80,10 +80,6 @@
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
 		profileList_pos_copy<-profileList_pos
 		save(profileList_pos_copy,file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),compress=FALSE); # used for screening - does not include modifications of downstream compound subtraction		
-		profpeaks_pos<-enviMass:::profiletopeak(profileList_pos,progbar=logfile$parameters$progressBar)		
-		profpeaks_pos<-profpeaks_pos[order(profpeaks_pos[,13],decreasing=TRUE),];
-		profpeaks_pos<<-profpeaks_pos;
-		save(profpeaks_pos,file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"));
 		links_peaks_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol; links_profiles_pos defined in do_components_profiles.r
 		save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));				
 	}
@@ -147,10 +143,6 @@
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
 		profileList_neg_copy<-profileList_neg
 		save(profileList_neg_copy,file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),compress=FALSE); # used for screening - does not include modifications of downstream compound subtraction			
-		profpeaks_neg<-enviMass:::profiletopeak(profileList_neg,progbar=logfile$parameters$progressBar)
-		profpeaks_neg<-profpeaks_neg[order(profpeaks_neg[,13],decreasing=TRUE),]
-		profpeaks_neg<<-profpeaks_neg;
-		save(profpeaks_neg,file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"));
 		links_peaks_neg<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
 		save(links_peaks_neg,file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"));		
 	}

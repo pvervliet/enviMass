@@ -450,16 +450,14 @@ observe({ # - F: generate outputs
 					}	
 				}else{ # get peaks from components - only selectable if selectInput adapted accordingly
 					if(verbose){cat("\n in Atoms_3")}	
-					at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID pattern peaks |"],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
-			#at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID pattern peaks |"],","), match, x=as.numeric(1743)))))	
+					at_peak<<-which(!is.na(unlist(lapply(strsplit(gsub("*","",component[["Components"]][,"ID pattern peaks |"],fixed=TRUE),","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
 					# search in adduct peaks
 					if(length(at_peak)==0){
-						at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID adduct peaks |"],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
-			#at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID adduct peaks |"],","), match, x=as.numeric(1743)))))		
+						at_peak<<-which(!is.na(unlist(lapply(strsplit(gsub("*","",component[["Components"]][,"ID pattern peaks |"],fixed=TRUE),","), match, x=as.numeric(isolate(input$atom_bound_peak))))))	
 					}
 					# search in interfering peaks
 					if(length(at_peak)==0){
-						at_peak<<-which(!is.na(unlist(lapply(strsplit(component[["Components"]][,"ID interfering peaks |"],","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
+						at_peak<<-which(!is.na(unlist(lapply(strsplit(gsub("*","",component[["Components"]][,"ID pattern peaks |"],fixed=TRUE),","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
 					}				
 					if(length(at_peak)>0){	# at_peak = at which component	
 						if(verbose){cat("\n in Atoms_4")}	

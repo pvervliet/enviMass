@@ -4,6 +4,7 @@
 exported_1<-reactive({
     input$expo_profiles
 	if(isolate(init$a)=="TRUE"){
+cat("\nUpdate me!")
 		if( 
 			isolate(input$expo_profiles) &
 			any(objects(envir=as.environment(".GlobalEnv"))=="profileList") & 

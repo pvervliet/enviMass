@@ -682,20 +682,17 @@ maincalc3<-reactive({
 			load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));
 		}
-		if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks")){ rm(profpeaks, inherits = TRUE) }
-		if(file.exists(file.path(logfile[[1]],"results","profpeaks_pos"))){
-			if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_pos")){rm(profpeaks_pos,envir=as.environment(".GlobalEnv"))}
-			if(any(objects()=="profpeaks_pos")){rm(profpeaks_pos)}				
-			load(file=file.path(as.character(logfile[[1]]),"results","profpeaks_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-			assign("profpeaks",profpeaks_pos,envir=as.environment(".GlobalEnv"));
-		}else{
-			stop("No profpeaks_pos available for profile filtering - debug!")
-		}
+		if(file.exists(file.path(logfile[[1]],"results","links_profiles_pos"))){
+			if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_pos")){rm(links_profiles_pos,envir=as.environment(".GlobalEnv"))}
+			if(any(objects()=="links_profiles_pos")){rm(links_profiles_pos)}				
+			load(file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
+			assign("links_profiles",links_profiles_pos,envir=as.environment(".GlobalEnv"));
+		}				
 		expr4p<-list(src=file.path(logfile[[1]],"pics","boxprofile_pos"))
 		output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)		
 		isolate(init$b<<-(init$b+1))
 		if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #1");}
-		if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #1");}
+		if(any(objects()=="profpeaks2")){stop("illegal profpeaks found, #1");}
 		return("Select ionization (switch to negative):\n")
 	}
 	if( (isolate(init$a)=="TRUE") &  (isolate(input$Ion_mode)=="negative") ){
@@ -710,20 +707,17 @@ maincalc3<-reactive({
 			load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));
 		}
-		if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks")){ rm(profpeaks, inherits = TRUE) }
-		if(file.exists(file.path(logfile[[1]],"results","profpeaks_neg"))){
-			if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks_neg")){rm(profpeaks_neg,envir=as.environment(".GlobalEnv"))}
-			if(any(objects()=="profpeaks_neg")){rm(profpeaks_neg)}				
-			load(file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-			assign("profpeaks",profpeaks_neg,envir=as.environment(".GlobalEnv"));
-		}else{
-			stop("No profpeaks_neg available for profile filtering - debug!")		
-		}
+		if(file.exists(file.path(logfile[[1]],"results","links_profiles_neg"))){
+			if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_neg")){rm(links_profiles_neg,envir=as.environment(".GlobalEnv"))}
+			if(any(objects()=="links_profiles_neg")){rm(links_profiles_neg)}				
+			load(file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
+			assign("links_profiles",links_profiles_neg,envir=as.environment(".GlobalEnv"));
+		}	
 		expr4n<-list(src=file.path(logfile[[1]],"pics","boxprofile_neg"))
 		output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)	
 		isolate(init$b<<-(init$b+1))
 		if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #2");}
-		if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #2");}
+		if(any(objects()=="profpeaks2")){stop("illegal profpeaks found, #2");}
 		return("Select ionization (switch to positive):\n")	
 	}
 })
@@ -745,222 +739,204 @@ maincalc6<-reactive({
 	input$filterProf_notblind
 	input$filterProf_sort
 	input$filterProf_count
+	input$filterProf_medianblind
 	input$filterProf_medianblind_value
+	input$filterProf_minMD
+	input$filterProf_maxMD
+	input$filterProf_components
+	cat("\n profileList filtered and sorted_1")
     if( 
 		(isolate(init$a)=="TRUE") & 
-		(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks")) & 
+		(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")) & 
 		!is.na(isolate(input$filterProf_minmass)) & 
 		!is.na(isolate(input$filterProf_maxmass)) & 
 		!is.na(isolate(input$filterProf_minrt)) & 
-		!is.na(isolate(input$filterProf_maxrt)) 
+		!is.na(isolate(input$filterProf_maxrt)) &
+		!is.na(isolate(input$filterProf_minMD)) &		
+		!is.na(isolate(input$filterProf_maxMD))		
 	){
-		cat("\n profilepeaks filtered and sorted")		
+		cat("\n profileList filtered and sorted_2")		
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")){rm(profpeaks2,envir=as.environment(".GlobalEnv"))}
-		if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #3");}
-		if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #3");}
-		if(any(objects()=="profpeaks2")){stop("illegal profpeaks2 found, #3");}
-		assign("profpeaks2",profpeaks,envir=as.environment(".GlobalEnv"));
-		if( length(profpeaks2)>13 ){profpeaks2<<-profpeaks2[profpeaks2[,"mean_m/z"]>=isolate(input$filterProf_minmass),,drop = FALSE]}else{ if( length(profpeaks2)==13 ){ profpeaks2<<-profpeaks2[profpeaks2[1]>=isolate(input$filterProf_minmass),drop = FALSE] }}
-		if( length(profpeaks2)>13 ){profpeaks2<<-profpeaks2[profpeaks2[,"mean_m/z"]<=isolate(input$filterProf_maxmass),,drop = FALSE]}else{ if( length(profpeaks2)==13 ){  profpeaks2<<-profpeaks2[profpeaks2[1]<=isolate(input$filterProf_maxmass),drop = FALSE] }}
-		if( length(profpeaks2)>13 ){profpeaks2<<-profpeaks2[profpeaks2[,"mean_RT"]>=isolate(input$filterProf_minrt),,drop = FALSE]}else{ if( length(profpeaks2)==13 ){  profpeaks2<<-profpeaks2[profpeaks2[3]>=isolate(input$filterProf_minrt),drop = FALSE] }}
-		if( length(profpeaks2)>13 ){profpeaks2<<-profpeaks2[profpeaks2[,"mean_RT"]<=isolate(input$filterProf_maxrt),,drop = FALSE]}else{ if( length(profpeaks2)==13 ){  profpeaks2<<-profpeaks2[profpeaks2[3]<=isolate(input$filterProf_maxrt),drop = FALSE] }}
-		if( length(profpeaks2)>13 ){
-			if(isolate(input$filterProf_medianblind)=="yes"){
-				profpeaks2<<-profpeaks2[(profpeaks2[,"above_blind?"]>=as.numeric(isolate(input$filterProf_medianblind_value))),,drop = FALSE] 
-			}
-		}else{
-			if(isolate(input$filterProf_medianblind)=="yes"){
-				if( length(profpeaks2)==13 ){
-					profpeaks2<<-profpeaks2[(profpeaks2[,"above_blind?"]>=as.numeric(isolate(input$filterProf_medianblind_value)))]
-				}
-			}
+		if(any(objects()=="profpeaks2")){rm(profpeaks2)}		
+		assign("profpeaks2",profileList[["index_prof"]],envir=as.environment(".GlobalEnv"));
+		if(any(objects()=="profileList")){stop("illegal profileList found, #3");}
+		if(any(objects()=="profpeaks2")){stop("illegal profileList found, #3");}
+		###################################################################################################
+		
+		
+		
+		###################################################################################################		
+		profpeaks2<<-profpeaks2[profpeaks2[,"mean_mz"]>=isolate(input$filterProf_minmass),,drop = FALSE]
+		profpeaks2<<-profpeaks2[profpeaks2[,"mean_mz"]<=isolate(input$filterProf_maxmass),,drop = FALSE]
+		profpeaks2<<-profpeaks2[profpeaks2[,"mean_RT"]>=isolate(input$filterProf_minrt),,drop = FALSE]
+		profpeaks2<<-profpeaks2[profpeaks2[,"mean_RT"]<=isolate(input$filterProf_maxrt),,drop = FALSE]
+		profpeaks2<<-profpeaks2[profpeaks2[,"Mass defect"]>=isolate(input$filterProf_minMD),,drop = FALSE]
+		profpeaks2<<-profpeaks2[profpeaks2[,"Mass defect"]<=isolate(input$filterProf_maxMD),,drop = FALSE]		
+		###################################################################################################		
+		if(isolate(input$filterProf_medianblind)=="yes"){
+			profpeaks2<<-profpeaks2[(profpeaks2[,"above_blind?"]>=as.numeric(isolate(input$filterProf_medianblind_value))),,drop = FALSE] 
 		}
-		if( length(profpeaks2)>13 ){
-			if(isolate(input$filterProf_notblind)=="yes"){
-				profpeaks2<<-profpeaks2[profpeaks2[,"in_blind?"]==0,,drop = FALSE] # not in blind, = profileList[[7]][k,8]
-			}
-		}else{
-			if( length(profpeaks2)==13 ){
-				profpeaks2<<-profpeaks2[(profpeaks2[,"in_blind?"]==0)]
-			}		
+		if(isolate(input$filterProf_notblind)=="yes"){
+			profpeaks2<<-profpeaks2[profpeaks2[,"in_blind?"]==0,,drop = FALSE] # not in blind, = profileList[[7]][k,8]
 		}
-		if( length(profpeaks2)>13 ){
-			if(isolate(input$filterProf_sort)=="ID"){
-				profpeaks2<<-profpeaks2[order(profpeaks2[,"profileID"],decreasing=FALSE),]
-			}
-			if(isolate(input$filterProf_sort)=="mean m/z"){
-				profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_m/z"],decreasing=FALSE),]
-			}
-			if(isolate(input$filterProf_sort)=="mean RT"){
-				profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"],decreasing=FALSE),]
-			}
-			if(isolate(input$filterProf_sort)=="maximum intensity"){
-				profpeaks2<<-profpeaks2[order(profpeaks2[,"max_intensity"],decreasing=TRUE),]
-			}
-			if(isolate(input$filterProf_sort)=="total peak number"){
-				profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_total"],profpeaks2[,"max_intensity"],decreasing=TRUE),]
-			}			
-			if(isolate(input$filterProf_sort)=="mean intensity"){
-				profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_intensity"],decreasing=TRUE),]
-			}
-			if(isolate(input$filterProf_sort)=="global trend intensity"){
-				profpeaks2<<-profpeaks2[order(profpeaks2[,"past_incident"],decreasing=TRUE),]
-				profpeaks2<<-profpeaks2[profpeaks2[,"past_incident"]!=0,]
-			}
-			if(isolate(input$filterProf_sort)=="current trend intensity"){
-				profpeaks2<<-profpeaks2[order(profpeaks2[,"current_incident"],decreasing=TRUE),]
-				profpeaks2<<-profpeaks2[profpeaks2[,"current_incident"]!=0,]
-			}
+		###################################################################################################	
+		if(isolate(input$filterProf_sort)=="ID (increasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"profile_ID"],decreasing=FALSE),,drop = FALSE]
+			sort_by<<-"profile_ID";sort_by_decreasing<-"FALSE"
 		}
-		if(length(profpeaks2)!=0){
-			if(length(profpeaks2)==13){ # contains just one row?
-				if(
-					profpeaks2[1]>=isolate(input$filterProf_minmass) &
-					profpeaks2[1]<=isolate(input$filterProf_maxmass) &
-					profpeaks2[3]>=isolate(input$filterProf_minrt) &
-					profpeaks2[3]<=isolate(input$filterProf_maxrt) 
-				){ 
-					if( ((isolate(input$filterProf_meanblind)=="yes") & (profpeaks2[6]==1)) || (isolate(input$filterProf_meanblind)=="no") ){
-						if( ((isolate(input$filterProf_notblind)=="yes") & (profpeaks2[5]==1)) || (isolate(input$filterProf_notblind)=="no") ){
-							output$allproftable<-renderTable(profpeaks2)
-							#output$atprof1<-renderText({ "1" })
-							output$atprof2<-renderText({ "1" })
-							output$atprof3<-renderText({ "1" })
-							output$atprof4<-renderText({ "1" })
-							output$atprof5<-renderText({ "1" })			
-							path=file.path(logfile[[1]],"pics","profilehisto.png");
-							png(filename = path, bg = "white", width = 1100);
-								plot.new()
-								plot.window(xlim=c(0,1),ylim=c(0,1))
-								text(0.5,0.5,labels="0 profiles left for these filter settings",cex=1.8,col="red")
-							dev.off();
-							expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
-							output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
-							updateNumericInput(session,"profID",value = 0);
-							updateNumericInput(session,"profentry",value = 0);	
-							return("1")
-						}else{
-							#output$atprof1<-renderText({ "0" })
-							output$atprof2<-renderText({ "0" })
-							output$atprof3<-renderText({ "0" })
-							output$atprof4<-renderText({ "0" })
-							output$atprof5<-renderText({ "0" })
-							path=file.path(logfile[[1]],"pics","profilehisto.png");
-							png(filename = path, bg = "white", width = 1100);
-								plot.new()
-								plot.window(xlim=c(0,1),ylim=c(0,1))
-								text(0.5,0.5,labels="0 profiles left for these filter settings",cex=1.8,col="red")
-							dev.off();
-							expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
-							output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
-							output$allproftable<-renderText("No profiles left")
-							updateNumericInput(session,"profID",value = 0);
-							updateNumericInput(session,"profentry",value = 0);
-							return("0")
-						}
-					}else{
-						#output$atprof1<-renderText({ "0" })
-						output$atprof2<-renderText({ "0" })
-						output$atprof3<-renderText({ "0" })
-						output$atprof4<-renderText({ "0" })
-						output$atprof5<-renderText({ "0" })
-						path=file.path(logfile[[1]],"pics","profilehisto.png");
-						png(filename = path, bg = "white", width = 1100);
-							plot.new()
-							plot.window(xlim=c(0,1),ylim=c(0,1))
-							text(0.5,0.5,labels="0 profiles for these filter settings",cex=1.8,col="red")
-						dev.off();
-						expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
-						output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
-						output$allproftable<-renderText("No profiles left")
-						updateNumericInput(session,"profID",value = 0);
-						updateNumericInput(session,"profentry",value = 0);
-						return("0")
-					}
-				}else{
-					#output$atprof1<-renderText({ "0" })
-					output$atprof2<-renderText({ "0" })
-					output$atprof3<-renderText({ "0" })
-					output$atprof4<-renderText({ "0" })
-					output$atprof5<-renderText({ "0" })
-					path=file.path(logfile[[1]],"pics","profilehisto.png");
-					png(filename = path, bg = "white", width = 1100);
-						plot.new()
-						plot.window(xlim=c(0,1),ylim=c(0,1))
-						text(0.5,0.5,labels="0 profiles for these filter settings",cex=1.8,col="red")
-					dev.off();
-					expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
-					output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
-					output$allproftable<-renderText("No profiles left")
-					updateNumericInput(session,"profID",value = 0);
-					updateNumericInput(session,"profentry",value = 0);
-					return("0")
-				}
+		if(isolate(input$filterProf_sort)=="mean m/z (increasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_mz"],decreasing=FALSE),,drop = FALSE]
+			sort_by<<-"mean_mz";sort_by_decreasing<-"FALSE"
+		}
+		if(isolate(input$filterProf_sort)=="mean m/z (decreasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_mz"],decreasing=TRUE),,drop = FALSE]
+			sort_by<<-"mean_mz";sort_by_decreasing<-"TRUE"
+		}		
+		if(isolate(input$filterProf_sort)=="mean RT (increasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"],decreasing=FALSE),,drop = FALSE]
+			sort_by<<-"mean_RT";sort_by_decreasing<-"FALSE"
+		}	
+		if(isolate(input$filterProf_sort)=="mean RT (decreasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"],decreasing=TRUE),,drop = FALSE]
+			sort_by<<-"mean_RT";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="minimum RT (decreasing)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"min_RT"],decreasing=TRUE),,drop = FALSE]	
+			sort_by<<-"min_RT";sort_by_decreasing<-"TRUE"			
+		}	
+		if(isolate(input$filterProf_sort)=="maximum RT (decreasing)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_RT" ],decreasing=TRUE),,drop = FALSE]	
+			sort_by<<-"max_RT";sort_by_decreasing<-"TRUE"			
+		}
+		if(isolate(input$filterProf_sort)=="maximum overall intensity (decreasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int"],decreasing=TRUE),,drop = FALSE]
+			sort_by<<-"max_int";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="maximum intensity in samples (decreasing, zeros removed)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int_sample"],decreasing=TRUE),,drop = FALSE]	
+			profpeaks2<<-profpeaks2[profpeaks2[,"max_int_sample"]!=0,,drop = FALSE]			
+			sort_by<<-"max_int_sample";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="maximum intensity in blanks/blinds (decreasing, zeros removed)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int_blind"],decreasing=TRUE),,drop = FALSE]	
+			profpeaks2<<-profpeaks2[profpeaks2[,"max_int_blind"]!=0,,drop = FALSE]			
+			sort_by<<-"max_int_blind";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="mean intensity (decreasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int"],decreasing=TRUE),,drop = FALSE]
+			sort_by<<-"mean_int";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="mean intensity in samples (decreasing, zeros removed)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int_sample"],decreasing=TRUE),,drop = FALSE]	
+			profpeaks2<<-profpeaks2[profpeaks2[,"mean_int_sample"]!=0,,drop = FALSE]
+			sort_by<<-"mean_int_sample";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="mean intensity in blanks/blinds (decreasing, zeros removed)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int_blind"],decreasing=TRUE),,drop = FALSE]	
+			profpeaks2<<-profpeaks2[profpeaks2[,"mean_int_blind"]!=0,,drop = FALSE]
+			sort_by<<-"mean_int_blind";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="current trend intensity (decreasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"deltaint_global"],decreasing=TRUE),,drop = FALSE]
+			profpeaks2<<-profpeaks2[profpeaks2[,"deltaint_global"]!=0,,drop = FALSE]
+			sort_by<<-"deltaint_global";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="past & current trend intensity (decreasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"deltaint_newest"],decreasing=TRUE),,drop = FALSE]
+			profpeaks2<<-profpeaks2[profpeaks2[,"deltaint_newest"]!=0,,drop = FALSE]
+			sort_by<<-"deltaint_newest";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="total peak number (decreasing)"){
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_total"],profpeaks2[,"max_int"],decreasing=TRUE),,drop = FALSE]
+			sort_by<<-"number_peaks_total";sort_by_decreasing<-"TRUE"
+		}			
+		if(isolate(input$filterProf_sort)=="peak number in samples (decreasing, zeros removed)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_sample"],decreasing=TRUE),,drop = FALSE]	
+			profpeaks2<<-profpeaks2[profpeaks2[,"number_peaks_sample"]!=0,,drop = FALSE]		
+			sort_by<<-"number_peaks_sample";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="peak number in blanks/blinds (decreasing, zeros removed)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_blind"],decreasing=TRUE),,drop = FALSE]	
+			profpeaks2<<-profpeaks2[profpeaks2[,"number_peaks_blind"]!=0,,drop = FALSE]	
+			sort_by<<-"number_peaks_blind";sort_by_decreasing<-"TRUE"
+		}
+		if(isolate(input$filterProf_sort)=="Mass defect (increasing)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"Mass defect"],decreasing=FALSE),,drop = FALSE]	
+			sort_by<<-"Mass defect";sort_by_decreasing<-"FALSE"				
+		}
+		if(isolate(input$filterProf_sort)=="Mass defect (decreasing)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"Mass defect"],decreasing=TRUE),,drop = FALSE]		
+			sort_by<<-"Mass defect";sort_by_decreasing<-"TRUE"
+		}		
+		if(isolate(input$filterProf_sort)=="Median sample above blind intensity (decreasing)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"in_blind?"],decreasing=TRUE),,drop = FALSE]		
+			sort_by<<-"in_blind?";sort_by_decreasing<-"TRUE"
+		}
+		###################################################################################################		
+		if(
+			(isolate(input$filterProf_components)=="TRUE") &
+			(logfile$workflow[names(logfile$workflow)=="components_profiles"]=="yes") &
+			(logfile$summary[logfile$summary[,1]=="components_profiles",2]=="TRUE") &
+			(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles"))
+		){
+			keep_IDs<-enviMass:::analyseE_links_profiles(
+				profileList_index=profpeaks2, 
+				links_profiles, 
+				sort_what=sort_by, 
+				sort_decreasing=sort_by_decreasing,
+				use_profile = NULL, 
+				with_bar = FALSE, 
+				return_excl=FALSE		
+			)
+			if(length(keep_IDs)){
+				profpeaks2<-profpeaks2[match(keep_IDs,profpeaks2[,"profile_ID"]),,drop=FALSE]
 			}else{
-				if(length(profpeaks2)>13){
-					# summary
-					atit1<-sum(profpeaks2[,11]) 
-					#output$atprof1<-renderText({ atit1 })
-					atit2<-length(profpeaks2[,11])
-					output$atprof2<-renderText({ atit2 })
-					atit3<-length(profpeaks2[profpeaks2[,5]==1,11])
-					output$atprof3<-renderText({ atit3 })
-					atit4<-length(profpeaks2[profpeaks2[,6]==1,11])
-					output$atprof4<-renderText({ atit4 })
-					atit5<-length(profpeaks2[profpeaks2[,13]!=0,11])
-					output$atprof5<-renderText({ atit5 })
-					# intensity histogram
-					path=file.path(logfile[[1]],"pics","profilehisto.png");
-                    png(filename = path, bg = "white", width = 600);
-                    plot_profiles_intensity_histograms(mean_intensities=profpeaks2[,2],
-                                                       max_intensities=profpeaks2[,4],
-                                                       past_incidents=profpeaks2[,12],
-                                                       current_incidents=profpeaks2[,13]);
-                    dev.off();
-					expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
-					output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
-					# table
-					if( (length(profpeaks2[,1])>isolate(input$filterProf_count))  &  !is.na(isolate(input$filterProf_count)) ){
-						profpeaks2<<-profpeaks2[1:isolate(input$filterProf_count),]
-					}
-					profpeaks2<<-as.data.frame(profpeaks2)
-					profpeaks2[,"mean_m/z" ]<<-format(profpeaks2[,"mean_m/z" ],digits=8)
-					profpeaks2[,"mean_intensity"]<<-format(profpeaks2[,"mean_intensity"],scientific=TRUE,digits=2)
-					profpeaks2[,"max_intensity"]<<-format(profpeaks2[,"max_intensity"],scientific=TRUE,digits=2)
-					profpeaks2[,"in_blind?"]<<-as.integer(profpeaks2[,"in_blind?"])
-					profpeaks2[,"above_blind?"]<<-round(profpeaks2[,"above_blind?"],digits=4)
-					profpeaks2[,"var_mz"]<<-format(profpeaks2[,"var_mz"],scientific=TRUE,digits=2)
-					profpeaks2[,"profileID"]<<-as.integer(profpeaks2[,"profileID"])
-					profpeaks2[,"number_peaks_total"]<<-as.integer(profpeaks2[,"number_peaks_total"])
-					profpeaks2[,"past_incident"]<<-format(profpeaks2[,"past_incident"],scientific=TRUE,digits=2)
-					profpeaks2[,"current_incident"]<<-format(profpeaks2[,"current_incident"],scientific=TRUE,digits=2)
-					profpeaks3<<-profpeaks2[,c(10:13,1:9)]
-if( any(is.na(profpeaks2[,"above_blind?"]))){cat("\nHERE_7!!\n")}
-					names(profpeaks3)<<-c("profile ID","number of peaks","global trend intensity","current trend intensity","mean m/z", "mean intensity", "mean RT", "maximum Intensity", "in blind?", "above blind?", "m/z variance", "minimum RT", "maximum RT")
-					output$allproftable<-renderTable(profpeaks3)
-					updateNumericInput(session,"profID",value = 0);
-					updateNumericInput(session,"profentry",value = 0);
-					return(as.character(atit1));
-				}else{
-					#output$atprof1<-renderText({ "0" })
-					output$atprof2<-renderText({ "0" })
-					output$atprof3<-renderText({ "0" })
-					output$atprof4<-renderText({ "0" })
-					output$atprof5<-renderText({ "0" })
-					path=file.path(logfile[[1]],"pics","profilehisto.png");
-					png(filename = path, bg = "white", width = 1100);
-						plot.new()
-						plot.window(xlim=c(0,1),ylim=c(0,1))
-						text(0.5,0.5,labels="0 profiles for these filter settings",cex=1.8,col="red")
-					dev.off();
-					expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
-					output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
-					output$allproftable<-renderText("No profiles left")
-					updateNumericInput(session,"profID",value = 0);
-					updateNumericInput(session,"profentry",value = 0);
-					return("0")
-				}
+				stop("\nDebug server_obs_res_meas.r @ 1")
 			}
+		}
+		###################################################################################################			
+		if(dim(profpeaks2)[1]>0){
+			atit1<-sum(profpeaks2[,"number_peaks_total"]) 
+			#output$atprof1<-renderText({ atit1 })
+			atit2<-dim(profpeaks2)[1]
+			output$atprof2<-renderText({ atit2 })
+			atit3<-sum(profpeaks2[,"number_peaks_blind"]>0)
+			output$atprof3<-renderText({ atit3 })
+			atit4<-sum(profpeaks2[,"deltaint_global"]>0)
+			output$atprof4<-renderText({ atit4 })
+			atit5<-sum(profpeaks2[,"deltaint_newest"]>0)
+			output$atprof5<-renderText({ atit5 })
+			# intensity histogram
+			path=file.path(logfile[[1]],"pics","profilehisto.png");
+                png(filename = path, bg = "white", width = 600);
+                plot_profiles_intensity_histograms(mean_intensities=profpeaks2[,2],
+                                                    max_intensities=profpeaks2[,4],
+                                                    past_incidents=profpeaks2[,12],
+                                                    current_incidents=profpeaks2[,13]);
+            dev.off();
+			expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
+			output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
+			# generate output table ############################################
+			if( (length(profpeaks2[,1])>isolate(input$filterProf_count))  &  !is.na(isolate(input$filterProf_count)) ){
+				profpeaks2<<-profpeaks2[1:isolate(input$filterProf_count),,drop=FALSE]
+			}
+			profpeaks3<<-as.data.frame(profpeaks2)
+			profpeaks3[,"mean_mz" ]<<-format(profpeaks3[,"mean_mz" ],digits=8)
+			profpeaks3[,"mean_int"]<<-format(profpeaks3[,"mean_int"],scientific=TRUE,digits=2)
+			profpeaks3[,"max_int"]<<-format(profpeaks3[,"max_int"],scientific=TRUE,digits=2)
+			profpeaks3[,"in_blind?"]<<-as.integer(profpeaks3[,"in_blind?"])
+			profpeaks3[,"above_blind?"]<<-round(profpeaks3[,"above_blind?"],digits=4)
+			profpeaks3[,"var_mz"]<<-format(profpeaks3[,"var_mz"],scientific=TRUE,digits=2)
+			profpeaks3[,"profile_ID"]<<-as.integer(profpeaks3[,"profile_ID"])
+			profpeaks3[,"number_peaks_total"]<<-as.integer(profpeaks3[,"number_peaks_total"])
+			profpeaks3[,"deltaint_global"]<<-format(profpeaks3[,"deltaint_global"],scientific=TRUE,digits=2)
+			profpeaks3[,"deltaint_newest"]<<-format(profpeaks3[,"deltaint_newest"],scientific=TRUE,digits=2)
+			profpeaks3<<-profpeaks3[,c(10:13,1:9)]
+			names(profpeaks3)<<-c("profile ID","number of peaks","global trend intensity","current trend intensity","mean m/z", "mean intensity", "mean RT", "maximum Intensity", "in blind?", "above blind?", "m/z variance", "minimum RT", "maximum RT")
+			output$allproftable<-renderTable(profpeaks3)
+			updateNumericInput(session,"profID",value = 0);
+			updateNumericInput(session,"profentry",value = 0);
+			return(as.character(atit1));
 		}else{
 			#output$atprof1<-renderText({ "0" })
 			output$atprof2<-renderText({ "0" })
@@ -1003,7 +979,6 @@ if( any(is.na(profpeaks2[,"above_blind?"]))){cat("\nHERE_7!!\n")}
 		}
 	}
 	if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #4");}
-	if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #4");}
 	if(any(objects()=="profpeaks2")){stop("illegal profpeaks2 found, #4");}
 	if(any(objects()=="profpeaks3")){stop("illegal profpeaks3 found, #4");}
 })	
@@ -1023,13 +998,10 @@ observe({
 		(!is.na(isolate(input$profID))) & 
 		(isolate(input$profID)!=0) & 
 		any(objects(envir=as.environment(".GlobalEnv"))=="profileList") & 
-		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks") 	& 
 		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")
 	){
 		if(any(objects()=="profileList")){stop("illegal profileList found, #5");}
-		if(any(objects()=="profpeaks")){stop("illegal profpeaks found, #5");}
-		if(any(objects()=="profpeaks2")){stop("illegal profpeaks2 found, #5");}
-		if(any(objects()=="profpeaks3")){stop("illegal profpeaks3 found, #5");}
+
 		if(any(profileList[[7]][,4]==as.numeric(isolate(input$profID)))){
 			cat("\n plotting profile with ID ");cat(as.numeric(isolate(input$profID)));
 			if(logfile$parameters$trend_blind=="yes"){

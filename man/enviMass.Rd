@@ -20,7 +20,6 @@ Exported functions:
 \item{\code{\link{webMass}}}{Start enviMass Workflow GUI.}
 \item{\code{\link{recalib}}}{Function for m/z and RT recalibration.}
 \item{\code{\link{PWfile}}}{Thermo .raw file conversion and centroidization with ProteoWizard.}
-\item{\code{\link{profiletopeak}}}{Summarise profile information.}
 \item{\code{\link{plotprofiles}}}{Interactive profile viewer.}
 \item{\code{\link{plotglobal}}}{Plot all time series from a list of profiles.}
 \item{\code{\link{plotaprofile}}}{Plot profiles.}

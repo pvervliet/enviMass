@@ -490,7 +490,9 @@ function(
 	HS_length<-3;
 	found<-0;
 	tupels<-cbind(tupels,seq(1,length(tupels[,1]),1)) # dummy column
-	while(any(tupels[,1]!=0)){
+	while(any(tupels[,1]!=0) 
+#& (HS_length<12)	
+	){
 	    cat(paste(" ",HS_length," - ",length(tupels[,1]),sep=""));
 		keeper<-rep(0,length(tupels[,1]))
 		if(length(tupels[,1])==1){break} # only one tupel left = nothing to combine

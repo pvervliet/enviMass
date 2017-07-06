@@ -318,22 +318,6 @@ maincalc2<-reactive({
 			if(file.exists(file.path(logfile$project_folder,"quantification","profileList_neg_cal"))){
 				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_neg_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			}	
-					
-			
-			if(file.exists(file.path(logfile$project_folder,"results","profpeaks_pos"))){
-				if(isolate(input$Ion_mode)=="positive"){
-					load(file=file.path(as.character(logfile$project_folder),"results","profpeaks_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-					assign("profpeaks",profpeaks_pos,envir=as.environment(".GlobalEnv"));
-				}
-			}
-			if(file.exists(file.path(logfile$project_folder,"results","profpeaks_neg"))){
-				if(isolate(input$Ion_mode)=="negative"){
-					load(file=file.path(as.character(logfile$project_folder),"results","profpeaks_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-					assign("profpeaks",profpeaks_neg,envir=as.environment(".GlobalEnv"));
-				}
-			}
-			
-
 			if(file.exists(file.path(logfile$project_folder,"pics","profilehisto.png"))){ 
 				expr6<-list(src=file.path(logfile$project_folder,"pics","profilehisto.png"))
 				output$profilehisto<-renderImage(expr6, deleteFile = FALSE)
