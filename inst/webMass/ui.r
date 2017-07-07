@@ -52,6 +52,35 @@ widget_style5 <-
 widget_style6 <-
   "max-width: 600px;"  
  
+widget_style7 <-
+  "display: inline-block;
+  vertical-align: text-top;
+  padding: 7px;
+  border: solid;
+  border-width: 2px;
+  border-radius: 4px;
+  border-color: darkgrey;
+  background-color: #ddff99;" 
+
+widget_style8 <-
+  "display: inline-block;
+  vertical-align: text-top;
+  padding: 7px;
+  border: solid;
+  border-width: 2px;
+  border-radius: 4px;
+  border-color: #003300;
+  background-color: #88cc00;" 
+
+widget_style9 <-
+  "display: inline-block;
+  vertical-align: text-top;
+  padding: 7px;
+  border: solid;
+  border-width: 2px;
+  border-radius: 4px;
+  border-color: #003300;
+  background-color: #ff9933;"
 
 shinyUI(
 	fluidPage(

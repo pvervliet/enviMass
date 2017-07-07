@@ -681,6 +681,8 @@ maincalc3<-reactive({
 			if(any(objects()=="profileList_pos")){rm(profileList_pos)}				
 			load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));
+		}else{
+			return("No profiles available for this ionization mode")
 		}
 		if(file.exists(file.path(logfile[[1]],"results","links_profiles_pos"))){
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_pos")){rm(links_profiles_pos,envir=as.environment(".GlobalEnv"))}
@@ -706,6 +708,8 @@ maincalc3<-reactive({
 			if(any(objects()=="profileList_neg")){rm(profileList_neg)}				
 			load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));
+		}else{
+			return("No profiles available for this ionization mode")			
 		}
 		if(file.exists(file.path(logfile[[1]],"results","links_profiles_neg"))){
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_neg")){rm(links_profiles_neg,envir=as.environment(".GlobalEnv"))}
@@ -755,16 +759,13 @@ maincalc6<-reactive({
 		!is.na(isolate(input$filterProf_minMD)) &		
 		!is.na(isolate(input$filterProf_maxMD))		
 	){
+
 		cat("\n profileList filtered and sorted_2")		
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")){rm(profpeaks2,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="profpeaks2")){rm(profpeaks2)}		
 		assign("profpeaks2",profileList[["index_prof"]],envir=as.environment(".GlobalEnv"));
 		if(any(objects()=="profileList")){stop("illegal profileList found, #3");}
 		if(any(objects()=="profpeaks2")){stop("illegal profileList found, #3");}
-		###################################################################################################
-		
-		
-		
 		###################################################################################################		
 		profpeaks2<<-profpeaks2[profpeaks2[,"mean_mz"]>=isolate(input$filterProf_minmass),,drop = FALSE]
 		profpeaks2<<-profpeaks2[profpeaks2[,"mean_mz"]<=isolate(input$filterProf_maxmass),,drop = FALSE]
@@ -897,9 +898,9 @@ maincalc6<-reactive({
 		###################################################################################################			
 		if(dim(profpeaks2)[1]>0){
 			atit1<-sum(profpeaks2[,"number_peaks_total"]) 
-			#output$atprof1<-renderText({ atit1 })
+			output$atprof1<-renderText({ atit1 })
 			atit2<-dim(profpeaks2)[1]
-			output$atprof2<-renderText({ atit2 })
+			#output$atprof2<-renderText({ atit2 })
 			atit3<-sum(profpeaks2[,"number_peaks_blind"]>0)
 			output$atprof3<-renderText({ atit3 })
 			atit4<-sum(profpeaks2[,"deltaint_global"]>0)
@@ -936,10 +937,10 @@ maincalc6<-reactive({
 			output$allproftable<-renderTable(profpeaks3)
 			updateNumericInput(session,"profID",value = 0);
 			updateNumericInput(session,"profentry",value = 0);
-			return(as.character(atit1));
+			return(as.character(atit2));
 		}else{
-			#output$atprof1<-renderText({ "0" })
-			output$atprof2<-renderText({ "0" })
+			output$atprof1<-renderText({ "0" })
+			#output$atprof2<-renderText({ "0" })
 			output$atprof3<-renderText({ "0" })
 			output$atprof4<-renderText({ "0" })
 			output$atprof5<-renderText({ "0" })
@@ -959,8 +960,8 @@ maincalc6<-reactive({
 	}else{
 		if( isolate(init$a)=="TRUE" ){
 			cat("\n No profiles available\n")
-			#output$atprof1<-renderText({"0"}) # now used as reactive output
-			output$atprof2<-renderText({"0"})
+			output$atprof1<-renderText({"0"}) # now used as reactive output
+			#output$atprof2<-renderText({"0"})
 			output$atprof3<-renderText({"0"})
 			output$atprof4<-renderText({"0"})
 			output$atprof5<-renderText({"0"})	
@@ -982,8 +983,8 @@ maincalc6<-reactive({
 	if(any(objects()=="profpeaks2")){stop("illegal profpeaks2 found, #4");}
 	if(any(objects()=="profpeaks3")){stop("illegal profpeaks3 found, #4");}
 })	
-output$atprof1<-renderText(paste(maincalc6()))
-output$peak_number<-renderText(paste(maincalc6())) 
+output$atprof2<-renderText(paste(maincalc6()))
+output$prof_number<-renderText(paste(maincalc6())) 
 ##############################################################################
 
 ##############################################################################
