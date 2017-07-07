@@ -42,14 +42,18 @@
 			# Peaklist 
 			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); 
 			peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs 
-			peaklist2<-as.data.frame(peaklist[peaklist[,"keep"]==1,c("m/z_corr","int_corr","RT_corr","peak_ID")])
+			if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks
+				peaklist<-peaklist[peaklist[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
+				cat("- blind peaks removed -")
+			}
+			peaklist2<-as.data.frame(peaklist[(peaklist[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
 			##########################################################################
 			cat("series extraction - ")		
 			if(logfile$parameters$homol_ppm=="TRUE"){
 				use_mztol<-as.numeric(logfile$parameters$homol_mztol)
 			}else{ # mmu
 				use_mztol<-(as.numeric(logfile$parameters$homol_mztol)/1000)
-			}
+			}			
 			homol<-try(
 				enviMass:::homol.search2(
 					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
@@ -87,7 +91,7 @@
 			from<-0
 			for(i in 1:length(homol[["Homologue Series"]][,1])){
 				those<-as.numeric(strsplit(homol[["Homologue Series"]][i,2],",")[[1]])
-				these<-match(those,peaklist2[,"peak_ID"])
+				#these<-match(those,peaklist2[,"peak_ID"]) # nonsense? remove?
 				those<-those[order(peaklist2[those,1],decreasing=FALSE)] # by increasing mass!
 				for(j in 2:length(those)){
 					from<-(from+1)

@@ -258,6 +258,8 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$homol_rttol<-"20"
 		logfile$parameters$homol_minlength<-"6"
 		logfile$parameters$homol_vec_size<-"1E8"
+		logfile$parameters$homol_blind<-"FALSE"
+		logfile$parameters$homol_blind_value<-"10"		
 		# EIC correlation ######################################################
 		logfile$parameters$EICor_delRT<-"5"		
 		logfile$parameters$EICor_minpeaks<-"15" 	
@@ -331,7 +333,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
     logfile[[9]]<-"";
     names(logfile)[9]<-c("isotopes")
 	# enviMass version number ##################################################
-    logfile[[10]]<-3.21
+    logfile[[10]]<-3.31
     names(logfile)[10]<-c("version")   
 	# subtraction files ########################################################
 	logfile[[13]]<-"FALSE"

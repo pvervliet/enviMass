@@ -1909,6 +1909,24 @@ if(logfile$version<3.3){
 }
 	
 	
+	
+if(logfile$version<3.31){
+
+	cat("\n Updating to version 3.31 ...")
+	################################################################################################
+	if(!any(names(logfile$parameters)=="homol_blind_value")){
+		logfile$parameters$homol_blind<<-"FALSE"
+		logfile$parameters$homol_blind_value<<-"10"		
+	}
+	################################################################################################	
+#logfile$version<<-3.31
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+	
 
 ########################################################################
 

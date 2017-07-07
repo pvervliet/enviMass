@@ -877,8 +877,8 @@
 					HTML('<hr noshade="noshade" />') ,
 					selectInput("peak_which_intensity", "Peak intensity: use peak area or peak intensoid?", choices = c("intensoid"="maximum","area"="area"), selected="intensoid")
 				),
-				div(style = widget_style,
-					tags$h4("Advanced options"),
+				div(style = widget_style9,
+					tags$h4("Advanced settings"),
 					numericInput("peak_maxint_log10", "Upper log10(intensity) safety threshold", 6.7),	
 					numericInput("peak_ended", "How often can a peak detection fail to end the recursion? - peak picking", 1),
 					numericInput("peak_weight", "Weight for assigning centroid data points to a peak - peak picking", 1),				
@@ -1110,8 +1110,16 @@
 								numericInput("homol_mztol", "+/- m/z tolerance ...", 3), 
 								selectInput("homol_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
 								numericInput("homol_minlength", "Minimum number of homologues in a series:", 6),						
-								HTML('<hr noshade="noshade" />'),						
-								numericInput("homol_vec_size", "Ignore unless a relevant error message is printed (then try to increase size): ", 1E8)
+								HTML('<hr noshade="noshade" />'),			
+# BAUSTELLE						
+								div(style = widget_style9,		
+									tags$h5("Advanced settings"),
+									numericInput("homol_vec_size", "Ignore unless a relevant error message is printed (then try to increase size): ", 1E8),
+									HTML('<hr noshade="noshade" />'),
+									selectInput("homol_blind", "Filter peaks by sample-vs-blind intensity ratio:", choices = c("yes"="TRUE","no"="FALSE"), "FALSE"),				
+									numericInput("homol_blind_value", "Sample-vs-blind intensity ratio threshold:", 10)									
+								)
+# BAUSTELLE	
 							),
 							tabPanel("EIC correlation",	
 								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/eic.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on EIC correlation parameter.</a></p>'),	
@@ -1165,7 +1173,7 @@
 				div(style = widget_style3,
 					textInput("PWpath", "Path to Proteowizard MSConvert (use / and include .exe)", value = "C:/Program Files/ProteoWizard/ProteoWizard 3.0.5140/msconvert.exe")
 				),
-				div(style = widget_style,
+				div(style = widget_style9,
 					tags$h5("Debug tools"),
 					selectInput("progressBar", "Show progress bars (Windows OS only)", choices = c("TRUE","FALSE"), selected="FALSE"),
 					HTML('<hr noshade="noshade" />'), 
