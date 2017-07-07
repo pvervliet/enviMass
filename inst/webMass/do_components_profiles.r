@@ -839,7 +839,7 @@ if(
 	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
 	save(links_profiles_pos,file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"));	
 	##############################################################################	
-	rm(links_profiles_pos,profileList_pos,links_peaks_pos)
+	rm(links_profiles_pos,profileList_pos)
 
 }
 
@@ -1671,6 +1671,6 @@ if(
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 	save(links_profiles_neg,file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"));	
 	##############################################################################	
-	rm(links_profiles_neg,profileList_neg,links_peaks_neg)
+	rm(links_profiles_neg,profileList_neg)
 
 }
