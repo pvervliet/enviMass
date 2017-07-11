@@ -82,6 +82,26 @@ widget_style9 <-
   border-color: #003300;
   background-color: #ff9933;"
 
+widget_style10 <-
+  "display: inline-block;
+  vertical-align: text-top;
+  padding: 7px;
+  border: solid;
+  border-width: 2px;
+  border-radius: 4px;
+  border-color: #003300;
+  background-color: #b3e6b3;"
+
+widget_style11 <-
+  "display: inline-block;
+  vertical-align: text-top;
+  padding: 7px;
+  border: solid;
+  border-width: 2px;
+  border-radius: 4px;
+  border-color: #003300;
+  background-color: #cce0ff"
+
 shinyUI(
 	fluidPage(
 	################################################################################

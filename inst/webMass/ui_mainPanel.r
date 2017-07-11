@@ -1,4 +1,4 @@
-	  
+
     conditionalPanel( 
 		condition = "output.textit != 'Waiting...'",  	
 		tags$h5(""),
@@ -850,7 +850,7 @@
 						)
 					),
 				HTML('<hr noshade="noshade" />'),
-				div(style = widget_style5,
+				div(style = widget_style10,
 					tags$h4("Parameter estimation"),
 					tags$h5("This self-parametrization step estimates file-specific values for the below 'Maximum m/z deviation of a centroid data point from its EIC mean',
 						the 'Minimum log10(intensity) threshold' and the 'Percentage of low-intense data points to discard'. It overwrites the provided values of these
@@ -877,7 +877,7 @@
 					HTML('<hr noshade="noshade" />') ,
 					selectInput("peak_which_intensity", "Peak intensity: use peak area or peak intensoid?", choices = c("intensoid"="maximum","area"="area"), selected="intensoid")
 				),
-				div(style = widget_style9,
+				div(style = widget_style11,
 					tags$h4("Advanced settings"),
 					numericInput("peak_maxint_log10", "Upper log10(intensity) safety threshold", 6.7),	
 					numericInput("peak_ended", "How often can a peak detection fail to end the recursion? - peak picking", 1),
@@ -1112,7 +1112,7 @@
 								numericInput("homol_minlength", "Minimum number of homologues in a series:", 6),						
 								HTML('<hr noshade="noshade" />'),			
 # BAUSTELLE						
-								div(style = widget_style9,		
+								div(style = widget_style11,		
 									tags$h5("Advanced settings"),
 									numericInput("homol_vec_size", "Ignore unless a relevant error message is printed (then try to increase size): ", 1E8),
 									HTML('<hr noshade="noshade" />'),
@@ -1173,7 +1173,7 @@
 				div(style = widget_style3,
 					textInput("PWpath", "Path to Proteowizard MSConvert (use / and include .exe)", value = "C:/Program Files/ProteoWizard/ProteoWizard 3.0.5140/msconvert.exe")
 				),
-				div(style = widget_style9,
+				div(style = widget_style11,
 					tags$h5("Debug tools"),
 					selectInput("progressBar", "Show progress bars (Windows OS only)", choices = c("TRUE","FALSE"), selected="FALSE"),
 					HTML('<hr noshade="noshade" />'), 

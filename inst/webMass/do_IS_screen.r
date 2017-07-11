@@ -360,7 +360,7 @@
 		pattern_delRT<<-patternDelRT_neg_IS;rm(patternDelRT_neg_IS,envir=as.environment(".GlobalEnv"));
 		
 		if(FALSE){ # debug - reduce to a speccific compound & adduct
-			use_that<-names(pattern)=="90_M-H_none_none_none" # Bentazone
+			use_that<-names(pattern)=="30n_M-H_none_none_none" # Sulcotrion-D3
 			#use_that<-names(pattern)=="692_M-H_none_none_none" # Bezafibrat
 			#use_that<-names(pattern)=="16_M-H_none_none_none" # 1,4-D 613C
 			#use_that<-names(pattern)=="320_M-H_none_none_none" # Diclofenac
@@ -399,8 +399,8 @@
 		}
 		rm(measurements)
 
-		peaks<-profileList_neg[[7]];
-		peaklist<-peaks[,c(14,16,15)];
+		peaks<-profileList_neg[["index_prof"]];
+		peaklist<-peaks[,c("mean_mz","mean_int","mean_RT")];
 		# screen centroids
 		count_nonmax<-0
 		for(i in 1:length(pattern)){

@@ -37,7 +37,7 @@ recomb_score<-function(
 	if((!is.numeric(LOD))||(length(LOD)>1)){stop("LOD must be numeric")}
 	if((!is.numeric(RT_tol_inside))||(length(RT_tol_inside)>1)){stop("LOD must be numeric")}
 	if((!is.numeric(int_tol))||(length(int_tol)>1)){stop("LOD must be numeric")}	
-	if(any(profileList[[2]][,2]==0)){stop("Data with zereo intensity found - debug")}
+	if(any(profileList[["peaks"]][,2]==0)){stop("Data with zereo intensity found - debug")}
 	#######################################################################		
 	results<-list()
 	at_results<-1
@@ -47,14 +47,16 @@ recomb_score<-function(
 	# Pre-decompose by RT gaps, especially for suspect screening 
 	if((length(cent_peak_mat[,2])>1) & RT_seperate){
 		cent_peak_mat<-cent_peak_mat[
-			order(profileList[[2]][cent_peak_mat[,2],3],decreasing=FALSE)
+			order(profileList[["peaks"]][cent_peak_mat[,2], "RT"],decreasing=FALSE)
 		,,drop=FALSE]	
-		at_RT<-profileList[[2]][cent_peak_mat[,2],3]
+		at_RT<-profileList[["peaks"]][cent_peak_mat[,2], "RT"]
 		in_node<-rep(1,length(cent_peak_mat[,1]))
 		init_node<-1
 		for(i in 2:length(cent_peak_mat[,2])){
 			if((at_RT[i]-at_RT[i-1])>RT_tol_inside){
 				init_node<-(init_node+1)
+				in_node[i]<-init_node
+			}else{
 				in_node[i]<-init_node
 			}
 		}
@@ -82,8 +84,8 @@ recomb_score<-function(
 			if(verbose){cat("\n  :: "); cat(paste(check_nodes[[k]][,2],collapse=","))}
 			if(plot_it){	
 				rescale<-weighted.mean(
-					x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
-				    w=(profileList[[2]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
+					x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[["peaks"]][check_nodes[[k]][,2],2]),
+				    w=(profileList[["peaks"]][check_nodes[[k]][,2],2] / (int_tol/100*profileList[["peaks"]][check_nodes[[k]][,2],2]) )
 				)
 				plot(
 					log10(pattern_compound[,2]/rescale),
@@ -91,21 +93,21 @@ recomb_score<-function(
 					pch=19,col="lightgray",cex=1.5,
 					xlab="Theoretical intensity",ylab="Measured intensity",
 					xlim=c(min(log10(pattern_compound[,2]/rescale)),max(log10(pattern_compound[,2]/rescale))),
-					ylim=c(min(log10(profileList[[2]][check_nodes[[k]][,2],2])),max(log10(profileList[[2]][check_nodes[[k]][,2],2])))
+					ylim=c(min(log10(profileList[["peaks"]][check_nodes[[k]][,2],2])),max(log10(profileList[[2]][check_nodes[[k]][,2],2])))
 				)
 				abline(h=log10(LOD),col="red")
 				abline(v=log10(LOD),col="red")
 				abline(0,1,col="lightgrey",lwd=2)
 				points(
 					log10(pattern_compound[check_nodes[[k]][,1],2]/rescale),
-					log10(profileList[[2]][check_nodes[[k]][,2],2]),
+					log10(profileList[["peaks"]][check_nodes[[k]][,2],2]),
 					pch=19,col="darkgreen",cex=1
 				)
 			}			
 			# score intensities ...
 			rescale<-weighted.mean(
 				x=(pattern_compound[check_nodes[[k]][,1],2]/profileList[[2]][check_nodes[[k]][,2],2]),
-				w=(profileList[[2]][check_nodes[[k]][,2],2]/(int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
+				w=(profileList[["peaks"]][check_nodes[[k]][,2],2]/(int_tol/100*profileList[[2]][check_nodes[[k]][,2],2]) )
 			)
 			above_LOD<-((pattern_compound[,2]/rescale)>LOD)
 			# ... measured "above LOD threshold:"
@@ -172,12 +174,12 @@ recomb_score<-function(
 					score2<-NA
 				}
 				results[[at_results]][[3]]<-score2
-				results[[at_results]][[4]]<-((pattern_compound[check_nodes[[k]][,1],1]-profileList[[2]][check_nodes[[k]][,2],1])/mean(pattern_compound[check_nodes[[k]][,1],1])*1E6)				
-				results[[at_results]][[5]]<-(mean(profileList[[2]][check_nodes[[k]][,2],3])-profileList[[2]][check_nodes[[k]][,2],3])
+				results[[at_results]][[4]]<-((pattern_compound[check_nodes[[k]][,1],1]-profileList[["peaks"]][check_nodes[[k]][,2],1])/mean(pattern_compound[check_nodes[[k]][,1],1])*1E6)				
+				results[[at_results]][[5]]<-(mean(profileList[["peaks"]][check_nodes[[k]][,2],3])-profileList[["peaks"]][check_nodes[[k]][,2],3])
 				results[[at_results]][[6]]<-rescale
-				results[[at_results]][[7]]<-profileList[[2]][check_nodes[[k]][,2],1]
-				results[[at_results]][[8]]<-profileList[[2]][check_nodes[[k]][,2],2]
-				results[[at_results]][[9]]<-profileList[[2]][check_nodes[[k]][,2],3]
+				results[[at_results]][[7]]<-profileList[["peaks"]][check_nodes[[k]][,2],1]
+				results[[at_results]][[8]]<-profileList[["peaks"]][check_nodes[[k]][,2],2]
+				results[[at_results]][[9]]<-profileList[["peaks"]][check_nodes[[k]][,2],3]
 				names(results[[at_results]])<-c("Peaks","score_1","score_2","ppm deviation","RT deviation from mean","rescale factor","m/z","Intensity","RT")
 				at_results<-(at_results+1)
 				if(plot_it){box(col="green",lwd=5);title(main=paste(score1,score2,k,sep=" - "));Sys.sleep(3);}
