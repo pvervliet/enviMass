@@ -5,16 +5,16 @@
 	cat("Homologue series detection: ")
 	if(logfile$parameters$homol_units[1]!="FALSE"){
 		these<-enviPat:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])[,3]
-		mzfilter<-c(enviPat:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])[,3] %*% t(1/as.numeric(strsplit(logfile$parameters$homol_charges,",")[[1]])))
-		mzfilter<-unique(mzfilter);
-		elements<-unique(unlist(sapply(enviMass:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]],get_list=TRUE),names)))
-		use_minmz<-(min(mzfilter)-.1)
-		use_maxmz<-(max(mzfilter)+.1)
+		mzfilter<<-c(enviPat:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])[,3] %*% t(1/as.numeric(strsplit(logfile$parameters$homol_charges,",")[[1]])))
+		mzfilter<<-unique(mzfilter);
+		elements<<-unique(unlist(sapply(enviMass:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]],get_list=TRUE),names)))
+		use_minmz<<-(min(mzfilter)-.1)
+		use_maxmz<<-(max(mzfilter)+.1)
 	}else{
-		mzfilter<-FALSE
-		elements<-unique(as.character(isotopes[,1])[1:295]) #then use all available elements
-		use_minmz<-as.numeric(logfile$parameters$homol_minmz)
-		use_maxmz<-as.numeric(logfile$parameters$homol_maxmz)		
+		mzfilter<<-FALSE
+		elements<<-unique(as.character(isotopes[,1])[1:295]) #then use all available elements
+		use_minmz<<-as.numeric(logfile$parameters$homol_minmz)
+		use_maxmz<<-as.numeric(logfile$parameters$homol_maxmz)		
 	}
 	####################################################################################		
 	
@@ -50,15 +50,15 @@
 			##########################################################################
 			cat("series extraction - ")		
 			if(logfile$parameters$homol_ppm=="TRUE"){
-				use_mztol<-as.numeric(logfile$parameters$homol_mztol)
+				use_mztol<<-as.numeric(logfile$parameters$homol_mztol)
 			}else{ # mmu
-				use_mztol<-(as.numeric(logfile$parameters$homol_mztol)/1000)
+				use_mztol<<-(as.numeric(logfile$parameters$homol_mztol)/1000)
 			}			
 			homol<-try(
 				enviMass:::homol.search2(
 					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
 					isotopes,
-					elements,
+					elements=elements,
 					use_C=FALSE,
 					minmz=use_minmz,
 					maxmz=use_maxmz,
