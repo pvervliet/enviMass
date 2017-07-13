@@ -44,8 +44,8 @@ if(logfile$version<3.100){
 	if(length(IDs)>0){
 		for(i in 1:length(IDs)){
 			load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-			if(any(colnames(peaklist)=="keep")){break} # ok, has been done before
-			#if(any(colnames(peaklist)=="keep")){next} # ok, has been done before			
+			#if(any(colnames(peaklist)=="keep")){break} # ok, has been done before
+			if(any(colnames(peaklist)=="keep")){next} # ok, has been done before			
 			keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
 			peaklist<-cbind(peaklist,keep)
 			colnames(peaklist)[15]<-"keep";
@@ -460,8 +460,8 @@ if(logfile$version<3.101){
 	if(length(IDs)>0){
 		for(i in 1:length(IDs)){
 			load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-			if(any(colnames(peaklist)=="keep_2")){break} # ok, has been done before
-			#if(any(colnames(peaklist)=="keep_2")){next} # ok, has been done before	
+			#if(any(colnames(peaklist)=="keep_2")){break} # ok, has been done before
+			if(any(colnames(peaklist)=="keep_2")){next} # ok, has been done before	
 			keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
 			peaklist<-cbind(peaklist,keep_2)
 			colnames(peaklist)[16]<-"keep_2";

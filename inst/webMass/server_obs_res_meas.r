@@ -783,95 +783,95 @@ maincalc6<-reactive({
 		###################################################################################################	
 		if(isolate(input$filterProf_sort)=="ID (increasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"profile_ID"],decreasing=FALSE),,drop = FALSE]
-			sort_by<<-"profile_ID";sort_by_decreasing<-"FALSE"
+			sort_by<<-"profile_ID";sort_by_decreasing<<-"FALSE"
 		}
 		if(isolate(input$filterProf_sort)=="mean m/z (increasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_mz"],decreasing=FALSE),,drop = FALSE]
-			sort_by<<-"mean_mz";sort_by_decreasing<-"FALSE"
+			sort_by<<-"mean_mz";sort_by_decreasing<<-"FALSE"
 		}
 		if(isolate(input$filterProf_sort)=="mean m/z (decreasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_mz"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"mean_mz";sort_by_decreasing<-"TRUE"
+			sort_by<<-"mean_mz";sort_by_decreasing<<-"TRUE"
 		}		
 		if(isolate(input$filterProf_sort)=="mean RT (increasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"],decreasing=FALSE),,drop = FALSE]
-			sort_by<<-"mean_RT";sort_by_decreasing<-"FALSE"
+			sort_by<<-"mean_RT";sort_by_decreasing<<-"FALSE"
 		}	
 		if(isolate(input$filterProf_sort)=="mean RT (decreasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"mean_RT";sort_by_decreasing<-"TRUE"
+			sort_by<<-"mean_RT";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="minimum RT (decreasing)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"min_RT"],decreasing=TRUE),,drop = FALSE]	
-			sort_by<<-"min_RT";sort_by_decreasing<-"TRUE"			
+			sort_by<<-"min_RT";sort_by_decreasing<<-"TRUE"			
 		}	
 		if(isolate(input$filterProf_sort)=="maximum RT (decreasing)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_RT" ],decreasing=TRUE),,drop = FALSE]	
-			sort_by<<-"max_RT";sort_by_decreasing<-"TRUE"			
+			sort_by<<-"max_RT";sort_by_decreasing<<-"TRUE"			
 		}
 		if(isolate(input$filterProf_sort)=="maximum overall intensity (decreasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"max_int";sort_by_decreasing<-"TRUE"
+			sort_by<<-"max_int";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="maximum intensity in samples (decreasing, zeros removed)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int_sample"],decreasing=TRUE),,drop = FALSE]	
 			profpeaks2<<-profpeaks2[profpeaks2[,"max_int_sample"]!=0,,drop = FALSE]			
-			sort_by<<-"max_int_sample";sort_by_decreasing<-"TRUE"
+			sort_by<<-"max_int_sample";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="maximum intensity in blanks/blinds (decreasing, zeros removed)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int_blind"],decreasing=TRUE),,drop = FALSE]	
 			profpeaks2<<-profpeaks2[profpeaks2[,"max_int_blind"]!=0,,drop = FALSE]			
-			sort_by<<-"max_int_blind";sort_by_decreasing<-"TRUE"
+			sort_by<<-"max_int_blind";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="mean intensity (decreasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"mean_int";sort_by_decreasing<-"TRUE"
+			sort_by<<-"mean_int";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="mean intensity in samples (decreasing, zeros removed)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int_sample"],decreasing=TRUE),,drop = FALSE]	
 			profpeaks2<<-profpeaks2[profpeaks2[,"mean_int_sample"]!=0,,drop = FALSE]
-			sort_by<<-"mean_int_sample";sort_by_decreasing<-"TRUE"
+			sort_by<<-"mean_int_sample";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="mean intensity in blanks/blinds (decreasing, zeros removed)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int_blind"],decreasing=TRUE),,drop = FALSE]	
 			profpeaks2<<-profpeaks2[profpeaks2[,"mean_int_blind"]!=0,,drop = FALSE]
-			sort_by<<-"mean_int_blind";sort_by_decreasing<-"TRUE"
+			sort_by<<-"mean_int_blind";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="current trend intensity (decreasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"deltaint_global"],decreasing=TRUE),,drop = FALSE]
 			profpeaks2<<-profpeaks2[profpeaks2[,"deltaint_global"]!=0,,drop = FALSE]
-			sort_by<<-"deltaint_global";sort_by_decreasing<-"TRUE"
+			sort_by<<-"deltaint_global";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="past & current trend intensity (decreasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"deltaint_newest"],decreasing=TRUE),,drop = FALSE]
 			profpeaks2<<-profpeaks2[profpeaks2[,"deltaint_newest"]!=0,,drop = FALSE]
-			sort_by<<-"deltaint_newest";sort_by_decreasing<-"TRUE"
+			sort_by<<-"deltaint_newest";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="total peak number (decreasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_total"],profpeaks2[,"max_int"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"number_peaks_total";sort_by_decreasing<-"TRUE"
+			sort_by<<-"number_peaks_total";sort_by_decreasing<<-"TRUE"
 		}			
 		if(isolate(input$filterProf_sort)=="peak number in samples (decreasing, zeros removed)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_sample"],decreasing=TRUE),,drop = FALSE]	
 			profpeaks2<<-profpeaks2[profpeaks2[,"number_peaks_sample"]!=0,,drop = FALSE]		
-			sort_by<<-"number_peaks_sample";sort_by_decreasing<-"TRUE"
+			sort_by<<-"number_peaks_sample";sort_by_decreasing<<-"TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="peak number in blanks/blinds (decreasing, zeros removed)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_blind"],decreasing=TRUE),,drop = FALSE]	
 			profpeaks2<<-profpeaks2[profpeaks2[,"number_peaks_blind"]!=0,,drop = FALSE]	
-			sort_by<<-"number_peaks_blind";sort_by_decreasing<-"TRUE"
+			sort_by<<-"number_peaks_blind";sort_by_decreasing<<-"TRUE"
 		}
-		if(isolate(input$filterProf_sort)=="Mass defect (increasing)"){		
+		if(isolate(input$filterProf_sort)=="mass defect (increasing)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"Mass defect"],decreasing=FALSE),,drop = FALSE]	
-			sort_by<<-"Mass defect";sort_by_decreasing<-"FALSE"				
+			sort_by<<-"Mass defect";sort_by_decreasing<<-"FALSE"				
 		}
-		if(isolate(input$filterProf_sort)=="Mass defect (decreasing)"){		
+		if(isolate(input$filterProf_sort)=="mass defect (decreasing)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"Mass defect"],decreasing=TRUE),,drop = FALSE]		
-			sort_by<<-"Mass defect";sort_by_decreasing<-"TRUE"
+			sort_by<<-"Mass defect";sort_by_decreasing<<-"TRUE"
 		}		
-		if(isolate(input$filterProf_sort)=="Median sample above blind intensity (decreasing)"){		
+		if(isolate(input$filterProf_sort)=="median sample above blind intensity (decreasing)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"in_blind?"],decreasing=TRUE),,drop = FALSE]		
-			sort_by<<-"in_blind?";sort_by_decreasing<-"TRUE"
+			sort_by<<-"in_blind?";sort_by_decreasing<<-"TRUE"
 		}
 		###################################################################################################		
 		if(
@@ -889,8 +889,8 @@ maincalc6<-reactive({
 				with_bar = FALSE, 
 				return_excl=FALSE		
 			)
-			if(length(keep_IDs)){
-				profpeaks2<-profpeaks2[match(keep_IDs,profpeaks2[,"profile_ID"]),,drop=FALSE]
+			if(length(keep_IDs) & all(!is.na(keep_IDs))){
+				profpeaks2<<-profpeaks2[match(keep_IDs,profpeaks2[,"profile_ID"]),,drop=FALSE]
 			}else{
 				stop("\nDebug server_obs_res_meas.r @ 1")
 			}
@@ -995,16 +995,18 @@ ranges_timeprofile <- reactiveValues(x = NULL, y = NULL)
 observe({
     input$profID
 	init$b
+	cat("\n plotting profile _1")
     if( (isolate(init$a)=="TRUE") &  
 		(!is.na(isolate(input$profID))) & 
 		(isolate(input$profID)!=0) & 
 		any(objects(envir=as.environment(".GlobalEnv"))=="profileList") & 
 		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")
 	){
+		cat("\n plotting profile _2")
 		if(any(objects()=="profileList")){stop("illegal profileList found, #5");}
-
-		if(any(profileList[[7]][,4]==as.numeric(isolate(input$profID)))){
+		if(any(profileList[["index_prof"]][,"profile_ID"]==as.numeric(isolate(input$profID)))){
 			cat("\n plotting profile with ID ");cat(as.numeric(isolate(input$profID)));
+			##################################################################
 			if(logfile$parameters$trend_blind=="yes"){
 				blindsubtract<-TRUE
 			}else{
@@ -1033,6 +1035,74 @@ observe({
 					mtext("Now zoomed in",side=3,col="gray")
 				}
 			})			
+			##################################################################
+			prof_plot_IDs<<-as.numeric(isolate(input$profID))
+			at_entry<-profileList[["index_prof"]][
+				match(prof_plot_IDs,profileList[["index_prof"]][,"profile_ID"])
+			,"links"]
+			plot_similar_profiles<-FALSE
+			if(at_entry!=0){
+				if(length(links_profiles[[at_entry]]$group)>0){
+					prof_plot_IDs<<-c(prof_plot_IDs,links_profiles[[at_entry]]$group)
+					prof_plot_IDs<<-unique(prof_plot_IDs)
+					plot_similar_profiles<-TRUE
+				}
+			}
+			output$similar_profiles_plot <- renderPlot({	
+				if(plot_similar_profiles){
+						enviMass:::plot_components(
+							profileList=profileList,
+							prof_IDs=prof_plot_IDs,
+							links_profiles=links_profiles,
+							what="profiles",
+							xlim=FALSE,ylim=FALSE,await_input=FALSE,
+							skipit=TRUE,
+							min_peaks=NULL,
+							norma=TRUE
+						)	
+				}else{
+					plot.new()
+					plot.window(xlim=c(0,1),ylim=c(0,1))
+					text(0.5,0.5,labels="Nothing to plot - no other similar profiles available",cex=1.8,col="red")
+				}
+			})
+			#output$similar_profiles_relations <- renderPlot({	
+			#	if(plot_similar_profiles){
+			#			enviMass:::plot_components(
+			#				profileList=profileList,
+			#				prof_IDs=prof_plot_IDs,
+			#				links_profiles=links_profiles,
+			#				what="relations",
+			#				xlim=FALSE,ylim=FALSE,await_input=FALSE,
+			#				skipit=TRUE,
+			#				min_peaks=NULL,
+			#				norma=TRUE
+			#			)	
+			#	}else{
+			#		plot.new()
+			#		plot.window(xlim=c(0,1),ylim=c(0,1))
+			#		text(0.5,0.5,labels="Nothing to plot - no other similar profiles available",cex=1.8,col="red")
+			#	}
+			#})
+			use_prof_IDs<-match(prof_plot_IDs,profileList[["index_prof"]][,"profile_ID"])
+			use_prof_IDs<-use_prof_IDs[!is.na(use_prof_IDs)]
+			similar_profiles_tab<-profileList[["index_prof"]][use_prof_IDs,c("profile_ID","mean_mz","mean_int","max_int_sample","mean_RT","Mass defect","in_blind?","number_peaks_sample","number_peaks_blind","number_peaks_total"),drop=FALSE]
+			similar_profiles_tab<-as.data.frame(similar_profiles_tab)
+			similar_profiles_tab[,"mean_mz" ]<-format(similar_profiles_tab[,"mean_mz" ],digits=5)
+			similar_profiles_tab[,"mean_int"]<-format(similar_profiles_tab[,"mean_int"],scientific=TRUE,digits=2)
+			similar_profiles_tab[,"max_int_sample"]<-format(similar_profiles_tab[,"max_int_sample"],scientific=TRUE,digits=2)
+			similar_profiles_tab[,"mean_RT"]<-format(similar_profiles_tab[,"mean_RT"],digits=1)
+			similar_profiles_tab[,"Mass defect"]<-format(similar_profiles_tab[,"Mass defect"],digits=3)
+			similar_profiles_tab[,"in_blind?"]<-format(similar_profiles_tab[,"in_blind?"],digits=3)
+			similar_profiles_tab[,"number_peaks_sample"]<-as.integer(similar_profiles_tab[,"number_peaks_sample"])
+			similar_profiles_tab[,"number_peaks_blind"]<-as.integer(similar_profiles_tab[,"number_peaks_blind"])
+			similar_profiles_tab[,"number_peaks_total"]<-as.integer(similar_profiles_tab[,"number_peaks_total"])
+			output$similar_profiles_table<-DT::renderDataTable({
+				DT::datatable(similar_profiles_tab,
+					colnames=c("Profile ID","Mean m/z","Mean int. overall","Max int. samples","Mean RT","Mass defect","Median int. ratio blind vs. samples","Peak number samples","Peak number blinds","Peak number total")
+				)
+			});
+			##################################################################
 			output$oneproftable<-DT::renderDataTable(peakTable);
 			updateNumericInput(session,"profpeakID",value = 0);
 			path=file.path(logfile[[1]],"pics","massdens.png");
@@ -1110,15 +1180,13 @@ observe({
 		!is.na(isolate(input$profentry)) & 
 		(isolate(input$profentry)!=0) & 
 		(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")) & 
-		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks") & 
 		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")
 	){
 		if( (isolate(input$profentry)<=length(profpeaks2[,1])) & 
-			(isolate(input$profentry)>0) & 
-			(isolate(input$profentry)<=length(profpeaks2[,1])) 
+			(isolate(input$profentry)>0) 
 		){ 
-				if( any( profileList[[7]][,4]==as.numeric(profpeaks2[isolate(input$profentry),10]) ) ){
-					updateNumericInput(session,"profID",value = as.numeric(as.character(profpeaks2[isolate(input$profentry),10])))				
+				if( any( profileList[["index_prof"]][,"profile_ID"]==as.numeric(profpeaks2[isolate(input$profentry),"profile_ID"]) ) ){
+					updateNumericInput(session,"profID",value = as.numeric(as.character(profpeaks2[isolate(input$profentry),"profile_ID"])))				
 				}
 		}else{
 			output$timeprofile <- renderPlot({	

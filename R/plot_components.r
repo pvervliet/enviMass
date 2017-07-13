@@ -24,17 +24,22 @@ plot_components<-function(
 	){
 
 	################################################################
+	use_prof_IDs<-match(prof_IDs,profileList[["index_prof"]][,"profile_ID"])
+	use_prof_IDs<-use_prof_IDs[!is.na(use_prof_IDs)]
+	################################################################
+
+	################################################################
 	# make relation plot ###########################################
 	if(any(what=="relations")){
 		if(!add){
 			plot.new()
 			if(xlim[1]==FALSE){
-				xlim2<-c(min(profileList[["index_prof"]][prof_IDs,"mean_mz"]),max(profileList[["index_prof"]][prof_IDs,"mean_mz"]))
+				xlim2<-c(min(profileList[["index_prof"]][use_prof_IDs,"mean_mz"]),max(profileList[["index_prof"]][use_prof_IDs,"mean_mz"]))
 			}else{
 				xlim2<-xlim
 			}
 			if(ylim[1]==FALSE){
-				ylim2<-c(min(profileList[["index_prof"]][prof_IDs,"mean_RT"]),max(profileList[["index_prof"]][prof_IDs,"mean_RT"]))
+				ylim2<-c(min(profileList[["index_prof"]][use_prof_IDs,"mean_RT"]),max(profileList[["index_prof"]][use_prof_IDs,"mean_RT"]))
 			}else{
 				ylim2<-ylim
 			}		
@@ -49,21 +54,21 @@ plot_components<-function(
 		}
 		# mark first profile
 		points(
-			profileList[["index_prof"]][prof_IDs[1],"mean_mz"],profileList[["index_prof"]][prof_IDs[1],"mean_RT"],
+			profileList[["index_prof"]][use_prof_IDs[1],"mean_mz"],profileList[["index_prof"]][use_prof_IDs[1],"mean_RT"],
 			pch=19,cex=4,col="yellow")	
 		# add relations
-		for(k in 1:length(prof_IDs)){
-			fork<-profileList[["index_prof"]][prof_IDs[k],"links"]
+		for(k in 1:length(use_prof_IDs)){
+			fork<-profileList[["index_prof"]][use_prof_IDs[k],"links"]
 			if(fork==0){cat("\nWARNING: better debug me!?");next}
 			##################################################################
 			if(length(links_profiles[[fork]]$EIC[,"linked profile"])>0){
 				for(m in 1:length(length(links_profiles[[fork]]$EIC[,"linked profile"]))){
 					form<-links_profiles[[fork]]$EIC[m,"linked profile"]
-					if(any(prof_IDs==form)){colorit<-"red"}else{colorit<-"lightgrey";if(skipit){next}}
+					if(any(use_prof_IDs==form)){colorit<-"red"}else{colorit<-"lightgrey";if(skipit){next}}
 					if(links_profiles[[fork]]$EIC[m,"link counts"]>min_peaks){lty2<-1}else{lty2<-2}
 					lines(
-						x=c(profileList[["index_prof"]][form,"mean_mz"],profileList[["index_prof"]][prof_IDs[k],"mean_mz"]),
-						y=c(profileList[["index_prof"]][form,"mean_RT"],profileList[["index_prof"]][prof_IDs[k],"mean_RT"]),
+						x=c(profileList[["index_prof"]][form,"mean_mz"],profileList[["index_prof"]][use_prof_IDs[k],"mean_mz"]),
+						y=c(profileList[["index_prof"]][form,"mean_RT"],profileList[["index_prof"]][use_prof_IDs[k],"mean_RT"]),
 						col=colorit,lwd=1.5,lty=lty2
 					)
 				}
@@ -72,11 +77,11 @@ plot_components<-function(
 			if(length(links_profiles[[fork]]$isot[,"linked profile"])>0){
 				for(m in 1:length(links_profiles[[fork]]$isot[,"linked profile"])){
 					form<-links_profiles[[fork]]$isot[m,"linked profile"]
-					if(any(prof_IDs==form)){colorit<-"blue"}else{colorit<-"lightgrey";if(skipit){next}}
+					if(any(use_prof_IDs==form)){colorit<-"blue"}else{colorit<-"lightgrey";if(skipit){next}}
 					if(links_profiles[[fork]]$isot[m,"link counts"]>min_peaks){lty2<-1}else{lty2<-2}
 					lines(
-						x=c(profileList[["index_prof"]][form,"mean_mz"],profileList[["index_prof"]][prof_IDs[k],"mean_mz"]),
-						y=c(profileList[["index_prof"]][form,"mean_RT"],profileList[["index_prof"]][prof_IDs[k],"mean_RT"]),
+						x=c(profileList[["index_prof"]][form,"mean_mz"],profileList[["index_prof"]][use_prof_IDs[k],"mean_mz"]),
+						y=c(profileList[["index_prof"]][form,"mean_RT"],profileList[["index_prof"]][use_prof_IDs[k],"mean_RT"]),
 						col=colorit,lwd=1.5,lty=lty2
 					)
 				}
@@ -85,11 +90,11 @@ plot_components<-function(
 			if(length(links_profiles[[fork]]$adduc[,"linked profile"])>0){
 				for(m in 1:length(links_profiles[[fork]]$adduc[,"linked profile"])){
 					form<-links_profiles[[fork]]$adduc[m,"linked profile"]
-					if(any(prof_IDs==form)){colorit<-"green"}else{colorit<-"lightgrey";if(skipit){next}}
+					if(any(use_prof_IDs==form)){colorit<-"green"}else{colorit<-"lightgrey";if(skipit){next}}
 					if(links_profiles[[fork]]$adduc[m,"link counts"]>min_peaks){lty2<-1}else{lty2<-2}
 					lines(
-						x=c(profileList[["index_prof"]][form,"mean_mz"],profileList[["index_prof"]][prof_IDs[k],"mean_mz"]),
-						y=c(profileList[["index_prof"]][form,"mean_RT"],profileList[["index_prof"]][prof_IDs[k],"mean_RT"]),
+						x=c(profileList[["index_prof"]][form,"mean_mz"],profileList[["index_prof"]][use_prof_IDs[k],"mean_mz"]),
+						y=c(profileList[["index_prof"]][form,"mean_RT"],profileList[["index_prof"]][use_prof_IDs[k],"mean_RT"]),
 						col=colorit,lwd=1.5,lty=lty2
 					)
 				}
@@ -98,11 +103,11 @@ plot_components<-function(
 			if(length(links_profiles[[fork]]$homol[,"linked profile"])>0){
 				for(m in 1:length(links_profiles[[fork]]$homol[,"linked profile"])){
 					form<-links_profiles[[fork]]$homol[m,"linked profile"]
-					if(any(prof_IDs==form)){colorit<-"black"}else{colorit<-"lightgrey";if(skipit){next}}
+					if(any(use_prof_IDs==form)){colorit<-"black"}else{colorit<-"lightgrey";if(skipit){next}}
 					if(links_profiles[[fork]]$homol[m,"link counts"]>min_peaks){lty2<-1}else{lty2<-2}
 					lines(
-						x=c(profileList[["index_prof"]][form,"mean_mz"],profileList[["index_prof"]][prof_IDs[k],"mean_mz"]),
-						y=c(profileList[["index_prof"]][form,"mean_RT"],profileList[["index_prof"]][prof_IDs[k],"mean_RT"]),
+						x=c(profileList[["index_prof"]][form,"mean_mz"],profileList[["index_prof"]][use_prof_IDs[k],"mean_mz"]),
+						y=c(profileList[["index_prof"]][form,"mean_RT"],profileList[["index_prof"]][use_prof_IDs[k],"mean_RT"]),
 						col=colorit,lwd=1.5,lty=lty2
 					)
 				}
@@ -111,12 +116,12 @@ plot_components<-function(
 		}
 		# plot profile points
 		points(
-			profileList[["index_prof"]][prof_IDs,"mean_mz"],profileList[["index_prof"]][prof_IDs,"mean_RT"],
+			profileList[["index_prof"]][use_prof_IDs,"mean_mz"],profileList[["index_prof"]][use_prof_IDs,"mean_RT"],
 			pch=19,cex=.8,col="black")	
 	}
 	################################################################
 	if(any(what=="profiles")){
-		those<-prof_IDs
+		those<-use_prof_IDs
 		samp<-as.numeric(profileList[[4]])
 		samp<-samp[order(samp)]
 		maxint<-0
@@ -134,7 +139,11 @@ plot_components<-function(
 			xlim=c(min(samp)-1,max(samp)+1),ylim=ylim2
 		)
 		box();axis(1);axis(2);
-		title(xlab="Samples",ylab="Intensity")
+		if(!norma){
+			title(xlab="Sample IDs",ylab="Intensity")
+		}else{
+			title(xlab="Sample IDs",ylab="Normalized intensity")
+		}
 		for(j in 1:length(those)){
 			int<-profileList[[2]][profileList[[7]][those[j],1]:profileList[[7]][those[j],2],2]	
 			if(norma){
@@ -145,9 +154,9 @@ plot_components<-function(
 			at<-match(sam,samp)
 			all_int[at]<-int
 			if(sum(all_int!=0)>1){
-				lines(samp[all_int!=0],all_int[all_int!=0],col="grey")
+				lines(samp[all_int!=0],all_int[all_int!=0],col="darkblue")
 			}else{
-				points(samp[all_int!=0],all_int[all_int!=0],col="grey",pch=19)
+				points(samp[all_int!=0],all_int[all_int!=0],col="darkblue",pch=19)
 			}
 			if(j==this){
 				if(sum(all_int!=0)>1){

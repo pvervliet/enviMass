@@ -39,11 +39,15 @@ analyseE_links_profiles<-function(profileList_index, links_profiles, sort_what="
 	for(i in 1:length(along)){
 		if(with_bar){setTxtProgressBar(pBar, i, title = NULL, label = NULL)}
 		if(keep_out[along[i]]==FALSE){next}
-		if(use_profile[along[i]]==FALSE){next}		
+		if(use_profile[along[i]]==FALSE){next}	
 		if(profileList_index[along[i],"links"]!=0){
 			at_entry<-profileList_index[along[i],"links"]
 			if(length(links_profiles[[at_entry]][["group"]])>0){
-				keep_out[links_profiles[[at_entry]][["group"]]]<-FALSE
+				those<-match(links_profiles[[at_entry]][["group"]],profileList_index[,"profile_ID"])
+				those<-those[!is.na(those)]
+				if(length(those)){
+					keep_out[those]<-FALSE
+				}
 			}
 		}
 	}

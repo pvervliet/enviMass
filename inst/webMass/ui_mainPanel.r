@@ -1880,7 +1880,7 @@
 						HTML('<hr noshade="noshade" />'),  
 						#navbarPage("", 
 						tabsetPanel( 					
-							tabPanel("Overview & Filters",		
+							tabPanel("Overview & Filtering",		
 									tags$h4("Profile inventory:"), 
 									div(style = widget_style7,tags$h5("Total number of peaks:"), textOutput("atprof1")),
 									div(style = widget_style8,tags$h5("Number of profiles:"), textOutput("atprof2")),
@@ -1932,12 +1932,12 @@
 											"total peak number (decreasing)", 
 											"peak number in samples (decreasing, zeros removed)", 
 											"peak number in blanks/blinds (decreasing, zeros removed)", 
-											"Mass defect (increasing)", 
-											"Mass defect (decreasing)", 
-											"Median sample above blind intensity (decreasing)" 
+											"mass defect (increasing)", 
+											"mass defect (decreasing)", 
+											"median sample above blind intensity (decreasing)" 
 											), 
 										selected="current trend intensity (decreasing)",width='80%'),
-									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no"="TRUE","yes"="FALSE"), selected="FALSE", inline = TRUE),
+									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no"="FALSE","yes"="TRUE"), selected="FALSE", inline = TRUE),
 									HTML('<hr noshade="noshade" />'),
 									div(style = widget_style3,numericInput("filterProf_count", "Restrict list size (only for export and below table):", 500, min=1)),
 									#conditionalPanel( # IS filter				
@@ -1992,13 +1992,13 @@
 							#
 							#),
 							tabPanel("Single Profiles",
-									tags$h5("Extraction of individual profiles"),					
+									tags$h5("Number of filtered profiles:"), textOutput("prof_number"),		
+									HTML('<hr noshade="noshade" />'),			
 									HTML('<p> Enter the ID of a profile to extract relevant information. Profile IDs are listed both in the Summary tab and the Newest trends tab. 
 									Alternatively, sort and filter the profile list in the Summary tab and choose an entry number to show a listed profile. </p>'),							
 									div(style = widget_style3,numericInput("profID", "profile ID:", 0)),
 									div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
-									div(style = widget_style3,radioButtons("prof_log", "Logarithmic intensity?", c("no"="no","yes"="yes"))),
-									div(style = widget_style3,textOutput("prof_number")),			
+									div(style = widget_style3,radioButtons("prof_log", "Logarithmic intensity?", c("no"="no","yes"="yes"))),		
 									plotOutput("timeprofile", 
 										dblclick = "timeprofile_dblclick",
 										brush = brushOpts(
@@ -2016,6 +2016,25 @@
 											plotOutput("profile_position"),										
 											plotOutput("profile_EIC"),											
 											value="test1"),
+										bsCollapsePanel("Similar lower-ranked profiles",
+											plotOutput("similar_profiles_plot", 
+												dblclick = "similar_profiles_plot_dblclick",
+												brush = brushOpts(
+											  		id = "similar_profiles_plot_brush",
+											  		resetOnNew = TRUE
+												)
+											),
+											HTML('<hr noshade="noshade" />'),
+											#plotOutput("similar_profiles_relations", 
+											#	dblclick = "similar_profiles_relations_dblclick",
+											#	brush = brushOpts(
+											#  		id = "similar_profiles_relations_brush",
+											#  		resetOnNew = TRUE
+											#	)
+											#),
+											#HTML('<hr noshade="noshade" />'),
+											DT::dataTableOutput("similar_profiles_table")
+										),
 										bsCollapsePanel("Profile mass estimation",
 											div(style = widget_style3,
 												bsButton("dens_mass","Get mass estimates",style="success"),
