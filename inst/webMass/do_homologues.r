@@ -18,6 +18,8 @@
 	}
 	####################################################################################		
 	
+	#measurements[,names(measurements)=="homologues"]<-"FALSE"
+	
 	####################################################################################		
 	for(b in 1:length(measurements[,"ID"])){
 		if( 
@@ -55,7 +57,7 @@
 				use_mztol<-(as.numeric(logfile$parameters$homol_mztol)/1000)
 			}			
 			homol<-try(
-				enviMass::homol.search2(
+				homol.search2(
 					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
 					isotopes,
 					elements=elements,
@@ -129,7 +131,7 @@
 	####################################################################################	
 	
 	####################################################################################	
-	rm(mzfilter,elements,use_minmz,use_maxmz,measurements)
+	rm(mzfilter,elements,use_minmz,use_maxmz,measurements,use_mztol)
 	####################################################################################	
 
 

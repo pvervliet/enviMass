@@ -100,3 +100,6 @@ useDynLib(enviMass,intdiff)
 useDynLib(enviMass,meandel)
 useDynLib(enviMass,neighbour)
 useDynLib(enviMass,plot_prof)
+
+
+
