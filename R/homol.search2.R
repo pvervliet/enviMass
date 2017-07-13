@@ -21,7 +21,6 @@ function(
 	deb=0
 ){
   
-
     ##########################################################################
     # (0) Issue warnings: check arguments ####################################
 	if(!is.logical(use_C)){stop("use_C must be logial.")}
