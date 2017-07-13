@@ -1,5 +1,10 @@
 	###############################################################################	
 	those_objects<-c(
+		"cut_delRT_EIC",
+		"cut_delRT_isot",
+		"cut_cor_isot",
+		"cut_delRT_adduc",
+		"cut_EIC",
 		"in_envir",
 		"logfile_here",    
 		"logfile_other",

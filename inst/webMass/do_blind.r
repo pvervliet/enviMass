@@ -32,7 +32,6 @@ for(i in 1:length(IDs)){
 	if(filetypus[i]=="blank"){next}
 	if(old_samplewise[i]=="TRUE"){next}
 	load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-	#keep_2<-rep(1,length(peaklist[,1])) # 1 == TRUE
 	peaklist[,"keep_2"]<-Inf
 	save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 	rm(peaklist)

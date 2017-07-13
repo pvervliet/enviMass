@@ -134,6 +134,7 @@ if(
 			}
 		}
 		if(with_bar){close(pBar)}
+		cat(" done.")
 	}
 	##############################################################################	
 	
@@ -276,6 +277,7 @@ if(
 			}
 			if(with_bar){close(pBar)}		
 			if(any(objects()=="EIC_pairs")){rm(EIC_pairs)}	
+			cat(" done.")
 		}
 	}
 	# (3) INSERT ISOTOPOLOGUE LINKS ##############################################
@@ -677,7 +679,7 @@ if(
 
 	##############################################################################	
 	# (6) Filter #################################################################
-	cut_delRT_EIC<-NA
+	cut_delRT_EIC<<-NA
 	if(logfile$parameters$filter_profcomp_pos=="TRUE"){
 		# (6.1) by ISTD - first get their characteristics on delRT and correl. ###
 		fil1<-enviMass:::analyseA_links_profiles(
@@ -690,8 +692,8 @@ if(
 			)
 		# clean isotopologues ####################################################
 		#cut_delRT_isot<-median(fil1$delRT_isot)
-		cut_delRT_isot<-boxplot.stats(c(fil1$delRT_isot))$stats[5]
-		cut_cor_isot<-(boxplot.stats(c(fil1$int_cor_isot))$stats[1])
+		cut_delRT_isot<<-boxplot.stats(c(fil1$delRT_isot))$stats[5]
+		cut_cor_isot<<-(boxplot.stats(c(fil1$int_cor_isot))$stats[1])
 		if(!is.na(cut_delRT_isot)&!is.na(cut_cor_isot)){
 			links_profiles_pos<-enviMass:::cleanA_links_profiles(
 				links_profiles = links_profiles_pos, 
@@ -703,7 +705,7 @@ if(
 		}else{cat("\n No isotopologue linkage filtering feasible")}
 		# clean adducts ##########################################################
 		#cut_delRT_adduc<-median(fil1$delRT_adduc)
-		cut_delRT_adduc<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
+		cut_delRT_adduc<<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
 		if(!is.na(cut_delRT_adduc)){
 			links_profiles_pos<-enviMass:::cleanB_links_profiles( 
 				links_profiles = links_profiles_pos, 
@@ -719,8 +721,8 @@ if(
 				for_which=logfile$parameters$for_which_profcomp_pos
 			)
 		use_EIC<-c(fil2$EIC_cor_isot,fil2$EIC_cor_adduc)
-		cut_EIC<-(boxplot.stats(use_EIC)$stats[1])
-		cut_delRT_EIC<-max(cut_delRT_isot,cut_delRT_adduc)
+		cut_EIC<<-(boxplot.stats(use_EIC)$stats[1])
+		cut_delRT_EIC<<-max(cut_delRT_isot,cut_delRT_adduc)
 		if(!is.na(cut_EIC)&!is.na(cut_delRT_EIC)){	
 			links_profiles_pos<-enviMass:::cleanC_links_profiles(
 				links_profiles = links_profiles_pos, 
@@ -749,9 +751,9 @@ if(
 	with_test<-FALSE
 	along<-order(profileList_pos[["index_prof"]][,"number_peaks_total"],decreasing=TRUE) # doesn`t matter actually ...
 	if( (logfile$parameters$filter_profcomp_pos=="TRUE") & (!is.na(cut_delRT_EIC)) ){
-		use_del_RT<-cut_delRT_EIC
+		use_del_RT<<-cut_delRT_EIC
 	}else{
-		use_del_RT<-as.numeric(logfile$parameters$corr_del_RT)
+		use_del_RT<<-as.numeric(logfile$parameters$corr_del_RT)
 	}
 	######################
 	if(with_bar){pBar <- txtProgressBar(min = 0, max = length(along), style = 3)}
@@ -966,6 +968,7 @@ if(
 			}
 		}
 		if(with_bar){close(pBar)}
+		cat(" done.")
 	}
 	##############################################################################	
 	
@@ -1108,6 +1111,7 @@ if(
 			}
 			if(with_bar){close(pBar)}		
 			if(any(objects()=="EIC_pairs")){rm(EIC_pairs)}	
+			cat(" done.")
 		}
 	}
 	# (3) INSERT ISOTOPOLOGUE LINKS ##############################################
@@ -1509,7 +1513,7 @@ if(
 
 	##############################################################################	
 	# (6) Filter #################################################################
-	cut_delRT_EIC<-NA
+	cut_delRT_EIC<<-NA
 	if(logfile$parameters$filter_profcomp_neg=="TRUE"){
 		# (6.1) by ISTD - first get their characteristics on delRT and correl. ###
 		fil1<-enviMass:::analyseA_links_profiles(
@@ -1522,8 +1526,8 @@ if(
 			)
 		# clean isotopologues ####################################################
 		#cut_delRT_isot<-median(fil1$delRT_isot)
-		cut_delRT_isot<-boxplot.stats(c(fil1$delRT_isot))$stats[5]
-		cut_cor_isot<-(boxplot.stats(c(fil1$int_cor_isot))$stats[1])
+		cut_delRT_isot<<-boxplot.stats(c(fil1$delRT_isot))$stats[5]
+		cut_cor_isot<<-(boxplot.stats(c(fil1$int_cor_isot))$stats[1])
 		if(!is.na(cut_delRT_isot)&!is.na(cut_cor_isot)){
 			links_profiles_neg<-enviMass:::cleanA_links_profiles(
 				links_profiles = links_profiles_neg, 
@@ -1535,7 +1539,7 @@ if(
 		}else{cat("\n No isotopologue linkage filtering feasible")}
 		# clean adducts ##########################################################
 		#cut_delRT_adduc<-median(fil1$delRT_adduc)
-		cut_delRT_adduc<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
+		cut_delRT_adduc<<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
 		if(!is.na(cut_delRT_adduc)){
 			links_profiles_neg<-enviMass:::cleanB_links_profiles( 
 				links_profiles = links_profiles_neg, 
@@ -1551,8 +1555,8 @@ if(
 				for_which=logfile$parameters$for_which_profcomp_neg
 			)
 		use_EIC<-c(fil2$EIC_cor_isot,fil2$EIC_cor_adduc)
-		cut_EIC<-(boxplot.stats(use_EIC)$stats[1])
-		cut_delRT_EIC<-max(cut_delRT_isot,cut_delRT_adduc)
+		cut_EIC<<-(boxplot.stats(use_EIC)$stats[1])
+		cut_delRT_EIC<<-max(cut_delRT_isot,cut_delRT_adduc)
 		if(!is.na(cut_EIC)&!is.na(cut_delRT_EIC)){	
 			links_profiles_neg<-enviMass:::cleanC_links_profiles(
 				links_profiles = links_profiles_neg, 
@@ -1581,9 +1585,9 @@ if(
 	with_test<-FALSE
 	along<-order(profileList_neg[["index_prof"]][,"number_peaks_total"],decreasing=TRUE) # doesn`t matter actually ...
 	if( (logfile$parameters$filter_profcomp_pos=="TRUE") & (!is.na(cut_delRT_EIC)) ){
-		use_del_RT<-cut_delRT_EIC
+		use_del_RT<<-cut_delRT_EIC
 	}else{
-		use_del_RT<-as.numeric(logfile$parameters$corr_del_RT)
+		use_del_RT<<-as.numeric(logfile$parameters$corr_del_RT)
 	}
 	######################
 	if(with_bar){pBar <- txtProgressBar(min = 0, max = length(along), style = 3)}
