@@ -83,7 +83,7 @@
 		}
 		those_files<-use_files[use_group!="FALSE",,drop=FALSE] # only files covered by a calibration model are considered!
 		if(length(those_files[,1])==0){
-			shinyjs:::info("No samples to be quantified (positive mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
+			shinyjs::info("No samples to be quantified (positive mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
 			stop("\nNo samples to be quantified (positive mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
 		}
 		# sort those files by decreasing date!
@@ -536,7 +536,7 @@
 		}
 		those_files<-use_files[use_group!="FALSE",,drop=FALSE] # only files covered by a calibration model are considered!
 		if(length(those_files[,1])==0){
-			shinyjs:::info("No samples to be quantified (negative mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
+			shinyjs::info("No samples to be quantified (negative mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
 			stop("\nNo samples to be quantified (negative mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
 		}
 		# sort those files by decreasing date!

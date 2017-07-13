@@ -75,7 +75,7 @@
 								IDs
 							)
 		}
-		profileList_pos<-enviMass:::in_blind(profileList_pos)
+		profileList_pos<-enviMass::in_blind(profileList_pos)
 		profileList_pos<<-profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
 		profileList_pos_copy<-profileList_pos
@@ -138,7 +138,7 @@
 								IDs
 							)
 		}
-		profileList_neg<-enviMass:::in_blind(profileList_neg)
+		profileList_neg<-enviMass::in_blind(profileList_neg)
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
 		profileList_neg_copy<-profileList_neg

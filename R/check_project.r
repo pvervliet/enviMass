@@ -58,7 +58,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	# compounds available & ok? ##################################################
 	intstand_check<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
 	targets_check<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
-	say<-enviMass:::check_compounds(intstand_check,targets_check,isotopes,adducts,logfile,write_tables=TRUE)
+	say<-enviMass::check_compounds(intstand_check,targets_check,isotopes,adducts,logfile,write_tables=TRUE)
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}	
 	
 	# enough compounds for recalibration available? ##############################
@@ -163,7 +163,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		}
 	}
 	if((logfile$workflow[names(logfile$workflow)=="homologues"]=="yes") & (logfile$parameters$homol_units[1]!="FALSE")){
-		these<-enviPat:::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])
+		these<-enviPat::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])
 		if(any(these[,1]=="TRUE")){
 			say<-"Invalid homologue units defined - please revise (empty spaces? not comma-seperated?)"
 		}
@@ -483,7 +483,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	# Homologue series detection ################################################## 
 	if(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes"){
 		if(logfile$parameters$external$homol_units[1]!="FALSE"){
-			these<-enviPat:::check_chemform(isotopes,logfile$parameters$external$homol_units)[,1] 
+			these<-enviPat::check_chemform(isotopes,logfile$parameters$external$homol_units)[,1] 
 			if(any(these!="FALSE")){
 				say<-"Invalid chemical formulas for predefined homologue series units found - please revise" 
 			}  

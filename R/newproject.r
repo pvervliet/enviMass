@@ -316,7 +316,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	names(logfile)[12]<-"workflow_must"	
 	################################################################################################	
 	# reorder summary into workflow ################################################################
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	if(!is.data.frame(schedule)){stop("\nschedule not a data frame")}
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<-logfile$summary[set_order,]	

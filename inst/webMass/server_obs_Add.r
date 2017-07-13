@@ -56,14 +56,14 @@ observe({
 		rm(IS,IS1,IS2);
 		#############################################################################
 		# adjust task/workflow settings #############################################
-		enviMass:::workflow_set(logfile,down="pattern")		  
+		enviMass::workflow_set(logfile,down="pattern")		  
 		#############################################################################			
 		output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		logfile[[2]][3:7]<<-rep(TRUE,length(3:7));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$dowhat<-renderText("Added IS compound");
 		if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
-		enviMass:::reset_selections(session)
+		enviMass::reset_selections(session)
     }
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="IS")){rm(IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="IS")){rm(IS)}
@@ -160,7 +160,7 @@ observe({
 		}
 		# check before saving ...
 		targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character")
-		say<-enviMass:::check_compounds(
+		say<-enviMass::check_compounds(
 			intstand_check=IS_mod,
 			targets,
 			isotopes,
@@ -169,7 +169,7 @@ observe({
 		)
 		if(say=="Project consistent"){
 			write.table(IS_mod,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
-			enviMass:::workflow_set(logfile,down="pattern")
+			enviMass::workflow_set(logfile,down="pattern")
 			output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$dowhat<-renderText("Modified an IS entry");
 		}else{
@@ -180,7 +180,7 @@ observe({
 			 ))		
 		}
 		######################################################################
-		enviMass:::reset_selections(session)
+		enviMass::reset_selections(session)
 	}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="IS_mod")){rm(IS_mod,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="IS_mod")){rm(IS_mod)}	
@@ -209,7 +209,7 @@ observe({
 					  ))				
 			}else{		
 				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character")
-				say<-enviMass:::check_compounds(
+				say<-enviMass::check_compounds(
 					intstand_check=IS_in,
 					targets,
 					isotopes,
@@ -239,14 +239,14 @@ observe({
 				rm(IS_in)
 				#############################################################################
 				# adjust task/workflow settings #############################################
-				enviMass:::workflow_set(logfile,down="pattern")	
+				enviMass::workflow_set(logfile,down="pattern")	
 				####################################################################
 				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
 				output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 				output$dowhat<-renderText("Imported IS list");
 			}
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
-			enviMass:::reset_selections(session)
+			enviMass::reset_selections(session)
 		}
 	}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="IS_in")){rm(IS_in,envir=as.environment(".GlobalEnv"))}
@@ -284,13 +284,13 @@ observe({
 		write.table(IS,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 		#############################################################################
 		# adjust task/workflow settings #############################################
-		enviMass:::workflow_set(logfile,down="pattern")	
+		enviMass::workflow_set(logfile,down="pattern")	
 		####################################################################
 		output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$dowhat<-renderText("Deleted compound");
 		if(any(ls()=="logfile")){stop("illegal logfile detected #1 in server_obs_Add.r!")}
-		enviMass:::reset_selections(session)
+		enviMass::reset_selections(session)
     }
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="IS")){rm(IS,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="IS")){rm(IS)}
@@ -355,13 +355,13 @@ observe({
 		rm(targets,targets1,targets2);
 		#############################################################################
 		# adjust task/workflow settings #############################################
-		enviMass:::workflow_set(logfile,down="pattern")	
+		enviMass::workflow_set(logfile,down="pattern")	
 		#############################################################################			
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
 		output$dowhat<-renderText("Added target compound");
 		if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
-		enviMass:::reset_selections(session)
+		enviMass::reset_selections(session)
     }
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="targets1")){rm(targets1,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="targets1")){rm(targets1)}	
@@ -464,7 +464,7 @@ observe({
 		}
 		# check before saving ...
 		IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character")
-		say<-enviMass:::check_compounds(
+		say<-enviMass::check_compounds(
 			intstand_check=IS,
 			targets=target_mod,
 			isotopes,
@@ -473,7 +473,7 @@ observe({
 		)
 		if(say=="Project consistent"){
 			write.table(target_mod,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
-			enviMass:::workflow_set(logfile,down="pattern")
+			enviMass::workflow_set(logfile,down="pattern")
 			output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
 			output$dowhat<-renderText("Modified a target entry");
 		}else{
@@ -484,7 +484,7 @@ observe({
 			 ))		
 		}
 		######################################################################
-		enviMass:::reset_selections(session)
+		enviMass::reset_selections(session)
 	}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="targets")){rm(targets,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="targets")){rm(targets)}
@@ -517,7 +517,7 @@ observe({
 					  ))				
 			}else{		
 				IS_current<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character")
-				say<-enviMass:::check_compounds(
+				say<-enviMass::check_compounds(
 					intstand_check=IS_current,
 					targets=target_in,
 					isotopes,
@@ -546,7 +546,7 @@ observe({
 				}
 				#############################################################################
 				# adjust task/workflow settings #############################################
-				enviMass:::workflow_set(logfile,down="pattern")	
+				enviMass::workflow_set(logfile,down="pattern")	
 				####################################################################
 				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
 				output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
@@ -554,7 +554,7 @@ observe({
 			}
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
 		}
-		enviMass:::reset_selections(session)
+		enviMass::reset_selections(session)
 	}
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="targets")){rm(targets,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="targets")){rm(targets)}
@@ -594,13 +594,13 @@ observe({
 		write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)      	  
 		#############################################################################
 		# adjust task/workflow settings #############################################
-		enviMass:::workflow_set(logfile,down="pattern")	
+		enviMass::workflow_set(logfile,down="pattern")	
 		#############################################################################			
 		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      	  
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$dowhat<-renderText("Deleted compound");
 		if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
-		enviMass:::reset_selections(session)
+		enviMass::reset_selections(session)
     }
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="targets")){rm(targets,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="targets")){rm(targets)}
@@ -690,8 +690,8 @@ addmeasu<-reactive({
 						)
 						measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 						names(measurements3)<-nameit;
-						measurements3[,"Date"]<-enviMass:::convDate(measurements3[,"Date"]);
-						measurements3[,"date_end"]<-enviMass:::convDate(measurements3[,"date_end"]);
+						measurements3[,"Date"]<-enviMass::convDate(measurements3[,"Date"]);
+						measurements3[,"date_end"]<-enviMass::convDate(measurements3[,"date_end"]);
 						write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 						rm(measurements1,measurements2,measurements3);
 						measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
@@ -706,11 +706,11 @@ addmeasu<-reactive({
 						doit<<-as.character(isolate(input$Measadd_incl))
 						if(doit=="TRUE"){
 							if( isolate(input$Measadd_type)!="calibration" ){ # exclude calibration
-								enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+								enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
 							}
 							if( isolate(input$Measadd_type)=="calibration" ){ # still, do everything
-								enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
-								enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)									
+								enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+								enviMass::workflow_set(logfile,down="calibration",single_file=TRUE)									
 							}						
 						}
 						#############################################################################			
@@ -833,8 +833,8 @@ addmeasu<-reactive({
 					)
 					measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 					names(measurements3)<-nameit;
-					measurements3[,"Date"]<-enviMass:::convDate(measurements3[,"Date"]);
-					measurements3[,"date_end"]<-enviMass:::convDate(measurements3[,"date_end"]);
+					measurements3[,"Date"]<-enviMass::convDate(measurements3[,"Date"]);
+					measurements3[,"date_end"]<-enviMass::convDate(measurements3[,"date_end"]);
 					write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 					rm(measurements1,measurements2,measurements3);
 					measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
@@ -849,11 +849,11 @@ addmeasu<-reactive({
 					doit<<-as.character(isolate(input$Measadd_incl))
 					if(doit=="TRUE"){
 						if( isolate(input$Measadd_type)!="calibration" ){ # exclude calibration
-							enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+							enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
 						}
 						if( isolate(input$Measadd_type)=="calibration" ){ # still, do everything
-							enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
-							enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)
+							enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+							enviMass::workflow_set(logfile,down="calibration",single_file=TRUE)
 						}						
 					}
 					#############################################################################			
@@ -958,11 +958,11 @@ observe({
 		# adjust task/workflow settings #############################################
 		if(adjustit=="TRUE"){
 			if(delete_type!="calibration"){ # exclude calibration
-				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+				enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
 			}
 			if(delete_type=="calibration"){ # still, do everything
-				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)
-				enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)
+				enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)
+				enviMass::workflow_set(logfile,down="calibration",single_file=TRUE)
 			}
 		}	
 		#########################################################################			
@@ -1131,7 +1131,7 @@ impproj<-reactive({
 				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 			); 
 			rm(measurements_1,measurements_2);
-			enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)			
+			enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)			
 			#########################################################################			
 			# subtraction files, positive: ##########################################
 			measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -1176,12 +1176,12 @@ impproj<-reactive({
 			rm(measurements3)
 			#########################################################################
 			logfile$summary[1,2]<<-"TRUE"
-			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
+			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 			#########################################################################			
 			output$dowhat<-renderText("Files imported.");
 			cat(" done.")		
-			enviMass:::reset_selections(session)
+			enviMass::reset_selections(session)
 		}else{
 			cat(" no files to import - project empty?.")
 			output$dowhat<-renderText("Failed import: no files.");
@@ -1279,7 +1279,7 @@ observe({
 			measurements3[measurements3[,"ID"]==atID,"Mode"]<-as.character(isolate(input$Modif_mode))
 			measurements3[measurements3[,"ID"]==atID,"Place"]<-as.character(isolate(input$Modif_place))
 			measurements3[measurements3[,"ID"]==atID,"Date"]<-start_date
-			measurements3[measurements3[,"ID"]==atID,"Date"]<-enviMass:::convDate(measurements3[measurements3[,"ID"]==atID,"Date"]);
+			measurements3[measurements3[,"ID"]==atID,"Date"]<-enviMass::convDate(measurements3[measurements3[,"ID"]==atID,"Date"]);
 			measurements3[measurements3[,"ID"]==atID,"Time"]<-start_time	
 			measurements3[measurements3[,"ID"]==atID,"tag1"]<-tag1
 			measurements3[measurements3[,"ID"]==atID,"tag2"]<-tag2
@@ -1287,7 +1287,7 @@ observe({
 			measurements3[measurements3[,"ID"]==atID,"include"]<-as.character(isolate(input$Modif_include))				
 			measurements3[measurements3[,"ID"]==atID,"profiled"]<-use_profiling	
 			measurements3[measurements3[,"ID"]==atID,"date_end"]<-date_end
-			measurements3[measurements3[,"ID"]==atID,"date_end"]<-enviMass:::convDate(measurements3[measurements3[,"ID"]==atID,"date_end"]);
+			measurements3[measurements3[,"ID"]==atID,"date_end"]<-enviMass::convDate(measurements3[measurements3[,"ID"]==atID,"date_end"]);
 			measurements3[measurements3[,"ID"]==atID,"time_end"]<-time_end
 			measurements3[measurements3[,"ID"]==atID,"ID_2"]<-custom_ID
 			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
@@ -1343,15 +1343,15 @@ observe({
 			######################################################################
 			# Adjust workflow ####################################################	
 			if( isolate(input$Modif_type)!="calibration" ){ # exclude calibration
-				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+				enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
 			}
 			if( isolate(input$Modif_type)=="calibration" ){ # still, do everything
-				enviMass:::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
-				enviMass:::workflow_set(logfile,down="calibration",single_file=TRUE)
+				enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
+				enviMass::workflow_set(logfile,down="calibration",single_file=TRUE)
 			}							
 			######################################################################
-			output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
-			enviMass:::reset_selections(session)
+			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
+			enviMass::reset_selections(session)
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 			######################################################################
 		}
@@ -1409,10 +1409,10 @@ observe({
 		cat(for_those)
 		if(length(for_those)>0){
 			measurements3[for_those,"Date"]<-as.character(isolate(input$Modif_calgroup_date1))
-			measurements3[for_those,"Date"]<-enviMass:::convDate(measurements3[for_those,"Date"]);
+			measurements3[for_those,"Date"]<-enviMass::convDate(measurements3[for_those,"Date"]);
 			measurements3[for_those,"Time"]<-as.character(isolate(input$Modif_calgroup_time1))	
 			measurements3[for_those,"date_end"]<-as.character(isolate(input$Modif_calgroup_date2))
-			measurements3[for_those,"date_end"]<-enviMass:::convDate(measurements3[for_those,"date_end"]);
+			measurements3[for_those,"date_end"]<-enviMass::convDate(measurements3[for_those,"date_end"]);
 			measurements3[for_those,"time_end"]<-as.character(isolate(input$Modif_calgroup_time2))		
 			any_include<-any(measurements3[for_those,"include"]=="TRUE")
 			write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
@@ -1430,9 +1430,9 @@ observe({
 			}			
 			############################################################################
 			if( any_include & any_calibrated ){ # included & calibration models exist? Changed time period only affects quantification, calibration models remain the same
-				enviMass:::workflow_set(down="quantification",check_node=TRUE,check_TP=c("TRUE"))	
-				enviMass:::workflow_set(down="calibration")	
-				enviMass:::reset_selections(session)				
+				enviMass::workflow_set(down="quantification",check_node=TRUE,check_TP=c("TRUE"))	
+				enviMass::workflow_set(down="calibration")	
+				enviMass::reset_selections(session)				
 			}	
 			############################################################################
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
@@ -1475,17 +1475,17 @@ observe({
 		if( itsok & (length(for_those)>0) ){ # = a valid new group name		
 			measurements4<-measurements3[for_those,]
 			measurements4[,"Date"]<-as.character(isolate(input$Modif_calgroup_date1))
-			measurements4[,"Date"]<-enviMass:::convDate(measurements4[,"Date"]);
+			measurements4[,"Date"]<-enviMass::convDate(measurements4[,"Date"]);
 			measurements4[,"Time"]<-as.character(isolate(input$Modif_calgroup_time1))	
 			measurements4[,"date_end"]<-as.character(isolate(input$Modif_calgroup_date2))
-			measurements4[,"date_end"]<-enviMass:::convDate(measurements4[,"date_end"]);
+			measurements4[,"date_end"]<-enviMass::convDate(measurements4[,"date_end"]);
 			measurements4[,"time_end"]<-as.character(isolate(input$Modif_calgroup_time2))	
 			measurements4[,"LOD"]<-"FALSE"	# redo LOD!
 			measurements4$tag2<-rep(isolate(input$Copy_cal_group),length(measurements4$tag2))		
 			for(i in 1:length(measurements4[,"ID"])){
 				oldID<-measurements4[i,"ID"]
 				# get new IDs!	
-				newID<-enviMass:::getID(as.numeric(c(measurements3[,"ID"],measurements4[,"ID"]))) # here, measurements4 still partly contain duplicated, old IDs
+				newID<-enviMass::getID(as.numeric(c(measurements3[,"ID"],measurements4[,"ID"]))) # here, measurements4 still partly contain duplicated, old IDs
 				newID<-as.character(newID)
 				measurements4[i,"ID"]<-newID
 				# copy mzML-files with new IDs. must exist!
@@ -1567,9 +1567,9 @@ observe({
 				}
 			}
 			############################################################################
-			enviMass:::workflow_set(down="LOD",single_file=TRUE)
-			enviMass:::workflow_set(down="calibration",single_file=TRUE)
-			enviMass:::reset_selections(session)
+			enviMass::workflow_set(down="LOD",single_file=TRUE)
+			enviMass::workflow_set(down="calibration",single_file=TRUE)
+			enviMass::reset_selections(session)
 			############################################################################
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
 			output$measurements<<-DT::renderDataTable(
@@ -1577,7 +1577,7 @@ observe({
 			);
 			cat("Calibration file set copied.")
 			output$Modif_cal_text_load<-renderText({"Calibration file set copied."})
-			enviMass:::reset_selections(session)
+			enviMass::reset_selections(session)
 		}else{
 			cat("Calibration file set not copied.")
 			output$Modif_cal_text_load<-renderText({"Calibration file set not copied, such a group already exists and cannot be overwritten."})		
@@ -1660,9 +1660,9 @@ observe({
 			}
 			############################################################################
 			if(any_include){ # included & calibration models exist?
-				enviMass:::workflow_set(down="quantification",check_node=TRUE,check_TP=c("TRUE"))	# is this optional? after all, the sets are just removed ...
-				enviMass:::workflow_set(down="calibration")
-				enviMass:::reset_selections(session) # stops, in combination with Tasks_to_redo, invalid selections in the calibration tab!
+				enviMass::workflow_set(down="quantification",check_node=TRUE,check_TP=c("TRUE"))	# is this optional? after all, the sets are just removed ...
+				enviMass::workflow_set(down="calibration")
+				enviMass::reset_selections(session) # stops, in combination with Tasks_to_redo, invalid selections in the calibration tab!
 			}	
 			############################################################################
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
@@ -1670,7 +1670,7 @@ observe({
 				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 			); 
 			output$Modif_cal_text_load<-renderText({"Calibration group deleted."})
-			enviMass:::reset_selections(session)
+			enviMass::reset_selections(session)
 			cat("\n Calibration group deleted.")
 		}else{
 			output$Modif_cal_text_load<-renderText({"Invalid group to delete. Done nothing."})
@@ -1692,12 +1692,12 @@ impfolder<-reactive({
 			many<-0;					
 			for(i in 1:length(getfiles)){
 				filepath<-file.path(file_in,getfiles[i])
-				file_ending<-enviMass:::filetype(getfiles[i],check=TRUE)
+				file_ending<-enviMass::filetype(getfiles[i],check=TRUE)
 				if(
 					file.exists(filepath) & file_ending # in case of modifications meanwhile
 				){
 					cat(paste("\n   processing file # ",i,sep=""));
-					file_ending<-enviMass:::filetype(getfiles[i],check=FALSE)
+					file_ending<-enviMass::filetype(getfiles[i],check=FALSE)
 					measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 					nameit<-names(measurements1);
 					measurements1<-measurements1[measurements1[,1]!="-",,drop=FALSE]		
@@ -1713,8 +1713,8 @@ impfolder<-reactive({
 						at_date<<-as.character(isolate(input$Measadd_date))
 					}else{
 						all_dates<-measurements1[,"Date"]
-						at_date<<-enviMass:::minDate(all_dates,get_min=FALSE)
-						at_date<<-enviMass:::incrDate(Date=at_date,increment=1);#cat(paste("\n",at_date))	
+						at_date<<-enviMass::minDate(all_dates,get_min=FALSE)
+						at_date<<-enviMass::incrDate(Date=at_date,increment=1);#cat(paste("\n",at_date))	
 					}
 					newID<-as.character(getID(as.numeric(measurements1[,"ID"])))
 					if(file_ending==".mzXML"){			
@@ -1723,7 +1723,7 @@ impfolder<-reactive({
 							to=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
 							overwrite=TRUE)	
 						if( file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) ){ # check: copy completed?			
-							mz1<-readMzXmlData:::readMzXmlFile(
+							mz1<-readMzXmlData::readMzXmlFile(
 								mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
 								removeMetaData = FALSE,verbose = FALSE)
 							ioniz<-mz1[[1]]$metaData$polarity											
@@ -1753,8 +1753,8 @@ impfolder<-reactive({
 							)								
 							measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 							names(measurements3)<-nameit;
-							measurements3[,"Date"]<-enviMass:::convDate(measurements3[,"Date"]);
-							measurements3[,"date_end"]<-enviMass:::convDate(measurements3[,"date_end"]);
+							measurements3[,"Date"]<-enviMass::convDate(measurements3[,"Date"]);
+							measurements3[,"date_end"]<-enviMass::convDate(measurements3[,"date_end"]);
 							write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 							rm(measurements1,measurements2,measurements3);
 							#############################################################################			
@@ -1786,7 +1786,7 @@ impfolder<-reactive({
 								use_format="mzXML");     				  
 							file.remove(file.path(logfile[[1]],"files",paste(newID,".raw",sep="")))
 							if( file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) ){ # copy completed and conversion ok?			
-								mz1<-readMzXmlData:::readMzXmlFile(
+								mz1<-readMzXmlData::readMzXmlFile(
 									mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
 									removeMetaData = FALSE,verbose = FALSE)
 								ioniz<-mz1[[1]]$metaData$polarity											
@@ -1816,8 +1816,8 @@ impfolder<-reactive({
 								)	
 								measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
 								names(measurements3)<-nameit;
-								measurements3[,"Date"]<-enviMass:::convDate(measurements3[,"Date"]);
-								measurements3[,"date_end"]<-enviMass:::convDate(measurements3[,"date_end"]);
+								measurements3[,"Date"]<-enviMass::convDate(measurements3[,"Date"]);
+								measurements3[,"date_end"]<-enviMass::convDate(measurements3[,"date_end"]);
 								write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 								rm(measurements1,measurements2,measurements3);
 								#############################################################################			
@@ -1844,13 +1844,13 @@ impfolder<-reactive({
 				}
 			}
 			if(many>0){
-				enviMass:::workflow_set(down="peakpicking",single_file=TRUE) 
+				enviMass::workflow_set(down="peakpicking",single_file=TRUE) 
 				logfile$summary[1,2]<<-"TRUE"
-				output$summa_html<<-renderText(enviMass:::summary_html(logfile$summary));
+				output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
 				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 				output$dowhat<-renderText(paste(many,"files imported"))
 				cat(paste("\n",many,"files imported"))
-				enviMass:::reset_selections(session)
+				enviMass::reset_selections(session)
 				return(paste(many,"files imported"))
 			}else{
 				cat("\nNo files imported")
@@ -1904,19 +1904,19 @@ observe({
 				###############################################################
 				source("server_variables_in.R", local=TRUE)
 				output$dowhat<<-renderText("Parameters imported.");
-				enviMass:::workflow_set(down="peakpicking",single_file=FALSE) # reset the whole workflow ... could be improved ...
-				enviMass:::reset_selections(session)
+				enviMass::workflow_set(down="peakpicking",single_file=FALSE) # reset the whole workflow ... could be improved ...
+				enviMass::reset_selections(session)
 				###############################################################
 				cat(" done. \n")
 			}else{
 				output$dowhat<<-renderText("Parameter import failed: incompatible enviMass versions.");
 				cat(" failed. \n")		
-				shinyjs:::info("Parameter import failed: incompatible enviMass versions.")
+				shinyjs::info("Parameter import failed: incompatible enviMass versions.")
 			}
 		}else{
 			output$dowhat<<-renderText("Parameter import failed: invalid file path.");
 			cat(" failed. \n")			
-			shinyjs:::info("Parameter import failed: invalid file path.")
+			shinyjs::info("Parameter import failed: invalid file path.")
 		}
 	}
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
@@ -1936,7 +1936,7 @@ observe({
 	input$Copy_cal
 	input$yes_delete_cal
 	output$file_overview <- renderPlot({
-		enviMass:::plot_measurements(logfile,ranges_overview)
+		enviMass::plot_measurements(logfile,ranges_overview)
 	})
 })
 

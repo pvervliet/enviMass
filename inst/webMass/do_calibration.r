@@ -254,7 +254,7 @@
 		# iterator m is directly equal to the sample ID ##################################################################
 		if( length(IS_pos_screen_listed_cal)>0 ){
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			results_screen_IS_pos_cal<-enviMass:::get_screening_results(
+			results_screen_IS_pos_cal<-enviMass::get_screening_results(
 				screened_listed=res_IS_pos_screen_cal,
 				pattern=pattern,
 				at_RT=pattern_RT,
@@ -439,7 +439,7 @@
 		# iterator m is directly equal to the sample ID ##################################################################
 		if( length(target_pos_screen_listed_cal)>0 ){
 			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			results_screen_target_pos_cal<-enviMass:::get_screening_results(
+			results_screen_target_pos_cal<-enviMass::get_screening_results(
 				screened_listed=res_target_pos_screen_cal,
 				pattern=pattern,
 				at_RT=pattern_RT,
@@ -697,7 +697,7 @@
 		# iterator m is directly equal to the sample ID ##################################################################
 		if( length(IS_neg_screen_listed_cal)>0 ){
 			intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-			results_screen_IS_neg_cal<-enviMass:::get_screening_results(
+			results_screen_IS_neg_cal<-enviMass::get_screening_results(
 				screened_listed=res_IS_neg_screen_cal,
 				pattern=pattern,
 				at_RT=pattern_RT,
@@ -882,7 +882,7 @@
 		# iterator m is directly equal to the sample ID ##################################################################
 		if( length(target_neg_screen_listed_cal)>0 ){
 			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			results_screen_target_neg_cal<-enviMass:::get_screening_results(
+			results_screen_target_neg_cal<-enviMass::get_screening_results(
 				screened_listed=res_target_neg_screen_cal,
 				pattern=pattern,
 				at_RT=pattern_RT,

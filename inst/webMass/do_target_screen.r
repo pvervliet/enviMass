@@ -246,7 +246,7 @@
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
 			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			results_screen_target_pos<-enviMass:::get_screening_results(
+			results_screen_target_pos<-enviMass::get_screening_results(
 				screened_listed=res_target_pos_screen,
 				pattern=pattern,
 				at_RT=pattern_RT,
@@ -544,7 +544,7 @@
 				measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]
 			}
 			targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-			results_screen_target_neg<-enviMass:::get_screening_results(
+			results_screen_target_neg<-enviMass::get_screening_results(
 				screened_listed=res_target_neg_screen,
 				pattern=pattern,
 				at_RT=pattern_RT,

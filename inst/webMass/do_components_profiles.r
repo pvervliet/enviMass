@@ -33,7 +33,7 @@ if(
 	peaks<-profileList_pos[["peaks"]][,c("sampleIDs","peakIDs","profileIDs","RT")] # to retrieve relations with, sampleID, peakID, profileID, RT
 	ord<-order(peaks[,"sampleIDs"],peaks[,"peakIDs"],peaks[,"profileIDs"],decreasing=FALSE)
 	peaks<-peaks[ord,]
-	use_entries_profiles<-enviMass:::find_empty(links_profiles_pos) # also finds gaps
+	use_entries_profiles<-enviMass::find_empty(links_profiles_pos) # also finds gaps
 	profileList_pos[["index_prof"]][,"links"]<-0
 	with_bar<-TRUE
 	##############################################################################	
@@ -69,7 +69,7 @@ if(
 					}else{
 						at_entry<-(length(links_profiles_pos)+1)
 					}
-					links_profiles_pos[[at_entry]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][i,"number_peaks_total"][[1]])
+					links_profiles_pos[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][i,"number_peaks_total"][[1]])
 					names(links_profiles_pos)[at_entry]<-as.character(i)
 					profileList_pos[["index_prof"]][i,"links"]<-at_entry						
 				}else{
@@ -183,12 +183,12 @@ if(
 				get1<-cbind(
 					rep(as.numeric(forIDs[i]),length(EIC_pairs[,1])),EIC_pairs[,1] # first column sorted correctly
 				)
-				found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
 				# find profiles for second peak
 				get2<-cbind(
 					rep(as.numeric(forIDs[i]),length(EIC_pairs[,2])),EIC_pairs[,2] # second column requires sorting
 				)
-				found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
 				for(j in 1:length(found1)){ # insert links
 					# insert PROFILE LINKS ########################################
 					if(found1[j]==0){not_found1<-(not_found1+1);next} # e.g., peak blind-removed 
@@ -211,7 +211,7 @@ if(
 						}else{
 							at_entry_1<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_1]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						links_profiles_pos[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
 						names(links_profiles_pos)[at_entry_1]<-as.character(prof1)
 						profileList_pos[["index_prof"]][prof1,"links"]<-at_entry_1						
 					}else{
@@ -235,7 +235,7 @@ if(
 						}else{
 							at_entry_2<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_2]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])		
+						links_profiles_pos[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])		
 						names(links_profiles_pos)[at_entry_2]<-as.character(prof2)
 						profileList_pos[["index_prof"]][prof2,"links"]<-at_entry_2						
 					}else{
@@ -318,12 +318,12 @@ if(
 				get1<-cbind(
 					rep(as.numeric(forIDs[i]),length(Isot_pairs[,1])),Isot_pairs[,1]
 				)
-				found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
 				# find profiles for second peak
 				get2<-cbind(
 					rep(as.numeric(forIDs[i]),length(Isot_pairs[,2])),Isot_pairs[,2]
 				)
-				found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
 				for(j in 1:length(found1)){ # insert links
 					# insert PROFILE LINKS ########################################
 					if(found1[j]==0){not_found3<-(not_found3+1);next} # e.g., peak blind-removed 
@@ -346,7 +346,7 @@ if(
 						}else{
 							at_entry_1<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_1]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						links_profiles_pos[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
 						names(links_profiles_pos)[at_entry_1]<-as.character(prof1)
 						profileList_pos[["index_prof"]][prof1,"links"]<-at_entry_1						
 					}else{
@@ -370,7 +370,7 @@ if(
 						}else{																		
 							at_entry_2<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_2]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						links_profiles_pos[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
 						names(links_profiles_pos)[at_entry_2]<-as.character(prof2)
 						profileList_pos[["index_prof"]][prof2,"links"]<-at_entry_2						
 					}else{
@@ -459,12 +459,12 @@ if(
 				get1<-cbind(
 					rep(as.numeric(forIDs[i]),length(Adduct_pairs[,1])),Adduct_pairs[,1]
 				)
-				found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
 				# find profiles for second peak
 				get2<-cbind(
 					rep(as.numeric(forIDs[i]),length(Adduct_pairs[,2])),Adduct_pairs[,2]
 				)
-				found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
 				for(j in 1:length(found1)){ # insert links	
 					if(found1[j]==0){not_found4<-(not_found4+1);next} # e.g., peak blind-removed 
 					if(found2[j]==0){not_found4<-(not_found4+1);next}		
@@ -487,7 +487,7 @@ if(
 						}else{
 							at_entry_1<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_1]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						links_profiles_pos[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
 						names(links_profiles_pos)[at_entry_1]<-as.character(prof1)
 						profileList_pos[["index_prof"]][prof1,"links"]<-at_entry_1						
 					}else{
@@ -511,7 +511,7 @@ if(
 						}else{
 							at_entry_2<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_2]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						links_profiles_pos[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
 						names(links_profiles_pos)[at_entry_2]<-as.character(prof2)
 						profileList_pos[["index_prof"]][prof2,"links"]<-at_entry_2						
 					}else{
@@ -598,14 +598,14 @@ if(
 				get1<-cbind(
 					rep(as.numeric(forIDs[i]),length(Homol_groups[,1])),Homol_groups[,1]
 				)
-				found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
 				keep_group[Homol_groups[found1==0,3]]<-FALSE
 				if(!any(keep_group)){next} # none left with all peaks still embedded into profiles
 				# find profiles for second peak
 				get2<-cbind(
 					rep(as.numeric(forIDs[i]),length(Homol_groups[,2])),Homol_groups[,2]
 				)
-				found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
 				if(!any(keep_group)){next} # none left with all peaks still embedded into profiles
 				for(j in 1:length(found1)){ # insert links	
 					if(found1[j]==0){not_found5<-(not_found5+1);next} # e.g., peak blind-removed 
@@ -631,7 +631,7 @@ if(
 						}else{
 							at_entry<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						links_profiles_pos[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
 						names(links_profiles_pos)[at_entry]<-as.character(prof1)
 						profileList_pos[["index_prof"]][prof1,"links"]<-at_entry						
 					}else{
@@ -654,7 +654,7 @@ if(
 						}else{
 							at_entry<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry]]<-enviMass:::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						links_profiles_pos[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
 						names(links_profiles_pos)[at_entry]<-as.character(prof2)
 						profileList_pos[["index_prof"]][prof2,"links"]<-at_entry						
 					}else{
@@ -682,7 +682,7 @@ if(
 	cut_delRT_EIC<<-NA
 	if(logfile$parameters$filter_profcomp_pos=="TRUE"){
 		# (6.1) by ISTD - first get their characteristics on delRT and correl. ###
-		fil1<-enviMass:::analyseA_links_profiles(
+		fil1<-enviMass::analyseA_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos, 
 				min_rat=.7, 	# isot, adduc: "link counts"/"ref_1"
@@ -695,7 +695,7 @@ if(
 		cut_delRT_isot<<-boxplot.stats(c(fil1$delRT_isot))$stats[5]
 		cut_cor_isot<<-(boxplot.stats(c(fil1$int_cor_isot))$stats[1])
 		if(!is.na(cut_delRT_isot)&!is.na(cut_cor_isot)){
-			links_profiles_pos<-enviMass:::cleanA_links_profiles(
+			links_profiles_pos<-enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_delRT_isot = cut_delRT_isot, 
@@ -707,7 +707,7 @@ if(
 		#cut_delRT_adduc<-median(fil1$delRT_adduc)
 		cut_delRT_adduc<<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
 		if(!is.na(cut_delRT_adduc)){
-			links_profiles_pos<-enviMass:::cleanB_links_profiles( 
+			links_profiles_pos<-enviMass::cleanB_links_profiles( 
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_delRT_adduc = cut_delRT_adduc, 
@@ -715,7 +715,7 @@ if(
 			)
 		}else{cat("\n No adduct linkage filtering feasible")}
 		# (6.2) by ISTD - check their EIC correlation ###########################
-		fil2<-enviMass:::analyseB_links_profiles(
+		fil2<-enviMass::analyseB_links_profiles(
 				links_profiles = links_profiles_pos,  
 				min_count=.4, 	# isot, adduc:  "ref_1">=(min_count*number_samples)
 				for_which=logfile$parameters$for_which_profcomp_pos
@@ -724,7 +724,7 @@ if(
 		cut_EIC<<-(boxplot.stats(use_EIC)$stats[1])
 		cut_delRT_EIC<<-max(cut_delRT_isot,cut_delRT_adduc)
 		if(!is.na(cut_EIC)&!is.na(cut_delRT_EIC)){	
-			links_profiles_pos<-enviMass:::cleanC_links_profiles(
+			links_profiles_pos<-enviMass::cleanC_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_EIC = cut_EIC, 
@@ -734,7 +734,7 @@ if(
 		}else{cat("\n No EIC linkage filtering feasible")}
 		# (6.3) Clean lists ######################################################
 		for(n in 1:length(links_profiles_pos)){
-			is_empty<-enviMass:::analyseC_links_profiles(links_profiles_pos, at_entry = n)
+			is_empty<-enviMass::analyseC_links_profiles(links_profiles_pos, at_entry = n)
 			if(is_empty){
 				links_profiles_pos[[n]]<-NA
 				profileList_pos[["index_prof"]][as.numeric(names(links_profiles_pos)[n]),"links"]<-0
@@ -761,7 +761,7 @@ if(
 		if(with_bar){setTxtProgressBar(pBar, i, title = NULL, label = NULL)}
 		if(logfile$parameters$prof_comp_link_only=="TRUE"){
 			# (1) get in-/directly related isotopologue profiles #####################
-			prof_isot_IDs<-enviMass:::get_isotopol(
+			prof_isot_IDs<-enviMass::get_isotopol(
 				profileList=profileList_pos,
 				prof_ID=along[i],
 				links_profiles=links_profiles_pos,
@@ -777,7 +777,7 @@ if(
 			# collect adducts for these isotopologue profiles ########################
 			prof_adduct_IDs<-c()
 			for(j in 1:length(prof_isot_IDs)){
-				got_adducts<-enviMass:::get_adducts(
+				got_adducts<-enviMass::get_adducts(
 					profileList=profileList_pos,
 					prof_ID=prof_isot_IDs[j],
 					links_profiles=links_profiles_pos,
@@ -793,7 +793,7 @@ if(
 			prof_all_IDs<-c(prof_isot_IDs,prof_adduct_IDs)
 		}else{
 			# (3) get all in-/directly related profiles ##############################	
-			prof_all_IDs<-enviMass:::get_all(
+			prof_all_IDs<-enviMass::get_all(
 				profileList=profileList_pos,
 				prof_ID=along[i],
 				links_profiles=links_profiles_pos,
@@ -810,7 +810,7 @@ if(
 		##############################################################################
 		if(plot_it){
 			if(length(prof_all_IDs)==1) next
-			enviMass:::plot_components(
+			enviMass::plot_components(
 				profileList=profileList_pos,
 				prof_IDs=prof_all_IDs,
 				links_profiles=links_profiles_pos,
@@ -823,7 +823,7 @@ if(
 		}	
 		##############################################################################
 		if(with_test){
-			if(!enviMass:::check_interlinked(prof_all_IDs,profileList_pos,links_profiles_pos)) stop("Not all interlinked!")
+			if(!enviMass::check_interlinked(prof_all_IDs,profileList_pos,links_profiles_pos)) stop("Not all interlinked!")
 		}
 		##############################################################################
 		if(length(prof_all_IDs)>1){
@@ -867,7 +867,7 @@ if(
 	peaks<-profileList_neg[["peaks"]][,c("sampleIDs","peakIDs","profileIDs","RT")] # to retrieve relations with, sampleID, peakID, profileID, RT
 	ord<-order(peaks[,"sampleIDs"],peaks[,"peakIDs"],peaks[,"profileIDs"],decreasing=FALSE)
 	peaks<-peaks[ord,]
-	use_entries_profiles<-enviMass:::find_empty(links_profiles_neg) # also finds gaps
+	use_entries_profiles<-enviMass::find_empty(links_profiles_neg) # also finds gaps
 	profileList_neg[["index_prof"]][,"links"]<-0
 	with_bar<-TRUE
 	##############################################################################	
@@ -903,7 +903,7 @@ if(
 					}else{
 						at_entry<-(length(links_profiles_neg)+1)
 					}
-					links_profiles_neg[[at_entry]]<-enviMass:::new_entry_links_profiles(profileList_neg[["index_prof"]][i,"number_peaks_total"][[1]])
+					links_profiles_neg[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][i,"number_peaks_total"][[1]])
 					names(links_profiles_neg)[at_entry]<-as.character(i)
 					profileList_neg[["index_prof"]][i,"links"]<-at_entry						
 				}else{
@@ -1017,12 +1017,12 @@ if(
 				get1<-cbind(
 					rep(as.numeric(forIDs[i]),length(EIC_pairs[,1])),EIC_pairs[,1] # first column sorted correctly
 				)
-				found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
 				# find profiles for second peak
 				get2<-cbind(
 					rep(as.numeric(forIDs[i]),length(EIC_pairs[,2])),EIC_pairs[,2] # second column requires sorting
 				)
-				found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
 				for(j in 1:length(found1)){ # insert links
 					# insert PROFILE LINKS ########################################
 					if(found1[j]==0){not_found1<-(not_found1+1);next} # e.g., peak blind-removed 
@@ -1045,7 +1045,7 @@ if(
 						}else{
 							at_entry_1<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_1]]<-enviMass:::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						links_profiles_neg[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
 						names(links_profiles_neg)[at_entry_1]<-as.character(prof1)
 						profileList_neg[["index_prof"]][prof1,"links"]<-at_entry_1						
 					}else{
@@ -1069,7 +1069,7 @@ if(
 						}else{
 							at_entry_2<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_2]]<-enviMass:::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])		
+						links_profiles_neg[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])		
 						names(links_profiles_neg)[at_entry_2]<-as.character(prof2)
 						profileList_neg[["index_prof"]][prof2,"links"]<-at_entry_2						
 					}else{
@@ -1152,12 +1152,12 @@ if(
 				get1<-cbind(
 					rep(as.numeric(forIDs[i]),length(Isot_pairs[,1])),Isot_pairs[,1]
 				)
-				found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
 				# find profiles for second peak
 				get2<-cbind(
 					rep(as.numeric(forIDs[i]),length(Isot_pairs[,2])),Isot_pairs[,2]
 				)
-				found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
 				for(j in 1:length(found1)){ # insert links
 					# insert PROFILE LINKS ########################################
 					if(found1[j]==0){not_found3<-(not_found3+1);next} # e.g., peak blind-removed 
@@ -1180,7 +1180,7 @@ if(
 						}else{
 							at_entry_1<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_1]]<-enviMass:::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						links_profiles_neg[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
 						names(links_profiles_neg)[at_entry_1]<-as.character(prof1)
 						profileList_neg[["index_prof"]][prof1,"links"]<-at_entry_1						
 					}else{
@@ -1204,7 +1204,7 @@ if(
 						}else{																		
 							at_entry_2<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_2]]<-enviMass:::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						links_profiles_neg[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
 						names(links_profiles_neg)[at_entry_2]<-as.character(prof2)
 						profileList_neg[["index_prof"]][prof2,"links"]<-at_entry_2						
 					}else{
@@ -1293,12 +1293,12 @@ if(
 				get1<-cbind(
 					rep(as.numeric(forIDs[i]),length(Adduct_pairs[,1])),Adduct_pairs[,1]
 				)
-				found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
 				# find profiles for second peak
 				get2<-cbind(
 					rep(as.numeric(forIDs[i]),length(Adduct_pairs[,2])),Adduct_pairs[,2]
 				)
-				found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
 				for(j in 1:length(found1)){ # insert links	
 					if(found1[j]==0){not_found4<-(not_found4+1);next} # e.g., peak blind-removed 
 					if(found2[j]==0){not_found4<-(not_found4+1);next}		
@@ -1321,7 +1321,7 @@ if(
 						}else{
 							at_entry_1<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_1]]<-enviMass:::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						links_profiles_neg[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
 						names(links_profiles_neg)[at_entry_1]<-as.character(prof1)
 						profileList_neg[["index_prof"]][prof1,"links"]<-at_entry_1						
 					}else{
@@ -1345,7 +1345,7 @@ if(
 						}else{
 							at_entry_2<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_2]]<-enviMass:::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						links_profiles_neg[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
 						names(links_profiles_neg)[at_entry_2]<-as.character(prof2)
 						profileList_neg[["index_prof"]][prof2,"links"]<-at_entry_2						
 					}else{
@@ -1432,14 +1432,14 @@ if(
 				get1<-cbind(
 					rep(as.numeric(forIDs[i]),length(Homol_groups[,1])),Homol_groups[,1]
 				)
-				found1<-enviMass:::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
 				keep_group[Homol_groups[found1==0,3]]<-FALSE
 				if(!any(keep_group)){next} # none left with all peaks still embedded into profiles
 				# find profiles for second peak
 				get2<-cbind(
 					rep(as.numeric(forIDs[i]),length(Homol_groups[,2])),Homol_groups[,2]
 				)
-				found2<-enviMass:::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
 				if(!any(keep_group)){next} # none left with all peaks still embedded into profiles
 				for(j in 1:length(found1)){ # insert links	
 					if(found1[j]==0){not_found5<-(not_found5+1);next} # e.g., peak blind-removed 
@@ -1465,7 +1465,7 @@ if(
 						}else{
 							at_entry<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry]]<-enviMass:::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						links_profiles_neg[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
 						names(links_profiles_neg)[at_entry]<-as.character(prof1)
 						profileList_neg[["index_prof"]][prof1,"links"]<-at_entry						
 					}else{
@@ -1488,7 +1488,7 @@ if(
 						}else{
 							at_entry<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry]]<-enviMass:::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						links_profiles_neg[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
 						names(links_profiles_neg)[at_entry]<-as.character(prof2)
 						profileList_neg[["index_prof"]][prof2,"links"]<-at_entry						
 					}else{
@@ -1516,7 +1516,7 @@ if(
 	cut_delRT_EIC<<-NA
 	if(logfile$parameters$filter_profcomp_neg=="TRUE"){
 		# (6.1) by ISTD - first get their characteristics on delRT and correl. ###
-		fil1<-enviMass:::analyseA_links_profiles(
+		fil1<-enviMass::analyseA_links_profiles(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg, 
 				min_rat=.7, 	# isot, adduc: "link counts"/"ref_1"
@@ -1529,7 +1529,7 @@ if(
 		cut_delRT_isot<<-boxplot.stats(c(fil1$delRT_isot))$stats[5]
 		cut_cor_isot<<-(boxplot.stats(c(fil1$int_cor_isot))$stats[1])
 		if(!is.na(cut_delRT_isot)&!is.na(cut_cor_isot)){
-			links_profiles_neg<-enviMass:::cleanA_links_profiles(
+			links_profiles_neg<-enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_delRT_isot = cut_delRT_isot, 
@@ -1541,7 +1541,7 @@ if(
 		#cut_delRT_adduc<-median(fil1$delRT_adduc)
 		cut_delRT_adduc<<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
 		if(!is.na(cut_delRT_adduc)){
-			links_profiles_neg<-enviMass:::cleanB_links_profiles( 
+			links_profiles_neg<-enviMass::cleanB_links_profiles( 
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_delRT_adduc = cut_delRT_adduc, 
@@ -1549,7 +1549,7 @@ if(
 			)
 		}else{cat("\n No adduct linkage filtering feasible")}
 		# (6.2) by ISTD - check their EIC correlation ###########################
-		fil2<-enviMass:::analyseB_links_profiles(
+		fil2<-enviMass::analyseB_links_profiles(
 				links_profiles = links_profiles_neg,  
 				min_count=.4, 	# isot, adduc:  "ref_1">=(min_count*number_samples)
 				for_which=logfile$parameters$for_which_profcomp_neg
@@ -1558,7 +1558,7 @@ if(
 		cut_EIC<<-(boxplot.stats(use_EIC)$stats[1])
 		cut_delRT_EIC<<-max(cut_delRT_isot,cut_delRT_adduc)
 		if(!is.na(cut_EIC)&!is.na(cut_delRT_EIC)){	
-			links_profiles_neg<-enviMass:::cleanC_links_profiles(
+			links_profiles_neg<-enviMass::cleanC_links_profiles(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_EIC = cut_EIC, 
@@ -1568,7 +1568,7 @@ if(
 		}else{cat("\n No EIC linkage filtering feasible")}
 		# (6.3) Clean lists ######################################################
 		for(n in 1:length(links_profiles_neg)){
-			is_empty<-enviMass:::analyseC_links_profiles(links_profiles_neg, at_entry = n)
+			is_empty<-enviMass::analyseC_links_profiles(links_profiles_neg, at_entry = n)
 			if(is_empty){
 				links_profiles_neg[[n]]<-NA
 				profileList_neg[["index_prof"]][as.numeric(names(links_profiles_neg)[n]),"links"]<-0
@@ -1595,7 +1595,7 @@ if(
 		if(with_bar){setTxtProgressBar(pBar, i, title = NULL, label = NULL)}
 		if(logfile$parameters$prof_comp_link_only=="TRUE"){
 			# (1) get in-/directly related isotopologue profiles #################
-			prof_isot_IDs<-enviMass:::get_isotopol(
+			prof_isot_IDs<-enviMass::get_isotopol(
 				profileList=profileList_neg,
 				prof_ID=along[i],
 				links_profiles=links_profiles_neg,
@@ -1611,7 +1611,7 @@ if(
 			# collect adducts for these isotopologue profiles ####################
 			prof_adduct_IDs<-c()
 			for(j in 1:length(prof_isot_IDs)){
-				got_adducts<-enviMass:::get_adducts(
+				got_adducts<-enviMass::get_adducts(
 					profileList=profileList_neg,
 					prof_ID=prof_isot_IDs[j],
 					links_profiles=links_profiles_neg,
@@ -1627,7 +1627,7 @@ if(
 			prof_all_IDs<-c(prof_isot_IDs,prof_adduct_IDs)
 		}else{
 			# (3) get all in-/directly related profiles ##########################
-			prof_all_IDs<-enviMass:::get_all(
+			prof_all_IDs<-enviMass::get_all(
 				profileList=profileList_neg,
 				prof_ID=along[i],
 				links_profiles=links_profiles_neg,
@@ -1644,7 +1644,7 @@ if(
 		##########################################################################
 		if(plot_it){
 			if(length(prof_all_IDs)==1) next
-			enviMass:::plot_components(
+			enviMass::plot_components(
 				profileList=profileList_neg,
 				prof_IDs=prof_all_IDs,
 				links_profiles=links_profiles_neg,
@@ -1657,7 +1657,7 @@ if(
 		}	
 		##########################################################################
 		if(with_test){
-			if(!enviMass:::check_interlinked(prof_all_IDs,profileList_neg,links_profiles_neg)) stop("Not all interlinked!")
+			if(!enviMass::check_interlinked(prof_all_IDs,profileList_neg,links_profiles_neg)) stop("Not all interlinked!")
 		}
 		##########################################################################
 		if(length(prof_all_IDs)>1){

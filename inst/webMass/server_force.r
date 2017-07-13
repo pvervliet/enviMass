@@ -1,4 +1,4 @@
-output$force_workflow <- networkD3:::renderForceNetwork({
+output$force_workflow <- networkD3::renderForceNetwork({
 
 	input$saveflow;
 	if(isolate(init$a)=="TRUE"){
@@ -51,7 +51,7 @@ output$force_workflow <- networkD3:::renderForceNetwork({
 			MisNodes[MisNodes[,1]=="target_subtr",1]<-"target subtraction"	
 			MisNodes[MisNodes[,1]=="blind_subtr",1]<-"Blind subtraction"
 			
-			networkD3:::forceNetwork(Links = MisLinks, Nodes = MisNodes,
+			networkD3::forceNetwork(Links = MisLinks, Nodes = MisNodes,
 						Source = "source", Target = "target",
 						NodeID = "name", Group = "group", 
 						zoom=TRUE, opacity = 0.8)

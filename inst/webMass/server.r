@@ -15,15 +15,15 @@ shinyServer(function(input, output, session){
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="adducts")){data(adducts,package="enviPat",envir=as.environment(".GlobalEnv"))}
   if(!any(objects(envir=as.environment(".GlobalEnv"))=="resolution_list")){data(resolution_list,package="enviPat",envir=as.environment(".GlobalEnv"))}
   if(any(names(resolution_list)=="Elite/R240000@400")){
-	shinyjs:::info("library enviPat is not up to date - or you have loaded an old workspace containing old enviPat resolution data lists. Update enviPat and clean your workspace before continuing with enviMass!");
+	shinyjs::info("library enviPat is not up to date - or you have loaded an old workspace containing old enviPat resolution data lists. Update enviPat and clean your workspace before continuing with enviMass!");
   }	
   ##############################################################################
   # define variables, inputs, outputs - if not in server.startup.R #############
   tried<-try(getVolumes()(),silent=FALSE)
-  if(!inherits(tried,"try-error")){
-	shinyFileChoose(input, "pro_dir3", session=session, roots=getVolumes(), filetypes=c("emp"), updateFreq = 30000)
-	shinyFileSave(input, "download_IS", roots=getVolumes(), updateFreq=30000)
-	shinyFileSave(input, "download_target", roots=getVolumes(), updateFreq=30000)	
+  if(!inherits(tried,"try-error")){	
+	#shinyFileChoose(input, "pro_dir3", updateFreq = 30000, roots=getVolumes(), filetypes=c("emp"))
+	#shinyFileSave(input, "download_IS", updateFreq = 30000, roots=getVolumes() )
+	#shinyFileSave(input, "download_target", updateFreq = 30000, roots=getVolumes() )	
   }else{
 	createAlert(session,anchorId = "alert_4", alertId="a4", title = NULL, content="logfile select disabled, used folder path input",style = "alarm",append=FALSE,dismiss=TRUE)
   }
@@ -78,6 +78,7 @@ shinyServer(function(input, output, session){
   ##############################################################################  
   # run calculations ###########################################################
   source("server_calculation.r", local=TRUE)
+cat("\nHERE_6")
   observe({ # Restart enviMass
     input$Restart
     if(input$Restart){

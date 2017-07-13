@@ -126,7 +126,7 @@ pattern_search3<-function(
 		those<-(relat_pairs[,1]>relat_pairs[,2])
 		relat_pairs[those,]<-relat_pairs[those,c(2,1)]
 		relat_pairs<-relat_pairs[order(relat_pairs[,1],relat_pairs[,2],decreasing=FALSE),]
-		found<-enviMass:::rows_compare(relat_pairs,exclude,row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=FALSE)
+		found<-enviMass::rows_compare(relat_pairs,exclude,row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=FALSE)
 		cat("\nExclusion: ")
 		cat(paste(as.character(round(sum(found)/length(found)*100,digits=2)),"% of potential potential pairs removed by missing EIC correlation.",sep=""))
 		relat_pairs<-relat_pairs[!found,]

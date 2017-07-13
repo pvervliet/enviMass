@@ -49,7 +49,7 @@ for(j in 1:20){ # different settings
 		)
 		###########################################################################################
 		# estimate bounds #########################################################################
-		bounds<-enviMass:::atoms(
+		bounds<-enviMass::atoms(
 			masses=centro[[1]][,1],
 			intensities=centro[[1]][,2],
 			elements=names(counts),

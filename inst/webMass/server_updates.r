@@ -5,13 +5,13 @@ if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.
 ########################################################################
 # package updates
 if(!any(names(resolution_list)==logfile$parameters$resolution)){
-	shinyjs:::info(paste0("Please specifiy your Instrument/Resolution for your instrument ",logfile$parameters$resolution," again (Settings tab): such specifications have changed and had to be reset."));
+	shinyjs::info(paste0("Please specifiy your Instrument/Resolution for your instrument ",logfile$parameters$resolution," again (Settings tab): such specifications have changed and had to be reset."));
 	logfile$parameters$resolution<<-"Elite_R240000@400";
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
 }	
 if(as.numeric(installed.packages()[installed.packages()[,1]=="enviPat","Version"])<2.2){
-	shinyjs:::info("Please first update enviPat (an enviMass package dependency)  to a version >=2.2. Check www.enviMass.ch installation section for how to update all dependencies. Aborting enviMass ...");
+	shinyjs::info("Please first update enviPat (an enviMass package dependency)  to a version >=2.2. Check www.enviMass.ch installation section for how to update all dependencies. Aborting enviMass ...");
 	stop("\n package enviPat update required! Abort ...")
 }
 
@@ -720,7 +720,7 @@ if(logfile$version<3.103){
 	names(logfile)[12]<<-"workflow_must"	
 	################################################################################################	
 	# reorder summary into workflow ################################################################
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<<-logfile$summary[set_order,]
 	################################################################################################	
@@ -839,7 +839,7 @@ if(logfile$version<3.105){
 	}
 	################################################################################################	
 	# reorder summary into workflow ################################################################
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<<-logfile$summary[set_order,]
 	################################################################################################	
@@ -913,7 +913,7 @@ if(logfile$version<3.106){
 	}
 	################################################################################################	
 	# reorder summary into workflow ################################################################
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<<-logfile$summary[set_order,]
 	################################################################################################	
@@ -1040,7 +1040,7 @@ if(logfile$version<3.111){ # redone 3.110 -> 3.111
 	}
 	################################################################################################	
 	# reorder summary into workflow ################################################################
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<<-logfile$summary[set_order,]
 	################################################################################################	
@@ -1131,7 +1131,7 @@ if(logfile$version<3.114){ # redone 3.113 -> 3.114
 	}
 	################################################################################################	
 	# reorder summary into workflow ################################################################
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<<-logfile$summary[set_order,]
 	################################################################################################	
@@ -1416,7 +1416,7 @@ if(logfile$version<3.123){
 	logfile[["workflow_depend"]]<<-workflow_depend	
 	logfile[["workflow_must"]]<<-workflow_must
 	################################################################################################	
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	if(!is.data.frame(schedule)){stop("\nschedule not a data frame")}
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<<-logfile$summary[set_order,]	
@@ -1463,7 +1463,7 @@ if(logfile$version<3.125){
 	logfile[["workflow_depend"]]<<-workflow_depend	
 	logfile[["workflow_must"]]<<-workflow_must
 	################################################################################################	
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	if(!is.data.frame(schedule)){stop("\nschedule not a data frame")}
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<<-logfile$summary[set_order,]	
@@ -1552,7 +1552,7 @@ if(logfile$version<3.127){
 	}
 	################################################################################################	
 	# reorder summary into workflow ################################################################
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<<-logfile$summary[set_order,]
 	################################################################################################	
@@ -1684,7 +1684,7 @@ if(logfile$version<3.26){
 		}
 	}
 	# reorder summary into workflow ################################################################
-	schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 	set_order<-match(schedule[,1],logfile$summary[,1])
 	logfile$summary<<-logfile$summary[set_order,]
 	################################################################################################	
@@ -1766,14 +1766,14 @@ if(logfile$version<3.28){
 			rm(peaklist)
 		}
 	}
-	enviMass:::workflow_set(
+	enviMass::workflow_set(
 		down="peakpicking",
 		except="peakpicking",
 		down_TF=c("TRUE","FALSE"),
 		check_node=TRUE, 	
 		single_file=FALSE
 	)
-	shinyjs:::info(paste0("Sample peaklists now contain intensity ratios above blind - please press the Calculate button any time soon to make these changes permanent to your project results (entails a project recalculation except peakpicking)!"));
+	shinyjs::info(paste0("Sample peaklists now contain intensity ratios above blind - please press the Calculate button any time soon to make these changes permanent to your project results (entails a project recalculation except peakpicking)!"));
 	################################################################################################	
 	logfile$version<<-3.28
 	################################################################################################		
@@ -1846,7 +1846,7 @@ if(logfile$version<3.29){
 		}
 		############################################################################################	
 		# reorder summary into workflow ############################################################
-		schedule<-enviMass:::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+		schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 		set_order<-match(schedule[,1],logfile$summary[,1])
 		logfile$summary<<-logfile$summary[set_order,]
 		############################################################################################		
@@ -1891,14 +1891,14 @@ if(logfile$version<3.3){
 	if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))){
 		file.remove(file=file.path(as.character(logfile[[1]]),"results","profpeaks_neg"))
 	}
-	enviMass:::workflow_set(
+	enviMass::workflow_set(
 		down="profiling",
 		except=FALSE,
 		down_TF=c("TRUE","FALSE"),
 		check_node=TRUE, 	
 		single_file=FALSE
 	)
-	shinyjs:::info(paste0("Profile list structure has been modified for profile componentization &  new filtering functionalities - please press the Calculate button any time soon to make these changes permanent to your project results (entails a project recalculation except peakpicking)!"));
+	shinyjs::info(paste0("Profile list structure has been modified for profile componentization &  new filtering functionalities - please press the Calculate button any time soon to make these changes permanent to your project results (entails a project recalculation except peakpicking)!"));
 	################################################################################################	
 	logfile$version<<-3.3
 	################################################################################################		

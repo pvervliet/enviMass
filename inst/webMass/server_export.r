@@ -11,7 +11,7 @@ cat("\nUpdate me!")
 			any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks") 	& 
 			any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")	
 		){
-			export<-enviMass:::export_profile_list(
+			export<-enviMass::export_profile_list(
 				profileList,	
 				profpeaks2,
 				progbar=FALSE

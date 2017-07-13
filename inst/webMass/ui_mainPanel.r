@@ -583,7 +583,7 @@
 				dark blue; disabled ones in light blue; interactive and zoomable. When modifying workflow steps, parameters or inputs, enviMass 
 				dynamically adjusts and minimizes all required recalculations via their relevant dependencies. These recalculations will ultimately be 
 				enforced when pressing the left-sided Calculate button."),
-				networkD3:::forceNetworkOutput("force_workflow", width = 1500, height = 400),
+				networkD3::forceNetworkOutput("force_workflow", width = 1500, height = 400),
 				# block 1 ######################################################
 				HTML('<hr noshade="noshade" />'),
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> File upload
@@ -1411,7 +1411,7 @@
 									plotOutput("plot_peaks_RT_int", width = "100%", height = "320px")
 								),
 								conditionalPanel(condition = 'input.showPanel2',
-									plotly:::plotlyOutput("plot_peaks_3D", width = "100%", height = "800px")
+									plotly::plotlyOutput("plot_peaks_3D", width = "100%", height = "800px")
 								)
 							),
 							bsCollapsePanel(title="Individual EICs and peaks", 

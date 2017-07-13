@@ -58,7 +58,7 @@
 				use_mztol<-(as.numeric(logfile$parameters$isotop_mztol)/1000)
 			}
 			pattern<-try(
-				enviMass:::pattern_search3(
+				enviMass::pattern_search3(
 					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
 					quantiz,
 					mztol=use_mztol,

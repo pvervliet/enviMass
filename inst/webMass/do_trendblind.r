@@ -28,7 +28,7 @@
 		profileList_pos<<-profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
 		png(filename = file.path(as.character(logfile[[1]]),"pics","boxprofile_pos"), width = 800, bg = "white")    
-		enviMass:::profiledist(profileList_pos)	# generate the trend boxplots
+		enviMass::profiledist(profileList_pos)	# generate the trend boxplots
 		dev.off()
 		expr4p<-list(src=file.path(logfile[[1]],"pics","boxprofile_pos"))
 		output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)
@@ -64,7 +64,7 @@
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
 		png(filename = file.path(as.character(logfile[[1]]),"pics","boxprofile_neg"), width = 800, bg = "white")    
-		enviMass:::profiledist(profileList_neg)	
+		enviMass::profiledist(profileList_neg)	
 		dev.off()
 		expr4n<-list(src=file.path(logfile[[1]],"pics","boxprofile_neg"))
 		output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)

@@ -29,17 +29,17 @@ observe({
 				found_it<-try(eval(parse(text=paste("new_param<-","as.character(isolate(input$",for_param,"))",sep=""))))
 				if(class(found_it)=="try-error"){	# present in UI?
 					cat("\n Error for parameter input detected: ");cat(for_param);					
-					#shinyjs:::info(paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
+					#shinyjs::info(paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
 					mess<-paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep="")
-					shinytoastr:::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut=0);
+					shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut=0);
 					all_ok<-FALSE
 				}else{
 					found_it<-eval(parse(text=paste("new_param<-","as.character(isolate(input$",for_param,"))",sep="")))
 					if(is.na(found_it) || length(found_it)==0){
 						cat("\n Invalid parameter input detected: ");cat(for_param);					
-						#shinyjs:::info(paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
+						#shinyjs::info(paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
 						mess<-paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep="")
-						shinytoastr:::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut=0);
+						shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut=0);
 						all_ok<-FALSE
 					}
 				}
@@ -60,7 +60,7 @@ observe({
 				for_param<-names(logfile$parameters)[i]
 				eval(parse(text=paste("new_param<-","as.character(isolate(input$",for_param,"))",sep="")))
 				if( length(new_param)>0 ){ # in shiny input list?
-					if(!enviMass:::comp_list(old_param,new_param,as_pairs=FALSE)){
+					if(!enviMass::comp_list(old_param,new_param,as_pairs=FALSE)){
 							# report changed parameter
 							cat(paste("\n","Changed parameter ",for_param," from ",sep=""));
 							cat("\n");print(old_param);cat("\n");cat(" to ");cat("\n");print(new_param);		
@@ -85,7 +85,7 @@ observe({
 						this<-which(names(external_old)==names(logfile$parameters$external)[i])
 						old_param<-external_old[[this]]
 						new_param<-logfile$parameters$external[[i]]
-						if(!enviMass:::comp_list(old_param,new_param,as_pairs=FALSE)){
+						if(!enviMass::comp_list(old_param,new_param,as_pairs=FALSE)){
 							cat("*")
 							found<-c(found,paste("logfile$parameters$external$",names(logfile$parameters$external)[i],sep=""))
 						}
@@ -99,7 +99,7 @@ observe({
 				found<-found[found!="logfile$parameters$progressBar"]
 			}
 			if(length(found)){
-				affected_table<-enviMass:::workflow_where(found) # which scripts directly affected?
+				affected_table<-enviMass::workflow_where(found) # which scripts directly affected?
 				if(dim(affected_table)[1]>0){
 					for(i in 1:dim(affected_table)[1]){
 						if( # just a message: 
@@ -109,7 +109,7 @@ observe({
 							cat("\nAdapt settings affecting nodes: ")
 							print(affected_table[i,1]);cat("\n")
 						}
-						enviMass:::workflow_set(
+						enviMass::workflow_set(
 							down=affected_table[i,1],
 							down_TF=affected_table[i,2],
 							check_node=TRUE, 	
@@ -140,7 +140,7 @@ observe({
 			logfile$adducts_neg<<-as.character(isolate(input$adducts_neg))
 			at6<-logfile$adducts_neg
 			if( any(is.na(match(at3,at4))) || any(is.na(match(at4,at3))) || any(is.na(match(at5,at6))) || any(is.na(match(at6,at5))) ){ 
-				enviMass:::workflow_set(
+				enviMass::workflow_set(
 					down="pattern",
 					check_node=TRUE,
 					down_TF="TRUE", # which is always the default
@@ -159,7 +159,7 @@ observe({
 			logfile$adducts_neg_group<<-as.character(isolate(input$adducts_neg_group))
 			at6<-logfile$adducts_neg_group
 			if( any(is.na(match(at3,at4))) || any(is.na(match(at4,at3))) || any(is.na(match(at5,at6))) || any(is.na(match(at6,at5))) ){ 
-				enviMass:::workflow_set(
+				enviMass::workflow_set(
 					down="adducts",
 					check_node=TRUE,
 					down_TF="TRUE",
@@ -175,8 +175,8 @@ observe({
 			logfile$Positive_subtraction_files<<-c(isolate(input$files_pos_select_subtract),"FALSE")
 			at2<-logfile$Positive_subtraction_files
 			if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
-			if(!enviMass:::comp_list(at1,at2,as_pairs=FALSE)){ # both steps take partly the same parameters! 
-				enviMass:::workflow_set(
+			if(!enviMass::comp_list(at1,at2,as_pairs=FALSE)){ # both steps take partly the same parameters! 
+				enviMass::workflow_set(
 					down="blind",
 					check_node=TRUE,
 					down_TF="TRUE",
@@ -187,8 +187,8 @@ observe({
 			logfile$Negative_subtraction_files<<-c(isolate(input$files_neg_select_subtract),"FALSE")
 			at2<-logfile$Negative_subtraction_files
 			if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
-			if(!enviMass:::comp_list(at1,at2,as_pairs=FALSE)){ # both steps take partly the same parameters! 
-				enviMass:::workflow_set(
+			if(!enviMass::comp_list(at1,at2,as_pairs=FALSE)){ # both steps take partly the same parameters! 
+				enviMass::workflow_set(
 					down="blind",
 					check_node=TRUE,
 					down_TF="TRUE",
@@ -208,7 +208,7 @@ observe({
 				for_node<-names(logfile$workflow)[i]
 				eval(parse(text=paste("new_node<-","as.character(isolate(input$",for_node,"))",sep="")))
 				if( length(new_node)>0 ){ # in shiny input list?
-					if(!enviMass:::comp_list(old_node,new_node,as_pairs=TRUE)){
+					if(!enviMass::comp_list(old_node,new_node,as_pairs=TRUE)){
 							# report changed parameter
 							cat(paste("\n","Changed parameter ",for_node," from ",sep=""));
 							cat("\n");print(old_node);cat("\n");cat(" to ");cat("\n");print(new_node);		
@@ -227,7 +227,7 @@ observe({
 					cat("\nAdapt settings affecting workflow nodes: ")
 					print(found);cat("\n")
 					for(i in 1:length(found)){
-						enviMass:::workflow_set(
+						enviMass::workflow_set(
 							down=found[i],
 							check_node=FALSE,
 							single_file=FALSE

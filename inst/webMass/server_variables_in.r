@@ -4,7 +4,7 @@ if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_variabel
 #########################################################################
 # get parameter and workflow settings from logfile ######################
 path<-"ui_mainPanel.r"
-enviMass:::workflow_get(path,logfile,session)
+enviMass::workflow_get(path,logfile,session)
 #########################################################################
 	
 #########################################################################

@@ -37,7 +37,7 @@ observe({ # - A
 					}
 				}
 				if(length(targets[,"ID"])==0 || length(intstand[,"ID"])==0 ){
-					shinyjs:::info("No valid targets and/or internal standard compounds found for a quantification!");
+					shinyjs::info("No valid targets and/or internal standard compounds found for a quantification!");
 				}
 			}
 			if(isolate(input$Ion_mode_Cal)=="negative"){
@@ -62,12 +62,12 @@ observe({ # - A
 					}
 				}
 				if(length(targets[,"ID"])==0 || length(intstand[,"ID"])==0 ){
-					shinyjs:::info("No valid targets and/or internal standard compounds found for a quantification!");
+					shinyjs::info("No valid targets and/or internal standard compounds found for a quantification!");
 				}
 			}
 		}else{
 			if(isolate(input$Ion_mode_Cal)!="none"){
-				shinyjs:::info("Calibration files have been modified or compounds added. Workflow recalculation including the calibration step (enabled?) required.");
+				shinyjs::info("Calibration files have been modified or compounds added. Workflow recalculation including the calibration step (enabled?) required.");
 				cat("\n Calibration files have been modified or compounds added. Recalculation required!")
 			}
 		}	
@@ -148,7 +148,7 @@ observe({ # - B
 					updateSelectInput(session,inputId="Cal_target_name",choices="none",selected = "none")
 					updateSelectInput(session,inputId="Cal_target_ID",choices="none",selected = "none")	
 					updateSelectInput(session,inputId="Cal_file_set",selected = "none")	
-					shinyjs:::info("No screening results for this calibration file set (positive mode) found - have you run the workflow with the calibration step enabled before?")
+					shinyjs::info("No screening results for this calibration file set (positive mode) found - have you run the workflow with the calibration step enabled before?")
 					output$number_missing_models<-renderText({"Screening results are missing."})
 				}
 			}
@@ -217,7 +217,7 @@ observe({ # - B
 					updateSelectInput(session,inputId="Cal_target_name",choices="none",selected = "none")
 					updateSelectInput(session,inputId="Cal_target_ID",choices="none",selected = "none")	
 					updateSelectInput(session,inputId="Cal_file_set",selected = "none")	
-					shinyjs:::info("No screening results for this calibration file set (negative mode) found - have you run the workflow with the calibration step enabled before?")
+					shinyjs::info("No screening results for this calibration file set (negative mode) found - have you run the workflow with the calibration step enabled before?")
 					output$number_missing_models<-renderText({"Screening results are missing."})					
 				}
 			}
@@ -440,7 +440,7 @@ observe({ # find next entry with a missing calibration model
 					}else{
 						at_target_ID<-"none"
 						updateSelectInput(session, inputId="Cal_target_ID", selected = at_target_ID)
-						shinyjs:::info("No Target compounds without calibration model left");
+						shinyjs::info("No Target compounds without calibration model left");
 					}
 				}else{
 					at_target_ID<-as.character(targets[1,"ID"])
@@ -476,7 +476,7 @@ observe({ # find next entry with a missing calibration model
 					}else{
 						at_target_ID<-"none"
 						updateSelectInput(session, inputId="Cal_target_ID", selected = at_target_ID)
-						shinyjs:::info("No Target compounds without calibration model left");
+						shinyjs::info("No Target compounds without calibration model left");
 					}
 				}else{
 					at_target_ID<-as.character(targets[1,"ID"])
@@ -515,7 +515,7 @@ observe({ # find first entry with a missing calibration model
 					}else{
 						at_target_ID<-"none"
 						updateSelectInput(session, inputId="Cal_target_ID", selected = at_target_ID)
-						shinyjs:::info("No Target compounds without calibration model left");
+						shinyjs::info("No Target compounds without calibration model left");
 					}
 				}else{
 					at_target_ID<-as.character(targets[1,"ID"])
@@ -543,7 +543,7 @@ observe({ # find first entry with a missing calibration model
 					}else{
 						at_target_ID<-"none"
 						updateSelectInput(session, inputId="Cal_target_ID", selected = at_target_ID)
-						shinyjs:::info("No Target compounds without calibration model left");
+						shinyjs::info("No Target compounds without calibration model left");
 					}
 				}else{
 					at_target_ID<-as.character(targets[1,"ID"])
@@ -1369,7 +1369,7 @@ observe({ # - P
 					})				
 				}
 			}
-			enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE,except="calibration")	
+			enviMass::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE,except="calibration")	
 			isolate(redo_cal$a<-(redo_cal$a+1))
 		}	
 	}
@@ -1457,7 +1457,7 @@ observe({ # - Q
 				cat("\n Nothing to remove ...")
 			}			
 		}
-		enviMass:::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE,except="calibration")	
+		enviMass::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE,except="calibration")	
 		isolate(redo_cal$a<-(redo_cal$a+1))
 	}
 })

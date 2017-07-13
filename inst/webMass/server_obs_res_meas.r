@@ -406,8 +406,8 @@ observe({
 							names(sub_peaks)<-c("m_z","RT","Intensity")				
 							sub_peaks[,"Intensity"]<-(sub_peaks[,"Intensity"]/2)
 							output$plot_peaks_3D <- renderPlotly({
-								p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
-								plotly:::add_trace(p,
+								p <- plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
+								plotly::add_trace(p,
 									x = ~m_z, y = ~RT, z = ~Intensity,
 									data = sub_peaks,
 									color=I("black"),
@@ -423,7 +423,7 @@ observe({
 								)	
 							})					
 						}else{
-							output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})
+							output$plot_peaks_3D <- renderPlotly({plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})
 						}
 					}
 					# only raw data? ###########################################################						
@@ -438,8 +438,8 @@ observe({
 							sub_MSlist[,"Intensity"]<-(sub_MSlist[,"Intensity"]/2)
 							if(any(sub_MSlist[,"peakID"]!=0)){ # raw data included in peaks available?
 								output$plot_peaks_3D <- renderPlotly({
-									p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
-									plotly:::add_trace(p,
+									p <- plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
+									plotly::add_trace(p,
 										x = ~m_z, y = ~RT, z = ~Intensity,
 										data = sub_MSlist[sub_MSlist[,"peakID"]==0,],
 										color=I("gray"),
@@ -453,7 +453,7 @@ observe({
 											array = sub_MSlist[sub_MSlist[,"peakID"]==0,]$Intensity
 										)
 									)%>%	
-									plotly:::add_trace(p,
+									plotly::add_trace(p,
 										x = ~m_z, y = ~RT, z = ~Intensity,
 										data = sub_MSlist[sub_MSlist[,"peakID"]!=0,],
 										color=I("red"),
@@ -470,8 +470,8 @@ observe({
 								})				
 							}else{
 								output$plot_peaks_3D <- renderPlotly({
-									p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
-									plotly:::add_trace(p,
+									p <- plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
+									plotly::add_trace(p,
 										x = ~m_z, y = ~RT, z = ~Intensity,
 										data = sub_MSlist[sub_MSlist[,"peakID"]==0,],
 										color=I("gray"),
@@ -488,7 +488,7 @@ observe({
 								})								
 							}
 						}else{
-							output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})					
+							output$plot_peaks_3D <- renderPlotly({plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})					
 						}
 					}					
 					# peaks & raw data? ########################################################
@@ -502,8 +502,8 @@ observe({
 							names(sub_peaks)<-c("m_z","RT","Intensity")				
 							sub_peaks[,"Intensity"]<-(sub_peaks[,"Intensity"]/2)
 							output$plot_peaks_3D <- renderPlotly({
-								p <- plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
-								plotly:::add_trace(p,
+								p <- plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)%>%
+								plotly::add_trace(p,
 									x = ~m_z, y = ~RT, z = ~Intensity,
 									data = sub_MSlist[sub_MSlist[,"peakID"]==0,],
 									color=I("gray"),
@@ -517,7 +517,7 @@ observe({
 										array = sub_MSlist[sub_MSlist[,"peakID"]==0,]$Intensity
 									)
 								)%>%	
-								plotly:::add_trace(p,
+								plotly::add_trace(p,
 									x = ~m_z, y = ~RT, z = ~Intensity,
 									data = sub_MSlist[sub_MSlist[,"peakID"]!=0,],
 									color=I("red"),
@@ -531,7 +531,7 @@ observe({
 										array = sub_MSlist[sub_MSlist[,"peakID"]!=0,]$Intensity
 									)
 								)%>%
-								plotly:::add_trace(p,
+								plotly::add_trace(p,
 									x = ~m_z, y = ~RT, z = ~Intensity,
 									data = sub_peaks,
 									color=I("black"),
@@ -547,12 +547,12 @@ observe({
 								)	
 							})							
 						}else{
-							output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})					
+							output$plot_peaks_3D <- renderPlotly({plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})					
 						}
 					}						
 					# nothing? ##################################################################
 					if( !isolate(input$peaks_mz_RT_use_peaks) & !isolate(input$peaks_mz_RT_use_raw)){
-						output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})	
+						output$plot_peaks_3D <- renderPlotly({plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})	
 					}
 					#############################################################################
 				}	
@@ -560,7 +560,7 @@ observe({
 				output$plot_peaks_mz_RT <- renderPlot({})
 				output$plot_peaks_mz_int <- renderPlot({})
 				output$plot_peaks_RT_int <- renderPlot({})
-				output$plot_peaks_3D <- renderPlotly({plotly:::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})	
+				output$plot_peaks_3D <- renderPlotly({plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})	
 			}
 		}
 	}
@@ -880,7 +880,7 @@ maincalc6<-reactive({
 			(logfile$summary[logfile$summary[,1]=="components_profiles",2]=="TRUE") &
 			(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles"))
 		){
-			keep_IDs<-enviMass:::analyseE_links_profiles(
+			keep_IDs<-enviMass::analyseE_links_profiles(
 				profileList_index=profpeaks2, 
 				links_profiles, 
 				sort_what=sort_by, 
@@ -1050,7 +1050,7 @@ observe({
 			}
 			output$similar_profiles_plot <- renderPlot({	
 				if(plot_similar_profiles){
-						enviMass:::plot_components(
+						enviMass::plot_components(
 							profileList=profileList,
 							prof_IDs=prof_plot_IDs,
 							links_profiles=links_profiles,
@@ -1068,7 +1068,7 @@ observe({
 			})
 			#output$similar_profiles_relations <- renderPlot({	
 			#	if(plot_similar_profiles){
-			#			enviMass:::plot_components(
+			#			enviMass::plot_components(
 			#				profileList=profileList,
 			#				prof_IDs=prof_plot_IDs,
 			#				links_profiles=links_profiles,

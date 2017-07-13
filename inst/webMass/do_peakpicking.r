@@ -44,7 +44,7 @@
 					##############################################################
 					if(logfile$parameters$peak_estimate=="TRUE"){
 						use_peak_perc_cut<-0
-						estim_values<-try({enviMass:::dens_filter(MSlist,plotit=FALSE,n=2000,m=5)},silent=TRUE)
+						estim_values<-try({enviMass::dens_filter(MSlist,plotit=FALSE,n=2000,m=5)},silent=TRUE)
 						if(class(estim_values)!="try-error"){
 							use_peak_dmzdens<-estim_values[[1]]
 							use_peak_minint_log10<-estim_values[[2]]

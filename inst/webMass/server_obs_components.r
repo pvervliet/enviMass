@@ -158,7 +158,7 @@ observe({ # - A
 				)
 				# output homol. series plot ######################################
 				output$homol_plot <- renderPlot({					
-					nontarget:::plothomol(homol,
+					nontarget::plothomol(homol,
 						xlim = FALSE, ylim = FALSE
 					)
 				},res=100)	
@@ -260,19 +260,19 @@ observe({ # - D: generate outputs
 	ee$entry 
 	if(isolate(ee$entry)>0){
 		if(verbose){cat("\n in Comp_D_1")}
-		got_comp<-enviMass:::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="check")			
+		got_comp<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="check")			
 		if(got_comp=="available"){
 			output$found_compo<-renderText("")
 			# output spectrum
 			output$comp_plot_spec <- renderPlot({	
-				enviMass:::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="spec")
+				enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="spec")
 			},res=110)				
 			# output circular plot
 			output$comp_plot_circ <- renderPlot({	
-				enviMass:::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="circ")
+				enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="circ")
 			},res=110)				
 			# output tables 
-			comp_table<<-enviMass:::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="table")
+			comp_table<<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="table")
 			inser<-rep("",length(comp_table$relations[,2]))
 			do_these<-which(grepl("<->",comp_table$relations[,2]))
 			if(length(do_these)>0){
@@ -535,7 +535,7 @@ observe({ # - F: generate outputs
 							)
 						})
 						atom_counts<<-try({					
-							enviMass:::atoms(
+							enviMass::atoms(
 								masses=atom_peaks[,"m/z_corr"],
 								intensities=atom_peaks[,"int_corr"],
 								elements,

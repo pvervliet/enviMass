@@ -79,7 +79,7 @@ profiles_to_matrix<-function(
 	# based on sorting, remove correlated components files with a lower rank ###
 	if(reduce_comp){
 		# BEWARE: must include use_profiles argument to account for above filtering
-		keep_IDs<-enviMass:::analyseE_links_profiles(
+		keep_IDs<-enviMass::analyseE_links_profiles(
 				profileList_index=profileList[["index_prof"]], 
 				links_profiles, 
 				sort_what=sort_by, 	# internally sorted in function - again sorted below
