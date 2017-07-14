@@ -17,15 +17,21 @@
 		use_maxmz<-as.numeric(logfile$parameters$homol_maxmz)		
 	}
 	####################################################################################		
-	
-	#measurements[,names(measurements)=="homologues"]<-"FALSE"
-	
+
+# >	
+measurements[,names(measurements)=="homologues"]<-"FALSE"
+# <
+
 	####################################################################################		
 	for(b in 1:length(measurements[,"ID"])){
 		if( 
 			(measurements[b,names(measurements)=="include"]=="TRUE") & 			# included?
 			(measurements[b,names(measurements)=="homologues"]=="FALSE")  	# not yet done
 		){ 
+
+# >			
+cat("\n: in loop:");print(environment());cat("\n");
+# <
 		
 			##########################################################################
 			# exclude files that do not end up in profiles ###########################
@@ -48,7 +54,7 @@
 				peaklist<-peaklist[peaklist[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
 				cat("- blind peaks removed -")
 			}
-			peaklist2<-as.data.frame(peaklist[(peaklist[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
+			peaklist4<-as.data.frame(peaklist[(peaklist[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
 			##########################################################################
 			cat("series extraction - ")		
 			if(logfile$parameters$homol_ppm=="TRUE"){
@@ -57,8 +63,8 @@
 				use_mztol<-(as.numeric(logfile$parameters$homol_mztol)/1000)
 			}			
 			homol<-try(
-				homol.search2(
-					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
+				enviMass::homol_search2(
+					peaklist=peaklist4[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
 					isotopes,
 					elements=elements,
 					use_C=FALSE,
@@ -94,7 +100,7 @@
 			for(i in 1:length(homol[["Homologue Series"]][,1])){
 				those<-as.numeric(strsplit(homol[["Homologue Series"]][i,2],",")[[1]])
 				#these<-match(those,peaklist2[,"peak_ID"]) # nonsense? remove?
-				those<-those[order(peaklist2[those,1],decreasing=FALSE)] # by increasing mass!
+				those<-those[order(peaklist4[those,1],decreasing=FALSE)] # by increasing mass!
 				for(j in 2:length(those)){
 					from<-(from+1)
 					if(from>at){
@@ -117,7 +123,7 @@
 			Homol_groups<-Homol_groups[order(Homol_groups[,1],Homol_groups[,2],decreasing=FALSE),]
 			save(Homol_groups,file=(file.path(logfile[[1]],"results","componentization","homologues",paste(for_file,sep="_"))))
 			save(homol,file=(file.path(logfile[["project_folder"]],"results","componentization","homologues",paste("full",for_file,sep="_"))))			
-			rm(peaklist,peaklist2,homol,Homol_groups)
+			rm(peaklist,peaklist4,homol,Homol_groups)
 			##########################################################################	
 			measurements[b,"homologues"]<-"TRUE"
 			write.csv(measurements,file=file.path(logfile[["project_folder"]],"dataframes","measurements"),row.names=FALSE);
@@ -134,4 +140,17 @@
 	rm(mzfilter,elements,use_minmz,use_maxmz,measurements,use_mztol)
 	####################################################################################	
 
-
+	
+	
+	
+	
+bb<-function(){
+	cat("\n: in loop:");print(environment());
+	cat("\n: in loop:");print(parent.frame());	
+}	
+	
+bb()	
+	
+	
+	
+	

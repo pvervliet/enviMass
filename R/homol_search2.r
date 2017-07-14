@@ -1,4 +1,4 @@
-homol.search2 <-
+homol_search2 <-
 function(
 	peaklist,
 	isotopes,	
@@ -20,7 +20,8 @@ function(
 	plotit=FALSE,
 	deb=0
 ){
-  
+ cat("\n in function envir: ");print(environment()); 
+ cat("\n in function parent frame: ");print(parent.frame()); 
     ##########################################################################
     # (0) Issue warnings: check arguments ####################################
 	if(!is.logical(use_C)){stop("use_C must be logial.")}
