@@ -51,10 +51,10 @@ cat("\n: in loop:");print(environment());cat("\n");
 			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); 
 			peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs 
 			if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks
-				peaklist<-peaklist[peaklist[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
+				peaklist4<-peaklist[peaklist[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
 				cat("- blind peaks removed -")
 			}
-			peaklist4<-as.data.frame(peaklist[(peaklist[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
+			peaklist4<-as.data.frame(peaklist4[(peaklist4[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
 			##########################################################################
 			cat("series extraction - ")		
 			if(logfile$parameters$homol_ppm=="TRUE"){
@@ -122,6 +122,22 @@ cat("\n: in loop:");print(environment());cat("\n");
 			}
 			Homol_groups<-Homol_groups[order(Homol_groups[,1],Homol_groups[,2],decreasing=FALSE),]
 			save(Homol_groups,file=(file.path(logfile[[1]],"results","componentization","homologues",paste(for_file,sep="_"))))
+			##########################################################################				
+			if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks - impute removed peaks
+				those<-is.na(match(peaklist[,"peak_ID"],peaklist4[,"peak_ID"]))		
+				homol_left<-cbind(
+					as.data.frame(peaklist[those,c("m/z_corr","int_corr","RT_corr","peak_ID")]),
+					rep(0,sum(those)), 		# HS IDs
+					rep(0,sum(those)), 		# series level
+					rep(0,sum(those)), 		# to ID
+					rep("none",sum(those)),	# m/z increment				
+					rep("none",sum(those)),	# RT increment					
+					rep(0,sum(those))		# HS cluster	
+				)
+				names(homol_left)<-names(homol[[1]])
+				homol[[1]]<-rbind(homol[[1]],homol_left)
+				homol[[1]]<-homol[[1]][order(homol[[1]][,"peak ID"]),]
+			}
 			save(homol,file=(file.path(logfile[["project_folder"]],"results","componentization","homologues",paste("full",for_file,sep="_"))))			
 			rm(peaklist,peaklist4,homol,Homol_groups)
 			##########################################################################	
