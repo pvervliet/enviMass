@@ -19,7 +19,7 @@
 	####################################################################################		
 
 # >	
-measurements[,names(measurements)=="homologues"]<-"FALSE"
+#measurements[,names(measurements)=="homologues"]<-"FALSE"
 # <
 
 	####################################################################################		
@@ -140,16 +140,6 @@ cat("\n: in loop:");print(environment());cat("\n");
 	rm(mzfilter,elements,use_minmz,use_maxmz,measurements,use_mztol)
 	####################################################################################	
 
-	
-	
-	
-	
-bb<-function(){
-	cat("\n: in loop:");print(environment());
-	cat("\n: in loop:");print(parent.frame());	
-}	
-	
-bb()	
 	
 	
 	

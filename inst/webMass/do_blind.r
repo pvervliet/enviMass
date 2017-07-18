@@ -12,7 +12,8 @@ atdate<-as.Date(atdate, tz="GMT");
 sampleID<-(measurements[,"ID"])
 old_samplewise<-(measurements[,"blind"])
 new_samplewise<-old_samplewise
-ord<-order(as.numeric(atdate),as.numeric(attime2),sampleID);
+ord<-order(as.numeric(atdate),as.numeric(attime2),filetypus,sampleID);
+#cbind(filetypus[ord],ionmode[ord],IDs[ord])
 
 ppm<-logfile$parameters$blind_ppm
 dmz<-as.numeric(logfile$parameters$blind_dmz)
@@ -42,7 +43,7 @@ for(i in 1:length(IDs)){
 # run last blank by date & time subtraction ###########################################################
 if((logfile$parameters$subtract_pos_bydate=="TRUE") || (logfile$parameters$subtract_neg_bydate=="TRUE")){
 	blank_ID_last<-"FALSE"
-	for(i in 2:length(ord)){ # can skip first file
+	for(i in 1:length(ord)){ 
 		if((logfile$parameters$subtract_pos_bydate=="FALSE") & (ionmode[ord[i]]=="positive")){next}
 		if((logfile$parameters$subtract_neg_bydate=="FALSE") & (ionmode[ord[i]]=="negative")){next}	
 		if(old_samplewise[ord[i]]=="TRUE"){next}
