@@ -49,9 +49,9 @@ cat("\n: in loop:");print(environment());cat("\n");
 			}			
 			# Peaklist 
 			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); 
-			peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs 
+			peaklist4<-peaklist[order(peaklist[,"peak_ID"],decreasing=FALSE),] # match with IDs 
 			if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks
-				peaklist4<-peaklist[peaklist[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
+				peaklist4<-peaklist4[peaklist4[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
 				cat("- blind peaks removed -")
 			}
 			peaklist4<-as.data.frame(peaklist4[(peaklist4[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
@@ -125,18 +125,30 @@ cat("\n: in loop:");print(environment());cat("\n");
 			##########################################################################				
 			if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks - impute removed peaks
 				those<-is.na(match(peaklist[,"peak_ID"],peaklist4[,"peak_ID"]))		
-				homol_left<-cbind(
-					as.data.frame(peaklist[those,c("m/z_corr","int_corr","RT_corr","peak_ID")]),
-					rep(0,sum(those)), 		# HS IDs
-					rep(0,sum(those)), 		# series level
-					rep(0,sum(those)), 		# to ID
-					rep("none",sum(those)),	# m/z increment				
-					rep("none",sum(those)),	# RT increment					
-					rep(0,sum(those))		# HS cluster	
-				)
-				names(homol_left)<-names(homol[[1]])
-				homol[[1]]<-rbind(homol[[1]],homol_left)
-				homol[[1]]<-homol[[1]][order(homol[[1]][,"peak ID"]),]
+				if(any(those)){
+					# impute (1) - "Peaks in homologue series"
+					homol_left<-cbind(
+						as.data.frame(peaklist[those,c("m/z_corr","int_corr","RT_corr","peak_ID")]),
+						rep(0,sum(those)), 		# HS IDs
+						rep(0,sum(those)), 		# series level
+						rep(0,sum(those)), 		# to ID
+						rep("none",sum(those)),	# m/z increment				
+						rep("none",sum(those)),	# RT increment					
+						rep(0,sum(those))		# HS cluster	
+					)
+					names(homol_left)<-names(homol[["Peaks in homologue series"]])
+					homol[["Peaks in homologue series"]]<-rbind(homol[["Peaks in homologue series"]],homol_left)
+					ord_homol<-order(homol[["Peaks in homologue series"]][,"peak ID"])
+					homol[["Peaks in homologue series"]]<-homol[["Peaks in homologue series"]][ord_homol,]
+					# impute (2) - "Peaks per level"
+					find_peak<-match(seq(1,dim(homol[["Peaks in homologue series"]])[1],1),ord_homol)
+					for(n in 1:length(homol[["Peaks per level"]])){
+						for(m in 1:length(homol[["Peaks per level"]][[n]])){	
+							homol[["Peaks per level"]][[n]][[m]]<-
+								find_peak[homol[["Peaks per level"]][[n]][[m]]]
+						}
+					}
+				}
 			}
 			save(homol,file=(file.path(logfile[["project_folder"]],"results","componentization","homologues",paste("full",for_file,sep="_"))))			
 			rm(peaklist,peaklist4,homol,Homol_groups)
