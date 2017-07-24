@@ -99,7 +99,7 @@
 			cat("done.")
 			##########################################################################		
 		}else{
-			cat("\n Adducts extracted before.")
+			cat("\n Adducts extracted before or file not included.")
 		}
 	}
 	rm(measurements)

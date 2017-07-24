@@ -184,7 +184,7 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 		logfile$parameters$subtract_pos_byfile<-"FALSE";		
 		logfile$parameters$subtract_neg_bydate<-"FALSE";		
 		logfile$parameters$subtract_neg_byfile<-"FALSE";		
-		logfile$parameters$blind_omit<-"no";			
+		logfile$parameters$blind_omit<-"FALSE";			
 		# profiling ############################################################
 		logfile$parameters$prof_maxfiles<-"100";		
 		logfile$parameters$upto_file<-"FALSE";		

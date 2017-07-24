@@ -97,7 +97,7 @@
 			cat("done.")
 			##########################################################################		
 		}else{
-			cat("\n Isotopologues detected before.")
+			cat("\n Isotopologues detected before or file not included.")
 		}
 	}
 	rm(quantiz,measurements)

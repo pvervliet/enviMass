@@ -28,10 +28,6 @@
 			(measurements[b,names(measurements)=="include"]=="TRUE") & 			# included?
 			(measurements[b,names(measurements)=="homologues"]=="FALSE")  	# not yet done
 		){ 
-
-# >			
-cat("\n: in loop:");print(environment());cat("\n");
-# <
 		
 			##########################################################################
 			# exclude files that do not end up in profiles ###########################
@@ -52,7 +48,7 @@ cat("\n: in loop:");print(environment());cat("\n");
 			peaklist4<-peaklist[order(peaklist[,"peak_ID"],decreasing=FALSE),] # match with IDs 
 			if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks
 				peaklist4<-peaklist4[peaklist4[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
-				cat("- blind peaks removed -")
+				cat("blind peaks removed -")
 			}
 			peaklist4<-as.data.frame(peaklist4[(peaklist4[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
 			##########################################################################
@@ -159,7 +155,7 @@ cat("\n: in loop:");print(environment());cat("\n");
 			##########################################################################		
 
 		}else{
-			cat("\n Homologues extracted before.")
+			cat("\n Homologues extracted before or file not included.")
 		}
 	}
 	####################################################################################	

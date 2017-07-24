@@ -93,7 +93,7 @@
 						if(dim(peaks)[1]>0){
 							# a check ...
 							load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); # Peaklist  
-							if(dim(peaks)[1]!=dim(peaklist)[1]){cat("If you read this your workflow should contain a replicate intersection. Otherwise: debug!")} # TEST
+							if(dim(peaks)[1]!=dim(peaklist)[1]){cat("If you read this your workflow should contain a replicate intersection or blind peak removal. Otherwise: debug!")} # TEST
 							rm(peaklist)
 							peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
 							for(i in 1:dim(component[["Components"]])[1]){
@@ -105,12 +105,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
-											got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){		
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
+												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -120,12 +124,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-											got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
+												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -135,12 +143,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 4")} # TEST
-											got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these)){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 4")} # TEST
+												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -184,7 +196,7 @@
 						if(dim(peaks)[1]>0){
 							# a check ...
 							load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); # Peaklist  
-							if(dim(peaks)[1]!=dim(peaklist)[1]){cat("If you read this your workflow should contain a replicate intersection. Otherwise: debug!")} # TEST
+							if(dim(peaks)[1]!=dim(peaklist)[1]){cat("If you read this your workflow should contain a replicate intersection or blind peak removal. Otherwise: debug!")} # TEST
 							rm(peaklist)
 							peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
 							for(i in 1:dim(component[[1]])[1]){
@@ -196,12 +208,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
-											got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
+												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -211,12 +227,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-											got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
+												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -226,12 +246,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-											got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
+												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -282,7 +306,7 @@
 						if(dim(peaks)[1]>0){
 							# a check ...
 							load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); # Peaklist  
-							if(dim(peaks)[1]!=dim(peaklist)[1]){cat("If you read this your workflow should contain a replicate intersection. Otherwise: debug!")} # TEST
+							if(dim(peaks)[1]!=dim(peaklist)[1]){cat("If you read this your workflow should contain a replicate intersection or blind peak removal. Otherwise: debug!")} # TEST
 							rm(peaklist)
 							peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
 							for(i in 1:dim(component[[1]])[1]){
@@ -294,12 +318,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
-											got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
+												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -309,12 +337,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-											got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
+												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -324,12 +356,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-											got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
+												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -373,7 +409,7 @@
 						if(dim(peaks)[1]>0){
 							# a check ...
 							load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); # Peaklist  
-							if(dim(peaks)[1]!=dim(peaklist)[1]){cat("If you read this your workflow should contain a replicate intersection. Otherwise: debug!")} # TEST
+							if(dim(peaks)[1]!=dim(peaklist)[1]){cat("If you read this your workflow should contain a replicate intersection or blind peak removal. Otherwise: debug!")} # TEST
 							rm(peaklist)
 							peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
 							for(i in 1:dim(component[[1]])[1]){
@@ -385,13 +421,17 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
-											got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
-										}
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
+												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
+										}	
 									}
 								}	
 								##########################################################
@@ -400,12 +440,16 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-											got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
+												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
 										}
 									}
 								}	
@@ -415,13 +459,17 @@
 									these<-as.numeric(those)
 									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									for(n in 1:length(these) ){
-										if(peaks[these[n],"links"]!=0){
-											if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-											got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
-											collect_comp<-c(collect_comp,got)
-											collect_peak<-c(collect_peak,rep(these[n],length(got)))	
-										}
+									these2<-these2[!is.na(these)]
+									these<-these[!is.na(these)]
+									if(length(these)){	
+										for(n in 1:length(these) ){
+											if(peaks[these[n],"links"]!=0){
+												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
+												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
+												collect_comp<-c(collect_comp,got)
+												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+											}
+										}	
 									}
 								}	
 								##########################################################
@@ -466,6 +514,7 @@
 							these<-as.numeric(those)
 							these2<-these
 							these<-match(these,peaklist[,"peak_ID"])
+							these2<-these2[!is.na(these)]
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
 								if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 5")} # TEST
@@ -481,6 +530,7 @@
 							these<-as.numeric(those)
 							these2<-these
 							these<-match(these,peaklist[,"peak_ID"])
+							these2<-these2[!is.na(these)]
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
 								if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 6")} # TEST
@@ -496,6 +546,7 @@
 							these<-as.numeric(those)
 							these2<-these
 							these<-match(these,peaklist[,"peak_ID"])
+							these2<-these2[!is.na(these)]
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
 								if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 7")} # TEST
@@ -519,6 +570,8 @@
 				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 				##########################################################################	
 				#cat("done.")
+			}else{
+				cat("\n Componentization done before or file not included.")			
 			}
 		}
 		rm(measurements)

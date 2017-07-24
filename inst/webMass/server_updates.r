@@ -395,7 +395,7 @@ if(logfile$version<3.101){
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}
 	if(!any(names(logfile$parameters)=="blind_omit")){
-		logfile$parameters$blind_omit<<-"no"; 		
+		logfile$parameters$blind_omit<<-"FALSE"; 		
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))
 	}		
