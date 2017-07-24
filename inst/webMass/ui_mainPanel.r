@@ -1773,24 +1773,30 @@
 											HTML('<hr noshade="noshade" />'),
 											plotOutput("comp_plot_spec",height = "400px"),
 											conditionalPanel(			
-												condition = "(output.found_compo != 'The selected component contains only one peak.')&(input.sel_meas_comp_comp != 0)",
+												condition = "(output.found_compo != 'Invalid peak ID')&(input.sel_meas_comp_comp != 0)",
 												tags$p(align="justify","The above mass spectrum shows all peaks grouped into the selected component (green) and all other non-component peaks that fall into the mass and RT range of the selected component."),											
 												HTML('<hr noshade="noshade" />'),
-												plotOutput("comp_plot_circ",height = "690px"),
-												tags$p(align="justify","The above circular plot shows all links (relations) that exist between peaks in the selected component, with 
-													individual peaks positioned at an outer circle by increasing m/z, starting at the gray arrow. The most intense peak is marked by a circle.
-													Peaks are listed with their IDs and component-wise intensity ranking (in brackets); those also present in blank/blind files are marked with
-													an asterisk. Adduct links are shown in red, links between different isotopologues of the same adduct in blue."),													
-												HTML('<hr noshade="noshade" />'),
+												conditionalPanel(			
+													condition = "(output.found_compo != 'single_peak')&(output.found_compo != 'Invalid peak ID')&(input.sel_meas_comp_comp != 0)",
+													plotOutput("comp_plot_circ",height = "690px"),
+													tags$p(align="justify","The above circular plot shows all links (relations) that exist between peaks in the selected component, with 
+														individual peaks positioned at an outer circle by increasing m/z, starting at the gray arrow. The most intense peak is marked by a circle.
+														Peaks are listed with their IDs and component-wise intensity ranking (in brackets); those also present in blank/blind files are marked with
+														an asterisk. Adduct links are shown in red, links between different isotopologues of the same adduct in blue."),													
+													HTML('<hr noshade="noshade" />')
+												),
 												textOutput('which_comp_tar'),
 												HTML('<hr noshade="noshade" />'),
 												textOutput('which_comp_ISTD'),												
-												HTML('<hr noshade="noshade" />'),												
-												HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component linkages </font></p> '),
-												tags$p(align="justify","The below table lists all pairwise relations between peaks being part of the selected component.  Each of the two peaks (i.e., 'first' & 'second' peak)
-													forming a link are listed by their IDs in the first and second column of the table."), 
-												DT::dataTableOutput('comp_table_a'),
-												HTML('<hr noshade="noshade" />'),
+												HTML('<hr noshade="noshade" />'),	
+												conditionalPanel(			
+													condition = "(output.found_compo != 'single_peak')&(output.found_compo != 'Invalid peak ID')&(input.sel_meas_comp_comp != 0)",												
+													HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component linkages </font></p> '),
+													tags$p(align="justify","The below table lists all pairwise relations between peaks being part of the selected component.  Each of the two peaks (i.e., 'first' & 'second' peak)
+														forming a link are listed by their IDs in the first and second column of the table."), 
+													DT::dataTableOutput('comp_table_a'),
+													HTML('<hr noshade="noshade" />')
+												),
 												HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component peaks </font></p> '),
 												tags$p(align="justify","The below table lists all peaks which are part of the selected component."), 
 												DT::dataTableOutput('comp_table_b'),

@@ -355,38 +355,115 @@ observe({ # - D: generate outputs
 				)
 			)
 		}else{
-			if(got_comp=="single_peak"){
-				output$found_compo<-renderText("The selected component contains only one peak.") # for conditional panel
+			if(got_comp=="single_peak"){		
+				#output$found_compo<-renderText("The selected component contains only one peak.") # for conditional panel
+				output$found_compo<-renderText("single_peak")
+				#output$comp_plot_spec <- renderPlot({	
+				#	plot.new()
+				#	plot.window(xlim=c(0,1),ylim=c(0,1))
+				#	text(.5,.5,labels="The selected component contains only one peak.")
+				#},res=110)			
+				
 				output$comp_plot_spec <- renderPlot({	
+					enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="spec")
+				},res=110)				
+				# output tables 
+				comp_table<<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="table")
+				# output circular plot
+				output$comp_plot_circ <- renderPlot({	
 					plot.new()
 					plot.window(xlim=c(0,1),ylim=c(0,1))
 					text(.5,.5,labels="The selected component contains only one peak.")
-				},res=110)			
+				},res=110)						
+				# output target peaks
+				if(component[[1]][as.numeric(isolate(ee$entry)),"Target peaks"]!="-"){
+					output$which_comp_tar<-renderText(paste0(
+						"Target/suspect peaks found for this component: ",
+						component[[1]][as.numeric(isolate(ee$entry)),"Target peaks"]
+					))
+				}else{
+					output$which_comp_tar<-renderText("No target or suspect peaks found for this component.")
+				}
+				# output ISTD peaks
+				if(component[[1]][as.numeric(isolate(ee$entry)),"ISTD peaks"]!="-"){
+					output$which_comp_ISTD<-renderText(paste0(
+						"ISTD peaks found for this component: ",
+						component[[1]][as.numeric(isolate(ee$entry)),"ISTD peaks"]
+					))
+				}else{
+					output$which_comp_ISTD<-renderText("No ISTD peaks found for this component.")
+				}
+				output$comp_table_a <- DT::renderDataTable(
+					datatable(data.frame("No results"),colnames="No results")
+				)
+				output$comp_table_b <- DT::renderDataTable(
+					datatable(
+						cbind(
+							round(comp_table$a[,1],digits=1),
+							round(comp_table$a[,2],digits=5),
+							format(comp_table$a[,3],scientific=TRUE,digits=2),
+							round(comp_table$a[,4],digits=2),
+							comp_table$a[,6]					
+						),
+						colnames=c("Peak ID","m/z","Intensity","RT [s]","In blind?")
+					)
+				)
+				if(comp_table[[4]]=="Not part of a homologue series"){
+					output$comp_table_c  <- DT::renderDataTable(
+						datatable(
+							data.frame("Peaks in selected component are not part of any homologue series"),
+							colnames="No results"
+						)
+					)
+				}else{
+					these<-unique(strsplit(comp_table[[4]],"/")[[1]][-1])
+					output$comp_table_c  <- DT::renderDataTable(
+						datatable(
+							cbind(
+								homol[[3]][these,1],
+								round(homol[[3]][these,3],digits=4),
+								round(homol[[3]][these,4],digits=1)
+							),
+							colnames=c("Series ID","m/z difference","RT difference [s]")
+						)
+					)
+				}
+				output$comp_table_d <- DT::renderDataTable(
+					datatable(
+						cbind(
+							round(comp_table[[2]][,1],digits=1),
+							round(comp_table[[2]][,2],digits=5),
+							format(comp_table[[2]][,3],scientific=TRUE,digits=2),
+							round(comp_table[[2]][,4],digits=2)						
+						),							
+						colnames=c("Peak ID","m/z","Intensity","RT [s]")	
+					)
+				)
 			}else{
-				output$found_compo<-renderText("The selected component contains only one peak.") # for conditional panel
+				output$found_compo<-renderText("Invalid peak ID") # for conditional panel
 				output$comp_plot_spec <- renderPlot({	
 					plot.new()
 					plot.window(xlim=c(0,1),ylim=c(0,1))
-					text(.5,.5,labels="No components for this peak, \n peak removed during replicate intersection.")
+					text(.5,.5,labels="No components for this peak, \n peak removed during replicate intersection, blind subtraction or \n invalid peak ID?.")
 				},res=110)	
+				# output circular plot
+				output$comp_plot_circ <- renderPlot({	
+					plot.new()
+				},res=110)				
+				# output tables 
+				output$comp_table_a <- DT::renderDataTable(
+					datatable(data.frame("No results"),colnames="No results")
+				)
+				output$comp_table_b <- DT::renderDataTable(
+					datatable(data.frame("No results"),colnames="No results")
+				)
+				output$comp_table_c  <- DT::renderDataTable(
+					datatable(data.frame("No results"),colnames="No results")
+				)
+				output$comp_table_d <- DT::renderDataTable(
+					datatable(data.frame("No results"),colnames="No results")
+				)		
 			}	
-			# output circular plot
-			output$comp_plot_circ <- renderPlot({	
-				plot.new()
-			},res=110)				
-			# output tables 
-			output$comp_table_a <- DT::renderDataTable(
-				datatable(data.frame("No results"),colnames="No results")
-			)
-			output$comp_table_b <- DT::renderDataTable(
-				datatable(data.frame("No results"),colnames="No results")
-			)
-			output$comp_table_c  <- DT::renderDataTable(
-				datatable(data.frame("No results"),colnames="No results")
-			)
-			output$comp_table_d <- DT::renderDataTable(
-				datatable(data.frame("No results"),colnames="No results")
-			)		
 		}	
 		######################################################################
 		

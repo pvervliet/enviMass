@@ -315,8 +315,12 @@ function(
 						}
 					}
 				}
-				relat1<-data.frame(these1,these2,these3,stringsAsFactors=FALSE);		
-				names(relat1)<-c("peaks","relation","intensity ratio");
+				if(length(these1)){
+					relat1<-data.frame(these1,these2,these3,stringsAsFactors=FALSE);		
+					names(relat1)<-c("peaks","relation","intensity ratio");
+				}else{
+					relat1<-NULL
+				}
 				if(comp[[1]][compoID,6]!="-"){
 					if(length(dat1)>1){
 						relat<-list(dat1[order(dat1[,1],decreasing=FALSE),c(4,1,2,3,6)],dat4[order(dat4[,1],decreasing=FALSE),
