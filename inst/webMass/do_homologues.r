@@ -152,6 +152,35 @@
 					}
 				}
 			}
+			##########################################################################
+			# expand peak relations for faster plotting ##############################
+			max_at<-50000
+			homol_peaks_relat<-matrix(ncol=3,nrow=max_at)
+			at<-1
+			for(i in 1:dim(homol[["Peaks in homologue series"]])[1]){
+				if(homol[["Peaks in homologue series"]][i,"HS IDs"]==0){next}
+				if(homol[["Peaks in homologue series"]][i,"to ID"]==0){next} # end of series
+				those<-as.numeric(strsplit(homol[["Peaks in homologue series"]][i,"to ID"],"/")[[1]])
+				those<-unique(those)
+				if(!all(homol[["Peaks in homologue series"]][those,"peak ID"]==those)){stop("\n Debug do_homologues at_0.")}
+				len<-length(those)
+				if((at+len-1)>max_at){ # expand matrix
+					homol_peaks_relat<-rbind(
+						homol_peaks_relat,
+						matrix(ncol=3,nrow=max_at)
+					)
+					max_at<-dim(homol_peaks_relat)[1]
+				}
+				#################################################################
+				homol_peaks_relat[(at:(at+len-1)),1]<-rep(i,len)
+				homol_peaks_relat[(at:(at+len-1)),2]<-those
+				homol_peaks_relat[(at:(at+len-1)),3]<-(homol[["Peaks in homologue series"]][those,"mz"]-homol[["Peaks in homologue series"]][i,"mz"]) # must be >0
+				at<-(at+len)	
+
+			}
+			homol_peaks_relat<-homol_peaks_relat[1:(at-1),]
+			homol[[7]]<-homol_peaks_relat
+			names(homol)[7]<-"homol_peaks_relat"
 			##########################################################################	
 			# intersect with target screening results ################################
 			if(

@@ -177,8 +177,8 @@ observe({ # - A
 				)
 				# output homol. series plot ######################################
 				output$homol_plot <- renderPlot({					
-					nontarget::plothomol(homol,
-						xlim = FALSE, ylim = FALSE
+					enviMass:::plothomol(homol,
+						xlim = FALSE, ylim = FALSE, plotlegend=FALSE
 					)
 				},res=100)	
 				#################################################################
