@@ -1823,7 +1823,7 @@
 							conditionalPanel(			
 								condition = "(output.sel_meas_comp_state2 != ' no homologue series detection results available') & (output.sel_meas_comp_state != 'Invalid file ID')",
 									HTML('<hr noshade="noshade" />'),
-									bsCollapse(multiple = FALSE, open = "col4", id = "collapse4",
+									bsCollapse(multiple = TRUE, open = "col4", id = "collapse4",
 										bsCollapsePanel("Series plot overview", 									
 											plotOutput("homol_plot",
 												dblclick = "homol_plot_dblclick",
@@ -1836,7 +1836,16 @@
 											)	
 										),
 										bsCollapsePanel("Series table", 
-											DT::dataTableOutput('homol_table')
+											tabsetPanel( 	
+												tabPanel("Peaks in series",
+													HTML('<hr noshade="noshade" />'),
+													DT::dataTableOutput('homol_series_peaks')
+												),
+												tabPanel("Series",
+													HTML('<hr noshade="noshade" />'),
+													DT::dataTableOutput('homol_series_table')
+												)
+											)	
 										)
 									)
 								)

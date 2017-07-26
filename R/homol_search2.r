@@ -918,8 +918,8 @@ function(
 			getit3[i]<-substr(getit3[i],3,nchar(getit3[i]))
 		}
 	}
-	grouped_samples<-data.frame(peaklist[,1:3],seq(1,len,1),getit1,getit2,getit3,getit4,getit5,getit6,stringsAsFactors=FALSE);
-	names(grouped_samples)<-c("mz","intensity","RT","peak ID","HS IDs","series level","to ID","m/z increment","RT increment","HS cluster");
+	grouped_samples<-data.frame(peaklist[,1:3],seq(1,len,1),getit1,getit2,getit3,getit4,getit5,getit6,rep("",len),rep("",len),stringsAsFactors=FALSE);
+	names(grouped_samples)<-c("mz","intensity","RT","peak ID","HS IDs","series level","to ID","m/z increment","RT increment","HS cluster","Targets","ISTDs");
 	grouping<-data.frame(group1,group2,group3,group4,group5,group6,group6-group5,group8,stringsAsFactors=FALSE);
 	names(grouping)<-c("HS IDs","peak IDs","m/z increment","RT increment","min. RT in series","max. RT in series","max.-min. RT","HS cluster");
 	# store parameters used ##################################################

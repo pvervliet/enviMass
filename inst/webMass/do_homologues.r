@@ -16,6 +16,9 @@
 		use_minmz<-as.numeric(logfile$parameters$homol_minmz)
 		use_maxmz<-as.numeric(logfile$parameters$homol_maxmz)		
 	}
+	# intersect with compounds 
+	intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+	targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
 	####################################################################################		
 
 # >	
@@ -118,8 +121,9 @@
 			}
 			Homol_groups<-Homol_groups[order(Homol_groups[,1],Homol_groups[,2],decreasing=FALSE),]
 			save(Homol_groups,file=(file.path(logfile[[1]],"results","componentization","homologues",paste(for_file,sep="_"))))
-			##########################################################################				
-			if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks - impute removed peaks
+			##########################################################################	
+			# remove blind peaks - impute removed peaks ##############################			
+			if(logfile$parameters$homol_blind=="TRUE"){ 
 				those<-is.na(match(peaklist[,"peak_ID"],peaklist4[,"peak_ID"]))		
 				if(any(those)){
 					# impute (1) - "Peaks in homologue series"
@@ -130,7 +134,9 @@
 						rep(0,sum(those)), 		# to ID
 						rep("none",sum(those)),	# m/z increment				
 						rep("none",sum(those)),	# RT increment					
-						rep(0,sum(those))		# HS cluster	
+						rep(0,sum(those)),		# HS cluster	
+						rep("",sum(those)),		# Targets
+						rep("",sum(those))		# ISTDs						
 					)
 					names(homol_left)<-names(homol[["Peaks in homologue series"]])
 					homol[["Peaks in homologue series"]]<-rbind(homol[["Peaks in homologue series"]],homol_left)
@@ -146,9 +152,201 @@
 					}
 				}
 			}
+			##########################################################################	
+			# intersect with target screening results ################################
+			if(
+				(logfile$workflow[names(logfile$workflow)=="target_screen"]=="yes")	||
+				(logfile$workflow[names(logfile$workflow)=="IS_screen"]=="yes")
+			){
+				cat("Annotating compounds ... ")
+				for_file<-as.numeric(measurements[b,"ID"])
+				for_mode<-measurements[b,"Mode"]
+				######################################################################
+				if(for_mode=="positive" & (any(intstand[,"ion_mode"] =="positive") || any(targets[,"ion_mode"] =="positive"))){
+					if(exists("profileList_pos_copy",envir=as.environment(".GlobalEnv"))){rm("profileList_pos_copy",envir=as.environment(".GlobalEnv"))}	
+					if(exists("profileList_pos_copy")){rm("profileList_pos_copy")}	
+					if(exists("links_peaks_pos",envir=as.environment(".GlobalEnv"))){rm("links_peaks_pos",envir=as.environment(".GlobalEnv"))}	
+					if(exists("links_peaks_pos")){rm("links_peaks_pos")}	
+					load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"))
+					load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"))
+					peaks<-profileList_pos_copy[["peaks"]][which(profileList_pos_copy[["peaks"]][,"sampleIDs"]==for_file),]		
+					if(dim(peaks)[1]>0){
+						peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
+						list_delmass<-list()
+						for(i in 1:dim(homol[["Peaks in homologue series"]])[1]){
+							if(homol[["Peaks in homologue series"]][i,"HS IDs"]!=0){
+								# any screening matches ? #############################
+								that<-match(homol[["Peaks in homologue series"]][i,"peak ID"],peaks[,"peakIDs"])
+								if(is.na(that)){next}
+								if(peaks[that,"links"]==0){next}
+								got_tar<-unlist(links_peaks_pos[[peaks[that,"links"]]][[1]])
+								got_IS<-unlist(links_peaks_pos[[peaks[that,"links"]]][[2]])
+								if(!length(got_tar)&!length(got_IS)){next} # compounds in links entry?
+								# check if matches belong to homologuous compounds ####
+								if(length(got_tar)){
+									keep_tar<-rep(TRUE,length(got_tar))
+									for(j in 1:length(got_tar)){
+# > BAUSTELLE
+									}
+									got_tar<-got_tar[keep_tar];
+								}
+								if(length(got_IS)){
+									keep_IS<-rep(TRUE,length(got_IS))
+									for(j in 1:length(got_IS)){
+# > BAUSTELLE
+									}
+									got_IS<-got_IS[keep_IS]
+								}
+								if(!length(got_tar)&!length(got_IS)){next} # any homologuous compounds?					
+								# collect series mass differences for each peak ########
+								series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][i,"HS IDs"],"/")[[1]])
+								list_delmass[[i]]<-homol[["Homologue Series"]][series[1],"m/z increment"]
+								for(j in series[-1]){
+									if(homol[["Homologue Series"]][j,"HS IDs"]!=j){stop("\n Debug do_homologues at_1.")} # just a check
+									list_delmass[[i]]<-c(list_delmass[[i]],homol[["Homologue Series"]][j,"m/z increment"])
+								}
+								list_delmass[[i]]<-unique(list_delmass[[i]])
+								# check & add target compounds ##########################
+								if(length(got_tar)){
+									got_tar<-unique(got_tar) # wtf?
+									for(j in 1:length(got_tar)){
+										this_target<-strsplit(got_tar[j],"_")[[1]]
+										at_target<-match(this_target[[1]],targets[,"ID"])
+										if(!length(at_target)){stop("\n Debug do_homologues at_2.")} # just a check
+										# -> calculate mass differences for chains ######
+# > BAUSTELLE										
+										# -> check if all chain masses were found #######
+# > BAUSTELLE										
+										# -> make entry #################################
+										use_label<-paste0(c(this_target[[1]],targets[at_target,"Name"],this_target[[2]],this_target[[3]]),collapse="_")
+										if(homol[["Peaks in homologue series"]][i,"Targets"]==""){ # first enty?
+											homol[["Peaks in homologue series"]][i,"Targets"]<-use_label
+										}else{
+											homol[["Peaks in homologue series"]][i,"Targets"]<-paste0(c(homol[["Peaks in homologue series"]][i,"Targets"],use_label),collapse=", ")
+										}
+									}
+								}
+								# check & add ISTD compounds ###########################
+								if(length(got_IS)){
+									got_IS<-unique(got_IS)
+									for(j in 1:length(got_IS)){
+										this_IS<-strsplit(got_IS[j],"_")[[1]]
+										at_IS<-match(this_IS[[1]],intstand[,"ID"])
+										if(!length(at_IS)){stop("\n Debug do_homologues at_2.")} # just a check
+										# -> calculate mass differences for chains ######
+# > BAUSTELLE										
+										# -> check if all chain masses were found #######
+# > BAUSTELLE										
+										# -> make entry #################################
+										use_label<-paste0(c(this_IS[[1]],intstand[at_IS,"Name"],this_IS[[2]],this_IS[[3]]),collapse="_")
+										if(homol[["Peaks in homologue series"]][i,"ISTDs"]==""){ # first enty?
+											homol[["Peaks in homologue series"]][i,"ISTDs"]<-use_label
+										}else{
+											homol[["Peaks in homologue series"]][i,"ISTDs"]<-paste0(c(homol[["Peaks in homologue series"]][i,"Targets"],use_label),collapse=", ")
+										}
+									}
+								}
+								#########################################################
+							}
+						}
+					}
+				}
+				######################################################################
+				if(for_mode=="negative" & (any(intstand[,"ion_mode"] =="negative") || any(targets[,"ion_mode"] =="negative"))){
+					if(exists("profileList_neg_copy",envir=as.environment(".GlobalEnv"))){rm("profileList_neg_copy",envir=as.environment(".GlobalEnv"))}	
+					if(exists("profileList_neg_copy")){rm("profileList_neg_copy")}	
+					if(exists("links_peaks_neg",envir=as.environment(".GlobalEnv"))){rm("links_peaks_neg",envir=as.environment(".GlobalEnv"))}	
+					if(exists("links_peaks_neg")){rm("links_peaks_neg")}	
+					load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"))
+					load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"),envir=as.environment(".GlobalEnv"))
+					peaks<-profileList_neg_copy[["peaks"]][which(profileList_neg_copy[["peaks"]][,"sampleIDs"]==for_file),]		
+					if(dim(peaks)[1]>0){
+						peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
+						list_delmass<-list()
+						for(i in 1:dim(homol[["Peaks in homologue series"]])[1]){
+							if(homol[["Peaks in homologue series"]][i,"HS IDs"]!=0){
+								# any screening matches ? #############################
+								that<-match(homol[["Peaks in homologue series"]][i,"peak ID"],peaks[,"peakIDs"])
+								if(is.na(that)){next}
+								if(peaks[that,"links"]==0){next}
+								got_tar<-unlist(links_peaks_neg[[peaks[that,"links"]]][[1]])
+								got_IS<-unlist(links_peaks_neg[[peaks[that,"links"]]][[2]])
+								if(!length(got_tar)&!length(got_IS)){next} # compounds in links entry?
+								# check if matches belong to homologuous compounds ####
+								if(length(got_tar)){
+									keep_tar<-rep(TRUE,length(got_tar))
+									for(j in 1:length(got_tar)){
+# > BAUSTELLE
+									}
+									got_tar<-got_tar[keep_tar];
+								}
+								if(length(got_IS)){
+									keep_IS<-rep(TRUE,length(got_IS))
+									for(j in 1:length(got_IS)){
+# > BAUSTELLE
+									}
+									got_IS<-got_IS[keep_IS]
+								}
+								if(!length(got_tar)&!length(got_IS)){next} # any homologuous compounds?					
+								# collect series mass differences for each peak ########
+								series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][i,"HS IDs"],"/")[[1]])
+								list_delmass[[i]]<-homol[["Homologue Series"]][series[1],"m/z increment"]
+								for(j in series[-1]){
+									if(homol[["Homologue Series"]][j,"HS IDs"]!=j){stop("\n Debug do_homologues at_1.")} # just a check
+									list_delmass[[i]]<-c(list_delmass[[i]],homol[["Homologue Series"]][j,"m/z increment"])
+								}
+								list_delmass[[i]]<-unique(list_delmass[[i]])
+								# check & add target compounds ##########################
+								if(length(got_tar)){
+									got_tar<-unique(got_tar) # wtf?
+									for(j in 1:length(got_tar)){
+										this_target<-strsplit(got_tar[j],"_")[[1]]
+										at_target<-match(this_target[[1]],targets[,"ID"])
+										if(!length(at_target)){stop("\n Debug do_homologues at_2.")} # just a check
+										# -> calculate mass differences for chains ######
+# > BAUSTELLE										
+										# -> check if all chain masses were found #######
+# > BAUSTELLE										
+										# -> make entry #################################
+#stop()
+										use_label<-paste0(c(this_target[[1]],targets[at_target,"Name"],this_target[[2]],this_target[[3]]),collapse="_")
+										if(homol[["Peaks in homologue series"]][i,"Targets"]==""){ # first enty?
+											homol[["Peaks in homologue series"]][i,"Targets"]<-use_label
+										}else{
+											homol[["Peaks in homologue series"]][i,"Targets"]<-paste0(c(homol[["Peaks in homologue series"]][i,"Targets"],use_label),collapse=", ")
+										}
+									}
+								}
+								# check & add ISTD compounds ###########################
+								if(length(got_IS)){
+									got_IS<-unique(got_IS)
+									for(j in 1:length(got_IS)){
+										this_IS<-strsplit(got_IS[j],"_")[[1]]
+										at_IS<-match(this_IS[[1]],intstand[,"ID"])
+										if(!length(at_IS)){stop("\n Debug do_homologues at_2.")} # just a check
+										# -> calculate mass differences for chains ######
+# > BAUSTELLE										
+										# -> check if all chain masses were found #######
+# > BAUSTELLE										
+										# -> make entry #################################
+										use_label<-paste0(c(this_IS[[1]],intstand[at_IS,"Name"],this_IS[[2]],this_IS[[3]]),collapse="_")
+										if(homol[["Peaks in homologue series"]][i,"ISTDs"]==""){ # first enty?
+											homol[["Peaks in homologue series"]][i,"ISTDs"]<-use_label
+										}else{
+											homol[["Peaks in homologue series"]][i,"ISTDs"]<-paste0(c(homol[["Peaks in homologue series"]][i,"Targets"],use_label),collapse=", ")
+										}
+									}
+								}
+								#########################################################
+							}
+						}
+					}
+				}
+				######################################################################	
+			}
+			##########################################################################				
 			save(homol,file=(file.path(logfile[["project_folder"]],"results","componentization","homologues",paste("full",for_file,sep="_"))))			
 			rm(peaklist,peaklist4,homol,Homol_groups)
-			##########################################################################	
 			measurements[b,"homologues"]<-"TRUE"
 			write.csv(measurements,file=file.path(logfile[["project_folder"]],"dataframes","measurements"),row.names=FALSE);
 			cat("done.")
@@ -161,7 +359,7 @@
 	####################################################################################	
 	
 	####################################################################################	
-	rm(mzfilter,elements,use_minmz,use_maxmz,measurements,use_mztol)
+	rm(mzfilter,elements,use_minmz,use_maxmz,measurements,use_mztol,intstand,targets)
 	####################################################################################	
 
 	

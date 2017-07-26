@@ -141,17 +141,36 @@ observe({ # - A
 			}
 			#####################################################################
 			# on homologues #####################################################			
-			if( 
+			if(
 				file.exists(file.path(logfile[[1]],"results","componentization","homologues",isolate(input$sel_meas_comp))) &
 				do_homol
 			){
 				#################################################################
 				if(verbose){cat("\n in Comp_A_3")}
 				load(file.path(logfile[[1]],"results","componentization","homologues",paste("full",isolate(input$sel_meas_comp),sep="_")),envir=as.environment(".GlobalEnv"))			
+				#load(file.path(logfile[[1]],"results","componentization","homologues","full_1"),envir=as.environment(".GlobalEnv"))			
 				# output homol. series table #####################################
-				output$homol_table <- DT::renderDataTable(
+				use_homol_peaks<-which(homol[["Peaks in homologue series"]][,"HS IDs"]!="0")
+				output$homol_series_peaks <- DT::renderDataTable(
 					datatable(
-						cbind(homol[[3]][,c(1,2,3)],round(homol[[3]][,4],digits=1)),
+						cbind(
+							homol[["Peaks in homologue series"]][use_homol_peaks,c("peak ID")],
+							round(homol[["Peaks in homologue series"]][use_homol_peaks,c("mz")],digits=4),
+							format(homol[["Peaks in homologue series"]][use_homol_peaks,c("intensity")],scientific=TRUE,digits=2),			
+							round(homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")],digits=1),	
+							round((homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")]/60),digits=1),							
+							homol[["Peaks in homologue series"]][use_homol_peaks,c("Targets")],
+							homol[["Peaks in homologue series"]][use_homol_peaks,c("ISTDs")],
+							homol[["Peaks in homologue series"]][use_homol_peaks,c("HS IDs")]							
+						),
+						colnames=c("Peak ID","m/z","Intensity","RT [s]","RT [min]","Target matches","ISTD matches","Series ID(s)"),
+						rownames=FALSE
+					)
+				)
+				# output homol. series table #####################################
+				output$homol_series_table <- DT::renderDataTable(
+					datatable(
+						cbind(homol[["Homologue Series"]][,c(1,2,3)],round(homol[["Homologue Series"]][,4],digits=1)),
 						colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]"),
 						rownames=FALSE
 					)
