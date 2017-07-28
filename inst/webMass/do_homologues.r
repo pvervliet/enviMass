@@ -176,7 +176,6 @@
 				homol_peaks_relat[(at:(at+len-1)),2]<-those
 				homol_peaks_relat[(at:(at+len-1)),3]<-(homol[["Peaks in homologue series"]][those,"mz"]-homol[["Peaks in homologue series"]][i,"mz"]) # must be >0
 				homol_peaks_relat[(at:(at+len-1)),4]<-(homol[["Peaks in homologue series"]][those,"RT"]-homol[["Peaks in homologue series"]][i,"RT"]) 
-
 				homol_peaks_relat[(at:(at+len-1)),6]<-homol[["Peaks in homologue series"]][i,"mz"]
 				homol_peaks_relat[(at:(at+len-1)),7]<-homol[["Peaks in homologue series"]][i,"RT"]
 				homol_peaks_relat[(at:(at+len-1)),8]<-homol[["Peaks in homologue series"]][those,"mz"]
@@ -184,6 +183,7 @@
 				at<-(at+len)	
 			}
 			homol_peaks_relat<-homol_peaks_relat[1:(at-1),]
+			if(any(homol_peaks_relat[,3]<0)){stop("\n Debug do_homologues at homol_peaks_relat processing.")}
 			homol_peaks_relat<-homol_peaks_relat[order(homol_peaks_relat[,1],(1/homol_peaks_relat[,3])),]
 			# insert theta
 			range_mz<-(max(homol[["Peaks in homologue series"]][,"mz"])-min(homol[["Peaks in homologue series"]][,"mz"])) 
@@ -195,9 +195,9 @@
 				PACKAGE="enviMass"
 			)
 			# resort to plot longest series segments on top of shorter ones
-			homol_peaks_relat<-homol_peaks_relat[order(homol_peaks_relat[,3]),]
+			homol_peaks_relat<-homol_peaks_relat[order(homol_peaks_relat[,3],decreasing = FALSE),]
 			homol[[7]]<-homol_peaks_relat
-			names(homol)[7]<-"homol_peaks_relat"
+			names(homol)[7]<-"homol_peaks_relat"		
 			##########################################################################	
 			# intersect with target screening results ################################
 			if(

@@ -3,9 +3,10 @@ function(
 	homol,
 	xlim=FALSE,
 	ylim=FALSE,
-	plotlegend=TRUE,
+	plotlegend=FALSE,
 	plotdefect=FALSE,
-  omit_theta=FALSE
+	omit_theta=FALSE,
+	deldel=.001
 ){
 
   ############################################################################
@@ -72,34 +73,12 @@ function(
 # add a legend?
 if(plotlegend==TRUE){
   ##########################################################################
-  delmz<-homol[["homol_peaks_relat"]][,3]
-  len<-length(delmz)
-  counts<-rep(1,len)
-  deldel<-.001
-
-  
-  for(i in 1:len){
-    if(i<len){
-      for(n in (i+1):len){
-        if((homol[["homol_peaks_relat"]][n,3]-homol[["homol_peaks_relat"]][i,3])<=deldel){
-          counts[i]<-(counts[i]+1)
-        }else{
-          break;
-        }
-      }
-    } 
-    if(i>1){
-      for(n in (i-1):1){
-        if((homol[["homol_peaks_relat"]][n,3]-homol[["homol_peaks_relat"]][i,3])<=deldel){
-          counts[i]<-(counts[i]+1)
-        }else{
-          break;
-        }
-      }
-    }  
-  }
-
-  plot(homol[["homol_peaks_relat"]][1:i,3],counts[1:i],type="h",col=coloring[1:i])
+	counts<-.Call("moving_count", 
+		homol[["homol_peaks_relat"]], 
+		deldel,
+		PACKAGE="enviMass"
+	)
+  plot(homol[["homol_peaks_relat"]][,3],counts,type="h",col=coloring,lwd=1.5,xlab="m/z difference",ylab="Moving window count")
   ##########################################################################
 
 

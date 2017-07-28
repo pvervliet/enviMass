@@ -103,5 +103,5 @@ useDynLib(enviMass,meandel)
 useDynLib(enviMass,neighbour)
 useDynLib(enviMass,plot_prof)
 useDynLib(enviMass,series_relat)
-
+useDynLib(enviMass,moving_count)
 

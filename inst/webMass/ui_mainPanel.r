@@ -1824,7 +1824,17 @@
 								condition = "(output.sel_meas_comp_state2 != ' no homologue series detection results available') & (output.sel_meas_comp_state != 'Invalid file ID')",
 									HTML('<hr noshade="noshade" />'),
 									bsCollapse(multiple = TRUE, open = "col4", id = "collapse4",
-										bsCollapsePanel("Series plot overview", 									
+										bsCollapsePanel("Series plot overview", 	
+											plotOutput("homol_counts",
+												dblclick = "homol_counts_dblclick",
+												hover = "homol_counts_hover",
+												brush = brushOpts(
+													id = "homol_counts_brush",
+													direction = c("x"),
+													resetOnNew = TRUE
+												),								
+												height = "250px"
+											),					
 											plotOutput("homol_plot",
 												dblclick = "homol_plot_dblclick",
 												hover = "homol_plot_hover",

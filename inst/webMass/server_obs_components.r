@@ -182,6 +182,13 @@ observe({ # - A
 						xlim = FALSE, ylim = FALSE, plotlegend=FALSE, omit_theta=20
 					)
 				},res=100)	
+				# output homol. mass difference counts plot #####################
+				output$homol_counts <- renderPlot({		
+					par(mar=c(5,4.5,.5,.5))
+					enviMass:::plothomol(homol,
+						xlim = FALSE, ylim = FALSE, plotlegend=TRUE, omit_theta=20
+					)
+				},res=100)					
 				#################################################################
 				output$sel_meas_comp_state2<-renderText(" homologue series detection results available")
 			}else{
