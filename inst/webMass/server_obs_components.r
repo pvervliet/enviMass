@@ -176,9 +176,10 @@ observe({ # - A
 					)
 				)
 				# output homol. series plot ######################################
-				output$homol_plot <- renderPlot({					
+				output$homol_plot <- renderPlot({		
+					par(mar=c(5,4.5,.5,.5))
 					enviMass:::plothomol(homol,
-						xlim = FALSE, ylim = FALSE, plotlegend=FALSE
+						xlim = FALSE, ylim = FALSE, plotlegend=FALSE, omit_theta=20
 					)
 				},res=100)	
 				#################################################################
