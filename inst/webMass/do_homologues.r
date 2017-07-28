@@ -22,7 +22,7 @@
 	####################################################################################		
 
 # >	
-#measurements[,names(measurements)=="homologues"]<-"FALSE"
+#measurements[,names(measurements)=="homologues"]<-"FALSE";b<-1
 # <
 
 	####################################################################################		
@@ -155,7 +155,7 @@
 			##########################################################################
 			# expand peak relations for faster plotting ##############################
 			max_at<-50000
-			homol_peaks_relat<-matrix(ncol=3,nrow=max_at)
+			homol_peaks_relat<-matrix(ncol=9,nrow=max_at)
 			at<-1
 			for(i in 1:dim(homol[["Peaks in homologue series"]])[1]){
 				if(homol[["Peaks in homologue series"]][i,"HS IDs"]==0){next}
@@ -167,7 +167,7 @@
 				if((at+len-1)>max_at){ # expand matrix
 					homol_peaks_relat<-rbind(
 						homol_peaks_relat,
-						matrix(ncol=3,nrow=max_at)
+						matrix(ncol=9,nrow=max_at)
 					)
 					max_at<-dim(homol_peaks_relat)[1]
 				}
@@ -175,10 +175,27 @@
 				homol_peaks_relat[(at:(at+len-1)),1]<-rep(i,len)
 				homol_peaks_relat[(at:(at+len-1)),2]<-those
 				homol_peaks_relat[(at:(at+len-1)),3]<-(homol[["Peaks in homologue series"]][those,"mz"]-homol[["Peaks in homologue series"]][i,"mz"]) # must be >0
-				at<-(at+len)	
+				homol_peaks_relat[(at:(at+len-1)),4]<-(homol[["Peaks in homologue series"]][those,"RT"]-homol[["Peaks in homologue series"]][i,"RT"]) 
 
+				homol_peaks_relat[(at:(at+len-1)),6]<-homol[["Peaks in homologue series"]][i,"mz"]
+				homol_peaks_relat[(at:(at+len-1)),7]<-homol[["Peaks in homologue series"]][i,"RT"]
+				homol_peaks_relat[(at:(at+len-1)),8]<-homol[["Peaks in homologue series"]][those,"mz"]
+				homol_peaks_relat[(at:(at+len-1)),9]<-homol[["Peaks in homologue series"]][those,"RT"]				
+				at<-(at+len)	
 			}
 			homol_peaks_relat<-homol_peaks_relat[1:(at-1),]
+			homol_peaks_relat<-homol_peaks_relat[order(homol_peaks_relat[,1],(1/homol_peaks_relat[,3])),]
+			# insert theta
+			range_mz<-(max(homol[["Peaks in homologue series"]][,"mz"])-min(homol[["Peaks in homologue series"]][,"mz"])) 
+			range_RT<-(max(homol[["Peaks in homologue series"]][,"RT"])-min(homol[["Peaks in homologue series"]][,"RT"])) 
+			homol_peaks_relat[,5]<-.Call("series_relat", 
+				homol_peaks_relat, 
+				range_mz,
+				range_RT,
+				PACKAGE="enviMass"
+			)
+			# resort to plot longest series segments on top of shorter ones
+			homol_peaks_relat<-homol_peaks_relat[order(homol_peaks_relat[,3]),]
 			homol[[7]]<-homol_peaks_relat
 			names(homol)[7]<-"homol_peaks_relat"
 			##########################################################################	
@@ -215,14 +232,14 @@
 								if(length(got_tar)){
 									keep_tar<-rep(TRUE,length(got_tar))
 									for(j in 1:length(got_tar)){
-# > BAUSTELLE
+							# > BAUSTELLE
 									}
 									got_tar<-got_tar[keep_tar];
 								}
 								if(length(got_IS)){
 									keep_IS<-rep(TRUE,length(got_IS))
 									for(j in 1:length(got_IS)){
-# > BAUSTELLE
+							# > BAUSTELLE
 									}
 									got_IS<-got_IS[keep_IS]
 								}
@@ -243,9 +260,9 @@
 										at_target<-match(this_target[[1]],targets[,"ID"])
 										if(!length(at_target)){stop("\n Debug do_homologues at_2.")} # just a check
 										# -> calculate mass differences for chains ######
-# > BAUSTELLE										
+							# > BAUSTELLE										
 										# -> check if all chain masses were found #######
-# > BAUSTELLE										
+							# > BAUSTELLE										
 										# -> make entry #################################
 										use_label<-paste0(c(this_target[[1]],targets[at_target,"Name"],this_target[[2]],this_target[[3]]),collapse="_")
 										if(homol[["Peaks in homologue series"]][i,"Targets"]==""){ # first enty?
@@ -263,9 +280,9 @@
 										at_IS<-match(this_IS[[1]],intstand[,"ID"])
 										if(!length(at_IS)){stop("\n Debug do_homologues at_2.")} # just a check
 										# -> calculate mass differences for chains ######
-# > BAUSTELLE										
+							# > BAUSTELLE										
 										# -> check if all chain masses were found #######
-# > BAUSTELLE										
+							# > BAUSTELLE										
 										# -> make entry #################################
 										use_label<-paste0(c(this_IS[[1]],intstand[at_IS,"Name"],this_IS[[2]],this_IS[[3]]),collapse="_")
 										if(homol[["Peaks in homologue series"]][i,"ISTDs"]==""){ # first enty?
@@ -305,14 +322,14 @@
 								if(length(got_tar)){
 									keep_tar<-rep(TRUE,length(got_tar))
 									for(j in 1:length(got_tar)){
-# > BAUSTELLE
+							# > BAUSTELLE
 									}
 									got_tar<-got_tar[keep_tar];
 								}
 								if(length(got_IS)){
 									keep_IS<-rep(TRUE,length(got_IS))
 									for(j in 1:length(got_IS)){
-# > BAUSTELLE
+							# > BAUSTELLE
 									}
 									got_IS<-got_IS[keep_IS]
 								}
@@ -333,11 +350,10 @@
 										at_target<-match(this_target[[1]],targets[,"ID"])
 										if(!length(at_target)){stop("\n Debug do_homologues at_2.")} # just a check
 										# -> calculate mass differences for chains ######
-# > BAUSTELLE										
+							# > BAUSTELLE										
 										# -> check if all chain masses were found #######
-# > BAUSTELLE										
+							# > BAUSTELLE										
 										# -> make entry #################################
-#stop()
 										use_label<-paste0(c(this_target[[1]],targets[at_target,"Name"],this_target[[2]],this_target[[3]]),collapse="_")
 										if(homol[["Peaks in homologue series"]][i,"Targets"]==""){ # first enty?
 											homol[["Peaks in homologue series"]][i,"Targets"]<-use_label
@@ -354,9 +370,9 @@
 										at_IS<-match(this_IS[[1]],intstand[,"ID"])
 										if(!length(at_IS)){stop("\n Debug do_homologues at_2.")} # just a check
 										# -> calculate mass differences for chains ######
-# > BAUSTELLE										
+							# > BAUSTELLE										
 										# -> check if all chain masses were found #######
-# > BAUSTELLE										
+							# > BAUSTELLE										
 										# -> make entry #################################
 										use_label<-paste0(c(this_IS[[1]],intstand[at_IS,"Name"],this_IS[[2]],this_IS[[3]]),collapse="_")
 										if(homol[["Peaks in homologue series"]][i,"ISTDs"]==""){ # first enty?

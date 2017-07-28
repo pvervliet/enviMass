@@ -10,6 +10,7 @@ Copyright (c) 2013 Eawag. All rights reserved.
 #include <R.h>
 #include <Rmath.h>
 #include <Rdefines.h>
+#include <R_ext/Utils.h>
 
 
 #define RMATRIX(m,i,j) (REAL(m)[ INTEGER(GET_DIM(m))[0]*(j)+(i) ])
@@ -20,6 +21,69 @@ Copyright (c) 2013 Eawag. All rights reserved.
 
 
 extern "C"{
+
+
+/******************************************************************************/
+/* calculate theta ************************************************************/
+/******************************************************************************/
+
+SEXP series_relat(
+    SEXP homol_peaks_relat,
+    SEXP range_mz,
+    SEXP range_RT
+){
+
+    PROTECT(homol_peaks_relat = AS_NUMERIC(homol_peaks_relat));
+    PROTECT(range_mz = AS_NUMERIC(range_mz));
+    PROTECT(range_RT = AS_NUMERIC(range_RT));
+
+    int len1=(RRow(homol_peaks_relat)-1);
+    int i=0,j=0,n=0,m=0;
+    double aa=0,ab=0,a2=0,ba=0,bb=0,b2=0,c2=0,to_cos,wink;
+
+    SEXP thetas = PROTECT(allocVector(REALSXP,(len1+1)));
+    for(i=0;i<=len1;i++){
+        RVECTOR(thetas,i) = R_PosInf;
+    }
+
+    for(i=0;i<len1;i++){
+        for(j=i;j<=len1;j++){
+            if( RMATRIX(homol_peaks_relat,j,0) != RMATRIX(homol_peaks_relat,i,0) ){
+                j--;
+                break;
+            }
+        }
+        if((j-i)>0){
+            void R_CheckUserInterrupt(void);
+            for(m=i;m<j;m++){
+                aa = (RMATRIX(homol_peaks_relat,m,2) / RVECTOR(range_mz,0));
+                ba = (RMATRIX(homol_peaks_relat,m,3) / RVECTOR(range_RT,0));
+                for(n=(m+1);n<=j;n++){
+                    ab = (RMATRIX(homol_peaks_relat,n,2) / RVECTOR(range_mz,0));
+                    bb = (RMATRIX(homol_peaks_relat,n,3) / RVECTOR(range_RT,0));
+                    a2 = ((aa*aa)+(ab*ab));
+                    b2 = ((ba*ba)+(bb*bb));
+                    c2 = sqrt(a2*b2);
+                    to_cos = (  ((aa*ba)+(ab*bb))   /   c2  );
+                    if(ISNA(to_cos) || ISNAN(to_cos)){
+                        wink = 0;
+                    }else{
+                        wink = acos(to_cos);
+                        wink = (wink * 180 / M_PI);
+                    }
+                    if(!R_FINITE(RVECTOR(thetas,n)) || wink<abs(RVECTOR(thetas,n))){
+                        RVECTOR(thetas,n) = wink;
+                    }
+                }
+            }
+            i = j;
+        }
+    }
+
+    UNPROTECT(4);
+    return thetas;
+
+}
 
 
 /******************************************************************************/
