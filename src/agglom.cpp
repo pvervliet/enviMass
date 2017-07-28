@@ -87,6 +87,53 @@ SEXP series_relat(
 
 
 /******************************************************************************/
+/* calculate moving counts ****************************************************/
+/******************************************************************************/
+
+SEXP moving_count(
+    SEXP homol_peaks_relat,
+    SEXP deldel
+){
+
+    PROTECT(homol_peaks_relat = AS_NUMERIC(homol_peaks_relat));
+    PROTECT(deldel = AS_NUMERIC(deldel));
+    int len = RRow(homol_peaks_relat);
+    int i=0,n=0;
+
+    SEXP counts = PROTECT(allocVector(REALSXP,len));
+    for(i=0;i<len;i++){
+        RVECTOR(counts,i) = 1;
+    }
+
+    for(i=0;i<len;i++){
+        void R_CheckUserInterrupt(void);
+        if(i<(len-1)){
+            for(n=(i+1);n<len;n++){
+                if((RMATRIX(homol_peaks_relat,n,2)-RMATRIX(homol_peaks_relat,i,2))<=RVECTOR(deldel,0)){
+                    RVECTOR(counts,i)++;
+                }else{
+                    break;
+                }
+            }
+        }
+        if(i>0){
+            for(n=(i-1);n>=0;n--){
+                if((RMATRIX(homol_peaks_relat,i,2)-RMATRIX(homol_peaks_relat,n,2))<=RVECTOR(deldel,0)){
+                    RVECTOR(counts,i)++;
+                }else{
+                    break;
+                }
+            }
+        }
+    }
+
+    UNPROTECT(3);
+    return counts;
+
+}
+
+
+/******************************************************************************/
 /* compare row-wise ***********************************************************/
 /******************************************************************************/
 
