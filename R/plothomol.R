@@ -78,7 +78,7 @@ if(plotlegend==TRUE){
 		deldel,
 		PACKAGE="enviMass"
 	)
-  plot(homol[["homol_peaks_relat"]][,3],counts,type="h",col=coloring,lwd=1.5,xlab="m/z difference",ylab="Moving window count")
+  plot(homol[["homol_peaks_relat"]][,3],counts,type="h",col=coloring,lwd=1.5,xlab="m/z difference",ylab="Moving window count",xlim=c(min(homol[["homol_peaks_relat"]][,3]),max(homol[["homol_peaks_relat"]][,3])))
   ##########################################################################
 
 
