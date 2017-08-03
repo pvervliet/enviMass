@@ -105,24 +105,14 @@ SEXP moving_count(
         RVECTOR(counts,i) = 1;
     }
 
-    for(i=0;i<len;i++){
+    for(i=0;i<(len-1);i++){
         void R_CheckUserInterrupt(void);
-        if(i<(len-1)){
-            for(n=(i+1);n<len;n++){
-                if((RMATRIX(homol_peaks_relat,n,2)-RMATRIX(homol_peaks_relat,i,2))<=RVECTOR(deldel,0)){
-                    RVECTOR(counts,i)++;
-                }else{
-                    break;
-                }
-            }
-        }
-        if(i>0){
-            for(n=(i-1);n>=0;n--){
-                if((RMATRIX(homol_peaks_relat,i,2)-RMATRIX(homol_peaks_relat,n,2))<=RVECTOR(deldel,0)){
-                    RVECTOR(counts,i)++;
-                }else{
-                    break;
-                }
+        for(n=(i+1);n<len;n++){
+            if((RMATRIX(homol_peaks_relat,n,2)-RMATRIX(homol_peaks_relat,i,2))<=RVECTOR(deldel,0)){
+                RVECTOR(counts,i)++;
+                RVECTOR(counts,n)++;
+            }else{
+                break;
             }
         }
     }

@@ -1825,25 +1825,43 @@
 									HTML('<hr noshade="noshade" />'),
 									bsCollapse(multiple = TRUE, open = "col4", id = "collapse4",
 										bsCollapsePanel("Series plot overview", 	
-											plotOutput("homol_counts",
-												dblclick = "homol_counts_dblclick",
-												hover = "homol_counts_hover",
-												brush = brushOpts(
-													id = "homol_counts_brush",
-													direction = c("x"),
-													resetOnNew = TRUE
-												),								
-												height = "250px"
-											),					
-											plotOutput("homol_plot",
-												dblclick = "homol_plot_dblclick",
-												hover = "homol_plot_hover",
-												brush = brushOpts(
-													id = "homol_plot_brush",
-													resetOnNew = TRUE
-												),								
-												height = "700px"
-											)	
+							                plotOutput("homol_counts",
+							                        click = "homol_counts_click",
+							                        dblclick = "homol_counts_dblclick",
+							                        #hover = "homol_counts_hover",
+							                        brush = brushOpts(
+							                          id = "homol_counts_brush",
+							                          direction = c("x"),
+							                          resetOnNew = TRUE,
+							                          delay = 0
+							                        ),                
+							                        height = "250px"
+							                      ),        
+							                ######################################################################
+							                plotOutput("homol_RT",
+							                        click = "homol_RT_click",
+							                        dblclick = "homol_RT_dblclick",
+							                        #hover = "homol_counts_hover",
+							                        brush = brushOpts(
+							                          id = "homol_RT_brush",
+							                          direction = c("x"),
+							                          resetOnNew = TRUE,
+							                          delay = 0
+							                        ),                
+							                        height = "250px"
+							                      ),            
+							                ######################################################################
+							                plotOutput("homol_plot",
+							                        click = "homol_plot_click",
+							                        dblclick = "homol_plot_dblclick",
+							                        #hover = "homol_plot_hover",
+							                        brush = brushOpts(
+							                          id = "homol_plot_brush",
+							                          resetOnNew = TRUE,
+							                          delay = 0
+							                        ),                
+							                        height = "700px"
+							                      )
 										),
 										bsCollapsePanel("Series table", 
 											tabsetPanel( 	
