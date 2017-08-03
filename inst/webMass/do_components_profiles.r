@@ -78,9 +78,13 @@ if(
 				###################################################################
 				# search peaks & their links to compounds #########################
 				for(j in (profileList_pos[["index_prof"]][i,"start_ID"]:profileList_pos[["index_prof"]][i,"end_ID"])){
-					if(profileList_pos[["peaks"]][j,"links"]!=0){
+					if(profileList_pos[["peaks"]][j,"links"]!=0){		
 						# add IS link #############################################
 						if(	length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]])>0 ){
+							if(any(duplicated(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]]))){ # From different peak vs. isotopologue pattern combinations
+								links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]]<-
+									links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][!duplicated(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]])]
+							}		
 							for(k in 1:length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_pos[[at_entry]][[2]])==0 ){ # make a new entry for profile link to IS
 									links_profiles_pos[[at_entry]][[2]]<-
@@ -105,6 +109,10 @@ if(
 						}					
 						# add target link #########################################
 						if(	length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]])>0 ){
+							if(any(duplicated(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]]))){ # From different peak vs. isotopologue pattern combinations
+								links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]]<-
+									links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][!duplicated(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]])]
+							}						
 							for(k in 1:length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_pos[[at_entry]][[1]])==0 ){ # make a new entry for profile link to IS
 									links_profiles_pos[[at_entry]][[1]]<-

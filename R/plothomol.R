@@ -105,7 +105,7 @@ function(
     }else{
       plot.new();
       plot.window(xlim=use_dmasslim,ylim=c(0,1));
-      title(xlab="m/z difference");
+      title(xlab="Series m/z difference");
       axis(1);
       box();
     }
@@ -138,7 +138,7 @@ function(
     }else{
       plot.new();
       plot.window(xlim=use_dRTlim,ylim=c(0,1));
-      title(xlab="RT difference");
+      title(xlab="Series RT difference");
       axis(1);
       box();
     }
