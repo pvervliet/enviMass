@@ -98,24 +98,46 @@ observe({ # - A
 				output$max_size_comp<-renderText(paste("Max number of peaks in a component: ",as.character(max_size_comp),sep=""))				
 				output$num_comp_nontarget<-renderText(paste("Number of nontarget components with at least one non-blind peak: ",as.character(comp_nontarget),sep=""))
 				# output component table #########################################
-				comp_table<-component[["Components"]][,c(1,15,13,14,16,16,3,5,6,7,11,12,19,20,21,22),drop=FALSE]
-				comp_table[,5]<-round(comp_table[,5],digits=2)
-				comp_table[,6]<-(comp_table[,6]/60)
-				comp_table[,6]<-round(comp_table[,6],digits=2)				
-				comp_table[,2]<-round(comp_table[,2],digits=1)
-				comp_table[,4]<-round(comp_table[,4],digits=5)	
+				comp_table<-component[["Components"]][,c(
+					"Component ID |",
+					"Monois. peak ID |",
+					"Monois. m/z |",
+					"Monois. RT |",
+					"Monois. RT |",
+					"Monois. int. |",
+					"Monois. sample/blind int. ratio",
+					"ID pattern peaks |",
+					"ID adduct peaks |",
+					"ID homologue series |",
+					"ID interfering peaks |",
+					"pattern group adduct|",
+					"adduct group adduct(s) |",
+					"Target peaks",
+					"ISTD peaks",
+					"Total peak number",
+					"Blind peak number",
+					"z"
+				),drop=FALSE]
+				comp_table[,4]<-round(comp_table[,4],digits=2)
+				comp_table[,5]<-(comp_table[,5]/60)
+				comp_table[,5]<-round(comp_table[,5],digits=2)				
+				comp_table[,6]<-round(comp_table[,6],digits=1)
+				comp_table[,3]<-round(comp_table[,3],digits=5)	
 				output$comp_table <- DT::renderDataTable(
 					DT::datatable(
 						comp_table,
 						colnames=c(
 							"Component ID",
-							"Max. peak intens.",
-							"Max. peak ID","Max. peak m/z",
-							"Max. peak RT [s]","Max. peak RT [min]",
+							"Monois. peak ID",
+							"Monois. peak m/z",
+							"Monois. peak RT [s]","Monois. peak RT [min]",
+							"Monois. peak intens.",
+							"Monois. sample/blind int. ratio",
 							"ID(s) isot. peaks","ID(s) adduct peaks","ID(s) homol. series","ID(s) interfering peaks",
 							"Isot. peaks adducts","Adduct peak adducts",
 							"Target peaks","ISTD peaks",
-							"Total peak number","Blind peak number"
+							"Total peak number","Blind peak number",
+							"Charge(s)"
 						),
 						rownames=FALSE,
 						extensions = c('Buttons'),
