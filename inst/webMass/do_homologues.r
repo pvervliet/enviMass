@@ -162,7 +162,8 @@
 				if(homol[["Peaks in homologue series"]][i,"to ID"]==0){next} # end of series
 				those<-as.numeric(strsplit(homol[["Peaks in homologue series"]][i,"to ID"],"/")[[1]])
 				those<-unique(those)
-				if(!all(homol[["Peaks in homologue series"]][those,"peak ID"]==those)){stop("\n Debug do_homologues at_0.")}
+				those<-match(those,homol[["Peaks in homologue series"]][,"peak ID"])
+				if(any(is.na(those))){stop("\n Debug do_homologues at_0_a.")} # replicates!
 				len<-length(those)
 				if((at+len-1)>max_at){ # expand matrix
 					homol_peaks_relat<-rbind(
