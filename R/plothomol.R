@@ -9,7 +9,9 @@ function(
 	plotdefect=FALSE,
 	omit_theta=FALSE,
 	deldel=.001,
-  plot_those=FALSE
+  plot_those=FALSE,
+  emph_point=FALSE,
+  emph_series=FALSE
 ){
 
   ############################################################################
@@ -68,6 +70,36 @@ function(
         y1=homol[["Peaks in homologue series"]][homol[["homol_peaks_relat"]][use_segm,2],"RT"],
         col=coloring[use_segm]
       )
+      if(emph_series[1]!=FALSE){
+        these_series<-match(emph_series,homol[["Homologue Series"]][,"HS IDs"])
+        for(i in these_series){
+          these_peaks<-as.numeric(strsplit(homol[["Homologue Series"]][i,"peak IDs"],",")[[1]])
+          these_peaks<-match(these_peaks,homol[["Peaks in homologue series"]][,"peak ID"])
+          for(j in 2:length(these_peaks)){
+            segments(
+              x0=homol[["Peaks in homologue series"]][these_peaks[j],"mz"],
+              y0=homol[["Peaks in homologue series"]][these_peaks[j],"RT"],
+              x1=homol[["Peaks in homologue series"]][these_peaks[j-1],"mz"],
+              y1=homol[["Peaks in homologue series"]][these_peaks[j-1],"RT"],
+              col="black",lwd=1
+            )
+          }
+          for(j in 1:length(these_peaks)){
+            points(
+              homol[["Peaks in homologue series"]][these_peaks[j],"mz"],homol[["Peaks in homologue series"]][these_peaks[j],"RT"],
+              cex=0.5,pch=19,col="black");
+          }
+        }
+      }
+      if(emph_point[1]!=FALSE){
+        that_peak<-match(emph_point[1],homol[["Peaks in homologue series"]][,"peak ID"])
+        points(
+          homol[["Peaks in homologue series"]][that_peak,"mz"],homol[["Peaks in homologue series"]][that_peak,"RT"],
+          cex=0.5,pch=19,col="black");
+        points(
+          homol[["Peaks in homologue series"]][that_peak,"mz"],homol[["Peaks in homologue series"]][that_peak,"RT"],
+          cex=2,pch=1,col="black");
+      }
       if(xlim[1]!=FALSE | ylim[1]!=FALSE){
         mtext("Zoomed in - click to zoom out partly or double-click to zoom out fully", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_xlim[1], adj = 0)
       }

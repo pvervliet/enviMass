@@ -1,5 +1,7 @@
 	###############################################################################	
 	those_objects<-c(
+		"plot_those",
+		"omit_theta",
 		"cut_delRT_EIC",
 		"cut_delRT_isot",
 		"cut_cor_isot",
