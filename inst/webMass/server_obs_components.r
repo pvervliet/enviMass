@@ -203,33 +203,31 @@ observe({ # - A
 })	
 ##############################################################################
   
-
 ################################################################################
 observe({
-    refresh_homol$a
-    if(isolate(refresh_homol$a>0) & isolate(init$a)=="TRUE"){
-    	cat("\n IN REFRESH")
-        # filter segments to plot
-        plot_those<<-enviMass:::filter_segments(
-            homol,
-            masslim = isolate(ranges_homol$mass),
-            RTlim = isolate(ranges_homol$RT),
-            massDlim = isolate(ranges_homol$massD),
-            dmasslim = isolate(ranges_homol$dmass),
-            dRTlim = isolate(ranges_homol$dRT)
-        )
-        sum_homol<-sum(plot_those)
-        if(sum_homol>1000){
-            omit_theta<<-2
-            if(sum_homol>5000){omit_theta<<-10}
-            if(sum_homol>20000){omit_theta<<-15}    
-            if(sum_homol>100000){omit_theta<<-20}  
-            if(sum_homol>200000){omit_theta<<-30}           
-        }else{
-            omit_theta<<-FALSE
-        }
-        # output homol. series plot ######################################
-        output$homol_plot <- renderPlot({   
+        refresh_homol$a
+        cat("\n IN REFRESH")
+                # filter segments to plot
+                plot_those<<-enviMass:::filter_segments(
+                  homol,
+                  masslim = isolate(ranges_homol$mass),
+                  RTlim = isolate(ranges_homol$RT),
+                  massDlim = isolate(ranges_homol$massD),
+                  dmasslim = isolate(ranges_homol$dmass),
+                  dRTlim = isolate(ranges_homol$dRT)
+                )
+                sum_homol<-sum(plot_those)
+                if(sum_homol>1000){
+                  omit_theta<<-2
+                  if(sum_homol>5000){omit_theta<<-10}
+                  if(sum_homol>20000){omit_theta<<-15}    
+                  if(sum_homol>100000){omit_theta<<-20}  
+                  if(sum_homol>200000){omit_theta<<-30}           
+                }else{
+                  omit_theta<<-FALSE
+                }
+                # output homol. series plot ######################################
+                output$homol_plot <- renderPlot({   
                   par(mar=c(5,4.5,.7,.5))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
@@ -237,8 +235,8 @@ observe({
                     plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those
                   );
                 },res=100)  
-        # output homol. mass difference counts plot #####################
-        output$homol_counts <- renderPlot({   
+                # output homol. mass difference counts plot #####################
+                output$homol_counts <- renderPlot({   
                   par(mar=c(5,4.5,.7,.5))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
@@ -246,8 +244,8 @@ observe({
                     plot_what="dmass", omit_theta=FALSE, plot_those = plot_those
                   );
                 },res=100)          
-        # output homol. RT difference vs mass scatter plot ##############
-        output$homol_RT <- renderPlot({   
+                # output homol. RT difference vs mass scatter plot ##############
+                output$homol_RT <- renderPlot({   
                   par(mar=c(5,4.5,.7,.5))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
@@ -255,144 +253,221 @@ observe({
                     plot_what="dRT", omit_theta=FALSE, plot_those = plot_those
                   );
                 },res=100)  
-        # output tables ##################################################
-        use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
-        output$homol_series_peaks <- DT::renderDataTable(
+                # output tables ##################################################
+                use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
+                output$homol_series_peaks <- DT::renderDataTable(
                   DT::datatable(
-                    cbind(
-                      homol[["Peaks in homologue series"]][use_homol_peaks,c("peak ID")],
-                      round(homol[["Peaks in homologue series"]][use_homol_peaks,c("mz")],digits=4),
-                      format(homol[["Peaks in homologue series"]][use_homol_peaks,c("intensity")],scientific=TRUE,digits=2),      
-                      round(homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")],digits=1),  
-                      round((homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")]/60),digits=1),             
-                      homol[["Peaks in homologue series"]][use_homol_peaks,c("Targets")],
-                      homol[["Peaks in homologue series"]][use_homol_peaks,c("ISTDs")],
-                      homol[["Peaks in homologue series"]][use_homol_peaks,c("HS IDs")]             
+                    dat<-data.frame(
+                      I(as.character(homol[["Peaks in homologue series"]][use_homol_peaks,c("peak ID")])),
+                      round(homol[["Peaks in homologue series"]][use_homol_peaks,c("mz")],digits=5),
+                      round(log10(homol[["Peaks in homologue series"]][use_homol_peaks,c("intensity")]),digits=4),
+                      round(homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")],digits=1),
+                      round((homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")]/60),digits=1),        
+                      I(homol[["Peaks in homologue series"]][use_homol_peaks,c("Targets")]),
+                      I(homol[["Peaks in homologue series"]][use_homol_peaks,c("ISTDs")]),
+                      I(homol[["Peaks in homologue series"]][use_homol_peaks,c("HS IDs")])             
                     ),
-                    colnames=c("Peak ID","m/z","Intensity","RT [s]","RT [min]","Target matches","ISTD matches","Series ID(s)"),
+                    filter = 'top',
+                    colnames=c("Peak ID","m/z","log10 intens.","RT [s]","RT [min]","Target matches","ISTD matches","Series ID(s)"),
                     rownames=FALSE,
                     selection = list(mode = 'single', target = 'row')
                   )
-        )
-        # output homol. series table #####################################
-        output$homol_series_table <- DT::renderDataTable(
-                  datatable(
-                    cbind(homol[["Homologue Series"]][,c(1,2,3)],round(homol[["Homologue Series"]][,4],digits=1)),
-                    colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]"),
-                    rownames=FALSE
+                )
+                # output homol. series table #####################################
+                output$homol_series_table <- DT::renderDataTable(
+                  DT::datatable(
+                    data.frame(
+                      I(as.character(homol[["Homologue Series"]][,"HS IDs"])),
+                      I(as.character(homol[["Homologue Series"]][,"peak IDs"])),
+                      round(homol[["Homologue Series"]][,"m/z increment"],digits=5),
+                      round(homol[["Homologue Series"]][,"RT increment"],digits=1),
+                      round(log10(homol[["Homologue Series"]][,"max int."]),digits=4)
+                    ),
+                    filter = 'top',
+                    colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]","Max log10 int."),
+                    rownames=FALSE,
+                    selection = list(mode = 'single', target = 'row')
                   )
-        )
-        ##################################################################
-    }
+                )
+                ##################################################################
 })           
 ################################################################################ 
 observe({
-    refresh_homol$b
-    if(isolate(refresh_homol$b>0) & isolate(init$a)=="TRUE"){
-    	cat("\n IN REFRESH_2")
-        # filter segments to plot
-        plot_those<<-enviMass:::filter_segments(
-            homol,
-            masslim = isolate(ranges_homol$mass),
-            RTlim = isolate(ranges_homol$RT),
-            massDlim = isolate(ranges_homol$massD),
-            dmasslim = isolate(ranges_homol$dmass),
-            dRTlim = isolate(ranges_homol$dRT)
-        )
-        sum_homol<-sum(plot_those)
-        if(sum_homol>1000){
-            omit_theta<<-2
-            if(sum_homol>5000){omit_theta<<-10}
-            if(sum_homol>20000){omit_theta<<-15}    
-            if(sum_homol>100000){omit_theta<<-20}  
-            if(sum_homol>200000){omit_theta<<-30}           
-        }else{
-            omit_theta<<-FALSE
-        }
-        # output homol. series plot ######################################
-        output$homol_plot <- renderPlot({   
-                par(mar=c(5,4.5,.7,.5))
-                enviMass:::plothomol(homol,
+          refresh_homol$b
+          cat("\n IN REFRESH_2")
+                # filter segments to plot
+                plot_those<<-enviMass:::filter_segments(
+                  homol,
+                  masslim = isolate(ranges_homol$mass),
+                  RTlim = isolate(ranges_homol$RT),
+                  massDlim = isolate(ranges_homol$massD),
+                  dmasslim = isolate(ranges_homol$dmass),
+                  dRTlim = isolate(ranges_homol$dRT)
+                )
+                sum_homol<-sum(plot_those)
+                if(sum_homol>1000){
+                  omit_theta<<-2
+                  if(sum_homol>5000){omit_theta<<-10}
+                  if(sum_homol>20000){omit_theta<<-15}    
+                  if(sum_homol>100000){omit_theta<<-20}  
+                  if(sum_homol>200000){omit_theta<<-30}           
+                }else{
+                  omit_theta<<-FALSE
+                }
+                # output homol. series plot ######################################
+                output$homol_plot <- renderPlot({   
+                  par(mar=c(5,4.5,.7,.5))
+                  enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                     dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
                     plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those
                   );
                 },res=100) 
-        # output tables ##################################################
-        use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
-        output$homol_series_peaks <- DT::renderDataTable(
+                # output tables ##################################################
+                use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
+                output$homol_series_peaks <- DT::renderDataTable(
                   DT::datatable(
-                    cbind(
-                      homol[["Peaks in homologue series"]][use_homol_peaks,c("peak ID")],
-                      round(homol[["Peaks in homologue series"]][use_homol_peaks,c("mz")],digits=4),
-                      format(homol[["Peaks in homologue series"]][use_homol_peaks,c("intensity")],scientific=TRUE,digits=2),      
-                      round(homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")],digits=1),  
-                      round((homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")]/60),digits=1),             
-                      homol[["Peaks in homologue series"]][use_homol_peaks,c("Targets")],
-                      homol[["Peaks in homologue series"]][use_homol_peaks,c("ISTDs")],
-                      homol[["Peaks in homologue series"]][use_homol_peaks,c("HS IDs")]             
+                    dat<-data.frame(
+                      I(as.character(homol[["Peaks in homologue series"]][use_homol_peaks,c("peak ID")])),
+                      round(homol[["Peaks in homologue series"]][use_homol_peaks,c("mz")],digits=5),
+                      round(log10(homol[["Peaks in homologue series"]][use_homol_peaks,c("intensity")]),digits=4),
+                      round(homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")],digits=1),
+                      round((homol[["Peaks in homologue series"]][use_homol_peaks,c("RT")]/60),digits=1),        
+                      I(homol[["Peaks in homologue series"]][use_homol_peaks,c("Targets")]),
+                      I(homol[["Peaks in homologue series"]][use_homol_peaks,c("ISTDs")]),
+                      I(homol[["Peaks in homologue series"]][use_homol_peaks,c("HS IDs")])             
                     ),
-                    colnames=c("Peak ID","m/z","Intensity","RT [s]","RT [min]","Target matches","ISTD matches","Series ID(s)"),
+                    filter = 'top',
+                    colnames=c("Peak ID","m/z","log10 intens.","RT [s]","RT [min]","Target matches","ISTD matches","Series ID(s)"),
                     rownames=FALSE,
                     selection = list(mode = 'single', target = 'row')
                   )
-        )
-    }
+               )
 })
-################################################################################
+################################################################################ 
 observe({      
-    s<-input$homol_series_peaks_rows_selected
-    if(length(s)){
-        if(s>=1){
-            print(s);
-            # output homol. series table ##################################### 
-            use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
-            these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s],c("HS IDs")],"/")[[1]])
-            print(these_series)
-            use_these_series<-match(these_series,homol[["Homologue Series"]][,"HS IDs"])
-            output$homol_series_table <- DT::renderDataTable(
-	            datatable(
-    	            cbind(homol[["Homologue Series"]][use_these_series,c(1,2,3)],round(homol[["Homologue Series"]][use_these_series,4],digits=1)),
-                  	colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]"),
-                  	rownames=FALSE
-                )
-            )
-            # output homol. series plot ######################################
-            cat("\n for this peak: ");print(use_homol_peaks[s]);
-            output$homol_plot <- renderPlot({   
+          s1<-input$homol_series_peaks_rows_selected
+          if(length(s1)){
+            if(s1>=1){
+              print(s1);
+              # output homol. series table ##################################### 
+              use_homol_peaks<<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
+              these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
+              print(these_series)
+              use_these_series<-match(these_series,homol[["Homologue Series"]][,"HS IDs"])
+              output$homol_series_table <- DT::renderDataTable(
+                  DT::datatable(
+                    data.frame(
+                      I(as.character(homol[["Homologue Series"]][,"HS IDs"])),
+                      I(as.character(homol[["Homologue Series"]][,"peak IDs"])),
+                      round(homol[["Homologue Series"]][,"m/z increment"],digits=5),
+                      round(homol[["Homologue Series"]][,"RT increment"],digits=1),
+                      round(log10(homol[["Homologue Series"]][,"max int."]),digits=4)
+                    ),
+                    filter = 'top',
+                    colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]","Max log10 int."),
+                    rownames=FALSE,
+                    selection = list(mode = 'single', target = 'row')
+                  )
+              )
+              # output homol. series plot ######################################
+              cat("\n for this peak: ");print(use_homol_peaks[s1]);
+              output$homol_plot <- renderPlot({   
                 par(mar=c(5,4.5,.7,.5))
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
                   plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those,
-                  emph_point=homol[["Peaks in homologue series"]][use_homol_peaks[s],"peak ID"],
+                  emph_point=homol[["Peaks in homologue series"]][use_homol_peaks[s1],"peak ID"],
                   emph_series=these_series
                 );
-              },res=100)  
-        }
-    }else{
-        cat("\n ALL DESELECTED")
-        # output homol. series table #####################################    
-        output$homol_series_table <- DT::renderDataTable(
-            datatable(
-                cbind(homol[["Homologue Series"]][,c(1,2,3)],round(homol[["Homologue Series"]][,4],digits=1)),
-                colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]"),
-                rownames=FALSE
-            )
-        )
-        # output homol. series plot ######################################
-        output$homol_plot <- renderPlot({   
-            par(mar=c(5,4.5,.7,.5))
-            enviMass:::plothomol(homol,
+              },res=100)
+            }
+          }else{
+            cat("\n ALL DESELECTED_1")
+            # output homol. series table #####################################    
+            output$homol_series_table <- DT::renderDataTable(
+                  DT::datatable(
+                    data.frame(
+                      I(as.character(homol[["Homologue Series"]][,"HS IDs"])),
+                      I(as.character(homol[["Homologue Series"]][,"peak IDs"])),
+                      round(homol[["Homologue Series"]][,"m/z increment"],digits=5),
+                      round(homol[["Homologue Series"]][,"RT increment"],digits=1),
+                      round(log10(homol[["Homologue Series"]][,"max int."]),digits=4)
+                    ),
+                    filter = 'top',
+                    colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]","Max log10 int."),
+                    rownames=FALSE,
+                    selection = list(mode = 'single', target = 'row')
+                  )
+               )
+            # output homol. series plot ######################################
+            output$homol_plot <- renderPlot({
+              par(mar=c(5,4.5,.7,.5))
+              enviMass:::plothomol(homol,
                 xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                 dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
                 plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those
-            );
-        },res=100)  
-    }
+              );
+            },res=100)  
+          }
+})
+################################################################################ 
+observe({      
+          s2<-input$homol_series_table_rows_selected
+          s1<-isolate(input$homol_series_peaks_rows_selected)
+          if(length(s2)){
+            if(s2>=1){print(s2);
+              cat("\n IN SELECT_2:")
+              if(length(s1)){
+                #use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
+                these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]][s2])
+                use_emph_point<-homol[["Peaks in homologue series"]][use_homol_peaks[s1],"peak ID"]
+              }else{
+                these_series<-homol[["Homologue Series"]][s2,"HS IDs"]
+                use_emph_point<-FALSE
+              }
+              print(these_series)
+              output$homol_plot <- renderPlot({
+                par(mar=c(5,4.5,.7,.5))
+                enviMass:::plothomol(homol,
+                  xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
+                  dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
+                  plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those,
+                  emph_point=use_emph_point,
+                  emph_series=these_series
+                );
+              },res=100)   
+            }
+          }else{
+            cat("\n IN DESELECT_2:")
+            # output homol. series plot ######################################
+            if(length(s1)){
+              these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
+              output$homol_plot <- renderPlot({   
+                par(mar=c(5,4.5,.7,.5))
+                enviMass:::plothomol(homol,
+                  xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
+                  dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
+                  plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those,
+                  emph_point=homol[["Peaks in homologue series"]][use_homol_peaks[s1],"peak ID"],
+                  emph_series=these_series
+                );
+              },res=100)
+            }else{  
+              output$homol_plot <- renderPlot({
+                par(mar=c(5,4.5,.7,.5))
+                enviMass:::plothomol(homol,
+                  xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
+                  dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
+                  plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those
+                );
+              },res=100)  
+            }
+          }
 })
 ################################################################################
- 
+
 ################################################################################
 observeEvent(input$homol_plot_dblclick, { 
           brush <- isolate(input$homol_plot_brush)

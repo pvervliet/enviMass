@@ -861,6 +861,7 @@ function(
     group6<-c();  # retmax
 	group7<-c();  # retdel
 	group8<-c();  # HS cluster ID
+	group9<-c();  # Max. intensity per series
 	len<-length(peaklist[,1])
     getit1<-rep("0",len);      	# (1) HS ID
     getit2<-rep("0",len);      	# (2) level
@@ -881,6 +882,7 @@ function(
 				minRT<-min(peaklist[HS[[a]][b,1:a],3]);
 				maxRT<-max(peaklist[HS[[a]][b,1:a],3]);
 				difRT<-(maxRT-minRT);
+				maxint<-max(peaklist[HS[[a]][b,1:a],2]);
 				for(k in 1:a){
 					getit1[HS[[a]][b,k]]<-paste(getit1[HS[[a]][b,k]],"/",as.character(atgroup),sep="")
 					getit2[HS[[a]][b,k]]<-paste(getit2[HS[[a]][b,k]],"/",as.character(k),sep="")
@@ -902,6 +904,7 @@ function(
 				group6<-c(group6,maxRT);				
 				group7<-c(group7,difRT);
 				group8<-c(group8,HS[[a]][b,a+5]);
+				group9<-c(group9,maxint)
 				atgroup<-(atgroup+1);
 			}
 		}
@@ -920,8 +923,8 @@ function(
 	}
 	grouped_samples<-data.frame(peaklist[,1:3],seq(1,len,1),getit1,getit2,getit3,getit4,getit5,getit6,rep("",len),rep("",len),stringsAsFactors=FALSE);
 	names(grouped_samples)<-c("mz","intensity","RT","peak ID","HS IDs","series level","to ID","m/z increment","RT increment","HS cluster","Targets","ISTDs");
-	grouping<-data.frame(group1,group2,group3,group4,group5,group6,group6-group5,group8,stringsAsFactors=FALSE);
-	names(grouping)<-c("HS IDs","peak IDs","m/z increment","RT increment","min. RT in series","max. RT in series","max.-min. RT","HS cluster");
+	grouping<-data.frame(group1,group2,group3,group4,group5,group6,group6-group5,group8,group9,stringsAsFactors=FALSE);
+	names(grouping)<-c("HS IDs","peak IDs","m/z increment","RT increment","min. RT in series","max. RT in series","max.-min. RT","HS cluster","max int.");
 	# store parameters used ##################################################
 	parameters<-list(0)
 	parameters[[1]]<-elements;

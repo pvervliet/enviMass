@@ -200,7 +200,7 @@
 			homol[[7]]<-homol_peaks_relat
 			names(homol)[7]<-"homol_peaks_relat"		
 			##########################################################################	
-			# intersect with target screening results ################################
+			# intersect with target & ISTD screening results #########################
 			if(
 				(logfile$workflow[names(logfile$workflow)=="target_screen"]=="yes")	||
 				(logfile$workflow[names(logfile$workflow)=="IS_screen"]=="yes")
