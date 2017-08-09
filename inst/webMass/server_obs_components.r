@@ -10,6 +10,7 @@ ranges_homol <- reactiveValues(mass = FALSE, RT = FALSE, massD = FALSE, dmass = 
 refresh_homol <- reactiveValues()
 refresh_homol$a <- 0
 refresh_homol$b <- 0
+refresh_homol$c <- 0
 
 observe({ # - A
 	input$sel_meas_comp 
@@ -205,7 +206,8 @@ observe({ # - A
   
 ################################################################################
 observe({
-        refresh_homol$a
+	refresh_homol$a
+	if(isolate(init$a)=="TRUE"){
         cat("\n IN REFRESH")
                 # filter segments to plot
                 plot_those<<-enviMass:::filter_segments(
@@ -290,10 +292,12 @@ observe({
                   )
                 )
                 ##################################################################
+    }
 })           
 ################################################################################ 
 observe({
-          refresh_homol$b
+	refresh_homol$b
+	if(isolate(init$a)=="TRUE"){
           cat("\n IN REFRESH_2")
                 # filter segments to plot
                 plot_those<<-enviMass:::filter_segments(
@@ -343,10 +347,12 @@ observe({
                     selection = list(mode = 'single', target = 'row')
                   )
                )
+    }
 })
 ################################################################################ 
-observe({      
-          s1<-input$homol_series_peaks_rows_selected
+observe({     
+	s1<-input$homol_series_peaks_rows_selected
+	if(isolate(init$a)=="TRUE"){ 
           if(length(s1)){
             if(s1>=1){
               print(s1);
@@ -411,10 +417,12 @@ observe({
               );
             },res=100)  
           }
+    }
 })
 ################################################################################ 
-observe({      
-          s2<-input$homol_series_table_rows_selected
+observe({  
+	s2<-input$homol_series_table_rows_selected
+	if(isolate(init$a)=="TRUE"){    
           s1<-isolate(input$homol_series_peaks_rows_selected)
           if(length(s2)){
             if(s2>=1){print(s2);
@@ -465,6 +473,7 @@ observe({
               },res=100)  
             }
           }
+    }
 })
 ################################################################################
 

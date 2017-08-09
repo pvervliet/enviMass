@@ -1865,7 +1865,7 @@
 										),
 										bsCollapsePanel("Series table", 
 											tabsetPanel( 	
-												tabPanel("Peaks in series",
+												tabPanel("Peaks in series ->",
 													HTML('<hr noshade="noshade" />'),
 													DT::dataTableOutput('homol_series_peaks')
 												),
