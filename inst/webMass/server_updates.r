@@ -1993,7 +1993,7 @@ if(logfile$version<3.311){
 	################################################################################################
 	if(logfile$workflow[names(logfile$workflow)=="blind"]=="yes"){
 		enviMass::workflow_set(
-			down="profiling",
+			down="blind",
 			except=FALSE,
 			down_TF=c("TRUE","FALSE"),
 			check_node=TRUE, 	
