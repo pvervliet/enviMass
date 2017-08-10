@@ -36,9 +36,9 @@ search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT,onlymax=FALSE,int_ratio=
   if(length(dmz)==1){dmz<-rep(dmz,length(mz))}
   if(length(dRT)==1){dRT<-rep(dRT,length(mz))}
   if(!get_ratio){
-	result<-rep("FALSE",length(mz));
+    result<-rep("FALSE",length(mz));
   }else{
- 	result<-rep(Inf,length(mz)); 
+    result<-rep(Inf,length(mz)); 
   }
   leng<-length(peaks[,1]);
   k<-c(1);
@@ -81,48 +81,50 @@ search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT,onlymax=FALSE,int_ratio=
 		  }
     };
    	for(f in k:n){
-    	if(   (as.numeric(peaks[f,1]) >= as.numeric(target_low)) &&
-    		    ( as.numeric(peaks[f,1]) <= as.numeric(target_up))  &&
-    		    ( as.numeric(peaks[f,3]) >= (as.numeric(RT[ord2[i]])-as.numeric(dRT[ord2[i]]))) &&
-    		    ( as.numeric(peaks[f,3]) <= (as.numeric(RT[ord2[i]])+as.numeric(dRT[ord2[i]])))){
+    	if(   
+          (as.numeric(peaks[f,1]) >= as.numeric(target_low))  &&
+    		  ( as.numeric(peaks[f,1]) <= as.numeric(target_up))  &&
+    		  ( as.numeric(peaks[f,3]) >= (as.numeric(RT[ord2[i]])-as.numeric(dRT[ord2[i]]))) &&
+    		  ( as.numeric(peaks[f,3]) <= (as.numeric(RT[ord2[i]])+as.numeric(dRT[ord2[i]])))
+        ){
           deletes<-c(deletes,f);
         }
     }
     # save results #############################################################
-    if(is.numeric(int_ratio) & length(deletes)>0){
-		deletes<-deletes[
-			int_ratio>=(int[ord2[i]]/peaklist[ord1[deletes],2])
-		]
-	}
-	if(length(deletes)>0){
-		if(get_ratio){
-			if(length(deletes)>1){ # get maximum intensity peak
-				deletes<-deletes[which.max(peaklist[ord1[deletes],2])]
-			}
-			result[ord2[i]]<-(int[ord2[i]]/peaklist[ord1[deletes],2])
-		}else{
-			if(!get_matches){
-				result[ord2[i]]<-"TRUE"
-				next;
-			}
-			if(onlymax){ # only save matched peak with highest intensity
-				if(length(deletes)==1){
-					result[ord2[i]]<-as.character(ord1[deletes]);
-				}else{
-					result[ord2[i]]<-as.character(
-						(ord1[deletes])[which.max(peaklist[ord1[deletes],2])]
-					)
-				}
-			}else{
-				result[ord2[i]]<-as.character(ord1[deletes[1]]);
-				if(length(deletes)>1){
-					for(j in 2:length(deletes)){
-						result[ord2[i]]<-paste(result[ord2[i]],"/",as.character(ord1[deletes[j]]))
-					}
-				}
-			}	
-		}
-	}
+    if(is.numeric(int_ratio) & length(deletes)>0 & !get_ratio){
+		  deletes<-deletes[
+        int_ratio>=(int[ord2[i]]/peaklist[ord1[deletes],2])
+		  ]
+    }
+    if(length(deletes)>0){
+		  if(get_ratio){
+        if(length(deletes)>1){ # get maximum intensity peak
+				  deletes<-deletes[which.max(peaklist[ord1[deletes],2])]
+        }
+        result[ord2[i]]<-(int[ord2[i]]/peaklist[ord1[deletes],2])
+		  }else{
+        if(!get_matches){
+				  result[ord2[i]]<-"TRUE"
+				  next;
+        }
+        if(onlymax){ # only save matched peak with highest intensity
+				  if(length(deletes)==1){
+            result[ord2[i]]<-as.character(ord1[deletes]);
+				  }else{
+            result[ord2[i]]<-as.character(
+						  (ord1[deletes])[which.max(peaklist[ord1[deletes],2])]
+            )
+				  }
+        }else{
+				  result[ord2[i]]<-as.character(ord1[deletes[1]]);
+				  if(length(deletes)>1){
+            for(j in 2:length(deletes)){
+						  result[ord2[i]]<-paste(result[ord2[i]],"/",as.character(ord1[deletes[j]]))
+            }
+          }
+        }	
+      }
+    }
   }
   ##############################################################################
   return(result);

@@ -44,6 +44,7 @@ for(i in 1:length(IDs)){
 if((logfile$parameters$subtract_pos_bydate=="TRUE") || (logfile$parameters$subtract_neg_bydate=="TRUE")){
 	blank_ID_last<-"FALSE"
 	for(i in 1:length(ord)){ 
+		#if(sampleID[ord[i]]=="167"){stop()}
 		if((logfile$parameters$subtract_pos_bydate=="FALSE") & (ionmode[ord[i]]=="positive")){next}
 		if((logfile$parameters$subtract_neg_bydate=="FALSE") & (ionmode[ord[i]]=="negative")){next}	
 		if(old_samplewise[ord[i]]=="TRUE"){next}
