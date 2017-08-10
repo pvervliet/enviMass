@@ -1938,13 +1938,9 @@ if(logfile$version<3.311){
 
 		############################################################################################	
 		# update workflow ##########################################################################		
-		workflow_depend<-read.table(
-			file="workflow_depend"		
-		)
+		workflow_depend<-read.table(file="workflow_depend")
 		workflow_depend<-as.matrix(workflow_depend)
-		workflow_must<-read.table(
-			file="workflow_must"			
-		)
+		workflow_must<-read.table(file="workflow_must")
 		workflow_must<-as.matrix(workflow_must)
 		logfile[[11]]<<-workflow_depend
 		names(logfile)[11]<<-"workflow_depend"	
@@ -1995,12 +1991,18 @@ if(logfile$version<3.311){
 		shinyjs::info(paste0("Screening results and homologues series extraction are now intersected - please press Calculate a.s.a.p. to apply this change to your project!"));
 	}
 	################################################################################################
-	
-	
-	
-	
+	if(logfile$workflow[names(logfile$workflow)=="blind"]=="yes"){
+		enviMass::workflow_set(
+			down="profiling",
+			except=FALSE,
+			down_TF=c("TRUE","FALSE"),
+			check_node=TRUE, 	
+			single_file=FALSE
+		)		
+		shinyjs::info(paste0("Important patch in blind subtraction/annotation step - please recalcualte your project!"));
+	}
 	################################################################################################	
-#	logfile$version<<-3.311	
+	logfile$version<<-3.311	
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 

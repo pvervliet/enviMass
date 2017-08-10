@@ -82,9 +82,9 @@ search_peak<-function(peaklist,mz,dmz=5,ppm=TRUE,RT,dRT,onlymax=FALSE,int_ratio=
     };
    	for(f in k:n){
     	if(   
-          (as.numeric(peaks[f,1]) >= as.numeric(target_low))  &&
-    		  ( as.numeric(peaks[f,1]) <= as.numeric(target_up))  &&
-    		  ( as.numeric(peaks[f,3]) >= (as.numeric(RT[ord2[i]])-as.numeric(dRT[ord2[i]]))) &&
+          (as.numeric(peaks[f,1]) >= as.numeric(target_low))  &
+    		  ( as.numeric(peaks[f,1]) <= as.numeric(target_up))  &
+    		  ( as.numeric(peaks[f,3]) >= (as.numeric(RT[ord2[i]])-as.numeric(dRT[ord2[i]]))) &
     		  ( as.numeric(peaks[f,3]) <= (as.numeric(RT[ord2[i]])+as.numeric(dRT[ord2[i]])))
         ){
           deletes<-c(deletes,f);
