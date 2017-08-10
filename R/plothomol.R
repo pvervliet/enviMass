@@ -11,7 +11,8 @@ function(
 	deldel=.001,
   plot_those=FALSE,
   emph_point=FALSE,
-  emph_series=FALSE
+  emph_series=FALSE,
+  with_num=TRUE
 ){
 
   ############################################################################
@@ -101,13 +102,20 @@ function(
           cex=2,pch=1,col="black");
       }
       if(xlim[1]!=FALSE | ylim[1]!=FALSE){
-        mtext("Zoomed in - click to zoom out partly or double-click to zoom out fully", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_xlim[1], adj = 0)
+        mtext("Zoomed in - click to zoom out partly or double-click to zoom out fully.", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_xlim[1], adj = 0)
+      }else{
+        mtext("Brush and doubleclick to zoom.", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_xlim[1], adj = 0)        
       }
       if(any(!plot_those)){
-        mtext("Series subsets selected", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_xlim[2], adj = 1)
+        mtext("Series subsets selected.", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_xlim[2], adj = 1)
       }
     }
     box();
+    if(with_num){
+      plot.window(xlim=c(0,1),ylim=c(0,1))
+      text(0,1,labels="C",cex=1.3)
+      plot.window(xlim=use_xlim,ylim=use_ylim);
+    }
   }
   ############################################################################
 
@@ -130,9 +138,11 @@ function(
         homol[["homol_peaks_relat"]][plot_those,3],counts,
         type="h",col=coloring[plot_those],lwd=1.5,
         xlab="Series m/z difference",ylab="Moving window count",
-        xlim=use_dmasslim)
+        xlim=use_dmasslim,ylim=c(0,max(counts)))
       if(dmasslim[1]!=FALSE){
-        mtext("Series mass differences zoomed in - click to zoom out partly or double-click to zoom out fully", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_dmasslim[1], adj = 0)
+        mtext("Series mass differences zoomed in - click to zoom out partly or double-click to zoom out fully.", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_dmasslim[1], adj = 0)
+      }else{
+        mtext("Brush to select subrange. Doubleclick into brush to zoom in.", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_dmasslim[1], adj = 0)        
       }
     }else{
       plot.new();
@@ -140,6 +150,11 @@ function(
       title(xlab="Series m/z difference");
       axis(1);
       box();
+    }
+    if(with_num){
+      plot.window(xlim=c(0,1),ylim=c(0,1))
+      text(0,.85,labels="A",cex=1.3)
+      plot.window(xlim=use_dmasslim,ylim=c(0,max(counts)))
     }
   }
   ##########################################################################
@@ -165,7 +180,9 @@ function(
         xlab="Series RT difference [s]",ylab="m/z difference",
         xlim=use_dRTlim,ylim=use_dmasslim)
       if(dRTlim[1]!=FALSE){
-        mtext("Series RT differences zoomed in - click to zoom out partly or double-click to zoom out fully", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_dRTlim[1], adj = 0)
+        mtext("Series RT differences zoomed in - click to zoom out partly or double-click to zoom out fully.", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_dRTlim[1], adj = 0)
+      }else{
+        mtext("Brush to select subrange. Doubleclick into brush to zoom in.", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_dRTlim[1], adj = 0)        
       }
     }else{
       plot.new();
@@ -173,6 +190,11 @@ function(
       title(xlab="Series RT difference");
       axis(1);
       box();
+    }
+    if(with_num){
+      plot.window(xlim=c(0,1),ylim=c(0,1))
+      text(0,.85,labels="B",cex=1.3)
+      plot.window(xlim=use_dRTlim,ylim=use_dmasslim)
     }
   }
   ############################################################################

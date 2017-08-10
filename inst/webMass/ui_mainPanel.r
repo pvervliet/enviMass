@@ -1729,7 +1729,8 @@
 				######################################################################################################################
 				tabPanel("Grouping",	
 					HTML('<hr noshade="noshade" />'),
-					tags$p(align="justify","To show nontarget grouping results of this tab, please first specify the ID of the file. The ID associated with a file can be found in the second column of the files table in the Files tab."),											
+					tags$p(align="justify","To show nontarget grouping and homologue series detection results in the below tabs, please first specify the ID of the file of interest. 
+						The ID associated with any file can be found in the second column of the files table in the Files tab."),											
 					div(style = widget_style3,numericInput("sel_meas_comp", "Type in file ID:", 0, min=0)),
 					textOutput('comp_file_name'),
 					textOutput('comp_file_type'),
@@ -1745,6 +1746,8 @@
 							tabPanel("Components",	
 							conditionalPanel(			
 								condition = "(output.sel_meas_comp_state1 != 'no nontarget components available ') & (output.sel_meas_comp_state != 'Invalid file ID')",
+									HTML('<hr noshade="noshade" />'),
+									tags$p(align="justify",""),
 									HTML('<hr noshade="noshade" />'),
 									bsCollapse(multiple = FALSE, open = "col3", id = "collapse3",	
 										bsCollapsePanel("Summary", 											
@@ -1823,8 +1826,19 @@
 							conditionalPanel(			
 								condition = "(output.sel_meas_comp_state2 != ' no homologue series detection results available') & (output.sel_meas_comp_state != 'Invalid file ID')",
 									HTML('<hr noshade="noshade" />'),
+									tags$p(align="justify","The below two subsections visualize and tabulate peak series indicative of homologuous compounds. Any zooms and selections made in 
+										any of the overview plots A to C will filter the listing of Peaks in series in the first subtab of the collapsible Series table subsection. 
+										Any selection or deselection of rows made in this Peaks in series table will in turn list either all series of which the selected peak is part of or 
+										simply all available series in the second Series subtab, respectively. 
+										In addition, selecting rows in the latter Series table will show the chromatographic peaks of the concerned series."),
+									HTML('<hr noshade="noshade" />'),
 									bsCollapse(multiple = TRUE, open = "col4", id = "collapse4",
 										bsCollapsePanel("Series plot overview", 	
+											HTML('<hr noshade="noshade" />'),
+											tags$p(align="justify","Selections by brushing or zooming made on the mass differences (plot A) or RT differences (plot B) between homologues adjacent in a series 
+												will jointly filter the plotting of series segments between such homologues in plot C. In turn, zooming in plot C will filter plots A and C. 
+												Please note that peaks incorporated in any series are plotted as bold darkgrey points, whereas all other peaks are set in lightgrey in plot C."),
+											HTML('<hr noshade="noshade" />'),
 							                plotOutput("homol_counts",
 							                        click = "homol_counts_click",
 							                        dblclick = "homol_counts_dblclick",
@@ -1861,18 +1875,45 @@
 							                          delay = 0
 							                        ),                
 							                        height = "700px"
-							                      )
+							                      ),
+											HTML('<h1 align="center"> &#x21D3; </h1> ')
 										),
 										bsCollapsePanel("Series table", 
 											tabsetPanel( 	
 												tabPanel("Peaks in series ->",
 													HTML('<hr noshade="noshade" />'),
+													tags$p(align="justify","The below table lists all series peaks for which series segments are visible in plot C of the above series plot overview. 
+														Selection of a row in this table will filter the series in the subsequent Series subtab, i.e., all those series corresponding to the Series ID(s)
+														shown in the selected row. In addition, the peak and all its corresponding series will be highlighted in the above plot C."),
+													HTML('<hr noshade="noshade" />'),
 													DT::dataTableOutput('homol_series_peaks')
 												),
-												tabPanel("Series",
-													HTML('<hr noshade="noshade" />'),
-													DT::dataTableOutput('homol_series_table')
-												)
+						                        tabPanel("Series",
+						                        	HTML('<hr noshade="noshade" />'),
+						                        	tags$p(align="justify","The below table lists either all available peak series or - if a row in the previous Peaks in series subtab is selected - all 
+						                        		series in which the selected peak is part of. Click on a row in the below Series table to get a series highlighted in the above plot C and to see its 
+						                        		chromatographic peaks."),
+						                            HTML('<hr noshade="noshade" />'),                
+						                            conditionalPanel(     
+						                              condition = "input.homol_series_table_rows_selected > 0",  
+						                                #####################################################            
+						                                plotOutput("homol_chromat",
+						                                    click = "homol_chromat_click",
+						                                    dblclick = "homol_chromat_dblclick",
+						                                    #hover = "homol_chromat_hover",
+						                                    brush = brushOpts(
+						                                      id = "homol_chromat_brush",
+						                                      direction = c("xy"),
+						                                      resetOnNew = TRUE,
+						                                      delay = 0
+						                                    ),
+						                                    height = "250px"
+						                                ),
+						                                #####################################################
+						                                HTML('<hr noshade="noshade" />')
+						                            ), 
+						                            DT::dataTableOutput('homol_series_table')
+						                        )
 											)	
 										)
 									)
@@ -1887,6 +1928,7 @@
 										is included in the workflow) or (b) all additional peaks with a RT similar to the monoisotopic one. 
 										Parameters for estimation are taken from those set for the isotopologue grouping (e.g., the intensity and RT tolerance) and the compound screening (e.g., LOD estimation), except
 										for the mass shift to be set below."), 
+									HTML('<hr noshade="noshade" />'),
 									fluidRow(										
 										column(3,numericInput("atom_bound_peak", "Type in peak ID:", 0, width='200px',min=0)),
 										column(5,selectInput("atom_bound_addpeaks", "Select additional peaks:", c("(b) all peaks with similar RT"),selected="(b) all peaks with similar RT",multiple=FALSE))

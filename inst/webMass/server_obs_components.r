@@ -6,11 +6,12 @@ ee	<-	reactiveValues() # reactive value ...
 ee$entry<-0
 verbose<-TRUE
 
-ranges_homol <- reactiveValues(mass = FALSE, RT = FALSE, massD = FALSE, dmass = FALSE, dRT = FALSE)
+ranges_homol <- reactiveValues(mass = FALSE, RT = FALSE, massD = FALSE, dmass = FALSE, dRT = FALSE, RTchrom=FALSE, intchrom=FALSE)
 refresh_homol <- reactiveValues()
 refresh_homol$a <- 0
 refresh_homol$b <- 0
-refresh_homol$c <- 0
+refresh_homol$c <- 0 # contains peaks
+refresh_homol$d <- 0
 
 observe({ # - A
 	input$sel_meas_comp 
@@ -26,16 +27,19 @@ observe({ # - A
 			(isolate(input$sel_meas_comp)!="") &
 			(any(measurements$ID==isolate(input$sel_meas_comp))) # check existence ...
 		){ # ... finds emtpy folder otherwise
-
 			output$sel_meas_comp_state<-renderText("For this file:")
 			output$comp_file_name<-renderText(paste("File name: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_comp)),"Name"],sep=""))
 			output$comp_file_type<-renderText(paste("File type: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_comp)),"Type"],sep=""))
 			output$comp_file_mode<-renderText(paste("Ionization mode: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_comp)),"Mode"],sep=""))
 			#####################################################################
+			# on centroid data ##################################################
+			load(file.path(logfile[[1]],"MSlist",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv"))  
+			#####################################################################
 			# on isotopologues & adducts ########################################
 			if( 
 				file.exists(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp))) &
-				(do_isot | do_addu) 
+				(do_isot | do_addu) &
+				measurements[measurements$ID==isolate(input$sel_meas_comp),"include"]=="TRUE"
 			){
 				#################################################################
 				if(do_isot){ # update selection entries for the atom bound estimations
@@ -170,7 +174,8 @@ observe({ # - A
 			# on homologues #####################################################			
 			if(
 				file.exists(file.path(logfile[[1]],"results","componentization","homologues",isolate(input$sel_meas_comp))) &
-				do_homol
+				do_homol &
+				measurements[measurements$ID==isolate(input$sel_meas_comp),"include"]=="TRUE"
 			){
 				#################################################################
 				if(verbose){cat("\n in Comp_A_3")}
@@ -206,9 +211,9 @@ observe({ # - A
   
 ################################################################################
 observe({
-	refresh_homol$a
+    refresh_homol$a
 	if(isolate(init$a)=="TRUE"){
-        cat("\n IN REFRESH")
+        cat("\n IN REFRESH_1")
                 # filter segments to plot
                 plot_those<<-enviMass:::filter_segments(
                   homol,
@@ -230,7 +235,7 @@ observe({
                 }
                 # output homol. series plot ######################################
                 output$homol_plot <- renderPlot({   
-                  par(mar=c(5,4.5,.7,.5))
+                  par(mar=c(4.5,4.5,.7,.8))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                     dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -239,7 +244,7 @@ observe({
                 },res=100)  
                 # output homol. mass difference counts plot #####################
                 output$homol_counts <- renderPlot({   
-                  par(mar=c(5,4.5,.7,.5))
+                  par(mar=c(4.5,4.5,.7,.8))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                     dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -248,7 +253,7 @@ observe({
                 },res=100)          
                 # output homol. RT difference vs mass scatter plot ##############
                 output$homol_RT <- renderPlot({   
-                  par(mar=c(5,4.5,.7,.5))
+                  par(mar=c(4.5,4.5,.7,.8))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                     dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -291,6 +296,8 @@ observe({
                     selection = list(mode = 'single', target = 'row')
                   )
                 )
+                isolate(ranges_homol$RTchrom<-FALSE) 
+                isolate(ranges_homol$intchrom<-FALSE) 
                 ##################################################################
     }
 })           
@@ -320,7 +327,7 @@ observe({
                 }
                 # output homol. series plot ######################################
                 output$homol_plot <- renderPlot({   
-                  par(mar=c(5,4.5,.7,.5))
+                  par(mar=c(4.5,4.5,.7,.8))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                     dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -350,12 +357,13 @@ observe({
     }
 })
 ################################################################################ 
-observe({     
-	s1<-input$homol_series_peaks_rows_selected
-	if(isolate(init$a)=="TRUE"){ 
+observe({      
+    s1<-input$homol_series_peaks_rows_selected
+    if(isolate(init$a)=="TRUE"){
           if(length(s1)){
             if(s1>=1){
               print(s1);
+              cat("\n IN SELECT_1:")
               # output homol. series table ##################################### 
               use_homol_peaks<<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
               these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
@@ -364,11 +372,11 @@ observe({
               output$homol_series_table <- DT::renderDataTable(
                   DT::datatable(
                     data.frame(
-                      I(as.character(homol[["Homologue Series"]][,"HS IDs"])),
-                      I(as.character(homol[["Homologue Series"]][,"peak IDs"])),
-                      round(homol[["Homologue Series"]][,"m/z increment"],digits=5),
-                      round(homol[["Homologue Series"]][,"RT increment"],digits=1),
-                      round(log10(homol[["Homologue Series"]][,"max int."]),digits=4)
+                      I(as.character(homol[["Homologue Series"]][use_these_series,"HS IDs"])),
+                      I(as.character(homol[["Homologue Series"]][use_these_series,"peak IDs"])),
+                      round(homol[["Homologue Series"]][use_these_series,"m/z increment"],digits=5),
+                      round(homol[["Homologue Series"]][use_these_series,"RT increment"],digits=1),
+                      round(log10(homol[["Homologue Series"]][use_these_series,"max int."]),digits=4)
                     ),
                     filter = 'top',
                     colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]","Max log10 int."),
@@ -376,10 +384,12 @@ observe({
                     selection = list(mode = 'single', target = 'row')
                   )
               )
+              isolate(ranges_homol$RTchrom<-FALSE) 
+              isolate(ranges_homol$intchrom<-FALSE) 
               # output homol. series plot ######################################
               cat("\n for this peak: ");print(use_homol_peaks[s1]);
               output$homol_plot <- renderPlot({   
-                par(mar=c(5,4.5,.7,.5))
+                par(mar=c(4.5,4.5,.7,.8))
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -409,7 +419,7 @@ observe({
                )
             # output homol. series plot ######################################
             output$homol_plot <- renderPlot({
-              par(mar=c(5,4.5,.7,.5))
+              par(mar=c(4.5,4.5,.7,.8))
               enviMass:::plothomol(homol,
                 xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                 dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -420,40 +430,47 @@ observe({
     }
 })
 ################################################################################ 
-observe({  
+observe({      
 	s2<-input$homol_series_table_rows_selected
-	if(isolate(init$a)=="TRUE"){    
+	if(isolate(init$a)=="TRUE"){
           s1<-isolate(input$homol_series_peaks_rows_selected)
           if(length(s2)){
-            if(s2>=1){print(s2);
+            if(s2>=1){
               cat("\n IN SELECT_2:")
+              # output homol. series plot ######################################
               if(length(s1)){
-                #use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
-                these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]][s2])
+                cat(" A ")
+                use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
+                these_series_1<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]][s2])
                 use_emph_point<-homol[["Peaks in homologue series"]][use_homol_peaks[s1],"peak ID"]
               }else{
-                these_series<-homol[["Homologue Series"]][s2,"HS IDs"]
+                cat(" B ")
+                these_series_1<-homol[["Homologue Series"]][s2,"HS IDs"]
                 use_emph_point<-FALSE
               }
-              print(these_series)
+              print(these_series_1)
               output$homol_plot <- renderPlot({
-                par(mar=c(5,4.5,.7,.5))
+                par(mar=c(4.5,4.5,.7,.8))
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
                   plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those,
                   emph_point=use_emph_point,
-                  emph_series=these_series
+                  emph_series=these_series_1
                 );
               },res=100)   
+              # output chromatograms #########################################
+              these_peaks<-as.numeric(strsplit(homol[["Homologue Series"]][these_series_1,"peak IDs"],",")[[1]])
+              isolate(refresh_homol$c<-these_peaks)
+              isolate(refresh_homol$d<-(refresh_homol$d+1))
             }
           }else{
-            cat("\n IN DESELECT_2:")
+            cat("\n IN DESELECT_2:");print(s2);
             # output homol. series plot ######################################
             if(length(s1)){
               these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
               output$homol_plot <- renderPlot({   
-                par(mar=c(5,4.5,.7,.5))
+                par(mar=c(4.5,4.5,.7,.8))
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -464,7 +481,7 @@ observe({
               },res=100)
             }else{  
               output$homol_plot <- renderPlot({
-                par(mar=c(5,4.5,.7,.5))
+                par(mar=c(4.5,4.5,.7,.8))
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -475,7 +492,28 @@ observe({
           }
     }
 })
+################################################################################ 
+observe({
+	refresh_homol$d
+	if(isolate(init$a)=="TRUE"){
+        if(isolate(refresh_homol$c[1]>0) & isolate(refresh_homol$d[1]>0)){
+          cat("\n IN CHROMAT");print(isolate(refresh_homol$c));
+          # output chromatograms #########################################
+          output$homol_chromat <- renderPlot({
+            par(mar=c(4.5,4,.8,.8))
+            enviMass:::plotchromat(
+              MSlist,
+              peakIDs=isolate(refresh_homol$c),
+              RTlim=isolate(ranges_homol$RTchrom),
+              Intlim=isolate(ranges_homol$intchrom),
+              normalize=FALSE
+            );
+          },res=100) 
+        }   
+    }   
+})
 ################################################################################
+
 
 ################################################################################
 observeEvent(input$homol_plot_dblclick, { 
@@ -567,6 +605,41 @@ observeEvent(input$homol_RT_click, { # NOTE: brushing already triggers a click -
             cat("\n Doing hover_d")
             isolate(ranges_homol$dRT <- c(brush$xmin, brush$xmax))
             refresh_homol$b<-(refresh_homol$b+1)
+          }   
+})     
+################################################################################
+################################################################################
+observeEvent(input$homol_chromat_dblclick, { 
+          brush <- isolate(input$homol_chromat_brush)
+          if (!is.null(brush)) {
+            cat("\n Zoom in_1e")
+            isolate(ranges_homol$RTchrom <- c(brush$xmin, brush$xmax))
+            isolate(ranges_homol$intchrom <- c(brush$ymin, brush$ymax))            
+          } else {
+            cat("\n Zoom out full_1e")
+            isolate(ranges_homol$RTchrom <- FALSE)
+            isolate(ranges_homol$intchrom <- FALSE)
+          }
+          refresh_homol$d<-(refresh_homol$d+1) # valid in both cases
+})
+observeEvent(input$homol_chromat_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
+          cat("\n Zoom out part_1_ae")
+          brush <- isolate(input$homol_chromat_brush)
+          if (is.null(brush)) {
+              cat("\n Zoom out part_1_be")
+              if(isolate(ranges_homol$RTchrom[1])!=FALSE){
+                old_range_dmass<-abs(isolate(ranges_homol$RTchrom[2]-ranges_homol$RTchrom[1]))
+                isolate(ranges_homol$RTchrom[1]<-ranges_homol$RTchrom[1]-.3*old_range_dmass)
+                isolate(ranges_homol$RTchrom[2]<-ranges_homol$RTchrom[2]+.3*old_range_dmass)
+                old_range_dmass<-abs(isolate(ranges_homol$intchrom[2]-ranges_homol$intchrom[1]))
+                isolate(ranges_homol$intchrom[1]<-ranges_homol$intchrom[1]-.3*old_range_dmass)
+                isolate(if(ranges_homol$intchrom[1]<0){ranges_homol$intchrom[1]<-0})
+                isolate(ranges_homol$intchrom[2]<-ranges_homol$intchrom[2]+.3*old_range_dmass)
+              }  
+              refresh_homol$d<-(refresh_homol$d+1)
+          }else{
+            cat("\n Doing hover_e - nothing")
+
           }   
 })     
 ################################################################################
