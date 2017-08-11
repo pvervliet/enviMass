@@ -302,6 +302,8 @@ observeEvent(input$peak_chromat_click, { # NOTE: brushing already triggers a cli
                 old_range_dmass<-abs(isolate(ranges_peaks_mz_RT$xchroma[2]-ranges_peaks_mz_RT$xchroma[1]))
                 isolate(ranges_peaks_mz_RT$xchroma[1]<-ranges_peaks_mz_RT$xchroma[1]-.3*old_range_dmass)
                 isolate(ranges_peaks_mz_RT$xchroma[2]<-ranges_peaks_mz_RT$xchroma[2]+.3*old_range_dmass)
+              }
+              if(isolate(ranges_peaks_mz_RT$ychroma[1])!=FALSE){             
                 old_range_dmass<-abs(isolate(ranges_peaks_mz_RT$ychroma[2]-ranges_peaks_mz_RT$ychroma[1]))
                 isolate(ranges_peaks_mz_RT$ychroma[1]<-ranges_peaks_mz_RT$ychroma[1]-.3*old_range_dmass)
                 isolate(if(ranges_peaks_mz_RT$ychroma[1]<0){ranges_peaks_mz_RT$ychroma[1]<-0})
@@ -1109,10 +1111,10 @@ maincalc6<-reactive({
 			# intensity histogram
 			path=file.path(logfile[[1]],"pics","profilehisto.png");
                 png(filename = path, bg = "white", width = 600);
-                plot_profiles_intensity_histograms(mean_intensities=profpeaks2[,2],
-                                                    max_intensities=profpeaks2[,4],
-                                                    past_incidents=profpeaks2[,12],
-                                                    current_incidents=profpeaks2[,13]);
+                plot_profiles_intensity_histograms(	mean_intensities=profpeaks2[,"mean_int"],
+                                                    max_intensities=profpeaks2[,"max_int"],
+                                                    past_incidents=profpeaks2[,"deltaint_global"],
+                                                    current_incidents=profpeaks2[,"deltaint_newest"]);
             dev.off();
 			expr6<-list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
 			output$profilehisto<-renderImage(expr6, deleteFile = FALSE);
@@ -1121,19 +1123,37 @@ maincalc6<-reactive({
 				profpeaks2<<-profpeaks2[1:isolate(input$filterProf_count),,drop=FALSE]
 			}
 			profpeaks3<<-as.data.frame(profpeaks2)
-			profpeaks3[,"mean_mz" ]<<-format(profpeaks3[,"mean_mz" ],digits=8)
-			profpeaks3[,"mean_int"]<<-format(profpeaks3[,"mean_int"],scientific=TRUE,digits=2)
-			profpeaks3[,"max_int"]<<-format(profpeaks3[,"max_int"],scientific=TRUE,digits=2)
+			profpeaks3[,"mean_mz" ]<<-round(profpeaks3[,"mean_mz"],digits=6)
+			profpeaks3[,"mean_RT" ]<<-round(profpeaks3[,"mean_RT"],digits=1)
+			profpeaks3[,"min_RT" ]<<-round(profpeaks3[,"min_RT"],digits=1)
+			profpeaks3[,"max_RT" ]<<-round(profpeaks3[,"max_RT"],digits=1)
+			profpeaks3[,"mean_int"]<<-round(log10(profpeaks3[,"mean_int"]),digits=3)
+			profpeaks3[,"max_int"]<<-round(log10(profpeaks3[,"max_int"]),digits=3)
 			profpeaks3[,"in_blind?"]<<-as.integer(profpeaks3[,"in_blind?"])
 			profpeaks3[,"above_blind?"]<<-round(profpeaks3[,"above_blind?"],digits=4)
-			profpeaks3[,"var_mz"]<<-format(profpeaks3[,"var_mz"],scientific=TRUE,digits=2)
-			profpeaks3[,"profile_ID"]<<-as.integer(profpeaks3[,"profile_ID"])
+			profpeaks3[,"var_mz"]<<-round(log10(profpeaks3[,"var_mz"]),digits=3)
+			profpeaks3[,"profile_ID"]<<-as.character(profpeaks3[,"profile_ID"])
 			profpeaks3[,"number_peaks_total"]<<-as.integer(profpeaks3[,"number_peaks_total"])
-			profpeaks3[,"deltaint_global"]<<-format(profpeaks3[,"deltaint_global"],scientific=TRUE,digits=2)
-			profpeaks3[,"deltaint_newest"]<<-format(profpeaks3[,"deltaint_newest"],scientific=TRUE,digits=2)
-			profpeaks3<<-profpeaks3[,c(10:13,1:9)]
-			names(profpeaks3)<<-c("profile ID","number of peaks","global trend intensity","current trend intensity","mean m/z", "mean intensity", "mean RT", "maximum Intensity", "in blind?", "above blind?", "m/z variance", "minimum RT", "maximum RT")
-			output$allproftable<-renderTable(profpeaks3)
+			profpeaks3[,"deltaint_global"]<<-round(log10(profpeaks3[,"deltaint_global"]),digits=2)
+			profpeaks3[,"deltaint_newest"]<<-round(log10(profpeaks3[,"deltaint_newest"]),digits=2)
+			profpeaks3<<-profpeaks3[,c("profile_ID","number_peaks_total","deltaint_global","deltaint_newest","mean_mz",
+				"mean_int","mean_RT","max_int","in_blind?","above_blind?","var_mz","min_RT","max_RT")]
+			output$allproftable<-DT::renderDataTable(
+				DT::datatable(profpeaks3,
+					colnames=c("profile ID","number of peaks","log10 global trend intensity","log10 current trend intensity","mean m/z","log10 mean intensity", 
+						"mean RT [s]","log10 maximum Intensity","in blind?","above blind?","log10 m/z variance","minimum RT [s]","maximum RT [s]"),
+					rownames=FALSE,
+					filter = 'top',
+                    selection = list(mode = 'single', target = 'row'),
+                   	extensions = c('Buttons'),
+					options = list(
+						lengthMenu = c(50,100,500),
+						ordering=T,
+						dom = 'Bfrtip',
+						buttons = c('excel', 'csv')#buttons = c('excel', 'pdf', 'print', 'csv'),
+					)
+				)
+			)
 			updateNumericInput(session,"profID",value = 0);
 			updateNumericInput(session,"profentry",value = 0);
 			return(as.character(atit2));
@@ -1285,20 +1305,22 @@ observe({
 			#})
 			use_prof_IDs<-match(prof_plot_IDs,profileList[["index_prof"]][,"profile_ID"])
 			use_prof_IDs<-use_prof_IDs[!is.na(use_prof_IDs)]
-			similar_profiles_tab<-profileList[["index_prof"]][use_prof_IDs,c("profile_ID","mean_mz","mean_int","max_int_sample","mean_RT","Mass defect","in_blind?","number_peaks_sample","number_peaks_blind","number_peaks_total"),drop=FALSE]
+			similar_profiles_tab<-profileList[["index_prof"]][use_prof_IDs,c("profile_ID","mean_mz","mean_int","max_int_sample","mean_RT",
+				"Mass defect","above_blind?","number_peaks_sample","number_peaks_blind","number_peaks_total"),drop=FALSE]
 			similar_profiles_tab<-as.data.frame(similar_profiles_tab)
 			similar_profiles_tab[,"mean_mz" ]<-format(similar_profiles_tab[,"mean_mz" ],digits=5)
 			similar_profiles_tab[,"mean_int"]<-format(similar_profiles_tab[,"mean_int"],scientific=TRUE,digits=2)
 			similar_profiles_tab[,"max_int_sample"]<-format(similar_profiles_tab[,"max_int_sample"],scientific=TRUE,digits=2)
 			similar_profiles_tab[,"mean_RT"]<-format(similar_profiles_tab[,"mean_RT"],digits=1)
 			similar_profiles_tab[,"Mass defect"]<-format(similar_profiles_tab[,"Mass defect"],digits=3)
-			similar_profiles_tab[,"in_blind?"]<-format(similar_profiles_tab[,"in_blind?"],digits=3)
+			similar_profiles_tab[,"above_blind?"]<-format(similar_profiles_tab[,"above_blind?"],digits=3)
 			similar_profiles_tab[,"number_peaks_sample"]<-as.integer(similar_profiles_tab[,"number_peaks_sample"])
 			similar_profiles_tab[,"number_peaks_blind"]<-as.integer(similar_profiles_tab[,"number_peaks_blind"])
 			similar_profiles_tab[,"number_peaks_total"]<-as.integer(similar_profiles_tab[,"number_peaks_total"])
 			output$similar_profiles_table<-DT::renderDataTable({
 				DT::datatable(similar_profiles_tab,
-					colnames=c("Profile ID","Mean m/z","Mean int. overall","Max int. samples","Mean RT","Mass defect","Median int. ratio blind vs. samples","Peak number samples","Peak number blinds","Peak number total")
+					colnames=c("Profile ID","Mean m/z","Mean int. overall","Max int. samples","Mean RT",
+						"Mass defect","Median int. ratio blind vs. samples","Peak number samples","Peak number blinds","Peak number total")
 				)
 			});
 			##################################################################

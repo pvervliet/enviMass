@@ -2098,16 +2098,9 @@
 										#	imageOutput("profileboxplot", height="auto"),
 										#	value="test5"),
 										bsCollapsePanel("Profile list", 		
-											tableOutput("allproftable"),
+											DT::dataTableOutput("allproftable"),
 											value="test5")
-									),
-									div(style = widget_style3,
-										bsButton("expo_profiles","Export filtered profile list",style="info"),
-										textOutput("expo1"),
-										bsPopover("expo_profiles", 
-											title = "Export above filtered profiles",
-											content = "Time-sorted peak intensities of profiles and their mean mass & RT are exported as profiles.txt to the export folder of this project. WARNING: restrict list size to avoid lengthy exports!", 
-											placement = "right", trigger = "hover"))				
+									)				
 							),
 							tabPanel("Trends",
 									tags$h5("Comparison of current vs. global trends by profile ID"),

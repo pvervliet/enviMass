@@ -46,7 +46,7 @@ profiletopeak<-function(profileList,progbar){
 		peaklist[k,"mean_intensity"]<-mean(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"intensity"])		
 		peaklist[k,"mean_RT"]<-profileList[["index_prof"]][k,"mean_RT"]
 		peaklist[k,"max_intensity"]<-max(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"intensity"])	
-		peaklist[k,"in_blind?"]<-profileList[["index_prof"]][k,"blind?"] 
+		peaklist[k,"in_blind?"]<-profileList[["index_prof"]][k,"in_blind?"] 
 		peaklist[k,"above_blind?"]<-profileList[["index_prof"]][k,"above_blind?"] 
 		peaklist[k,"var_mz"]<-var(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"m/z"])	
 		peaklist[k,"min_RT"]<-min(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[["index_prof"]][k,"end_ID"]),"RT"])	

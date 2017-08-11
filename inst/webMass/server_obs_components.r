@@ -506,7 +506,8 @@ observe({
               peakIDs=isolate(refresh_homol$c),
               RTlim=isolate(ranges_homol$RTchrom),
               Intlim=isolate(ranges_homol$intchrom),
-              normalize=FALSE
+              normalize=FALSE,
+              chromat_full=TRUE
             );
           },res=100) 
         }   
