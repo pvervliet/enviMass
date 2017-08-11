@@ -1,37 +1,69 @@
+ranges_peaks_mz_RT <- reactiveValues(x = NULL, y = NULL, xchroma=FALSE, ychroma=FALSE) # used for several of the below observers
+refresh_plot<-reactiveValues()
+refresh_plot$a<-1
+refresh_plot$b<-0
+refresh_plot$c<-0
+
+
+
+
 ##############################################################################
 # update results for individual measurements #################################
 ##############################################################################
 observe({
     input$sel_meas
 	input$blind_boxplot_log
+	if(isolate(init$a)=="TRUE"){
 	if(!is.na(isolate(input$sel_meas))){
     if(isolate(input$sel_meas)!=0){
 		##########################################################################	
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if(any(measurements[,"ID"]==as.character(isolate(input$sel_meas)))){
-			output$file_proc_name<-renderText(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Name"])
-			output$file_proc_type<-renderText(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Type"])
-			output$file_proc_mode<-renderText(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Mode"])		
+			output$file_proc_name<-renderText(paste("File name: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Name"],sep=""))
+			output$file_proc_type<-renderText(paste("File type: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Type"],sep=""))
+			output$file_proc_mode<-renderText(paste("Ionization mode: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Mode"],sep=""))
 			# peaklist info ##########################################################
-			if(file.exists(file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))))){
-				load(file=file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"),verbose=FALSE);			
+			if(	file.exists(file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas)))) &
+				(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"include"]=="TRUE")
+			){
+				load(file=file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+				#load(file=file.path(logfile$project_folder,"peaklist",as.character(1)),envir=as.environment(".GlobalEnv"),verbose=FALSE);			
 				output$file_peak_number<-renderText(as.character(length(peaklist[,1])));	
+				blind_aff<-round(
+					(sum(peaklist[,colnames(peaklist)=="keep_2"]<Inf))/length(peaklist[,1])*100
+				,digits=3)
+				output$file_blind_aff<-renderText(as.character(blind_aff));
+				output$file_blind_aff2<-renderText(as.character(blind_aff));
 				blind_rem<-round(
 					(sum(peaklist[,colnames(peaklist)=="keep_2"]<as.numeric(logfile$parameters$blind_threshold)))/length(peaklist[,1])*100
 				,digits=3)
 				output$file_blind_rem<-renderText(as.character(blind_rem));
+				output$file_blind_rem2<-renderText(as.character(blind_rem));
 				repl_rem<-round(
 					(sum(peaklist[,colnames(peaklist)=="keep"]==0))/length(peaklist[,1])*100
 				,digits=3)
 				output$file_repl_rem<-renderText(as.character(repl_rem));
-				#rm(peaklist,envir=as.environment(".GlobalEnv")) # wtf?
+				######################################################################
+				isolate(refresh_plot$c<-(refresh_plot$c+1))
+	  			######################################################################
 			}else{
-				cat("\n no peaklist for processing view found")
+				cat("\n no processed peaklist found for the selected file.")
+				isolate(refresh_plot$b<-0)	
+				isolate(refresh_plot$c<-0)	
+				output$file_peak_number<-renderText("none");
+				output$file_blind_aff<-renderText("none");
+				output$file_blind_aff2<-renderText("none");
+				output$file_blind_rem<-renderText("none");
+				output$file_blind_rem2<-renderText("none");
+				output$file_repl_rem<-renderText("none");
 			}
 			##########################################################################		
 			# blind/blank peak tagging ###############################################
 			if(
-				(logfile$workflow[names(logfile$workflow)=="blind"]=="yes") & (measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Type"]!="blank")
+				(logfile$workflow[names(logfile$workflow)=="blind"]=="yes") & 
+				(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Type"]!="blank") &
+				(file.exists(file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))))) &
+				(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"include"]=="TRUE")
 			){			
 				output$showblank<-renderText("Blank/blind peak tagging (subtraction) results:")			
 				load(file=file.path(logfile[[1]],"peaklist",as.character(isolate(input$sel_meas))),verbose=FALSE);
@@ -67,7 +99,9 @@ observe({
 			pics<-list.files(file.path(logfile[[1]],"pics"))			
 			# recalibration ##########################################################
 			if(
-				any(pics==paste("recal_",as.character(isolate(input$sel_meas)),sep="")) & (logfile$workflow[names(logfile$workflow)=="recal"]=="yes")
+				any(pics==paste("recal_",as.character(isolate(input$sel_meas)),sep="")) & 
+				(logfile$workflow[names(logfile$workflow)=="recal"]=="yes") &
+				(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"include"]=="TRUE")
 			){
 				output$showrecal<-renderText("Mass recalibration results:")
 				expr1<-list(src=file.path(logfile[[1]],"pics",paste("recal_",as.character(isolate(input$sel_meas)),sep="")))
@@ -80,7 +114,8 @@ observe({
 			##########################################################################
 			# intensity distribution #################################################
 			if(
-				any(pics==paste("peakhist_",as.character(isolate(input$sel_meas)),sep=""))
+				any(pics==paste("peakhist_",as.character(isolate(input$sel_meas)),sep="")) &
+				(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"include"]=="TRUE")
 			){			
 				output$showintensitydistrib<-renderText("Centroid & peak intensity distribution:")
 				expr_peakhist<-list(src=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(isolate(input$sel_meas)),sep="")))			
@@ -93,7 +128,8 @@ observe({
 			##########################################################################
 			# LOD  ###################################################################
 			if( 
-				file.exists( file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="") ) ) 
+				file.exists( file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="") ) ) &
+				(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"include"]=="TRUE")
 			){
 				output$showLOD<-renderText("LOD interpolation results:")
 				expr_LOD<-list( src=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="")) )
@@ -110,19 +146,182 @@ observe({
 			output$showrecal<-renderText("FALSE")
 			output$showintensitydistrib<-renderText("FALSE")
 			output$showLOD<-renderText("FALSE")
-			output$dowhat<-renderText("Invalid ID chosen to view processing results.");		
+			output$dowhat<-renderText("Invalid ID chosen to view processing results.");	
+			isolate(refresh_plot$b<-0)	
+			isolate(refresh_plot$c<-0)	
 		}
     }
 	}
+	}
 })
 ##############################################################################
+observe({
+    refresh_plot$c
+    input$peak_chromat_refresh
+    if(isolate(init$a)=="TRUE" & isolate(refresh_plot$c>0)){				
+				use_keep_2<-peaklist[,"keep_2"]
+				use_keep_2[use_keep_2==Inf]<-0
+	            output$exp_peaklist <- DT::renderDataTable(
+	                DT::datatable(
+						dat<-data.frame(
+							I(as.character(peaklist[,"peak_ID"])),
+							round(peaklist[,"m/z"],digits=5),
+							round(log10(peaklist[,"var_m/z"]),digits=4),
+							round(peaklist[,"m/z_corr"],digits=5),
+							round(log10(peaklist[,"max_int"]),digits=5),
+							round(log10(peaklist[,"sum_int"]),digits=5),
+							round(log10(peaklist[,"int_corr"]),digits=5),
+							round(peaklist[,"RT"],digits=1),
+							round((peaklist[,"RT"]/60),digits=2),
+							round(peaklist[,"minRT"],digits=1),
+							round(peaklist[,"maxRT"],digits=1),
+							round(peaklist[,"RT_corr"],digits=1),
+							I(as.character(peaklist[,"keep"]==1)),
+							round(use_keep_2,digits=2)
+	                	),
+	                	filter = 'top',
+	                	colnames=c(
+	                		"Peak ID",
+	                		"m/z","log10 var(m/z)","m/z_recal",
+	                		"log10 max int.","log10 sum int.","log10 norm int.",
+	                		"RT [s]","RT [min]","min_RT [s]","max_RT [s]","RT_align [s]",
+							"in replicates?","int. ratio sample/blind"
+	                	),
+	                	selection = list(mode = 'multiple', target = 'row'),
+	                	extensions = c('Buttons'),
+						options = list(
+							lengthMenu = c(20,50,100,200,500),
+							ordering=T,
+							dom = 'Bfrtip',
+							buttons = c('excel', 'csv')#buttons = c('excel', 'pdf', 'print', 'csv'),
+						)
+	                )
+	            )
+	}else{
+		output$exp_peaklist <- DT::renderDataTable(
+			DT::datatable(cbind("no data available","")),
+				colnames=c("","")
+		)
+	}
+})
+##############################################################################
+observe({
+    s5<-input$exp_peaklist_rows_selected
+    if(isolate(init$a)=="TRUE"){
+        if(length(s5)){
+        	cat("\n Selected rows: ");print(s5)
+        	these_peaks<<-peaklist[s5,"peak_ID"];print(these_peaks)
+        	##################################################################
+        	if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){
+        		if(any(names(MSlist)=="File_ID")){
+        			if(MSlist[["File_ID"]]!=as.character(isolate(input$sel_meas))){ # File_ID does not match
+						load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv")) 
+        			}
+        		}else{ # available MSlist not with File_ID yet
+					load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"))  
+					MSlist[["File_ID"]]<-as.character(isolate(input$sel_meas))
+        		}
+        	}else{ # no MSlist in GlobalEnv
+				load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"))  
+        	}
+        	##################################################################
+	        isolate(refresh_plot$b<-(refresh_plot$b+1))
+        	##################################################################
+        }else{
+        	cat("\n Selected nothing: ");print(s5)
+        }
+	}
+})
+##############################################################################
+# observers on peak(s) chromatogram(s) plot ##################################
+##############################################################################
+observe({ # seconds <-> minutes switch when zoomed ###########################
+	input$peak_chromat_time
+	if(isolate(init$a)=="TRUE" & isolate(ranges_peaks_mz_RT$xchroma[1]!=FALSE)){
+		if(isolate(input$peak_chromat_time)=="minutes"){
+			isolate(ranges_peaks_mz_RT$xchroma<-(ranges_peaks_mz_RT$xchroma/60))
+		}
+		if(isolate(input$peak_chromat_time)=="seconds"){
+			isolate(ranges_peaks_mz_RT$xchroma<-(ranges_peaks_mz_RT$xchroma*60))
+		}
+	}
+})
+##############################################################################
+observe({ # seconds <-> minutes switch when zoomed ###########################
+	input$peak_chromat_norm
+	if(isolate(init$a)=="TRUE" & isolate(ranges_peaks_mz_RT$ychroma[1]!=FALSE)){
+		isolate(ranges_peaks_mz_RT$ychroma<-FALSE)
+	}
+})
+##############################################################################
+observe({
+	refresh_plot$b
+	input$peak_chromat_norm
+	input$peak_chromat_time
+	input$peak_chromat_type
+    if(isolate(init$a)=="TRUE" & isolate(refresh_plot$b>0)){
+	    output$peak_chromat <- renderPlot({
+	        par(mar=c(5,4,1,.8))
+	        enviMass:::plotchromat(
+	          	MSlist,
+	           	peakIDs=these_peaks,
+	           	RTlim=isolate(ranges_peaks_mz_RT$xchroma),
+	           	Intlim=isolate(ranges_peaks_mz_RT$ychroma),
+	           	normalize=as.logical(isolate(input$peak_chromat_norm)),
+	           	n_col=dim(peaklist)[1],
+	           	set_RT=isolate(input$peak_chromat_time),
+	           	chromat_full=input$peak_chromat_type
+	        );
+	    },res=100) 
+	}
+})
+##############################################################################
+observeEvent(input$peak_chromat_dblclick, { 
+	if(isolate(init$a)=="TRUE"){
+          brush <- isolate(input$peak_chromat_brush)
+          if (!is.null(brush)) {
+            cat("\n Zoom in_1e")
+            isolate(ranges_peaks_mz_RT$xchroma <- c(brush$xmin, brush$xmax))
+            isolate(ranges_peaks_mz_RT$ychroma <- c(brush$ymin, brush$ymax))            
+          } else {
+            cat("\n Zoom out full_1e")
+            isolate(ranges_peaks_mz_RT$xchroma <- FALSE)
+            isolate(ranges_peaks_mz_RT$ychroma <- FALSE)
+          }
+          isolate(refresh_plot$b<-(refresh_plot$b+1)) # valid in both cases
+    }
+})
+##############################################################################
+observeEvent(input$peak_chromat_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
+	if(isolate(init$a)=="TRUE"){
+          cat("\n Zoom out part_1_ae")
+          brush <- isolate(input$peak_chromat_brush)
+          if (is.null(brush)) {
+              cat("\n Zoom out part_1_be")
+              if(isolate(ranges_peaks_mz_RT$xchroma[1])!=FALSE){
+                old_range_dmass<-abs(isolate(ranges_peaks_mz_RT$xchroma[2]-ranges_peaks_mz_RT$xchroma[1]))
+                isolate(ranges_peaks_mz_RT$xchroma[1]<-ranges_peaks_mz_RT$xchroma[1]-.3*old_range_dmass)
+                isolate(ranges_peaks_mz_RT$xchroma[2]<-ranges_peaks_mz_RT$xchroma[2]+.3*old_range_dmass)
+                old_range_dmass<-abs(isolate(ranges_peaks_mz_RT$ychroma[2]-ranges_peaks_mz_RT$ychroma[1]))
+                isolate(ranges_peaks_mz_RT$ychroma[1]<-ranges_peaks_mz_RT$ychroma[1]-.3*old_range_dmass)
+                isolate(if(ranges_peaks_mz_RT$ychroma[1]<0){ranges_peaks_mz_RT$ychroma[1]<-0})
+                isolate(ranges_peaks_mz_RT$ychroma[2]<-ranges_peaks_mz_RT$ychroma[2]+.3*old_range_dmass)
+              }  
+              isolate(refresh_plot$b<-(refresh_plot$b+1))
+          }else{
+            cat("\n Doing hover_e - nothing")
+          }   
+    }
+})     
+##############################################################################
+##############################################################################
+
+
+
 
 ##############################################################################
 # retrieve peak information ##################################################
 ##############################################################################
-ranges_peaks_mz_RT <- reactiveValues(x = NULL, y = NULL)
-refresh_plot<-reactiveValues()
-refresh_plot$a<-1
 observe({
 	refresh_plot$a
     input$sel_meas_ID

@@ -1471,57 +1471,111 @@
 					numericInput("sel_meas", "Type in file ID:", 0),
 					conditionalPanel(			
 						condition = "output.dowhat != 'Invalid ID chosen to view processing results.'",
+						textOutput('file_proc_name'),
+						textOutput('file_proc_type'),
+						textOutput('file_proc_mode'),
 						HTML('<hr noshade="noshade" />'),
-						fluidRow(										
-							column(4,tags$h5("File name:"),textOutput('file_proc_name') ),
-							column(4,tags$h5("File type: "),textOutput('file_proc_type')),										
-							column(4,tags$h5("Ionization mode: "),textOutput('file_proc_mode'))										
-						),									
-						HTML('<hr noshade="noshade" />'),
-						fluidRow(										
-							column(4,tags$h5("Total number of peaks: "),textOutput('file_peak_number') ),
-							column(4,tags$h5("% of peaks affected by blind filter: "),textOutput('file_blind_rem')),										
-							column(4,tags$h5("% of peaks removed by replicate filter: "),textOutput('file_repl_rem'))										
-						),					
-						HTML('<hr noshade="noshade" />'),
-						textOutput('showblank'),
-						conditionalPanel(			
-							condition = "output.showblank == 'Blank/blind peak tagging (subtraction) results:'",	
-							plotOutput("blind_boxplot", height = "200px"),
-							radioButtons("blind_boxplot_log", "Plot intensity ratio on log scale?", c("no"="FALSE","yes"="TRUE"),inline=TRUE),
-							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')								
-						),
-						HTML('<hr noshade="noshade" />'),
-						textOutput('showrecal'),
-						conditionalPanel(			
-							condition = "output.showrecal == 'Mass recalibration results:'",	
-							imageOutput("recal_pic", height="auto"),
-							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/recalibration.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')
-						),
-						HTML('<hr noshade="noshade" />'),
-						textOutput('showintensitydistrib'),
-						conditionalPanel(			
-							condition = "output.showintensitydistrib == 'Centroid & peak intensity distribution:'",	
-							imageOutput("peakhist_pic", height="auto"),
-							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peakpicking.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')	
-						),
-						HTML('<hr noshade="noshade" />'),
-						textOutput('showLOD'),
-						conditionalPanel(			
-							condition = "output.showLOD == 'LOD interpolation results:'",									
-							imageOutput("LOD_pic", height = "280px"),
-							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/lod.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')	
-						),
-						HTML('<hr noshade="noshade" />'),
-						div(style = widget_style3,
-							bsButton("expo_peaklist","Export peaklist in .csv format",style="info"),
-							textOutput("expo2"),
-							bsPopover("expo_peaklist", 
-								title = "Export peaklist of above selected file",
-								content = "Export as peaklist.csv to the export folder of this project.", 
-								placement = "right", trigger = "hover"),
-								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peaklist_export.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More info.</a></p>')),
-						HTML('<hr noshade="noshade" />')		
+						tags$p(align="justify","Minimize the below Peak list & chromatograms section for faster result loading."),
+						bsCollapse(multiple = TRUE, open = NULL, id = "collapse_processing",
+							bsCollapsePanel(title="Peak inventory & intensity distributions",
+								fluidRow(										
+									column(3,tags$h5("Total number of peaks: "),textOutput('file_peak_number') ),
+									column(3,tags$h5("% of peaks affected by blind annotation: "),textOutput('file_blind_aff')),
+									column(3,tags$h5("% of peaks affected by blind annotation, below threshold: "),textOutput('file_blind_rem')),										
+									column(3,tags$h5("% of peaks removed by replicate filter: "),textOutput('file_repl_rem'))										
+								),	
+								HTML('<hr noshade="noshade" />'),
+								textOutput('showintensitydistrib'),
+								conditionalPanel(			
+									condition = "output.showintensitydistrib == 'Centroid & peak intensity distribution:'",	
+									imageOutput("peakhist_pic", height="auto"),
+									tags$p(align="justify","The white histogram bars in the above plot depict the absolute intensity distribution over all centroid data points available for the
+											selected file. Normally, centroid data points are more frequent at lower intensities than at higher ones in this histogram.
+											In contrast, the red bars show the same distribution for the subset of centroid data points incorporated into picked peaks only.
+											Moreover, blue dots and their associated right axis indicate the fraction of centroids incorporated into peaks for each such histogram class.
+											Usually, this fraction somewhat increases with intensity. However, a deviation from this increase occurs if highly intense baselines are present, 
+											as these baselines can contain intense centroid peaks not commonly incorporated into picked peaks.")
+								),
+								HTML('<hr noshade="noshade" />'),
+								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peakpicking.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More information on EIC extraction and peak picking.</a></p>')
+							),
+							bsCollapsePanel(title="Peak list & chromatograms",
+								tags$p(align="justify","The below sortable table lists all picked peaks and their characteristics for the above selected file. Click into table row(s) to inspect the chromatograms of selected peak(s)."),
+								HTML('<hr noshade="noshade" />'),
+						        conditionalPanel(     
+						            condition = "input.exp_peaklist_rows_selected.length>0",  
+						            #####################################################      
+						            tags$h5("Chromatograms of selected peaks:"),    				         
+						            plotOutput("peak_chromat",
+						                click = "peak_chromat_click",
+						                dblclick = "peak_chromat_dblclick",
+						                brush = brushOpts(
+						                    id = "peak_chromat_brush",
+						                    direction = c("xy"),
+						                    resetOnNew = TRUE,
+						                    delay = 0
+						                ),
+						                height = "360px"
+						            ),
+						            fluidRow(
+						            	column(width = 3, radioButtons("peak_chromat_norm", "Normalize intensities?", c("No"="FALSE","Yes"="TRUE"), inline = TRUE)), 
+						            	column(width = 3, radioButtons("peak_chromat_time", "Show RT in", c("Seconds"="seconds","Minutes"="minutes"), inline = FALSE)),
+						            	column(width = 3, radioButtons("peak_chromat_type", "Show chromatograms for:", c("Full EICs with peaks"="TRUE","Peaks only"="FALSE"), inline = FALSE)),						            	
+						            	column(width = 3.5, bsButton("peak_chromat_refresh"," Refresh and deselect peak table?", style="default",icon=NULL))
+						            ),								         
+						            #####################################################
+						            HTML('<hr noshade="noshade" />')
+						        ), 
+						        HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peaklist_export.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Help on table contents.</a></p>'),
+								DT::dataTableOutput('exp_peaklist')
+							),
+							bsCollapsePanel(title="Blank/blind peak detection",
+								fluidRow(										
+									column(4,tags$h5("% of peaks affected by blind annotation: "),textOutput('file_blind_aff2')),
+									column(7,tags$h5("% of peaks affected by blind annotation, below factor set in the Blind Settings: "),textOutput('file_blind_rem2'))										
+								),
+								HTML('<hr noshade="noshade" />'),
+								textOutput('showblank'),
+								conditionalPanel(			
+									condition = "output.showblank == 'Blank/blind peak tagging (subtraction) results:'",	
+									plotOutput("blind_boxplot", height = "200px"),
+									radioButtons("blind_boxplot_log", "Plot intensity ratio on log scale?", c("no"="FALSE","yes"="TRUE"),inline=TRUE),
+									tags$p(align="justify","The above boxplot shows the distribution of intensity ratios between picked peaks in the selected sample file and their counterpart peaks of maximum 
+										intensity in the associated blank or blind files. 
+										Sample peaks which could not be matched to any blank peaks do not contribute to this distribution; i.e., they are not part of the listed
+										% of peaks affected by blind annotation.")							
+								),
+								HTML('<hr noshade="noshade" />'),
+								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More information on blind/blank peak subtraction and annotation.</a></p>')
+							),
+							bsCollapsePanel(title="Mass recalibration",
+								textOutput('showrecal'),
+								conditionalPanel(			
+									condition = "output.showrecal != 'No mass recalibration results available.'",	
+									imageOutput("recal_pic", height="auto"),
+									tags$p(align="justify","The above plot shows the difference between calculated and thus expected masses of known compounds and their measured/observed peaks (ordinate) as a function 
+										of their mass (abscissa). The considered masses are restricted to the most intense calculated centroid per compound, prior to any detailed screening in the workflow.
+										Moreover, the red line is a smoothing spline model used to recalibrate this mass difference (i.e., the smoothed mass difference of the recalibrated masses would lie on the
+										green zero-intercept). Any red dashed lines, if visible, denote the maximum allowable mass recalibration as set in the Mass recalibration section of the Settings tab.
+										Grey dashed lines denote mass differences of 2, 5, and 10 ppm each.")
+								),
+								HTML('<hr noshade="noshade" />'),
+								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/recalibration.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More information on mass recalibration.</a></p>')
+							),
+							bsCollapsePanel(title="LOD interpolation",						
+								textOutput('showLOD'),
+								conditionalPanel(			
+									condition = "output.showLOD == 'LOD interpolation results:'",									
+									imageOutput("LOD_pic", height = "280px"),
+									tags$p(align="justify","The above plot outlines the RT-dependent LOD estimation used for workflow steps such as screening or the calculation of upper bounds on atom counts.
+										Therein, each grey dot corresponds to a picked peak, whereas gray lines seperate the RT range into bins. 
+										The lower 10th percentile peaks of each such bins are then used to smooth a conservative intensity threshold (red line), 
+										below which peaks are not expected to be either present or picked.")
+								),
+								HTML('<hr noshade="noshade" />'),
+								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/lod.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; More information on LOD interpolation.</a></p>')
+							)
+						)		
 					)
 				),
 				######################################################################################################################

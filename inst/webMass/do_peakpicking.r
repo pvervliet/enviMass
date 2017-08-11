@@ -31,7 +31,7 @@
 					file.exists(file.path(logfile[[1]],"files",paste0(as.character(measurements[i,"ID"]),".mzXML")))
 				){
 					MSlist<-enviPick::readMSdata(
-						filepath.mzXML=file.path(logfile[[1]],"files",paste0(as.character(measurements[i,1]),".mzXML")),
+						filepath.mzXML=file.path(logfile[[1]],"files",paste0(as.character(measurements[i,"ID"]),".mzXML")),
 						MSlevel=logfile$parameters$peak_MSlevel,  # MSlevel
 						progbar=logfile$parameters$progressBar, # progbar
 						minRT=use_minRT,
@@ -40,6 +40,8 @@
 						maxmz=use_maxmass,
 						ion_mode=measurements[i,"Mode"]
 					);
+					MSlist[[9]]<-as.character(measurements[i,"ID"]);
+					names(MSlist)[9]<-"File_ID";
 					cat(" file read -"); 
 					##############################################################
 					if(logfile$parameters$peak_estimate=="TRUE"){

@@ -639,7 +639,6 @@ observeEvent(input$homol_chromat_click, { # NOTE: brushing already triggers a cl
               refresh_homol$d<-(refresh_homol$d+1)
           }else{
             cat("\n Doing hover_e - nothing")
-
           }   
 })     
 ################################################################################
