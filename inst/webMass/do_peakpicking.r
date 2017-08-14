@@ -40,8 +40,6 @@
 						maxmz=use_maxmass,
 						ion_mode=measurements[i,"Mode"]
 					);
-					MSlist[[9]]<-as.character(measurements[i,"ID"]);
-					names(MSlist)[9]<-"File_ID";
 					cat(" file read -"); 
 					##############################################################
 					if(logfile$parameters$peak_estimate=="TRUE"){
@@ -143,6 +141,8 @@
 					from=FALSE,to=FALSE
 				);
 				if(any(MSlist[["Peaklist"]][,3]==0)){stop("\n do_peakpicking: zero intensities found - resolve issue before proceding.")}
+				MSlist[[9]]<-as.character(measurements[i,"ID"]);
+				names(MSlist)[9]<-"File_ID";
 				save(MSlist,file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"])));   
 				peaklist<-MSlist[["Peaklist"]];
 				if(length(peaklist)==0){

@@ -1999,7 +1999,7 @@ if(logfile$version<3.311){
 			check_node=TRUE, 	
 			single_file=FALSE
 		)		
-		shinyjs::info(paste0("Important patch in blind subtraction/annotation step - please recalcualte your project!"));
+		shinyjs::info(paste0("Important patch in blind subtraction/annotation step - please recalculate your project!"));
 	}
 	################################################################################################	
 	logfile$version<<-3.311	

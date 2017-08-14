@@ -53,6 +53,10 @@
 				peaklist4<-peaklist4[peaklist4[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
 				cat("blind peaks removed -")
 			}
+			if(logfile$workflow[names(logfile$workflow)=="replicates"]=="yes"){
+				peaklist4<-peaklist4[peaklist4[,"keep"]==1,,drop=FALSE]
+				cat("non-replicate peaks removed -")			
+			}
 			peaklist4<-as.data.frame(peaklist4[(peaklist4[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
 			##########################################################################
 			cat("series extraction - ")		

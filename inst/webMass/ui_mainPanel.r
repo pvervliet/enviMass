@@ -71,13 +71,13 @@
 								placement = "right", trigger = "hover"),
 							textOutput("had_meas_added")		
 						)
-					),
+					,style="success"),
 					# DELETE FILE ##################################################
 					bsCollapsePanel("Delete LC-MS file", 		
 						tags$h5("Delete file by its unique ID from the below file table"),
 						textInput("Measdel_ID", "ID:", value = "123"),
 						bsButton("Measdel","Remove",style="primary")		
-					),				
+					,style="success"),				
 					# MODIFY FILE ##################################################
 					bsCollapsePanel("Modify specifications for a single file", 
 						fluidRow(
@@ -128,7 +128,7 @@
 						),						
 						HTML('<hr noshade="noshade" />'),
 						bsButton("Modif_export","Save",style="primary")
-					),
+					,style="success"),
 					# MODIFY CALIBRATION GROUP ######################################
 					bsCollapsePanel("Modify, copy or delete a calibration group", 
 						fluidRow(
@@ -157,7 +157,7 @@
 						bsModal("Del_cal_confirm", "Sure about deleting the selected calibration file set?", "Del_cal", size = "small",
 							bsButton("yes_delete_cal","Yes",style="warning")
 						)
-					),		
+					,style="success"),		
 					# BATCH UPLOAD ##################################################
 					bsCollapsePanel("Batch upload from folder", 	
 						tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be modified above. 
@@ -175,7 +175,7 @@
 						bsButton("Import_file_folder","Import",style="primary"),
 						HTML('<hr noshade="noshade" />'),
 						textOutput("had_import_folder")						
-					),
+					,style="success"),
 					bsCollapsePanel("Import files from another project", 		
 						tags$h5("Select project folder to import files from:"),
 						textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
@@ -191,7 +191,7 @@
 						bsButton("Import_project","Import",style="primary"),		
 						HTML('<hr noshade="noshade" />'),
 						textOutput("had_import_project")	
-					),
+					,style="info"),
 					bsCollapsePanel("File overview", 
 						helpText("The below plot indicates available files as dots at their respective date and time, listed over the different file categories 
 						and seperately for each of the two ion modes."),
@@ -212,7 +212,7 @@
 						HTML('<hr noshade="noshade" />'),		
 						HTML('<font size="5"> - </font><font size="3"> Last selected file IDs, negative ionization:</font>'),
 						htmlOutput("info_files_neg_samp"),htmlOutput("info_files_neg_blind"),htmlOutput("info_files_neg_cal"),htmlOutput("info_files_neg_calgroup"),htmlOutput("info_files_neg_spiked")
-					)
+					,style="warning")
 				),	
 			HTML('<hr noshade="noshade" />'),
 			DT::dataTableOutput("measurements")	
@@ -317,12 +317,12 @@
 								helpText("To rank several centroid peaks to quantify with, use:"),
 								selectInput("IS_quant_rule", label=NULL, choices=c("most intense peak","closest RT","closest m/z"), selected = "most intense peak",width='400px'))							
 						)
-					),
+					,style="success"),
 					bsCollapsePanel("Remove internal standard compound", 					
 						helpText("To delete a compound from the list, type in its ID and press Delete"),
 						textInput("ISdelete_ID", "ID for deletion:", value = "123_XYZ"),          
 						bsButton("DeleteIS","Delete",style="primary")					
-					),
+					,style="success"),
 					bsCollapsePanel("Import / export internal standard compound list", 		
 						helpText("Import IS compund list.txt file, e.g. from the dataframes folder of another project (where it can be found as IS.txt):"),					
 						fileInput("ISlist_path", NULL, multiple = FALSE, accept = c(".txt")),
@@ -334,7 +334,7 @@
 						HTML('<hr noshade="noshade" />'),
 						helpText("Export and save the below IS table as .txt file. The latter can again be reloaded after modifications, using the above import."),
 						shinySaveButton(id="download_IS", label="Save", title="Save below IS table", filetype=list(text='txt'), buttonType = "default", class = NULL)	
-					),
+					,style="info"),
 					bsCollapsePanel("Modify in external editor", 					
 						HTML('
 							<p><font>
@@ -387,7 +387,7 @@
 									The one quantified concentration after applying the rule will be listed first in the quantification tables for targets linked to this internal standard.</li>
 							</ol>
 						')		
-					)
+					,style="info")
 				),
                 HTML('<hr noshade="noshade" />'),
                 DT::dataTableOutput("IS")
@@ -491,12 +491,12 @@
 								helpText("To rank several centroid peaks to quantify with, use:"),
 								selectInput("target_quant_rule", label=NULL, choices=c("most intense peak","closest RT","closest m/z"), selected = "most intense peak",width='400px'))							
 						)
-					),
+					,style="success"),
 					bsCollapsePanel("Remove target compound", 
 						helpText("To delete a compound from the list, type in its ID and press Delete"),
 						textInput("targetsdelete_ID", "ID for deletion:", value = "123_XYZ"),          
 						bsButton("Deletetargets","Delete",style="primary")					
-					),
+					,style="success"),
 					bsCollapsePanel("Import / export target compound list", 		
 						helpText("Import target compound list.txt file, e.g. from the dataframes folder of another project (where it can be found as targets.txt):"),					
 						fileInput("targetlist_path", NULL, multiple = FALSE, accept = c(".txt")),
@@ -508,7 +508,7 @@
 						HTML('<hr noshade="noshade" />'),
 						helpText("Export and save the below target compound table as .txt file. The latter can again be reloaded after modifications, using the above import."),
 						shinySaveButton(id="download_target", label="Save", title="Save below target compound table", filetype=list(text='txt'), buttonType = "default", class = NULL)	
-					),
+					,style="info"),
 					bsCollapsePanel("Modify in external editor", 					
 						HTML('
 							<p><font>
@@ -564,8 +564,7 @@
 									The one quantified concentration after applying the rule will be listed first in the quantification tables.</li>
 							</ol>
 						')		
-	
-					)
+					,style="info")
 				),
 				HTML('<hr noshade="noshade" />'),  
                 DT::dataTableOutput("targets")
