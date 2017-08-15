@@ -1346,7 +1346,7 @@ observe({
 				plot.window(xlim=c(0,1),ylim=c(0,1))
 				text(0.5,0.5,labels="Nothing to plot - invalid ID",cex=1.8,col="red")
 			})
-			output$oneproftable<-renderText("")
+			output$oneproftable<-DT::renderDataTable(cbind("No date available",""));
 			updateNumericInput(session,"profpeakID",value = 0);		
 			path=file.path(logfile[[1]],"pics","massdens.png");
 			png(filename = path, bg = "white", width = 550,height=200);			
@@ -1370,7 +1370,7 @@ observe({
 				plot.window(xlim=c(0,1),ylim=c(0,1))
 				text(0.5,0.5,labels="Nothing to plot - invalid ID",cex=1.8,col="red")
 			})			
-			output$oneproftable<-renderText("")
+			output$oneproftable<-DT::renderDataTable(cbind("No date available",""));
 			updateNumericInput(session,"profpeakID",value = 0);
 			path=file.path(logfile[[1]],"pics","massdens.png");
 			png(filename = path, bg = "white", width = 550,height=200);			
