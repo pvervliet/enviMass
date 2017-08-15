@@ -51,11 +51,7 @@
 			peaklist4<-peaklist[order(peaklist[,"peak_ID"],decreasing=FALSE),] # match with IDs 
 			if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks
 				peaklist4<-peaklist4[peaklist4[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
-				cat("blind peaks removed -")
-			}
-			if(logfile$workflow[names(logfile$workflow)=="replicates"]=="yes"){
-				peaklist4<-peaklist4[peaklist4[,"keep"]==1,,drop=FALSE]
-				cat("non-replicate peaks removed -")			
+				cat("blind peaks removed - ")
 			}
 			peaklist4<-as.data.frame(peaklist4[(peaklist4[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
 			##########################################################################
@@ -127,7 +123,9 @@
 			save(Homol_groups,file=(file.path(logfile[[1]],"results","componentization","homologues",paste(for_file,sep="_"))))
 			##########################################################################	
 			# remove blind peaks - impute removed peaks ##############################			
-			if(logfile$parameters$homol_blind=="TRUE"){ 
+			if(
+				(logfile$parameters$homol_blind=="TRUE") 
+			){ 
 				those<-is.na(match(peaklist[,"peak_ID"],peaklist4[,"peak_ID"]))		
 				if(any(those)){
 					# impute (1) - "Peaks in homologue series"

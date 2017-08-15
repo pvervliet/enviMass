@@ -1832,39 +1832,47 @@
 												condition = "(output.found_compo != 'Invalid peak ID')&(input.sel_meas_comp_comp != 0)",
 												tags$p(align="justify","The above mass spectrum shows all peaks grouped into the selected component (green) and all other non-component peaks that fall into the mass and RT range of the selected component."),											
 												HTML('<hr noshade="noshade" />'),
-												conditionalPanel(			
-													condition = "(output.found_compo != 'single_peak')&(output.found_compo != 'Invalid peak ID')&(input.sel_meas_comp_comp != 0)",
-													plotOutput("comp_plot_circ",height = "690px"),
-													tags$p(align="justify","The above circular plot shows all links (relations) that exist between peaks in the selected component, with 
-														individual peaks positioned at an outer circle by increasing m/z, starting at the gray arrow. The most intense peak is marked by a circle.
-														Peaks are listed with their IDs and component-wise intensity ranking (in brackets); those also present in blank/blind files are marked with
-														an asterisk. Adduct links are shown in red, links between different isotopologues of the same adduct in blue."),													
-													HTML('<hr noshade="noshade" />')
-												),
-												textOutput('which_comp_tar'),
-												HTML('<hr noshade="noshade" />'),
-												textOutput('which_comp_ISTD'),												
-												HTML('<hr noshade="noshade" />'),	
-												conditionalPanel(			
-													condition = "(output.found_compo != 'single_peak')&(output.found_compo != 'Invalid peak ID')&(input.sel_meas_comp_comp != 0)",												
-													HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component linkages </font></p> '),
-													tags$p(align="justify","The below table lists all pairwise relations between peaks being part of the selected component.  Each of the two peaks (i.e., 'first' & 'second' peak)
-														forming a link are listed by their IDs in the first and second column of the table."), 
-													DT::dataTableOutput('comp_table_a'),
-													HTML('<hr noshade="noshade" />')
-												),
-												HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component peaks </font></p> '),
-												tags$p(align="justify","The below table lists all peaks which are part of the selected component."), 
-												DT::dataTableOutput('comp_table_b'),
-												HTML('<hr noshade="noshade" />'),
-												HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component homologues </font></p> '),
-												tags$p(align="justify","If peaks of the selected component form part of a homologue series, the individual series are listed in the below table."), 
-												DT::dataTableOutput('comp_table_c'),										
-												HTML('<hr noshade="noshade" />'),
-												HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> All peaks </font></p> '),
-												tags$p(align="justify","The below table lists all peaks which range in the RT- and m/z-window of the selected component, i.e., also peaks which were not
-													grouped into the selected component."),
-												DT::dataTableOutput('comp_table_d')				
+												radioButtons("comp_hide", label="Show all component details?", choices = c("minimize"="minimize","maximize"="maximize"), selected = "maximize",
+												  inline = TRUE, width = NULL, choiceNames = NULL, choiceValues = NULL),
+												HTML('<hr noshade="noshade" />'), 												
+												#conditionalPanel(			
+													#condition = "input.comp_hide == 'maximize'",		
+													#condition = "FALSE",
+													conditionalPanel(			
+														condition = "(output.found_compo != 'single_peak')&(output.found_compo != 'Invalid peak ID')&(input.sel_meas_comp_comp != 0)",
+														plotOutput("comp_plot_circ",height = "690px"),
+														tags$p(align="justify","The above circular plot shows all links (relations) that exist between peaks in the selected component, with 
+															individual peaks positioned at an outer circle by increasing m/z, starting at the gray arrow. The most intense peak is marked by a circle.
+															Peaks are listed with their IDs and component-wise intensity ranking (in brackets); those also present in blank/blind files are marked with
+															an asterisk. Adduct links are shown in red, links between different isotopologues of the same adduct in blue."),													
+														HTML('<hr noshade="noshade" />')
+													),
+													textOutput('which_comp_tar'),
+													HTML('<hr noshade="noshade" />'),
+													textOutput('which_comp_ISTD'),												
+													HTML('<hr noshade="noshade" />'),	
+													conditionalPanel(
+														condition = "(output.found_compo != 'single_peak')&(output.found_compo != 'Invalid peak ID')&(input.sel_meas_comp_comp != 0)",												
+														HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component linkages </font></p> '),
+														tags$p(align="justify","The below table lists all pairwise relations between peaks being part of the selected component.  Each of the two peaks (i.e., 'first' & 'second' peak)
+															forming a link are listed by their IDs in the first and second column of the table."), 
+														DT::dataTableOutput('comp_table_a'),
+														HTML('<hr noshade="noshade" />')
+													),
+													HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component peaks </font></p> '),
+													tags$p(align="justify","The below table lists all peaks which are part of the selected component."), 
+													DT::dataTableOutput('comp_table_b'),
+													HTML('<hr noshade="noshade" />'),
+													HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component homologues </font></p> '),
+													tags$p(align="justify","If peaks of the selected component form part of a homologue series, the individual series are listed in the below table."), 
+													DT::dataTableOutput('comp_table_c'),										
+													HTML('<hr noshade="noshade" />'),
+													HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> All peaks </font></p> '),
+													tags$p(align="justify","The below table lists all peaks which range in the RT- and m/z-window of the selected component, i.e., also peaks which were not
+														grouped into the selected component."),
+													DT::dataTableOutput('comp_table_d')		
+
+												#)
 											)
 										),
 										bsCollapsePanel("Full component list", 
@@ -2038,7 +2046,7 @@
 									div(style = widget_style3,
 										fluidRow(									
 											column(4,
-												radioButtons("filterProf_medianblind", "Filter profiles by median sample vs. blind intensity ratio ...", c("no"="no","yes"="yes"), inline = TRUE),
+												radioButtons("filterProf_medianblind", "Filter profiles by mean sample vs. blind intensity ratio ...", c("no"="no","yes"="yes"), inline = TRUE),
 												bsPopover("filterProf_medianblind", 
 													title = "Filter profiles by the specified value for their median sample vs. blind/blank intensity ratio across all peaks?",
 													content = "This filter is only available if blind/blank peaks have not been removed from the profiles yet. Indivual intensity ratios for peaks calculated according to Settings -> Blind.", 
@@ -2072,7 +2080,7 @@
 											"peak number in blanks/blinds (decreasing, zeros removed)", 
 											"mass defect (increasing)", 
 											"mass defect (decreasing)", 
-											"median sample above blind intensity (decreasing)" 
+											"mean sample above blind intensity (decreasing)" 
 											), 
 										selected="current trend intensity (decreasing)",width='80%'),
 									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no"="FALSE","yes"="TRUE"), selected="FALSE", inline = TRUE),

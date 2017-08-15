@@ -261,7 +261,7 @@ observe({
                   );
                 },res=100)  
                 # output tables ##################################################
-                use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
+				use_homol_peaks<-unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2]))
                 output$homol_series_peaks <- DT::renderDataTable(
                   DT::datatable(
                     dat<-data.frame(
@@ -335,7 +335,7 @@ observe({
                   );
                 },res=100) 
                 # output tables ##################################################
-                use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
+				use_homol_peaks<-unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2]))
                 output$homol_series_peaks <- DT::renderDataTable(
                   DT::datatable(
                     dat<-data.frame(
@@ -365,8 +365,8 @@ observe({
               print(s1);
               cat("\n IN SELECT_1:")
               # output homol. series table ##################################### 
-              use_homol_peaks<<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
-              these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
+              use_homol_peaks<<-unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2]))
+			  these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
               print(these_series)
               use_these_series<-match(these_series,homol[["Homologue Series"]][,"HS IDs"])
               output$homol_series_table <- DT::renderDataTable(
@@ -440,7 +440,7 @@ observe({
               # output homol. series plot ######################################
               if(length(s1)){
                 cat(" A ")
-                use_homol_peaks<-match(unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2])),homol[["Peaks in homologue series"]][,"peak ID"])
+				use_homol_peaks<-unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2]))
                 these_series_1<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]][s2])
                 use_emph_point<-homol[["Peaks in homologue series"]][use_homol_peaks[s1],"peak ID"]
               }else{
