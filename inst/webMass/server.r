@@ -29,7 +29,7 @@ shinyServer(function(input, output, session){
   }
   output$textit<-renderText("Waiting...")
   output$dowhat<-renderText("Open")
-  output$sel_meas_comp_state<-renderText("No componentization results for this file available")
+  output$sel_meas_comp_state<-renderText("")
   output$isotable<-renderTable(isotopes)
   updateCheckboxGroupInput(session, "adducts_pos", "Positive ions:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
   updateCheckboxGroupInput(session, "adducts_neg", "Negative ions:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               

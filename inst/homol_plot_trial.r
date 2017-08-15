@@ -4,32 +4,43 @@
   runApp(list(
     ##################################################################################
     ui = bootstrapPage(
-                ######################################################################
-                plotOutput("homol_counts",
-                        click = "homol_counts_click",
-                        dblclick = "homol_counts_dblclick",
-                        #hover = "homol_counts_hover",
-                        brush = brushOpts(
-                          id = "homol_counts_brush",
-                          direction = c("x"),
-                          resetOnNew = TRUE,
-                          delay = 0
-                        ),                
-                        height = "250px"
-                ),        
-                ######################################################################
-                plotOutput("homol_RT",
-                        click = "homol_RT_click",
-                        dblclick = "homol_RT_dblclick",
-                        #hover = "homol_counts_hover",
-                        brush = brushOpts(
-                          id = "homol_RT_brush",
-                          direction = c("x"),
-                          resetOnNew = TRUE,
-                          delay = 0
-                        ),                
-                        height = "250px"
-                ),            
+			radioButtons("comp_hide", label="Show all component details?", choices = c("minimize"="minimize","maximize"="maximize"), selected = "maximize",
+			  inline = TRUE, width = NULL, choiceNames = NULL, choiceValues = NULL),
+			conditionalPanel(			
+				#condition = "input.comp_hide == 'maximize'",
+				condition = "1==2",	
+				radioButtons("comp_hide2", label="Show all component details?", choices = c("minimize"="minimize","maximize"="maximize"), selected = "maximize",
+				  inline = TRUE, width = NULL, choiceNames = NULL, choiceValues = NULL),				
+				#conditionalPanel(			
+				#	condition = "input.comp_hide2 == 'maximize'",					
+					######################################################################
+					plotOutput("homol_counts",
+							click = "homol_counts_click",
+							dblclick = "homol_counts_dblclick",
+							#hover = "homol_counts_hover",
+							brush = brushOpts(
+							  id = "homol_counts_brush",
+							  direction = c("x"),
+							  resetOnNew = TRUE,
+							  delay = 0
+							),                
+							height = "250px"
+					),        
+					######################################################################
+					plotOutput("homol_RT",
+							click = "homol_RT_click",
+							dblclick = "homol_RT_dblclick",
+							#hover = "homol_counts_hover",
+							brush = brushOpts(
+							  id = "homol_RT_brush",
+							  direction = c("x"),
+							  resetOnNew = TRUE,
+							  delay = 0
+							),                
+							height = "250px"
+					)
+				#)
+			),
                 ######################################################################
                 plotOutput("homol_plot",
                         click = "homol_plot_click",
@@ -73,7 +84,8 @@
                 )
     ),
     ##################################################################################
-    server = function(input, output) {  at<-"1"
+    server = function(input, output) {  
+	  at<-"1"
       load(file.path(logfile[[1]],"results","componentization","homologues",paste("full",at,sep="_")),envir=as.environment(".GlobalEnv"))
       load(file.path(logfile[[1]],"MSlist",at),envir=as.environment(".GlobalEnv"))      
     

@@ -22,7 +22,7 @@
 							column(width = 5, selectInput("Measadd_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
 						),
 						conditionalPanel(
-							condition = "input.Measadd_type != 'calibration' & input.Measadd_type != 'spiked'",						
+							condition = "input.Measadd_type != 'calibration' && input.Measadd_type != 'spiked'",						
 							HTML('<hr noshade="noshade" />'),
 							fluidRow(
 								column(width = 5, textInput("Measadd_place", "Place:", value = "Rhine")),		
@@ -1109,8 +1109,7 @@
 								numericInput("homol_mztol", "+/- m/z tolerance ...", 3), 
 								selectInput("homol_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
 								numericInput("homol_minlength", "Minimum number of homologues in a series:", 6),						
-								HTML('<hr noshade="noshade" />'),			
-			# BAUSTELLE						
+								HTML('<hr noshade="noshade" />'),					
 								div(style = widget_style11,		
 									tags$h5("Advanced settings"),
 									numericInput("homol_vec_size", "Ignore unless a relevant error message is printed (then try to increase size): ", 1E8),
@@ -1118,7 +1117,6 @@
 									selectInput("homol_blind", "Filter peaks by sample-vs-blind intensity ratio:", choices = c("yes"="TRUE","no"="FALSE"), "FALSE"),				
 									numericInput("homol_blind_value", "Sample-vs-blind intensity ratio threshold:", 10)									
 								)
-			# BAUSTELLE	
 							),
 							tabPanel("EIC correlation",	
 								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/eic.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on EIC correlation parameter.</a></p>'),	
@@ -1137,7 +1135,7 @@
 							column(3,numericInput("comp_corr", "Minimum Pearson profile intensity correlation:", value = 0.9, min = 0, max = 1)),
 							column(4,numericInput("corr_del_RT", "RT tolerance window for co-occuring peaks of different profiles [s]:", value = 5, min = 0, max = NA))
 						),		
-			#logfile$parameters$corr_skip_peaks<<-"TRUE"
+						#logfile$parameters$corr_skip_peaks<<-"TRUE"
 						HTML('<hr noshade="noshade" />'), 
 						selectInput("prof_comp_link_only",label="Restrict profile componentization to isotopologue and selected adduct relations only?",choices=c("TRUE","FALSE"),selected = "FALSE", multiple = FALSE),
 						HTML('<hr noshade="noshade" />'),
@@ -1220,7 +1218,7 @@
 						HTML('<hr noshade="noshade" />'),
 						HTML('<h1 align="center"> &#x21e9; </h1> '),
 						conditionalPanel(
-							condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none'", 
+							condition = "input.Cal_file_set != 'none' && input.Ion_mode_Cal != 'none'", 
 							helpText("Select Target compounds which are linked to an Internal standard (column 6 of the target compound table) to (resume) work on their individual calibration models below. 
 							The screened compounds can also be viewed in the Results/Compound screening tab, choosing the calibration files. Target - Internal standard links can be modified either directly 
 							in the target compound table (above tab Compound -> Targets) or with the below orange button Use for quantification"),
@@ -1272,7 +1270,7 @@
 								content = "... e.g., after you have changed the intensity bounds of the Internal standard in the tab <em> Results -> Screening& -> Ionization -> Internal standards (show all adducts) -> Characteristics for selected compound. </em>", 
 								placement = "bottom", trigger = "hover"),							
 							conditionalPanel(
-								condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none' & input.Cal_target_ID != 'none' & input.Cal_target_name != 'none' & input.Cal_IS_ID != 'none' & input.Cal_IS_name != 'none'  ", 
+								condition = "input.Cal_file_set != 'none' & input.Ion_mode_Cal != 'none' && input.Cal_target_ID != 'none' && input.Cal_target_name != 'none' && input.Cal_IS_ID != 'none' && input.Cal_IS_name != 'none'  ", 
 								HTML('<hr noshade="noshade" />'),
 								div(style = widget_style6,
 									plotOutput("cal_plot", 
@@ -1502,7 +1500,7 @@
 								tags$p(align="justify","The below sortable table lists all picked peaks and their characteristics for the above selected file. Click into table row(s) to inspect the chromatograms of selected peak(s)."),
 								HTML('<hr noshade="noshade" />'),
 						        conditionalPanel(     
-						            condition = "input.exp_peaklist_rows_selected.length>0",  
+						            condition = "input.exp_peaklist_rows_selected.length > 0",  
 						            #####################################################      
 						            tags$h5("Chromatograms of selected peaks:"),    				         
 						            plotOutput("peak_chromat",
@@ -1621,7 +1619,7 @@
 											HTML('<hr noshade="noshade" />'),
 											textOutput('info_IS_bounds_pos'),
 											conditionalPanel(				
-												condition = "(input.Pos_compound_select == 'Internal standards') & (output.info_IS_bounds_pos != 'Compound/adduct not used for quantification')",					
+												condition = "(input.Pos_compound_select == 'Internal standards') && (output.info_IS_bounds_pos != 'Compound/adduct not used for quantification')",					
 													fluidRow(										
 														column(3,numericInput("screen_int_pos_low", "Lower bound", 0,step=0.1)),
 														column(3,numericInput("screen_int_pos_up", "Upper bound", 10,step=0.1)),
@@ -1719,7 +1717,7 @@
 											HTML('<hr noshade="noshade" />'),
 											textOutput('info_IS_bounds_neg'),
 											conditionalPanel(				
-												condition = "(input.Neg_compound_select == 'Internal standards') & (output.info_IS_bounds_neg != 'Compound/adduct not used for quantification')",					
+												condition = "(input.Neg_compound_select == 'Internal standards') && (output.info_IS_bounds_neg != 'Compound/adduct not used for quantification')",					
 													fluidRow(										
 														column(3,numericInput("screen_int_neg_low", "Lower bound", 0,step=0.1)),
 														column(3,numericInput("screen_int_neg_up", "Upper bound", 10,step=0.1)),
@@ -1776,8 +1774,7 @@
 								HTML('<hr noshade="noshade" />')
 							)						
 						)
-
-					)	
+					)
 				),
 				######################################################################################################################
 				tabPanel("Grouping",	
@@ -1794,221 +1791,15 @@
 					textOutput('sel_meas_comp_state2'),
 					HTML('<hr noshade="noshade" />'),
 					conditionalPanel(
-						condition = "(output.sel_meas_comp_state != 'Invalid file ID') && (output.sel_meas_comp_state != '')",
-						tabsetPanel( 					
-							tabPanel("Components",	
-							conditionalPanel(			
-								condition = "(output.sel_meas_comp_state1 != 'no nontarget components available ') && (output.sel_meas_comp_state != 'Invalid file ID')",
-									HTML('<hr noshade="noshade" />'),
-									tags$p(align="justify",""),
-									HTML('<hr noshade="noshade" />'),
-									bsCollapse(multiple = FALSE, open = "col3", id = "collapse3",	
-										bsCollapsePanel("Summary", 											
-											textOutput('num_peaks_all'),
-											textOutput('num_comp'),
-											textOutput('reduc'),
-											textOutput('min2_size_comp'),
-											textOutput('median_size_comp'),
-											textOutput('max_size_comp'),
-											HTML('<hr noshade="noshade" />'),
-											textOutput('num_comp_tar'),
-											textOutput('num_comp_ISTD'),
-											textOutput('num_comp_blind_any'),
-											textOutput('num_comp_blind_all'),
-											HTML('<hr noshade="noshade" />'),
-											textOutput('num_comp_nontarget')										
-										),
-										bsCollapsePanel("Individual components", 
-											tags$p(align="justify","You can select components either via the ID of a single peak contained in the component or via the ID of the component itself. In the first case, the selection of the peak ID
-												will automatically update the ID of the associated component."),											
-											fluidRow(										
-												column(4,numericInput("sel_meas_comp_peak", "Type in peak ID:", 0, min=0)),
-												column(4,numericInput("sel_meas_comp_comp", "Type in component ID:", 0, min=0)),
-												column(4,textOutput('found_compo'))
-											),
-											HTML('<hr noshade="noshade" />'),
-											plotOutput("comp_plot_spec",height = "400px"),
-											conditionalPanel(			
-												condition = "(output.found_compo != 'Invalid peak ID') && (input.sel_meas_comp_comp != 0)",
-												tags$p(align="justify","The above mass spectrum shows all peaks grouped into the selected component (green) and all other non-component peaks that fall into the mass and RT range of the selected component."),											
-												HTML('<hr noshade="noshade" />')
-											),
-											radioButtons("comp_hide", label="Show all component details?", choices = c("minimize"="minimize","maximize"="maximize"), selected = "maximize",
-												inline = TRUE, width = NULL, choiceNames = NULL, choiceValues = NULL),
-											HTML('<hr noshade="noshade" />'), 												
-											conditionalPanel(	
-												condition = "(output.found_compo != 'Invalid peak ID') && (input.sel_meas_comp_comp != 0) && (input.comp_hide == 'maximize')",
-												plotOutput("comp_plot_circ",height = "690px"),
-												tags$p(align="justify","The above circular plot shows all links (relations) that exist between peaks in the selected component, with 
-													individual peaks positioned at an outer circle by increasing m/z, starting at the gray arrow. The most intense peak is marked by a circle.
-													Peaks are listed with their IDs and component-wise intensity ranking (in brackets); those also present in blank/blind files are marked with
-													an asterisk. Adduct links are shown in red, links between different isotopologues of the same adduct in blue."),													
-												HTML('<hr noshade="noshade" />'),
-												textOutput('which_comp_tar'),
-												HTML('<hr noshade="noshade" />'),
-												textOutput('which_comp_ISTD'),												
-												HTML('<hr noshade="noshade" />'),	
-												conditionalPanel(
-													condition = "(output.found_compo != 'single_peak') && (output.found_compo != 'Invalid peak ID') && (input.sel_meas_comp_comp != 0)",												
-													HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component linkages </font></p> '),
-													tags$p(align="justify","The below table lists all pairwise relations between peaks being part of the selected component.  Each of the two peaks (i.e., 'first' & 'second' peak)
-														forming a link are listed by their IDs in the first and second column of the table."), 
-													DT::dataTableOutput('comp_table_a'),
-													HTML('<hr noshade="noshade" />')
-												),
-												HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component peaks </font></p> '),
-												tags$p(align="justify","The below table lists all peaks which are part of the selected component."), 
-												DT::dataTableOutput('comp_table_b'),
-												HTML('<hr noshade="noshade" />'),
-												HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Component homologues </font></p> '),
-												tags$p(align="justify","If peaks of the selected component form part of a homologue series, the individual series are listed in the below table."), 
-												DT::dataTableOutput('comp_table_c'),										
-												HTML('<hr noshade="noshade" />'),
-												HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> All peaks </font></p> '),
-												tags$p(align="justify","The below table lists all peaks which range in the RT- and m/z-window of the selected component, i.e., also peaks which were not
-													grouped into the selected component."),
-												DT::dataTableOutput('comp_table_d')		
-											)
-										),
-										bsCollapsePanel("Full component list", 
-											tags$p(align="justify","Each row in the below table corresponds to a component, sorted by decreasing maximum peak intensity. 
-												Peaks which are also present in blank/blind files are marked with an asterisk in the below table."), 
-											DT::dataTableOutput('comp_table')					
-										)
-									)
-								)
-							),
-							tabPanel("Homologues",	
-							conditionalPanel(			
-								condition = "(output.sel_meas_comp_state2 != ' no homologue series detection results available') && (output.sel_meas_comp_state != 'Invalid file ID')",
-									HTML('<hr noshade="noshade" />'),
-									tags$p(align="justify","The below two subsections visualize and tabulate peak series indicative of homologuous compounds. Any zooms and selections made in 
-										any of the overview plots A to C will filter the listing of Peaks in series in the first subtab of the collapsible Series table subsection. 
-										Any selection or deselection of rows made in this Peaks in series table will in turn list either all series of which the selected peak is part of or 
-										simply all available series in the second Series subtab, respectively. 
-										In addition, selecting rows in the latter Series table will show the chromatographic peaks of the concerned series."),
-									HTML('<hr noshade="noshade" />'),
-									bsCollapse(multiple = TRUE, open = "col4", id = "collapse4",
-										bsCollapsePanel("Series plot overview", 	
-											HTML('<hr noshade="noshade" />'),
-											tags$p(align="justify","Selections by brushing or zooming made on the mass differences (plot A) or RT differences (plot B) between homologues adjacent in a series 
-												will jointly filter the plotting of series segments between such homologues in plot C. In turn, zooming in plot C will filter plots A and C. 
-												Please note that peaks incorporated in any series are plotted as bold darkgrey points, whereas all other peaks are set in lightgrey in plot C."),
-											HTML('<hr noshade="noshade" />'),
-							                plotOutput("homol_counts",
-							                        click = "homol_counts_click",
-							                        dblclick = "homol_counts_dblclick",
-							                        #hover = "homol_counts_hover",
-							                        brush = brushOpts(
-							                          id = "homol_counts_brush",
-							                          direction = c("x"),
-							                          resetOnNew = TRUE,
-							                          delay = 0
-							                        ),                
-							                        height = "250px"
-							                      ),        
-							                ######################################################################
-							                plotOutput("homol_RT",
-							                        click = "homol_RT_click",
-							                        dblclick = "homol_RT_dblclick",
-							                        #hover = "homol_counts_hover",
-							                        brush = brushOpts(
-							                          id = "homol_RT_brush",
-							                          direction = c("x"),
-							                          resetOnNew = TRUE,
-							                          delay = 0
-							                        ),                
-							                        height = "250px"
-							                      ),            
-							                ######################################################################
-							                plotOutput("homol_plot",
-							                        click = "homol_plot_click",
-							                        dblclick = "homol_plot_dblclick",
-							                        #hover = "homol_plot_hover",
-							                        brush = brushOpts(
-							                          id = "homol_plot_brush",
-							                          resetOnNew = TRUE,
-							                          delay = 0
-							                        ),                
-							                        height = "700px"
-							                      ),
-											HTML('<h1 align="center"> &#x21D3; </h1> ')
-										),
-										bsCollapsePanel("Series table", 
-											tabsetPanel( 	
-												tabPanel("Peaks in series ->",
-													HTML('<hr noshade="noshade" />'),
-													tags$p(align="justify","The below table lists all series peaks for which series segments are visible in plot C of the above series plot overview. 
-														Selection of a row in this table will filter the series in the subsequent Series subtab, i.e., all those series corresponding to the Series ID(s)
-														shown in the selected row. In addition, the peak and all its corresponding series will be highlighted in the above plot C."),
-													HTML('<hr noshade="noshade" />'),
-													DT::dataTableOutput('homol_series_peaks')
-												),
-						                        tabPanel("Series",
-						                        	HTML('<hr noshade="noshade" />'),
-						                        	tags$p(align="justify","The below table lists either all available peak series or - if a row in the previous Peaks in series subtab is selected - all 
-						                        		series in which the selected peak is part of. Click on a row in the below Series table to get a series highlighted in the above plot C and to see its 
-						                        		chromatographic peaks."),
-						                            HTML('<hr noshade="noshade" />'),                
-						                            conditionalPanel(     
-						                              condition = "input.homol_series_table_rows_selected > 0",  
-						                                #####################################################            
-						                                plotOutput("homol_chromat",
-						                                    click = "homol_chromat_click",
-						                                    dblclick = "homol_chromat_dblclick",
-						                                    #hover = "homol_chromat_hover",
-						                                    brush = brushOpts(
-						                                      id = "homol_chromat_brush",
-						                                      direction = c("xy"),
-						                                      resetOnNew = TRUE,
-						                                      delay = 0
-						                                    ),
-						                                    height = "250px"
-						                                ),
-						                                #####################################################
-						                                HTML('<hr noshade="noshade" />')
-						                            ), 
-						                            DT::dataTableOutput('homol_series_table')
-						                        )
-											)	
-										)
-									)
-								)
-							),
-							tabPanel("Atom bounds",	
-							conditionalPanel(			
-								condition = "output.sel_meas_comp_state != 'Invalid file ID'",
-									HTML('<hr noshade="noshade" />'),
-									tags$p(align="justify","Given a monoisotopic peak (via its ID) and any additional peaks of higher mass and similar RT (if any), this tool estimates upper bounds for the number of atoms of selected elements.
-										This estimate can be based (a) either only on those additional peaks contained in the same isotopologue group of the monoisotopic peak (if any, and if the isotopologue grouping 
-										is included in the workflow) or (b) all additional peaks with a RT similar to the monoisotopic one. 
-										Parameters for estimation are taken from those set for the isotopologue grouping (e.g., the intensity and RT tolerance) and the compound screening (e.g., LOD estimation), except
-										for the mass shift to be set below."), 
-									HTML('<hr noshade="noshade" />'),
-									fluidRow(										
-										column(3,numericInput("atom_bound_peak", "Type in peak ID:", 0, width='200px',min=0)),
-										column(5,selectInput("atom_bound_addpeaks", "Select additional peaks:", c("(b) all peaks with similar RT"),selected="(b) all peaks with similar RT",multiple=FALSE))
-									),	
-									plotOutput("atom_bound_plot_peak",height = "400px"),
-									HTML('<hr noshade="noshade" />'),
-									HTML('<h1 align="left"> &#x21e9; </h1> '),
-									selectInput("atom_bounds_this", label="Choose elements to include / exclude", choices=c("C","H","N","O","Cl","Br","S"), selected = c("C","H","N","O","Cl","Br"), multiple = TRUE),
-									tags$p(align="justify","The below numeric values set the maximum allowable shift in between centroided peaks and their exact underlying isotopologue masses for each selected element, in ppm.
-									This maximum shift depends on the resolution of your instrument and can sometimes be quite large (even for high-res MS) - better use conservative values to be safe."), 
-									uiOutput("atom_bounds_that"),
-									HTML('<hr noshade="noshade" />'),
-									HTML('<h1 align="left"> &#x21e9; </h1> '),
-									tags$p(align="justify","Would you like the bounds of atom counts for elements other than carbon to be restricted by their maximum atom count ratio to that of carbon? Only functional if carbon is selected above."), 
-									radioButtons("atom_bound_wcarbon", "Include?", c("yes"="TRUE","no"="FALSE"),inline=TRUE),
-									HTML('<hr noshade="noshade" />'),
-									bsButton("atom_bounds_calculate","Refresh",style="success"),
-									HTML('<h1 align="left"> &#x21e9; </h1> '),
-									tags$p(align="justify","Maximum possible number of atoms for each element at charges of z = 1 to 4 based on the above selections:"), 
-									DT::dataTableOutput('atom_count_table')
-								)
-							)	
-						)	
-					)
+						#condition = "(output.sel_meas_comp_state != 'Invalid file ID') && (output.sel_meas_comp_state != '')",
+						condition = "input.Neg_compound_select == 'Recovery'",						
+						tags$p(align="justify","FUCK YOU")
+					),
+					
+					
+					
+numericInput("sel_meas_comp_peak", "Type in peak ID:", 0, min=0),
+numericInput("sel_meas_comp_comp", "Type in component ID:", 0, min=0)					
 				),				
 				######################################################################################################################
 				tabPanel("Profiles",

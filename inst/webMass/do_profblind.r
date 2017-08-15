@@ -19,7 +19,8 @@ if(
 				profileList_pos[["index_prof"]][n,"start_ID"]:profileList_pos[["index_prof"]][n,"end_ID"]
 			,"in_blind"]	
 		if(any(these!=Inf)){
-			a<-median(these[these!=Inf])
+			#a<-median(these[these!=Inf])
+			a<-mean(these[these!=Inf])
 			profileList_pos[["index_prof"]][n,"above_blind?"]<-a
 		}else{
 			profileList_pos[["index_prof"]][n,"above_blind?"]<-Inf
