@@ -236,13 +236,23 @@ function(
 			      set.seed(1)
 			      colo<-sample(colo,size=n_col[1], replace = FALSE)
 			    }
-				plot(dat4[,1],dat4[,2],type="h",xlab="",ylab="",lwd=1,col="lightgrey",cex.axis=.9);
-				title(xlab="m/z",ylab="Intensity",cex.lab=.9,line=3)
+				if(masslim[1]==FALSE){
+					use_xlim<-c(min(dat4[,1]),max(dat4[,1]))
+				}else{
+					use_xlim<-masslim
+				}
+				plot(dat4[,1],dat4[,2],type="h",xlab="",ylab="",lwd=1,col="lightgrey",cex.axis=.9,xlim=use_xlim);
+				title(xlab="m/z",ylab="Intensity",cex.lab=.9,line=2.6)
 				if(length(comp[["pattern peak list"]])>2){
 					points(dat1[,1],dat1[,2],type="h",lwd=2,col=colo[as.numeric(dat1[,"peak ID"])]);
 				}
 				if(length(comp[["adduct peak list"]])>2){
 					points(dat2[,1],dat2[,2],type="h",lwd=2,col=colo[as.numeric(dat2[,"peak ID"])]);
+				}
+				if(masslim[1]!=FALSE){
+				  mtext("Zoomed in - click to zoom out partly or double-click to zoom out fully.", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_xlim[1], adj = 0)
+				}else{
+				  mtext("Brush and doubleclick to zoom.", side = 3, line=0.1, cex=.8, col="darkgrey", at=use_xlim[1], adj = 0)
 				}
 			}
             ####################################################################

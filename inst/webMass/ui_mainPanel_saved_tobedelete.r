@@ -1339,9 +1339,9 @@
 					tags$p(align="justify","This tab plots the centroided data points and picked peaks for an individual file - please first specify the ID of this file. 
 					The ID associated with a file can be found in the second column of the files table in the Files tab."),											
 					div(style = widget_style3,numericInput("sel_meas_ID", "Type in file ID:", 0)),
+					HTML('<hr noshade="noshade" />'),
 					conditionalPanel(			
-						condition = "input.sel_meas_ID != 0",	
-						HTML('<hr noshade="noshade" />'),				
+						condition = "input.sel_meas_ID != 0",					
 						bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
 							bsCollapsePanel(title="All picked peaks & raw data", 
 								navbarPage("Settings:",
@@ -1469,7 +1469,7 @@
 						The ID associated with a file can be found in the second column of the files table in the Files tab."),											
 					numericInput("sel_meas", "Type in file ID:", 0),
 					conditionalPanel(			
-						condition = "(output.dowhat != 'Invalid ID chosen to view processing results.') && (input.sel_meas != 0)",
+						condition = "output.dowhat != 'Invalid ID chosen to view processing results.'",
 						textOutput('file_proc_name'),
 						textOutput('file_proc_type'),
 						textOutput('file_proc_mode'),
@@ -1502,7 +1502,7 @@
 								tags$p(align="justify","The below sortable table lists all picked peaks and their characteristics for the above selected file. Click into table row(s) to inspect the chromatograms of selected peak(s)."),
 								HTML('<hr noshade="noshade" />'),
 						        conditionalPanel(     
-						            condition = "(typeof input.exp_peaklist_rows_selected !== 'undefined') && (input.exp_peaklist_rows_selected.length > 0)",  
+						            condition = "input.exp_peaklist_rows_selected.length>0",  
 						            #####################################################      
 						            tags$h5("Chromatograms of selected peaks:"),    				         
 						            plotOutput("peak_chromat",
@@ -1800,11 +1800,9 @@
 							conditionalPanel(			
 								condition = "(output.sel_meas_comp_state1 != 'no nontarget components available ') && (output.sel_meas_comp_state != 'Invalid file ID')",
 									HTML('<hr noshade="noshade" />'),
-									tags$p(align="justify","The below collapsible subsections give summarized and detailed information on the chemical component peaks (i.e., different adducts and isotopologues of the same analyte) 
-									detected in the selected file. Any row selections made in the Full component list table subsection will update the indivdual component viewed in the Single component subsection. You can hide
-									most component details in the latter subsection for easier navigation."),
+									tags$p(align="justify",""),
 									HTML('<hr noshade="noshade" />'),
-									bsCollapse(multiple = TRUE, open = "col3", id = "collapse3",	
+									bsCollapse(multiple = FALSE, open = "col3", id = "collapse3",	
 										bsCollapsePanel("Summary", 											
 											textOutput('num_peaks_all'),
 											textOutput('num_comp'),
@@ -1820,7 +1818,7 @@
 											HTML('<hr noshade="noshade" />'),
 											textOutput('num_comp_nontarget')										
 										),
-										bsCollapsePanel("Single component", 
+										bsCollapsePanel("Individual components", 
 											tags$p(align="justify","You can select components either via the ID of a single peak contained in the component or via the ID of the component itself. In the first case, the selection of the peak ID
 												will automatically update the ID of the associated component."),											
 											fluidRow(										
@@ -1829,35 +1827,10 @@
 												column(4,textOutput('found_compo'))
 											),
 											HTML('<hr noshade="noshade" />'),
-											plotOutput("comp_plot_spec",
-							                    click = "comp_plot_spec_click",
-							                    dblclick = "comp_plot_spec_dblclick",
-							                    #hover = "homol_counts_hover",
-							                    brush = brushOpts(
-							                        id = "comp_plot_spec_brush",
-							                        direction = c("x"),
-							                        resetOnNew = TRUE,
-							                        delay = 0
-							                    ),       
-												height = "300px"
-											),
-											plotOutput("comp_plot_chromat",
-							                    click = "comp_plot_chromat_click",
-							                    dblclick = "comp_plot_chromat_dblclick",
-							                    #hover = "homol_counts_hover",
-							                    brush = brushOpts(
-							                        id = "comp_plot_chromat_brush",
-							                        direction = c("xy"),
-							                        resetOnNew = TRUE,
-							                        delay = 0
-							                    ),       
-												height = "330px"
-											),
+											plotOutput("comp_plot_spec",height = "400px"),
 											conditionalPanel(			
 												condition = "(output.found_compo != 'Invalid peak ID') && (input.sel_meas_comp_comp != 0)",
-												tags$p(align="justify","The above mass spectrum shows all peaks grouped into the selected component (colored bars) and all other non-component peaks that fall into 
-												the mass and RT range of the selected component (gray bars, if any). The chromatogram plot below that mass spectrum shows the individual chromatograms of these component 
-												peaks; their selection if affected by any zooming in the mass spectrum."),											
+												tags$p(align="justify","The above mass spectrum shows all peaks grouped into the selected component (green) and all other non-component peaks that fall into the mass and RT range of the selected component."),											
 												HTML('<hr noshade="noshade" />')
 											),
 											radioButtons("comp_hide", label="Show all component details?", choices = c("minimize"="minimize","maximize"="maximize"), selected = "maximize",
@@ -1898,11 +1871,9 @@
 											)
 										),
 										bsCollapsePanel("Full component list", 
-											tags$p(align="justify","Each row in the below table corresponds to a component and its different isotoplogue and adduct peaks. 
-												Peaks which are also present in blank/blind files are marked with an asterisk in the below table.
-												Click into a table row to have further details on the selected component highlighted in the above Single component subsection."), 
-											HTML('<hr noshade="noshade" />'),
-											DT::dataTableOutput('comp_table_full')					
+											tags$p(align="justify","Each row in the below table corresponds to a component, sorted by decreasing maximum peak intensity. 
+												Peaks which are also present in blank/blind files are marked with an asterisk in the below table."), 
+											DT::dataTableOutput('comp_table')					
 										)
 									)
 								)
@@ -1980,7 +1951,7 @@
 						                        		chromatographic peaks."),
 						                            HTML('<hr noshade="noshade" />'),                
 						                            conditionalPanel(     
-						                              condition = "(input.homol_series_table_rows_selected > 0) && (input.homol_series_table_rows_selected.length > 0)",  
+						                              condition = "input.homol_series_table_rows_selected > 0",  
 						                                #####################################################            
 						                                plotOutput("homol_chromat",
 						                                    click = "homol_chromat_click",

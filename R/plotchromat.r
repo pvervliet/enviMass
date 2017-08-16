@@ -23,7 +23,17 @@ function(
     ############################################################################
     normalize<-as.logical(normalize)
     these_peaks<-peakIDs
-    #if(any(is.na(these_peaks))){stop("\n Invalid peakIDs in plotchromat detected!")}
+	if(masslim[1]!=FALSE){
+		for_peaks<-match(these_peaks,MSlist[["Peaklist"]][,"peak_ID"])
+		these_peaks<-these_peaks[
+			(MSlist[["Peaklist"]][for_peaks,"m/z"] >= masslim[1]) &
+			(MSlist[["Peaklist"]][for_peaks,"m/z"] <= masslim[2])	
+		]
+		if(!length(these_peaks)){
+			plot.new()
+			return("done")		
+		}
+	}
     if(RTlim[1]==FALSE){
       min_RT<-min(MSlist[["Scans"]][[2]][,"RT"])
       max_RT<-max(MSlist[["Scans"]][[2]][,"RT"])
@@ -112,16 +122,19 @@ function(
           points(all_RTs,all_int,type="l",col=colo[i],lwd=1.5)
         }
     }
-    if(!normalize & set_RT=="seconds"){title(xlab="RT [s]",ylab="Intensity",cex.lab=.9,line=3)}
-    if(!normalize & set_RT=="minutes"){title(xlab="RT [min]",ylab="Intensity",cex.lab=.9,line=3)}
-    if(normalize & set_RT=="seconds"){title(xlab="RT [s]",ylab="Norm. intens.",cex.lab=.9,line=3)}
-    if(normalize & set_RT=="minutes"){title(xlab="RT [min]",ylab="Norm. intens.",cex.lab=.9,line=3)}
+    if(!normalize & set_RT=="seconds"){title(xlab="RT [s]",ylab="Intensity",cex.lab=.9,line=2.6)}
+    if(!normalize & set_RT=="minutes"){title(xlab="RT [min]",ylab="Intensity",cex.lab=.9,line=2.6)}
+    if(normalize & set_RT=="seconds"){title(xlab="RT [s]",ylab="Norm. intens.",cex.lab=.9,line=2.6)}
+    if(normalize & set_RT=="minutes"){title(xlab="RT [min]",ylab="Norm. intens.",cex.lab=.9,line=2.6)}
     box();axis(1,cex.axis=.9);axis(2,cex.axis=.9)
     if(RTlim[1]!=FALSE | Intlim[1]!=FALSE){
       mtext("Zoomed in - click to zoom out partly or double-click to zoom out fully.", side = 3, line=0.1, cex=.8, col="darkgrey", at=x_lim[1], adj = 0)
     }else{
       mtext("Brush and doubleclick to zoom.", side = 3, line=0.1, cex=.8, col="darkgrey", at=x_lim[1], adj = 0)
     }
+    if(masslim[1]!=FALSE){
+      mtext("Restricted mass range.", side = 3, line=0.1, cex=.8, col="darkgrey", at=x_lim[2], adj = 1)	
+	}
     ############################################################################    
     return("done")
     ############################################################################

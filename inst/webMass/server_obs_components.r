@@ -14,7 +14,8 @@ refresh_homol$c <- 0 # contains peaks
 refresh_homol$d <- 0
 
 ranges_compo <- reactiveValues(mass = FALSE, RTchrom=FALSE, intchrom=FALSE)
-
+refresh_compo <- reactiveValues()
+refresh_compo$a <- 0
 
 observe({ # - A
 	input$sel_meas_comp 
@@ -216,19 +217,6 @@ observe({ # - A
 })	
 ##############################################################################
 
-################################################################################
-observe({
-    s1<-input$comp_table_full_rows_selected
-    if(isolate(init$a)=="TRUE"){
-        if(length(s1)){
-        	print(s1)
-            if(s1>=1){
-				updateNumericInput(session, inputId = "sel_meas_comp_comp", value = as.numeric(comp_table_full[s1,"Component ID |"]))
-            }
-     	}
-	}
-})           
-################################################################################ 
 
 ################################################################################
 observe({
@@ -256,7 +244,7 @@ observe({
                 }
                 # output homol. series plot ######################################
                 output$homol_plot <- renderPlot({   
-                  par(mar=c(4.5,4.5,.7,.8))
+                  par(mar=c(4.5,4.5,.9,.8))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                     dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -265,7 +253,7 @@ observe({
                 },res=100)  
                 # output homol. mass difference counts plot #####################
                 output$homol_counts <- renderPlot({   
-                  par(mar=c(4.5,4.5,.7,.8))
+                  par(mar=c(4.5,4.5,.9,.8))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                     dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -274,7 +262,7 @@ observe({
                 },res=100)          
                 # output homol. RT difference vs mass scatter plot ##############
                 output$homol_RT <- renderPlot({   
-                  par(mar=c(4.5,4.5,.7,.8))
+                  par(mar=c(4.5,4.5,.9,.8))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                     dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -348,7 +336,7 @@ observe({
                 }
                 # output homol. series plot ######################################
                 output$homol_plot <- renderPlot({   
-                  par(mar=c(4.5,4.5,.7,.8))
+                  par(mar=c(4.5,4.5,.9,.8))
                   enviMass:::plothomol(homol,
                     xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                     dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -410,7 +398,7 @@ observe({
               # output homol. series plot ######################################
               cat("\n for this peak: ");print(use_homol_peaks[s1]);
               output$homol_plot <- renderPlot({   
-                par(mar=c(4.5,4.5,.7,.8))
+                par(mar=c(4.5,4.5,.9,.8))
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -440,7 +428,7 @@ observe({
                )
             # output homol. series plot ######################################
             output$homol_plot <- renderPlot({
-              par(mar=c(4.5,4.5,.7,.8))
+              par(mar=c(4.5,4.5,.9,.8))
               enviMass:::plothomol(homol,
                 xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                 dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -471,7 +459,7 @@ observe({
               }
               print(these_series_1)
               output$homol_plot <- renderPlot({
-                par(mar=c(4.5,4.5,.7,.8))
+                par(mar=c(4.5,4.5,.9,.8))
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -491,7 +479,7 @@ observe({
             if(length(s1)){
               these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
               output$homol_plot <- renderPlot({   
-                par(mar=c(4.5,4.5,.7,.8))
+                par(mar=c(4.5,4.5,.9,.8))
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -502,7 +490,7 @@ observe({
               },res=100)
             }else{  
               output$homol_plot <- renderPlot({
-                par(mar=c(4.5,4.5,.7,.8))
+                par(mar=c(4.5,4.5,.9,.8))
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
@@ -668,6 +656,23 @@ observeEvent(input$homol_chromat_click, { # NOTE: brushing already triggers a cl
 
   
 ############################################################################## 
+
+################################################################################
+observe({
+    s1<-input$comp_table_full_rows_selected
+    if(isolate(init$a)=="TRUE"){
+        if(length(s1)){
+        	print(s1)
+            if(s1>=1){
+				updateNumericInput(session, inputId = "sel_meas_comp_comp", value = as.numeric(comp_table_full[s1,"Component ID |"]))
+				isolate(ranges_compo$mass<-FALSE)
+				isolate(ranges_compo$RTchrom<-FALSE)
+				isolate(ranges_compo$intchrom<-FALSE)
+            }
+     	}
+	}
+})           
+
 observe({ # - B
 	input$sel_meas_comp_peak 
 	if(verbose){cat("\n in Comp_B")}
@@ -735,14 +740,15 @@ observe({ # - C
 
 observe({ # - D: generate outputs
 	ee$entry 
-	if(isolate(ee$entry)>0){
+	refresh_compo$a
+	if( isolate(ee$entry)>0 || isolate(refresh_compo$a)>0 ){
 		if(verbose){cat("\n in Comp_D_1")}
 		got_comp<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="check")			
 		if(got_comp=="available"){
 			output$found_compo<-renderText("")
 			# output spectrum ##############################################################
 			output$comp_plot_spec <- renderPlot({	
-				par(mar=c(4,4,.5,.8));
+				par(mar=c(4,4,.9,.8));
 				enviMass::plotcomp_parts(
 					component, 
 					compoID=as.numeric(isolate(ee$entry)), 
@@ -752,7 +758,6 @@ observe({ # - D: generate outputs
 				)
 			},res=110)				
 			# output chromatogram ##########################################################
-# > BAUSTELLE
 			at_comp<<-match(as.numeric(isolate(ee$entry)),comp_table_full[,"Component ID |"])
 			peaks1<-comp_table_full[at_comp,"ID pattern peaks |"]
 			peaks1<-gsub("*","",peaks1,fixed=TRUE)
@@ -801,7 +806,6 @@ observe({ # - D: generate outputs
 		           	chromat_full=TRUE#input$peak_chromat_type
 		        );
 			},res=110)		
-# > BAUSTELLE
 			# output circular plot ##########################################################
 			output$comp_plot_circ <- renderPlot({	
 				enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="circ")
@@ -894,7 +898,7 @@ observe({ # - D: generate outputs
 				#output$found_compo<-renderText("The selected component contains only one peak.") # for conditional panel
 				output$found_compo<-renderText("single_peak")
 				output$comp_plot_spec <- renderPlot({	
-					par(mar=c(4,4,.5,.8));
+					par(mar=c(4,4,.9,.8));
 					enviMass::plotcomp_parts(
 						component, 
 						compoID=as.numeric(isolate(ee$entry)), 
@@ -903,7 +907,6 @@ observe({ # - D: generate outputs
 						masslim=isolate(ranges_compo$mass))
 				},res=110)				
 				# output chromatogram ##########################################################
-# > BAUSTELLE
 				at_comp<<-match(as.numeric(isolate(ee$entry)),comp_table_full[,"Component ID |"])
 				peaks1<-comp_table_full[at_comp,"ID pattern peaks |"]
 				peaks1<-gsub("*","",peaks1,fixed=TRUE)
@@ -937,7 +940,6 @@ observe({ # - D: generate outputs
 	        	}else{ # no MSlist in GlobalEnv
 					load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv"))  
 	        	}
-
 				output$comp_plot_chromat <- renderPlot({				
 			        par(mar=c(5,4,1,.8))
 			        enviMass:::plotchromat(
@@ -952,7 +954,6 @@ observe({ # - D: generate outputs
 			           	chromat_full=TRUE#input$peak_chromat_type
 			        );
 				},res=110)		
-# > BAUSTELLE
 				# output tables ################################################################################
 				comp_table<<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="table")
 				# output circular plot
@@ -1058,8 +1059,70 @@ observe({ # - D: generate outputs
 		
 	}
 })
+
+observeEvent(input$comp_plot_chromat_dblclick, { # - E observe chromatogram plot
+          brush <- isolate(input$comp_plot_chromat_brush)
+          if (!is.null(brush)) {
+            cat("\n Zoom comp in_1e")
+            isolate(ranges_compo$RTchrom <- c(brush$xmin, brush$xmax))
+            isolate(ranges_compo$intchrom <- c(brush$ymin, brush$ymax))            
+          } else {
+            cat("\n Zoom out comp  full_1e")
+            isolate(ranges_compo$RTchrom <- FALSE)
+            isolate(ranges_compo$intchrom <- FALSE)
+          }
+          isolate(refresh_compo$a<-(refresh_compo$a+1)) # valid in both cases
+})
+observeEvent(input$comp_plot_chromat_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
+          cat("\n Zoom out comp  part_1_ae")
+          brush <- isolate(input$comp_plot_chromat_brush)
+          if (is.null(brush)) {
+              cat("\n Zoom out comp  part_1_be")
+              if(isolate(ranges_compo$RTchrom[1])!=FALSE){
+                old_range_dmass<-abs(isolate(ranges_compo$RTchrom[2]-ranges_compo$RTchrom[1]))
+                isolate(ranges_compo$RTchrom[1]<-ranges_compo$RTchrom[1]-.3*old_range_dmass)
+                isolate(ranges_compo$RTchrom[2]<-ranges_compo$RTchrom[2]+.3*old_range_dmass)
+                old_range_dmass<-abs(isolate(ranges_compo$intchrom[2]-ranges_compo$intchrom[1]))
+                isolate(ranges_compo$intchrom[1]<-ranges_compo$intchrom[1]-.3*old_range_dmass)
+                isolate(if(ranges_compo$intchrom[1]<0){ranges_compo$intchrom[1]<-0})
+                isolate(ranges_compo$intchrom[2]<-ranges_compo$intchrom[2]+.3*old_range_dmass)
+              }
+              isolate(refresh_compo$a<-(refresh_compo$a+1))
+          }else{
+            cat("\n Doing hover_e comp comp - nothing")
+          }   
+})     
+
+observeEvent(input$comp_plot_spec_dblclick, { # - E observe chromatogram plot
+          brush <- isolate(input$comp_plot_spec_brush)
+          if (!is.null(brush)) {
+            cat("\n Zoom comp in_1e")
+            isolate(ranges_compo$mass <- c(brush$xmin, brush$xmax))      
+          } else {
+            cat("\n Zoom out comp  full_1e")
+            isolate(ranges_compo$mass <- FALSE)
+          }
+          isolate(refresh_compo$a<-(refresh_compo$a+1)) # valid in both cases
+})
+observeEvent(input$comp_plot_spec_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
+          cat("\n Zoom out comp  part_1_ae")
+          brush <- isolate(input$comp_plot_spec_brush)
+          if (is.null(brush)) {
+              cat("\n Zoom out comp  part_1_be")
+              if(isolate(ranges_compo$mass[1])!=FALSE){
+                old_range_dmass<-abs(isolate(ranges_compo$mass[2]-ranges_compo$mass[1]))
+                isolate(ranges_compo$mass[1]<-ranges_compo$mass[1]-.3*old_range_dmass)
+                isolate(ranges_compo$mass[2]<-ranges_compo$mass[2]+.3*old_range_dmass)
+              }
+              isolate(refresh_compo$a<-(refresh_compo$a+1))
+          }else{
+            cat("\n Doing hover_e comp comp - nothing")
+          }   
+})     
+
+
 ##############################################################################
-  
+
   
 ##############################################################################
 # Calculate atom bounds ######################################################
