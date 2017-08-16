@@ -1,5 +1,6 @@
 	###############################################################################	
 	those_objects<-c(
+		"comp_table",
 		"plot_those",
 		"omit_theta",
 		"cut_delRT_EIC",

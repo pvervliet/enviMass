@@ -1339,9 +1339,9 @@
 					tags$p(align="justify","This tab plots the centroided data points and picked peaks for an individual file - please first specify the ID of this file. 
 					The ID associated with a file can be found in the second column of the files table in the Files tab."),											
 					div(style = widget_style3,numericInput("sel_meas_ID", "Type in file ID:", 0)),
-					HTML('<hr noshade="noshade" />'),
 					conditionalPanel(			
-						condition = "input.sel_meas_ID != 0",					
+						condition = "input.sel_meas_ID != 0",	
+						HTML('<hr noshade="noshade" />'),				
 						bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
 							bsCollapsePanel(title="All picked peaks & raw data", 
 								navbarPage("Settings:",
@@ -1469,7 +1469,7 @@
 						The ID associated with a file can be found in the second column of the files table in the Files tab."),											
 					numericInput("sel_meas", "Type in file ID:", 0),
 					conditionalPanel(			
-						condition = "output.dowhat != 'Invalid ID chosen to view processing results.'",
+						condition = "(output.dowhat != 'Invalid ID chosen to view processing results.') && (input.sel_meas != 0)",
 						textOutput('file_proc_name'),
 						textOutput('file_proc_type'),
 						textOutput('file_proc_mode'),
@@ -1502,7 +1502,7 @@
 								tags$p(align="justify","The below sortable table lists all picked peaks and their characteristics for the above selected file. Click into table row(s) to inspect the chromatograms of selected peak(s)."),
 								HTML('<hr noshade="noshade" />'),
 						        conditionalPanel(     
-						            condition = "input.exp_peaklist_rows_selected.length>0",  
+						            condition = "(typeof input.exp_peaklist_rows_selected !== 'undefined') && (input.exp_peaklist_rows_selected.length > 0)",  
 						            #####################################################      
 						            tags$h5("Chromatograms of selected peaks:"),    				         
 						            plotOutput("peak_chromat",
@@ -1802,7 +1802,7 @@
 									HTML('<hr noshade="noshade" />'),
 									tags$p(align="justify",""),
 									HTML('<hr noshade="noshade" />'),
-									bsCollapse(multiple = FALSE, open = "col3", id = "collapse3",	
+									bsCollapse(multiple = TRUE, open = "col3", id = "collapse3",	
 										bsCollapsePanel("Summary", 											
 											textOutput('num_peaks_all'),
 											textOutput('num_comp'),
@@ -1827,7 +1827,32 @@
 												column(4,textOutput('found_compo'))
 											),
 											HTML('<hr noshade="noshade" />'),
-											plotOutput("comp_plot_spec",height = "400px"),
+											plotOutput("comp_plot_spec",
+							                    click = "comp_plot_spec_click",
+							                    dblclick = "comp_plot_spec_dblclick",
+							                    #hover = "homol_counts_hover",
+							                    brush = brushOpts(
+							                        id = "comp_plot_spec_brush",
+							                        direction = c("x"),
+							                        resetOnNew = TRUE,
+							                        delay = 0
+							                    ),       
+												height = "300px"
+											),
+# > BAUSTELLE
+											plotOutput("comp_plot_chromat",
+							                    click = "comp_plot_chromat_click",
+							                    dblclick = "comp_plot_chromat_dblclick",
+							                    #hover = "homol_counts_hover",
+							                    brush = brushOpts(
+							                        id = "comp_plot_chromat_brush",
+							                        direction = c("xy"),
+							                        resetOnNew = TRUE,
+							                        delay = 0
+							                    ),       
+												height = "330px"
+											),
+# 	
 											conditionalPanel(			
 												condition = "(output.found_compo != 'Invalid peak ID') && (input.sel_meas_comp_comp != 0)",
 												tags$p(align="justify","The above mass spectrum shows all peaks grouped into the selected component (green) and all other non-component peaks that fall into the mass and RT range of the selected component."),											
@@ -1873,7 +1898,7 @@
 										bsCollapsePanel("Full component list", 
 											tags$p(align="justify","Each row in the below table corresponds to a component, sorted by decreasing maximum peak intensity. 
 												Peaks which are also present in blank/blind files are marked with an asterisk in the below table."), 
-											DT::dataTableOutput('comp_table')					
+											DT::dataTableOutput('comp_table_full')					
 										)
 									)
 								)
@@ -1951,7 +1976,7 @@
 						                        		chromatographic peaks."),
 						                            HTML('<hr noshade="noshade" />'),                
 						                            conditionalPanel(     
-						                              condition = "input.homol_series_table_rows_selected > 0",  
+						                              condition = "(input.homol_series_table_rows_selected > 0) && (input.homol_series_table_rows_selected.length > 0)",  
 						                                #####################################################            
 						                                plotOutput("homol_chromat",
 						                                    click = "homol_chromat_click",

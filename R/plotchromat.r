@@ -13,6 +13,7 @@ function(
   peakIDs,
   RTlim=FALSE,
   Intlim=FALSE,
+  masslim=FALSE,
   normalize=FALSE,
   n_col=FALSE,
   set_RT="seconds",
@@ -111,11 +112,11 @@ function(
           points(all_RTs,all_int,type="l",col=colo[i],lwd=1.5)
         }
     }
-    if(!normalize & set_RT=="seconds"){title(xlab="RT [s]",ylab="Intensity")}
-    if(!normalize & set_RT=="minutes"){title(xlab="RT [min]",ylab="Intensity")}
-    if(normalize & set_RT=="seconds"){title(xlab="RT [s]",ylab="Norm. intens.")}
-    if(normalize & set_RT=="minutes"){title(xlab="RT [min]",ylab="Norm. intens.")}
-    box();axis(1);axis(2)
+    if(!normalize & set_RT=="seconds"){title(xlab="RT [s]",ylab="Intensity",cex.lab=.9,line=3)}
+    if(!normalize & set_RT=="minutes"){title(xlab="RT [min]",ylab="Intensity",cex.lab=.9,line=3)}
+    if(normalize & set_RT=="seconds"){title(xlab="RT [s]",ylab="Norm. intens.",cex.lab=.9,line=3)}
+    if(normalize & set_RT=="minutes"){title(xlab="RT [min]",ylab="Norm. intens.",cex.lab=.9,line=3)}
+    box();axis(1,cex.axis=.9);axis(2,cex.axis=.9)
     if(RTlim[1]!=FALSE | Intlim[1]!=FALSE){
       mtext("Zoomed in - click to zoom out partly or double-click to zoom out fully.", side = 3, line=0.1, cex=.8, col="darkgrey", at=x_lim[1], adj = 0)
     }else{

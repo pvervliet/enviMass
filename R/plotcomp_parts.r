@@ -2,6 +2,8 @@ plotcomp_parts <-
 function(
 	comp,
 	compoID,
+	n_col=FALSE,
+	masslim=FALSE,
 	what="circ"
 ){
 
@@ -178,7 +180,6 @@ function(
 			####################################################################
             # plot peaks #######################################################
 			if(what=="spec"){
-				par(mar=c(4,4,1,1));
 				if(length(comp[["pattern peak list"]])>1 & length(comp[[3]])>1){
 					mintol<-c(min(dat1[,3],dat2[,3])-comp[["Parameters"]][1]);
 					maxtol<-c(max(dat1[,3],dat2[,3])+comp[["Parameters"]][1]);
@@ -228,12 +229,20 @@ function(
 						comp[["adduct peak list"]][,1]<=maxmz
 					,]
 				}
-				plot(dat4[,1],dat4[,2],type="h",xlab="m/z",ylab="Intensity",lwd=1,col="lightgrey",cex.lab=.9,cex.axis=.9);
+			    if(n_col[1]==FALSE){
+			      colo<-"darkgreen"
+			    }else{
+			      colo<-rainbow(n_col[1],s = .5, v = .7)
+			      set.seed(1)
+			      colo<-sample(colo,size=n_col[1], replace = FALSE)
+			    }
+				plot(dat4[,1],dat4[,2],type="h",xlab="",ylab="",lwd=1,col="lightgrey",cex.axis=.9);
+				title(xlab="m/z",ylab="Intensity",cex.lab=.9,line=3)
 				if(length(comp[["pattern peak list"]])>2){
-					points(dat1[,1],dat1[,2],type="h",lwd=2,col="darkgreen");
+					points(dat1[,1],dat1[,2],type="h",lwd=2,col=colo[as.numeric(dat1[,"peak ID"])]);
 				}
 				if(length(comp[["adduct peak list"]])>2){
-					points(dat2[,1],dat2[,2],type="h",lwd=2,col="darkgreen");
+					points(dat2[,1],dat2[,2],type="h",lwd=2,col=colo[as.numeric(dat2[,"peak ID"])]);
 				}
 			}
             ####################################################################

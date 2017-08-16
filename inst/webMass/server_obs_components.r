@@ -13,6 +13,9 @@ refresh_homol$b <- 0
 refresh_homol$c <- 0 # contains peaks
 refresh_homol$d <- 0
 
+ranges_compo <- reactiveValues(mass = FALSE, RTchrom=FALSE, intchrom=FALSE)
+
+
 observe({ # - A
 	input$sel_meas_comp 
 	if(verbose){cat("\n in Comp_A")}
@@ -62,8 +65,10 @@ observe({ # - A
 				# output components summary table ################################
 				if(!is.null(dim(component[["pattern peak list"]]))){
 					num_peaks_all<-dim(component[["pattern peak list"]])[1]
+					max_peak_ID<<-max(component[["pattern peak list"]][,"peak ID"])
 				}else{
 					num_peaks_all<-dim(component[["adduct peak list"]])[1]
+					max_peak_ID<<-max(component[["adduct peak list"]][,"peak ID"])
 				}
 				num_comp<-dim(component[["Components"]])[1]
 				num_comp_tar<-sum(component[["Components"]][,"Target peaks"]!="-")
@@ -103,7 +108,7 @@ observe({ # - A
 				output$max_size_comp<-renderText(paste("Max number of peaks in a component: ",as.character(max_size_comp),sep=""))				
 				output$num_comp_nontarget<-renderText(paste("Number of nontarget components with at least one non-blind peak: ",as.character(comp_nontarget),sep=""))
 				# output component table #########################################
-				comp_table<-component[["Components"]][,c(
+				comp_table_full<<-component[["Components"]][,c(
 					"Component ID |",
 					"Monois. peak ID |",
 					"Monois. m/z |",
@@ -123,14 +128,14 @@ observe({ # - A
 					"Blind peak number",
 					"z"
 				),drop=FALSE]
-				comp_table[,4]<-round(comp_table[,4],digits=2)
-				comp_table[,5]<-(comp_table[,5]/60)
-				comp_table[,5]<-round(comp_table[,5],digits=2)				
-				comp_table[,6]<-round(comp_table[,6],digits=1)
-				comp_table[,3]<-round(comp_table[,3],digits=5)	
-				output$comp_table <- DT::renderDataTable(
+				comp_table_full[,4]<-round(comp_table_full[,4],digits=2)
+				comp_table_full[,5]<-(comp_table_full[,5]/60)
+				comp_table_full[,5]<-round(comp_table_full[,5],digits=2)				
+				comp_table_full[,6]<-round(comp_table_full[,6],digits=1)
+				comp_table_full[,3]<-round(comp_table_full[,3],digits=5)	
+				output$comp_table_full <- DT::renderDataTable(
 					DT::datatable(
-						comp_table,
+						comp_table_full,
 						colnames=c(
 							"Component ID",
 							"Monois. peak ID",
@@ -151,7 +156,9 @@ observe({ # - A
 							ordering=T,
 							dom = 'Bfrtip',
 							buttons = c('excel')#buttons = c('excel', 'pdf', 'print', 'csv'),
-						)
+						),
+						filter = 'top',
+	                    selection = list(mode = 'single', target = 'row')
 					),
 					server = FALSE
 				)
@@ -208,7 +215,21 @@ observe({ # - A
 	}
 })	
 ##############################################################################
-  
+
+################################################################################
+observe({
+    s1<-input$comp_table_full_rows_selected
+    if(isolate(init$a)=="TRUE"){
+        if(length(s1)){
+        	print(s1)
+            if(s1>=1){
+				updateNumericInput(session, inputId = "sel_meas_comp_comp", value = as.numeric(comp_table_full[s1,"Component ID |"]))
+            }
+     	}
+	}
+})           
+################################################################################ 
+
 ################################################################################
 observe({
     refresh_homol$a
@@ -719,15 +740,73 @@ observe({ # - D: generate outputs
 		got_comp<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="check")			
 		if(got_comp=="available"){
 			output$found_compo<-renderText("")
-			# output spectrum
+			# output spectrum ##############################################################
 			output$comp_plot_spec <- renderPlot({	
-				enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="spec")
+				par(mar=c(4,4,.5,.8));
+				enviMass::plotcomp_parts(
+					component, 
+					compoID=as.numeric(isolate(ee$entry)), 
+					what="spec",
+					n_col=max_peak_ID,
+					masslim=isolate(ranges_compo$mass)
+				)
 			},res=110)				
-			# output circular plot
+			# output chromatogram ##########################################################
+# > BAUSTELLE
+			at_comp<<-match(as.numeric(isolate(ee$entry)),comp_table_full[,"Component ID |"])
+			peaks1<-comp_table_full[at_comp,"ID pattern peaks |"]
+			peaks1<-gsub("*","",peaks1,fixed=TRUE)
+			peaks1<-as.numeric(strsplit(peaks1,",")[[1]])
+			if(comp_table_full[at_comp,"ID adduct peaks |"]!="-"){
+				peaks2<-comp_table_full[at_comp,"ID adduct peaks |"]
+				peaks2<-gsub("*","",peaks2,fixed=TRUE)
+				peaks2<-as.numeric(strsplit(peaks2,",")[[1]])
+			}else{
+				peaks2<-c()
+			}
+			if(comp_table_full[at_comp,"ID interfering peaks |"]!="-"){
+				#peaks3<-comp_table_full[at_comp,"ID interfering peaks |"]
+				#peaks3<-gsub("*","",peaks3,fixed=TRUE)
+				#peaks3<-as.numeric(strsplit(peaks3,",")[[1]])
+				peaks3<-c()
+			}else{
+				peaks3<-c()
+			}				
+			all_peaks<<-c(peaks1,peaks2,peaks3)
+			# load MSlist if missing
+        	if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){
+        		if(any(names(MSlist)=="File_ID")){
+        			if(MSlist[["File_ID"]]!=as.character(isolate(input$sel_meas_comp))){ # File_ID does not match
+						load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv")) 
+        			}
+        		}else{ # available MSlist not with File_ID yet
+					load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv"))  
+					MSlist[["File_ID"]]<-as.character(isolate(input$sel_meas_comp))
+        		}
+        	}else{ # no MSlist in GlobalEnv
+				load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv"))  
+        	}
+
+			output$comp_plot_chromat <- renderPlot({				
+		        par(mar=c(4.5,4,1,.8));
+		        enviMass:::plotchromat(
+		          	MSlist,
+		           	peakIDs=all_peaks,
+		           	RTlim=isolate(ranges_compo$RTchrom),
+		           	Intlim=isolate(ranges_compo$intchrom),
+		           	masslim=isolate(ranges_compo$mass),
+		           	normalize=FALSE,#as.logical(isolate(input$peak_chromat_norm)),
+		           	n_col=max_peak_ID,#dim(peaklist)[1],
+		           	set_RT="seconds",#isolate(input$peak_chromat_time),
+		           	chromat_full=TRUE#input$peak_chromat_type
+		        );
+			},res=110)		
+# > BAUSTELLE
+			# output circular plot ##########################################################
 			output$comp_plot_circ <- renderPlot({	
 				enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="circ")
 			},res=110)				
-			# output tables 
+			# output tables #################################################################
 			comp_table<<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="table")
 			inser<-rep("",length(comp_table$relations[,2]))
 			do_these<-which(grepl("<->",comp_table$relations[,2]))
@@ -738,7 +817,7 @@ observe({ # - D: generate outputs
 			if(length(do_these)>0){					
 				inser[do_these]<-"Different isotopologues of the same adduct"
 			}	
-			# output target peaks
+			# output target peaks ###########################################################
 			if(component[[1]][as.numeric(isolate(ee$entry)),"Target peaks"]!="-"){
 				output$which_comp_tar<-renderText(paste0(
 					"Target/suspect peaks found for this component: ",
@@ -747,7 +826,7 @@ observe({ # - D: generate outputs
 			}else{
 				output$which_comp_tar<-renderText("No target or suspect peaks found for this component.")
 			}
-			# output ISTD peaks
+			# output ISTD peaks #############################################################
 			if(component[[1]][as.numeric(isolate(ee$entry)),"ISTD peaks"]!="-"){
 				output$which_comp_ISTD<-renderText(paste0(
 					"ISTD peaks found for this component: ",
@@ -814,16 +893,67 @@ observe({ # - D: generate outputs
 			if(got_comp=="single_peak"){		
 				#output$found_compo<-renderText("The selected component contains only one peak.") # for conditional panel
 				output$found_compo<-renderText("single_peak")
-				#output$comp_plot_spec <- renderPlot({	
-				#	plot.new()
-				#	plot.window(xlim=c(0,1),ylim=c(0,1))
-				#	text(.5,.5,labels="The selected component contains only one peak.")
-				#},res=110)			
-				
 				output$comp_plot_spec <- renderPlot({	
-					enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="spec")
+					par(mar=c(4,4,.5,.8));
+					enviMass::plotcomp_parts(
+						component, 
+						compoID=as.numeric(isolate(ee$entry)), 
+						what="spec",
+						n_col=max_peak_ID,
+						masslim=isolate(ranges_compo$mass))
 				},res=110)				
-				# output tables 
+				# output chromatogram ##########################################################
+# > BAUSTELLE
+				at_comp<<-match(as.numeric(isolate(ee$entry)),comp_table_full[,"Component ID |"])
+				peaks1<-comp_table_full[at_comp,"ID pattern peaks |"]
+				peaks1<-gsub("*","",peaks1,fixed=TRUE)
+				peaks1<-as.numeric(strsplit(peaks1,",")[[1]])
+				if(comp_table_full[at_comp,"ID adduct peaks |"]!="-"){
+					peaks2<-comp_table_full[at_comp,"ID adduct peaks |"]
+					peaks2<-gsub("*","",peaks2,fixed=TRUE)
+					peaks2<-as.numeric(strsplit(peaks2,",")[[1]])
+				}else{
+					peaks2<-c()
+				}
+				if(comp_table_full[at_comp,"ID interfering peaks |"]!="-"){
+					#peaks3<-comp_table_full[at_comp,"ID interfering peaks |"]
+					#peaks3<-gsub("*","",peaks3,fixed=TRUE)
+					#peaks3<-as.numeric(strsplit(peaks3,",")[[1]])
+					peaks3<-c()
+				}else{
+					peaks3<-c()
+				}				
+				all_peaks<<-c(peaks1,peaks2,peaks3)
+				# load MSlist if missing
+	        	if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){
+	        		if(any(names(MSlist)=="File_ID")){
+	        			if(MSlist[["File_ID"]]!=as.character(isolate(input$sel_meas_comp))){ # File_ID does not match
+							load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv")) 
+	        			}
+	        		}else{ # available MSlist not with File_ID yet
+						load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv"))  
+						MSlist[["File_ID"]]<-as.character(isolate(input$sel_meas_comp))
+	        		}
+	        	}else{ # no MSlist in GlobalEnv
+					load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv"))  
+	        	}
+
+				output$comp_plot_chromat <- renderPlot({				
+			        par(mar=c(5,4,1,.8))
+			        enviMass:::plotchromat(
+			          	MSlist,
+			           	peakIDs=all_peaks,
+		           		RTlim=isolate(ranges_compo$RTchrom),
+		           		Intlim=isolate(ranges_compo$intchrom),
+		           		masslim=isolate(ranges_compo$mass),
+			           	normalize=FALSE,#as.logical(isolate(input$peak_chromat_norm)),
+			           	n_col=max_peak_ID,#dim(peaklist)[1],
+			           	set_RT=FALSE,#isolate(input$peak_chromat_time),
+			           	chromat_full=TRUE#input$peak_chromat_type
+			        );
+				},res=110)		
+# > BAUSTELLE
+				# output tables ################################################################################
 				comp_table<<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="table")
 				# output circular plot
 				output$comp_plot_circ <- renderPlot({	
@@ -831,7 +961,7 @@ observe({ # - D: generate outputs
 					plot.window(xlim=c(0,1),ylim=c(0,1))
 					text(.5,.5,labels="The selected component contains only one peak.")
 				},res=110)						
-				# output target peaks
+				# output target peaks ##########################################################################
 				if(component[[1]][as.numeric(isolate(ee$entry)),"Target peaks"]!="-"){
 					output$which_comp_tar<-renderText(paste0(
 						"Target/suspect peaks found for this component: ",
@@ -840,7 +970,7 @@ observe({ # - D: generate outputs
 				}else{
 					output$which_comp_tar<-renderText("No target or suspect peaks found for this component.")
 				}
-				# output ISTD peaks
+				# output ISTD peaks ############################################################################
 				if(component[[1]][as.numeric(isolate(ee$entry)),"ISTD peaks"]!="-"){
 					output$which_comp_ISTD<-renderText(paste0(
 						"ISTD peaks found for this component: ",
@@ -902,6 +1032,9 @@ observe({ # - D: generate outputs
 					plot.window(xlim=c(0,1),ylim=c(0,1))
 					text(.5,.5,labels="No components for this peak, \n peak removed during replicate intersection, blind subtraction or \n invalid peak ID?.")
 				},res=110)	
+				output$comp_plot_chromat <- renderPlot({	
+					plot.new()
+				},res=110)				
 				# output circular plot
 				output$comp_plot_circ <- renderPlot({	
 					plot.new()
