@@ -1,5 +1,16 @@
 	###############################################################################	
 	those_objects<-c(
+		"screen_dev_pos",
+		"rat_sam_blank_pos",
+		"compound_table",
+		"patt_pos_ID",
+		"patt_pos_add",
+		"pattern_pos",
+		"logfile",
+		"measurements",
+		"patt_pos_ID",
+		"patt_pos_add",
+		"tab_screening_selected_pos",
 		"comp_table",
 		"plot_those",
 		"omit_theta",

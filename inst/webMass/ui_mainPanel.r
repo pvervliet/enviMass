@@ -1591,7 +1591,7 @@
 											selected = "Non-calibration files", multiple = FALSE))			
 								)							
 							),
-							conditionalPanel(			
+							conditionalPanel(
 								condition = "input.Pos_compound_select == 'Internal standards' || input.Pos_compound_select == 'Target compounds'",	
 									conditionalPanel(			
 									condition = "input.screen_pos_summarize == 'yes'",	
@@ -1604,7 +1604,10 @@
 													id = "plot_pattern_pos_brush",
 													resetOnNew = TRUE
 												)
-											)
+											),
+											HTML('<hr noshade="noshade" />'),
+											tags$p(align="justify","The above red bars show the theoretical centroid pattern for the selected compound. Screening matches of this pattern with measured peaks 
+												are depicted as green circles. The grey lines connect peaks which have been jointly matched to this pattern, i.e., are present in the same peaklist of a file.")
 										),
 										bsCollapsePanel(title="Characteristics for selected compound",
 											textOutput('screening_details_comp_pos2'),
@@ -1618,10 +1621,14 @@
 											),
 											HTML('<hr noshade="noshade" />'),						
 											plotOutput("plot_selec_dist_pos"),
+						# > BAUSTELLE
+											tags$p(align="justify","The above scatterplot shows peak characteristics for the selected compound, as set by the two drop-down selection for each axis.
+												Peaks which have been matched to the theoretical pattern of this compound with a score below the Cutoff-score defined in the Settings -> Screening are shown
+												in gray; those above as black dots."),
 											HTML('<hr noshade="noshade" />'),
 											textOutput('info_IS_bounds_pos'),
 											conditionalPanel(				
-												condition = "(input.Pos_compound_select == 'Internal standards') & (output.info_IS_bounds_pos != 'Compound/adduct not used for quantification')",					
+												condition = "(input.Pos_compound_select == 'Internal standards') && (output.info_IS_bounds_pos != 'Compound/adduct not used for quantification')",					
 													fluidRow(										
 														column(3,numericInput("screen_int_pos_low", "Lower bound", 0,step=0.1)),
 														column(3,numericInput("screen_int_pos_up", "Upper bound", 10,step=0.1)),
@@ -1629,32 +1636,59 @@
 													)	
 											)
 										),
+						# < BAUSTELLE_DONE
 										bsCollapsePanel(title="Screening table for selected compound", 
 											textOutput('screening_details_comp_pos3'),
+						# > BAUSTELLE
+											conditionalPanel(     
+						            			condition = "(typeof input.Table_screening_selected_pos_rows_selected !== 'undefined') && (input.Table_screening_selected_pos_rows_selected.length > 0)",  
+												HTML('<hr noshade="noshade" />'),
+												plotOutput("screening_chromat_pos",
+								                    click = "screening_chromat_pos_click",
+								                    dblclick = "screening_chromat_pos_dblclick",
+								                    #hover = "homol_counts_hover",
+								                    brush = brushOpts(
+								                        id = "screening_chromat_pos_brush",
+								                        direction = c("xy"),
+								                        resetOnNew = TRUE,
+								                        delay = 0
+								                    ),       
+													height = "330px"
+												)
+											),
+											HTML('<hr noshade="noshade" />'),
+											tags$p(align="justify","Click on a table row to show chromatograms."),
+						# < BAUSTELLE_DONE
 											HTML('<hr noshade="noshade" />'),
 											DT::dataTableOutput('Table_screening_selected_pos')
 										)
 									)		
 								),
 								HTML('<hr noshade="noshade" />'),
-								tags$p(align="justify","The below sample and blank matches give the number of files with matches above the cutoff score, 
+								tags$p(align="justify","The below Sample and Blank matches show the number of files with screening matches above the cutoff score, 
 								with multiple matches per file above this cutoff merged."),
 								DT::dataTableOutput('Table_screening_pos'),
 								HTML('<hr noshade="noshade" />'),
 								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_all",
 									bsCollapsePanel(title="Summary plots",
 										fluidRow(
-											column(width = 4, offset = 0.6,
-													tags$p(align="justify","Characteristics of all signal peaks for screened compounds from the above table.")
+						# > BAUSTELLE
+											column(width = 6, offset = 0.6,
+													tags$p(align="justify","Summary characteristics over all peaks matched to the screened compounds of the above table. Information based on peaks which have been 
+														matched to the theoretical pattern of a compound with a score equal or above the Cutoff-score defined in the Settings -> Screening is shown
+														in black or white; and otherwise in gray.")
 											),
-											column(4, selectInput("Summ_pos_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
-											column(4, selectInput("Summ_pos_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
+						# < BAUSTELLE_DONE
+											column(3, selectInput("Summ_pos_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
+											column(3, selectInput("Summ_pos_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
 										),
 										plotOutput("plot_pattern_distrib_pos"),
 										HTML('<hr noshade="noshade" />'),
-										fluidRow(										
-											column(4,textOutput('count_aboveBlank_pos')),
-											column(4,radioButtons("screen_pos_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
+										fluidRow(								
+						# > BAUSTELLE		
+											column(7,textOutput('count_aboveBlank_pos')),
+											column(3,radioButtons("screen_pos_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
+						# < BAUSTELLE_DONE
 										),
 										plotOutput("plot_aboveBlank_pos",height = 250)
 									)
@@ -1693,7 +1727,7 @@
 								condition = "input.Neg_compound_select == 'Internal standards' || input.Neg_compound_select == 'Target compounds'",	
 								conditionalPanel(			
 								condition = "input.screen_neg_summarize == 'yes'",	
-									bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_neg_one",
+									bsCollapse(multiple = TRUE, open = NULL, id = "collapse_screen_neg_one",
 										bsCollapsePanel(title="Pattern match for selected compound", #style="info",
 											textOutput('screening_details_comp_neg'),
 											plotOutput("plot_pattern_neg", 
@@ -1702,22 +1736,29 @@
 													id = "plot_pattern_neg_brush",
 													resetOnNew = TRUE
 												)
-											)
+											),
+											HTML('<hr noshade="noshade" />'),
+											tags$p(align="justify","The above red bars show the theoretical centroid pattern for the selected compound. Screening matches of this pattern with measured peaks 
+												are depicted as green circles. The grey lines connect peaks which have been jointly matched to this pattern, i.e., are present in the same peaklist of a file.")											
 										),
 										bsCollapsePanel(title="Characteristics for selected compound",
 											textOutput('screening_details_comp_neg2'),
 											HTML('<hr noshade="noshade" />'),
 											fluidRow(										
 												column(4, selectInput("selec_neg_x",label="x axis",
-													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "m/z", multiple = FALSE)),
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "m/z", multiple = FALSE)),
 												column(4, selectInput("selec_neg_y",label="y axis",
-													choices=c("m/z","RT","Intensity","Date&time","Type","Place","Conz."),selected = "Intensity", multiple = FALSE)),									
+													choices=c("m/z","RT","Intensity","Date&time","Type","Place"),selected = "Intensity", multiple = FALSE)),									
 												column(4, radioButtons("selec_neg_log_rat", "Log intensity?", c("yes"="yes","no"="no"),inline=TRUE))
 											),
 											HTML('<hr noshade="noshade" />'),						
 											plotOutput("plot_selec_dist_neg"),
-											HTML('<hr noshade="noshade" />'),
+						# > BAUSTELLE
+											tags$p(align="justify","The above scatterplot shows peak characteristics for the selected compound, as set by the two drop-down selection for each axis.
+												Peaks which have been matched to the theoretical pattern of this compound with a score below the Cutoff-score defined in the Settings -> Screening are shown
+												in gray; those above as black dots."),
 											textOutput('info_IS_bounds_neg'),
+											HTML('<hr noshade="noshade" />'),
 											conditionalPanel(				
 												condition = "(input.Neg_compound_select == 'Internal standards') & (output.info_IS_bounds_neg != 'Compound/adduct not used for quantification')",					
 													fluidRow(										
@@ -1727,8 +1768,29 @@
 													)	
 											)
 										),
+						# < BAUSTELLE
 										bsCollapsePanel(title="Screening table for selected compound", 
 											textOutput('screening_details_comp_neg3'),
+						# > BAUSTELLE
+											conditionalPanel(     
+						            			condition = "(typeof input.Table_screening_selected_neg_rows_selected !== 'undefined') && (input.Table_screening_selected_neg_rows_selected.length > 0)",  
+												HTML('<hr noshade="noshade" />'),
+												plotOutput("screening_chromat_neg",
+								                    click = "screening_chromat_neg_click",
+								                    dblclick = "screening_chromat_neg_dblclick",
+								                    #hover = "homol_counts_hover",
+								                    brush = brushOpts(
+								                        id = "screening_chromat_neg_brush",
+								                        direction = c("xy"),
+								                        resetOnNew = TRUE,
+								                        delay = 0
+								                    ),       
+													height = "330px"
+												)
+											),
+											HTML('<hr noshade="noshade" />'),
+											tags$p(align="justify","Click on a table row to show chromatograms."),
+						# < BAUSTELLE											
 											HTML('<hr noshade="noshade" />'),
 											DT::dataTableOutput('Table_screening_selected_neg')
 										)
@@ -1742,17 +1804,23 @@
 								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_neg_all",
 									bsCollapsePanel(title="Summary plots",
 										fluidRow(
-											column(width = 4, offset = 0.6,
-													tags$p(align="justify","Characteristics of all signal peaks for screened compounds from the above table.")
+						# > BAUSTELLE
+											column(width = 6, offset = 0.6,
+													tags$p(align="justify","Summary characteristics over all peaks matched to the screened compounds of the above table. Information based on peaks which have been 
+														matched to the theoretical pattern of a compound with a score equal or above the Cutoff-score defined in the Settings -> Screening is shown
+														in black or white; and otherwise in gray.")
 											),
+						# < BAUSTELLE
 											column(4, selectInput("Summ_neg_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
 											column(4, selectInput("Summ_neg_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
 										),
 										plotOutput("plot_pattern_distrib_neg"),
 										HTML('<hr noshade="noshade" />'),
 										fluidRow(										
-											column(4,textOutput('count_aboveBlank_neg')),
-											column(4,radioButtons("screen_neg_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
+						# > BAUSTELLE		
+											column(7,textOutput('count_aboveBlank_neg')),
+											column(3,radioButtons("screen_neg_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
+						# < BAUSTELLE
 										),
 										plotOutput("plot_aboveBlank_neg",height = 250)
 									)
