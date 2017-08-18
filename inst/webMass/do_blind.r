@@ -1,6 +1,7 @@
 
 
 measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+measurements<-measurements[measurements[,"include"]=="TRUE",]
 IDs<-(measurements[,"ID"])
 incl<-(measurements[,"include"])
 filetypus<-(measurements[,"Type"])
