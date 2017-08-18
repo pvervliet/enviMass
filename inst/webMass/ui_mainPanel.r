@@ -1621,7 +1621,7 @@
 											),
 											HTML('<hr noshade="noshade" />'),						
 											plotOutput("plot_selec_dist_pos"),
-						# > BAUSTELLE
+
 											tags$p(align="justify","The above scatterplot shows peak characteristics for the selected compound, as set by the two drop-down selection for each axis.
 												Peaks which have been matched to the theoretical pattern of this compound with a score below the Cutoff-score defined in the Settings -> Screening are shown
 												in gray; those above as black dots."),
@@ -1636,10 +1636,8 @@
 													)	
 											)
 										),
-						# < BAUSTELLE_DONE
 										bsCollapsePanel(title="Screening table for selected compound", 
 											textOutput('screening_details_comp_pos3'),
-						# > BAUSTELLE
 											conditionalPanel(     
 						            			condition = "(typeof input.Table_screening_selected_pos_rows_selected !== 'undefined') && (input.Table_screening_selected_pos_rows_selected.length > 0)",  
 												HTML('<hr noshade="noshade" />'),
@@ -1658,7 +1656,6 @@
 											),
 											HTML('<hr noshade="noshade" />'),
 											tags$p(align="justify","Click on a table row to show chromatograms."),
-						# < BAUSTELLE_DONE
 											HTML('<hr noshade="noshade" />'),
 											DT::dataTableOutput('Table_screening_selected_pos')
 										)
@@ -1672,23 +1669,20 @@
 								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_all",
 									bsCollapsePanel(title="Summary plots",
 										fluidRow(
-						# > BAUSTELLE
 											column(width = 6, offset = 0.6,
 													tags$p(align="justify","Summary characteristics over all peaks matched to the screened compounds of the above table. Information based on peaks which have been 
 														matched to the theoretical pattern of a compound with a score equal or above the Cutoff-score defined in the Settings -> Screening is shown
 														in black or white; and otherwise in gray.")
 											),
-						# < BAUSTELLE_DONE
 											column(3, selectInput("Summ_pos_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
 											column(3, selectInput("Summ_pos_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
 										),
 										plotOutput("plot_pattern_distrib_pos"),
 										HTML('<hr noshade="noshade" />'),
 										fluidRow(								
-						# > BAUSTELLE		
 											column(7,textOutput('count_aboveBlank_pos')),
 											column(3,radioButtons("screen_pos_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
-						# < BAUSTELLE_DONE
+
 										),
 										plotOutput("plot_aboveBlank_pos",height = 250)
 									)
@@ -1753,7 +1747,6 @@
 											),
 											HTML('<hr noshade="noshade" />'),						
 											plotOutput("plot_selec_dist_neg"),
-						# > BAUSTELLE
 											tags$p(align="justify","The above scatterplot shows peak characteristics for the selected compound, as set by the two drop-down selection for each axis.
 												Peaks which have been matched to the theoretical pattern of this compound with a score below the Cutoff-score defined in the Settings -> Screening are shown
 												in gray; those above as black dots."),
@@ -1768,10 +1761,8 @@
 													)	
 											)
 										),
-						# < BAUSTELLE
 										bsCollapsePanel(title="Screening table for selected compound", 
 											textOutput('screening_details_comp_neg3'),
-						# > BAUSTELLE
 											conditionalPanel(     
 						            			condition = "(typeof input.Table_screening_selected_neg_rows_selected !== 'undefined') && (input.Table_screening_selected_neg_rows_selected.length > 0)",  
 												HTML('<hr noshade="noshade" />'),
@@ -1789,8 +1780,7 @@
 												)
 											),
 											HTML('<hr noshade="noshade" />'),
-											tags$p(align="justify","Click on a table row to show chromatograms."),
-						# < BAUSTELLE											
+											tags$p(align="justify","Click on a table row to show chromatograms."),										
 											HTML('<hr noshade="noshade" />'),
 											DT::dataTableOutput('Table_screening_selected_neg')
 										)
@@ -1804,23 +1794,19 @@
 								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_neg_all",
 									bsCollapsePanel(title="Summary plots",
 										fluidRow(
-						# > BAUSTELLE
 											column(width = 6, offset = 0.6,
 													tags$p(align="justify","Summary characteristics over all peaks matched to the screened compounds of the above table. Information based on peaks which have been 
 														matched to the theoretical pattern of a compound with a score equal or above the Cutoff-score defined in the Settings -> Screening is shown
 														in black or white; and otherwise in gray.")
 											),
-						# < BAUSTELLE
 											column(4, selectInput("Summ_neg_x",label="x axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "m/z", multiple = FALSE)),
 											column(4, selectInput("Summ_neg_y",label="y axis",choices=c("m/z","Measured RT","log Intensity","m/z deviation [ppm]","RT deviation within","Time sequence","Expected RT"),selected = "RT", multiple = FALSE))									
 										),
 										plotOutput("plot_pattern_distrib_neg"),
 										HTML('<hr noshade="noshade" />'),
-										fluidRow(										
-						# > BAUSTELLE		
+										fluidRow(											
 											column(7,textOutput('count_aboveBlank_neg')),
 											column(3,radioButtons("screen_neg_log_rat", "Log scale?", c("yes"="yes","no"="no"),inline=TRUE))
-						# < BAUSTELLE
 										),
 										plotOutput("plot_aboveBlank_neg",height = 250)
 									)
@@ -2140,7 +2126,7 @@
 											column(4,
 												radioButtons("filterProf_medianblind", "Filter profiles by mean sample vs. blind intensity ratio ...", c("no"="no","yes"="yes"), inline = TRUE),
 												bsPopover("filterProf_medianblind", 
-													title = "Filter profiles by the specified value for their median sample vs. blind/blank intensity ratio across all peaks?",
+													title = "Filter profiles by the specified value for their mean sample vs. blind/blank intensity ratio across all peaks?",
 													content = "This filter is only available if blind/blank peaks have not been removed from the profiles yet. Indivual intensity ratios for peaks calculated according to Settings -> Blind.", 
 													placement = "top", trigger = "hover")
 											),
