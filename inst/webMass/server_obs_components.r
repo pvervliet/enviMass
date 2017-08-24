@@ -151,12 +151,15 @@ observe({ # - A
 							"Charge(s)"
 						),
 						rownames=FALSE,
-						extensions = c('Buttons'),
+						extensions = c('Buttons','FixedHeader','ColReorder'),
 						options = list(
-							lengthMenu = c(100,200,400),
+							lengthMenu = c(20, 50, 100, 200, 500),
+							fixedHeader = TRUE,
 							ordering=T,
-							dom = 'Bfrtip',
-							buttons = c('excel')#buttons = c('excel', 'pdf', 'print', 'csv'),
+							dom = 'Blfrtip',
+							buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+							scrollX = TRUE,
+							colReorder = TRUE
 						),
 						filter = 'top',
 	                    selection = list(mode = 'single', target = 'row')
@@ -286,6 +289,16 @@ observe({
                     filter = 'top',
                     colnames=c("Peak ID","m/z","log10 intens.","RT [s]","RT [min]","Target matches","ISTD matches","Series ID(s)"),
                     rownames=FALSE,
+                    extensions = c('Buttons','FixedHeader','ColReorder'),
+					options = list(
+						lengthMenu = c(20, 50, 100, 200, 500),
+						fixedHeader = TRUE,
+						ordering=T,
+						dom = 'Blfrtip',
+						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+						scrollX = TRUE,
+						colReorder = TRUE
+					),                    
                     selection = list(mode = 'single', target = 'row')
                   )
                 )
@@ -360,7 +373,17 @@ observe({
                     filter = 'top',
                     colnames=c("Peak ID","m/z","log10 intens.","RT [s]","RT [min]","Target matches","ISTD matches","Series ID(s)"),
                     rownames=FALSE,
-                    selection = list(mode = 'single', target = 'row')
+                    extensions = c('Buttons','FixedHeader','ColReorder'),
+					options = list(
+						lengthMenu = c(20, 50, 100, 200, 500),
+						fixedHeader = TRUE,
+						ordering=T,
+						dom = 'Blfrtip',
+						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+						scrollX = TRUE,
+						colReorder = TRUE
+					),
+					selection = list(mode = 'single', target = 'row')
                   )
                )
     }
@@ -707,6 +730,26 @@ observe({ # - B
 					plot.window(xlim=c(0,1),ylim=c(0,1))
 					text(.5,.5,labels="No components for this peak ID. \n -> peak either removed during replicate intersection or peak ID invalid.")
 				},res=110)	
+				output$comp_plot_chromat <- renderPlot({	
+					plot.new()
+				},res=110)				
+				# output circular plot
+				output$comp_plot_circ <- renderPlot({	
+					plot.new()
+				},res=110)				
+				# output tables 
+				output$comp_table_a <- DT::renderDataTable(
+					datatable(data.frame("No results"),colnames="No results")
+				)
+				output$comp_table_b <- DT::renderDataTable(
+					datatable(data.frame("No results"),colnames="No results")
+				)
+				output$comp_table_c  <- DT::renderDataTable(
+					datatable(data.frame("No results"),colnames="No results")
+				)
+				output$comp_table_d <- DT::renderDataTable(
+					datatable(data.frame("No results"),colnames="No results")
+				)	
 			}
 		}
 	}
@@ -800,10 +843,10 @@ observe({ # - D: generate outputs
 		           	RTlim=isolate(ranges_compo$RTchrom),
 		           	Intlim=isolate(ranges_compo$intchrom),
 		           	masslim=isolate(ranges_compo$mass),
-		           	normalize=FALSE,#as.logical(isolate(input$peak_chromat_norm)),
 		           	n_col=max_peak_ID,#dim(peaklist)[1],
-		           	set_RT="seconds",#isolate(input$peak_chromat_time),
-		           	chromat_full=TRUE#input$peak_chromat_type
+		            set_RT=(input$comp_chromat_time),
+		            normalize=(input$comp_chromat_norm),
+		            chromat_full=(input$comp_chromat_type)
 		        );
 			},res=110)		
 			# output circular plot ##########################################################
@@ -948,10 +991,10 @@ observe({ # - D: generate outputs
 		           		RTlim=isolate(ranges_compo$RTchrom),
 		           		Intlim=isolate(ranges_compo$intchrom),
 		           		masslim=isolate(ranges_compo$mass),
-			           	normalize=FALSE,#as.logical(isolate(input$peak_chromat_norm)),
 			           	n_col=max_peak_ID,#dim(peaklist)[1],
-			           	set_RT=FALSE,#isolate(input$peak_chromat_time),
-			           	chromat_full=TRUE#input$peak_chromat_type
+		            	set_RT=(input$comp_chromat_time),
+		            	normalize=(input$comp_chromat_norm),
+		            	chromat_full=(input$comp_chromat_type)
 			        );
 				},res=110)		
 				# output tables ################################################################################
@@ -1059,7 +1102,24 @@ observe({ # - D: generate outputs
 		
 	}
 })
-
+##############################################################################
+observe({ # seconds <-> minutes switch when zoomed ###########################
+	input$comp_chromat_time
+	if(isolate(init$a)=="TRUE" & isolate(ranges_compo$RTchrom[1]!=FALSE)){
+		if(isolate(input$comp_chromat_time)=="minutes"){
+			isolate(ranges_compo$RTchrom<-(ranges_compo$RTchrom/60))
+		}
+		if(isolate(input$comp_chromat_time)=="seconds"){
+			isolate(ranges_compo$RTchrom<-(ranges_compo$RTchrom*60))
+		}
+	}
+})
+observe({ # normalization switch when zoomed #################################
+	input$comp_chromat_norm
+	if(isolate(init$a)=="TRUE" & isolate(ranges_compo$intchrom[1]!=FALSE)){
+		isolate(ranges_compo$intchrom<-FALSE)
+	}
+})
 observeEvent(input$comp_plot_chromat_dblclick, { # - E observe chromatogram plot
           brush <- isolate(input$comp_plot_chromat_brush)
           if (!is.null(brush)) {

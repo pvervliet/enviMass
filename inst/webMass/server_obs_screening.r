@@ -52,12 +52,16 @@ observe({
 				}
 				table_screening_pos<-DT::datatable(
 											results_screen_pos, escape = FALSE,selection = 'single',
-											extensions = c('Buttons'),		
-											options = list(	
-												lengthMenu = c(25,100,200),
-												ordering=TRUE,
-												dom = 'Bfrtip',
-												buttons = c('excel')
+						                	extensions = c('Buttons','FixedHeader','ColReorder'),
+						                	rownames = FALSE,
+											options = list(
+												lengthMenu = c(25, 50, 100, 200, 1000),
+												fixedHeader = TRUE,
+												ordering=T,
+												dom = 'Blfrtip',
+												buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+												scrollX = TRUE,
+												colReorder = TRUE
 											)
 										) %>% formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
 				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = FALSE)
@@ -545,7 +549,7 @@ observe({ ####################################################################
 		if(!length(use_comp)){stop("Report this issue for a debug on server_obs_screening.r #1b")}	
 		if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1b")}	
 		res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
-		which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
+		which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();delRT_min<-c();inte<-c();
 		with_peaks<-c();#with_file<-c();with_s<-c();
 		IDs<-as.numeric(measurements[,"ID"]) 
 		if(length(res_pos_screen_sel)>0){
@@ -575,6 +579,9 @@ observe({ ####################################################################
 						delRT<-c(delRT,
 							paste(as.character(round(res_pos_screen_sel[[i]][[j]]$RT,digits=2)),collapse=", ")
 						)
+						delRT_min<-c(delRT_min,
+							paste(as.character(round((res_pos_screen_sel[[i]][[j]]$RT/60),digits=2)),collapse=", ")
+						)
 						inte<-c(inte,
 							paste(as.character(round(log10(res_pos_screen_sel[[i]][[j]]$Intensity),digits=2)),collapse=", ")									
 						)
@@ -584,22 +591,25 @@ observe({ ####################################################################
 				}
 			}
 		}
-		tab_screening_selected_pos<<-as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,inte,with_peaks),
+		tab_screening_selected_pos<<-as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,delRT_min,inte,with_peaks),
 				row.names = NULL,stringsAsFactors=FALSE)
 		output$Table_screening_selected_pos<-DT::renderDataTable({
 			DT::datatable(
 				tab_screening_selected_pos,
 				rownames = FALSE, 
 				colnames=c("File ID","File type","Pattern matches","Score > LOD","Score < LOD",
-					"m/z deviation (ppm)","RT","log Intensity","Peak IDs"),
-				extensions = 'Buttons',		
-				options = list(	
-					lengthMenu = c(50,100),
-					dom = 'Bfrtip',
-					buttons = c('excel'),
-					ordering=TRUE
-				),
-				selection = list(mode = 'single', target = 'row')							
+					"m/z deviation (ppm)","RT [s]","RT [min]","log Intensity","Peak IDs"),
+				selection = list(mode = 'single', target = 'row'),		
+	            extensions = c('Buttons','FixedHeader','ColReorder'),
+				options = list(
+					lengthMenu = c(15, 30, 50, 100),
+					fixedHeader = TRUE,
+					ordering=TRUE,
+					dom = 'Blfrtip',
+					buttons = c('excel','csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)
 			)				
 		},server = FALSE)
 		isolate(ranges_screening$RTchrom_pos<-FALSE)
@@ -640,13 +650,31 @@ observe({ ####################################################################
 		              	peakIDs=as.numeric(strsplit(tab_screening_selected_pos[row_sel,"with_peaks"],",")[[1]]),
 		              	RTlim=isolate(ranges_screening$RTchrom_pos),
 		              	Intlim=isolate(ranges_screening$intchrom_pos),
-		              	normalize=FALSE,
-		              	chromat_full=TRUE
+		              	set_RT=(input$screening_chromat_pos_time),
+		              	normalize=(input$screening_chromat_pos_norm),
+		              	chromat_full=(input$screening_chromat_pos_type)
 		            );
 		        },res=100)
             }
         }
     }
+})
+observe({ # seconds <-> minutes switch when zoomed ###########################
+	input$screening_chromat_pos_time
+	if(isolate(init$a)=="TRUE" & isolate(ranges_screening$RTchrom_pos[1]!=FALSE)){
+		if(isolate(input$screening_chromat_pos_time)=="minutes"){
+			isolate(ranges_screening$RTchrom_pos<-(ranges_screening$RTchrom_pos/60))
+		}
+		if(isolate(input$screening_chromat_pos_time)=="seconds"){
+			isolate(ranges_screening$RTchrom_pos<-(ranges_screening$RTchrom_pos*60))
+		}
+	}
+})
+observe({ # normalization switch when zoomed #################################
+	input$screening_chromat_pos_norm
+	if(isolate(init$a)=="TRUE" & isolate(ranges_screening$intchrom_pos[1]!=FALSE)){
+		isolate(ranges_screening$intchrom_pos<-FALSE)
+	}
 })
 observeEvent(input$screening_chromat_pos_dblclick, { 
 	brush <- isolate(input$screening_chromat_pos_brush)
@@ -966,12 +994,16 @@ observe({
 				}
 				table_screening_neg<-DT::datatable(
 											results_screen_neg, escape = FALSE,selection = 'single',
-											extensions = c('Buttons'),		
-											options = list(	
-												lengthMenu = c(25,100,200),
-												ordering=TRUE,
-												dom = 'Bfrtip',
-												buttons = c('excel')
+						                	extensions = c('Buttons','FixedHeader','ColReorder'),
+						                	rownames = FALSE,
+											options = list(
+												lengthMenu = c(25, 50, 100, 200, 1000),
+												fixedHeader = TRUE,
+												ordering=T,
+												dom = 'Blfrtip',
+												buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+												scrollX = TRUE,
+												colReorder = TRUE
 											)
 										) %>% formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundNegition = 'right')
 				output$Table_screening_neg <- DT::renderDataTable({table_screening_neg},server = FALSE)
@@ -1459,7 +1491,7 @@ observe({ ####################################################################
 		if(!length(use_comp)){stop("Report this issue for a debug on server_obs_screening.r #1b")}	
 		if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1b")}	
 		res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
-		which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();inte<-c();
+		which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();delRT_min<-c();inte<-c();
 		with_peaks<-c();#with_file<-c();with_s<-c();
 		IDs<-as.numeric(measurements[,"ID"]) 
 		if(length(res_neg_screen_sel)>0){
@@ -1489,6 +1521,9 @@ observe({ ####################################################################
 						delRT<-c(delRT,
 							paste(as.character(round(res_neg_screen_sel[[i]][[j]]$RT,digits=2)),collapse=", ")
 						)
+						delRT_min<-c(delRT_min,
+							paste(as.character(round((res_neg_screen_sel[[i]][[j]]$RT/60),digits=2)),collapse=", ")
+						)
 						inte<-c(inte,
 							paste(as.character(round(log10(res_neg_screen_sel[[i]][[j]]$Intensity),digits=2)),collapse=", ")									
 						)
@@ -1498,22 +1533,25 @@ observe({ ####################################################################
 				}
 			}
 		}
-		tab_screening_selected_neg<<-as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,inte,with_peaks),
+		tab_screening_selected_neg<<-as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,delRT_min,inte,with_peaks),
 				row.names = NULL,stringsAsFactors=FALSE)
 		output$Table_screening_selected_neg<-DT::renderDataTable({
 			DT::datatable(
 				tab_screening_selected_neg,
 				rownames = FALSE, 
 				colnames=c("File ID","File type","Pattern matches","Score > LOD","Score < LOD",
-					"m/z deviation (ppm)","RT","log Intensity","Peak IDs"),
-				extensions = 'Buttons',		
-				options = list(	
-					lengthMenu = c(50,100),
-					dom = 'Bfrtip',
-					buttons = c('excel'),
-					ordering=TRUE
-				),
-				selection = list(mode = 'single', target = 'row')							
+					"m/z deviation (ppm)","RT [s]","RT [min]","log Intensity","Peak IDs"),
+				selection = list(mode = 'single', target = 'row'),
+	            extensions = c('Buttons','FixedHeader','ColReorder'),
+				options = list(
+					lengthMenu = c(15, 30, 50, 100),
+					fixedHeader = TRUE,
+					ordering=TRUE,
+					dom = 'Blfrtip',
+					buttons = c('excel','csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)
 			)				
 		},server = FALSE)
 		isolate(ranges_screening$RTchrom_neg<-FALSE)
@@ -1554,13 +1592,31 @@ observe({ ####################################################################
 		              	peakIDs=as.numeric(strsplit(tab_screening_selected_neg[row_sel,"with_peaks"],",")[[1]]),
 		              	RTlim=isolate(ranges_screening$RTchrom_neg),
 		              	Intlim=isolate(ranges_screening$intchrom_neg),
-		              	normalize=FALSE,
-		              	chromat_full=TRUE
+		              	set_RT=(input$screening_chromat_neg_time),
+		              	normalize=(input$screening_chromat_neg_norm),
+		              	chromat_full=(input$screening_chromat_neg_type)
 		            );
 		        },res=100)
             }
         }
     }
+})
+observe({ # seconds <-> minutes switch when zoomed ###########################
+	input$screening_chromat_neg_time
+	if(isolate(init$a)=="TRUE" & isolate(ranges_screening$RTchrom_neg[1]!=FALSE)){
+		if(isolate(input$screening_chromat_neg_time)=="minutes"){
+			isolate(ranges_screening$RTchrom_neg<-(ranges_screening$RTchrom_neg/60))
+		}
+		if(isolate(input$screening_chromat_neg_time)=="seconds"){
+			isolate(ranges_screening$RTchrom_neg<-(ranges_screening$RTchrom_neg*60))
+		}
+	}
+})
+observe({ # normalization switch when zoomed #################################
+	input$screening_chromat_neg_norm
+	if(isolate(init$a)=="TRUE" & isolate(ranges_screening$intchrom_neg[1]!=FALSE)){
+		isolate(ranges_screening$intchrom_neg<-FALSE)
+	}
 })
 observeEvent(input$screening_chromat_neg_dblclick, { 
 	brush <- isolate(input$screening_chromat_neg_brush)

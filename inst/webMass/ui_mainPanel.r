@@ -591,7 +591,7 @@
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Peak picking 
 					<a href="http://www.looscomputing.ch/eng/enviMass/topics/peakpicking.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a>	
 				</font></p> '),
-				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Quality control filter </font></p> '),
+				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Intensity control filter </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("qc", "Include?", c("yes"="yes","no"="no"), inline = TRUE)),          
 						column(width = 10, offset = 0.3,
@@ -1442,23 +1442,37 @@
 					)
                 ),
 				######################################################################################################################
-				tabPanel("Quality control",
+				tabPanel("Intensity control",
 					tabsetPanel(
 						tabPanel("Positive ionization ",
-							tags$h5("Quantile distribution of peak intensities:"),           
-							imageOutput("plotQCa_pos", height="auto"),
-							tags$h5("Outliers:"),
-							imageOutput("plotQCb_pos", height="auto"),
-							tags$h5("Intensity distribution for median intensity normalization:"),                    
-							imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
+							HTML('<hr noshade="noshade" />'),
+							bsCollapse(multiple = TRUE, open = NULL, id = "collapse_intens_control_pos",
+								bsCollapsePanel(title="Quantile intensity distributions", 
+									tags$h5("Quantile distribution of peak intensities:"),           
+									imageOutput("plotQCa_pos", height="auto"),
+									tags$h5("Outliers:"),
+									imageOutput("plotQCb_pos", height="auto")
+								),
+								bsCollapsePanel(title="Boxplot intensity distributions", 
+									tags$h5("Intensity distribution for median intensity normalization:"),                    
+									imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
+								)
+							)
 						),
 						tabPanel("Negative ionization ",
-							tags$h5("Quantile distribution of peak intensities:"),           
-							imageOutput("plotQCa_neg", height="auto"),
-							tags$h5("Outliers:"),
-							imageOutput("plotQCb_neg", height="auto"),
-							tags$h5("Intensity distribution for median intensity normalization:"),                    
-							imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
+							HTML('<hr noshade="noshade" />'),
+							bsCollapse(multiple = TRUE, open = NULL, id = "collapse_intens_control_neg",
+								bsCollapsePanel(title="Quantile intensity distributions", 
+									tags$h5("Quantile distribution of peak intensities:"),           
+									imageOutput("plotQCa_neg", height="auto"),
+									tags$h5("Outliers:"),
+									imageOutput("plotQCb_neg", height="auto")
+								),
+								bsCollapsePanel(title="Boxplot intensity distributions", 
+									tags$h5("Intensity distribution for median intensity normalization:"),                    
+									imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
+								)
+							)						
 						)
 					)	
 				),
@@ -1525,7 +1539,7 @@
 						            #####################################################
 						            HTML('<hr noshade="noshade" />')
 						        ), 
-						        HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peaklist_export.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Help on table contents.</a></p>'),
+						        HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peaklist_export.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Help on table navigation, filtering & table contents.</a></p>'),
 								DT::dataTableOutput('exp_peaklist')
 							),
 							bsCollapsePanel(title="Blank/blind peak detection",
@@ -1652,7 +1666,12 @@
 								                        delay = 0
 								                    ),       
 													height = "330px"
-												)
+												),
+									            fluidRow(
+									            	column(width = 3, radioButtons("screening_chromat_pos_norm", "Normalize intensities?", c("No"="FALSE","Yes"="TRUE"), inline = TRUE)), 
+									            	column(width = 3, radioButtons("screening_chromat_pos_time", "Show RT in", c("Seconds"="seconds","Minutes"="minutes"), inline = FALSE)),
+									            	column(width = 3, radioButtons("screening_chromat_pos_type", "Show chromatograms for:", c("Full EICs with peaks"="TRUE","Peaks only"="FALSE"), inline = FALSE))
+									            )	
 											),
 											HTML('<hr noshade="noshade" />'),
 											tags$p(align="justify","Click on a table row to show chromatograms."),
@@ -1777,7 +1796,12 @@
 								                        delay = 0
 								                    ),       
 													height = "330px"
-												)
+												),
+									            fluidRow(
+									            	column(width = 3, radioButtons("screening_chromat_neg_norm", "Normalize intensities?", c("No"="FALSE","Yes"="TRUE"), inline = TRUE)), 
+									            	column(width = 3, radioButtons("screening_chromat_neg_time", "Show RT in", c("Seconds"="seconds","Minutes"="minutes"), inline = FALSE)),
+									            	column(width = 3, radioButtons("screening_chromat_neg_type", "Show chromatograms for:", c("Full EICs with peaks"="TRUE","Peaks only"="FALSE"), inline = FALSE))
+									            )													
 											),
 											HTML('<hr noshade="noshade" />'),
 											tags$p(align="justify","Click on a table row to show chromatograms."),										
@@ -1907,6 +1931,11 @@
 							                    ),       
 												height = "330px"
 											),
+											fluidRow(
+									           	column(width = 3, radioButtons("comp_chromat_norm", "Normalize intensities?", c("No"="FALSE","Yes"="TRUE"), inline = TRUE)), 
+									            column(width = 3, radioButtons("comp_chromat_time", "Show RT in", c("Seconds"="seconds","Minutes"="minutes"), inline = FALSE)),
+									            column(width = 3, radioButtons("comp_chromat_type", "Show chromatograms for:", c("Full EICs with peaks"="TRUE","Peaks only"="FALSE"), inline = FALSE))
+									        ),
 											conditionalPanel(			
 												condition = "(output.found_compo != 'Invalid peak ID') && (input.sel_meas_comp_comp != 0)",
 												tags$p(align="justify","The above mass spectrum shows all peaks grouped into the selected component (colored bars) and all other non-component peaks that fall into 

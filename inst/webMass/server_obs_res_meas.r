@@ -179,21 +179,25 @@ observe({
 							I(as.character(peaklist[,"keep"]==1)),
 							round(use_keep_2,digits=2)
 	                	),
-	                	filter = 'top',
+	                	filter = list(position = 'top', clear = FALSE, plain = TRUE),
 	                	colnames=c(
-	                		"Peak ID",
-	                		"m/z","log10 var(m/z)","m/z_recal",
+	                		"Peak ID","m/z",
+	                		"log10 var(m/z)","m/z_recal",
 	                		"log10 max int.","log10 sum int.","log10 norm int.",
 	                		"RT [s]","RT [min]","min_RT [s]","max_RT [s]","RT_align [s]",
 							"in replicates?","int. ratio sample/blind"
 	                	),
+	                	rownames = FALSE,
 	                	selection = list(mode = 'multiple', target = 'row'),
-	                	extensions = c('Buttons'),
+	                	extensions = c('Buttons','FixedHeader','ColReorder'),
 						options = list(
-							lengthMenu = c(20,50,100,200,500),
+							lengthMenu = c(25, 50, 100, 200, 1000),
+							fixedHeader = TRUE,
 							ordering=T,
-							dom = 'Bfrtip',
-							buttons = c('excel', 'csv')#buttons = c('excel', 'pdf', 'print', 'csv'),
+							dom = 'Blfrtip',
+							buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+							scrollX = TRUE,
+							colReorder = TRUE
 						)
 	                )
 	            )
@@ -247,7 +251,7 @@ observe({ # seconds <-> minutes switch when zoomed ###########################
 	}
 })
 ##############################################################################
-observe({ # seconds <-> minutes switch when zoomed ###########################
+observe({ # nomralization switch when zoomed #################################
 	input$peak_chromat_norm
 	if(isolate(init$a)=="TRUE" & isolate(ranges_peaks_mz_RT$ychroma[1]!=FALSE)){
 		isolate(ranges_peaks_mz_RT$ychroma<-FALSE)
@@ -1137,20 +1141,24 @@ maincalc6<-reactive({
 			profpeaks3[,"deltaint_global"]<<-round(log10(profpeaks3[,"deltaint_global"]),digits=2)
 			profpeaks3[,"deltaint_newest"]<<-round(log10(profpeaks3[,"deltaint_newest"]),digits=2)
 			profpeaks3<<-profpeaks3[,c("profile_ID","number_peaks_total","deltaint_global","deltaint_newest","mean_mz",
-				"mean_int","mean_RT","max_int","in_blind?","above_blind?","var_mz","min_RT","max_RT")]
+				"mean_int","mean_RT","mean_RT","max_int","in_blind?","above_blind?","var_mz","min_RT","max_RT")]
+			profpeaks3[,8]<<-round((profpeaks3[,8]/60),digits=2)
 			output$allproftable<-DT::renderDataTable(
 				DT::datatable(profpeaks3,
 					colnames=c("profile ID","number of peaks","log10 global trend intensity","log10 current trend intensity","mean m/z","log10 mean intensity", 
-						"mean RT [s]","log10 maximum Intensity","in blind?","above blind?","log10 m/z variance","minimum RT [s]","maximum RT [s]"),
+						"mean RT [s]","mean RT [min]","log10 maximum Intensity","in blind?","above blind?","log10 m/z variance","minimum RT [s]","maximum RT [s]"),
 					rownames=FALSE,
 					filter = 'top',
                     selection = list(mode = 'single', target = 'row'),
-                   	extensions = c('Buttons'),
+					extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
-						lengthMenu = c(50,100,500),
+						lengthMenu = c(25, 50, 100, 200, 1000),
+						fixedHeader = TRUE,
 						ordering=T,
-						dom = 'Bfrtip',
-						buttons = c('excel', 'csv')#buttons = c('excel', 'pdf', 'print', 'csv'),
+						dom = 'Blfrtip',
+						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+						scrollX = TRUE,
+						colReorder = TRUE
 					)
 				)
 			)
