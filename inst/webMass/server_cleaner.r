@@ -1,5 +1,6 @@
 	###############################################################################	
 	those_objects<-c(
+		"these_peaks",
 		"screen_dev_pos",
 		"rat_sam_blank_pos",
 		"compound_table",

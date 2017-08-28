@@ -1928,6 +1928,12 @@ observe({
 ranges_overview <- reactiveValues(x = NULL, y = NULL)
 
 observe({
+	input$openit
+	isolate(ranges_overview$x<-NULL)
+	isolate(ranges_overview$y<-NULL)
+})
+
+observe({
 	input$Measadd_path
 	input$Measdel
 	input$Import_project
