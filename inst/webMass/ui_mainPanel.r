@@ -2253,15 +2253,31 @@
 										)
 									),
 									bsCollapse(multiple = FALSE, open = "col1", id = "collapse1",
+										##################################################################
 										bsCollapsePanel("Profile EICs & Peak viewer", 
 											div(style = widget_style3,numericInput("profpeakID", "Peak entry #:", min=0, 0)),
 											bsPopover("profpeakID", title = "View extracted chromatograms & peaks of the selected profile (sample files only).",
 												content = "Select peaks in the order listed in the profile peak table, i.e. from latest to oldest file.", placement = "right", trigger = "hover"),
-											div(style = widget_style3,textOutput("prof_peak_text")),
-											HTML('<hr noshade="noshade" />'),				
-											plotOutput("profile_position"),										
-											plotOutput("profile_EIC"),											
+											div(style = widget_style3,textOutput("prof_peak_text")),		
+											plotOutput("profile_position", height = "180px"),		
+											HTML('<hr noshade="noshade" />'),													
+											plotOutput("profile_EIC",
+												click = "profile_EIC_click",
+												dblclick = "profile_EIC_dblclick",
+												brush = brushOpts(
+													id = "profile_EIC_brush",
+													direction = c("xy"),
+													resetOnNew = TRUE,
+													delay = 0
+												)
+						                    ),
+											fluidRow(
+									           	#column(width = 3, radioButtons("profile_EIC_norm", "Normalize intensities?", c("No"="FALSE","Yes"="TRUE"), inline = TRUE)), 
+									            column(width = 3, radioButtons("profile_EIC_time", "Show RT in", c("Seconds"="seconds","Minutes"="minutes"), inline = FALSE)),
+									            column(width = 3, radioButtons("profile_EIC_type", "Show chromatograms for:", c("Full EICs with peaks"="TRUE","Peaks only"="FALSE"), inline = FALSE))
+									        ),
 											value="test1"),
+										##################################################################
 										bsCollapsePanel("Similar lower-ranked profiles",
 											plotOutput("similar_profiles_plot", 
 												dblclick = "similar_profiles_plot_dblclick",
@@ -2281,6 +2297,7 @@
 											#HTML('<hr noshade="noshade" />'),
 											DT::dataTableOutput("similar_profiles_table")
 										),
+										##################################################################
 										bsCollapsePanel("Profile mass estimation",
 											div(style = widget_style3,
 												bsButton("dens_mass","Get mass estimates",style="success"),
@@ -2292,13 +2309,16 @@
 											imageOutput("massdens", height="auto"),
 											imageOutput("massint", height="auto"),
 											value="test3"),
+										##################################################################
 										bsCollapsePanel("Concentration estimation", 
 											tags$h5("To be completed")								
 																			
 										),			
+										##################################################################
 										bsCollapsePanel("Profile peak table", 
-											DT::dataTableOutput("oneproftable"),
-											value="test2")
+											DT::dataTableOutput("oneproftable")
+										)
+										##################################################################
 									)
 							),
 							tabPanel("Normalization",            					

@@ -1328,8 +1328,21 @@ observe({
 			output$similar_profiles_table<-DT::renderDataTable({
 				DT::datatable(similar_profiles_tab,
 					colnames=c("Profile ID","Mean m/z","Mean int. overall","Max int. samples","Mean RT",
-						"Mass defect","Median int. ratio blind vs. samples","Peak number samples","Peak number blinds","Peak number total")
-				)
+						"Mass defect","Median int. ratio blind vs. samples","Peak number samples","Peak number blinds","Peak number total"),
+					rownames=FALSE,
+					filter = 'top',
+                    selection = list(mode = 'single', target = 'row'),
+					extensions = c('Buttons','FixedHeader','ColReorder'),
+					options = list(
+						lengthMenu = c(15, 30, 50, 100),
+						fixedHeader = TRUE,
+						ordering=T,
+						dom = 'Blfrtip',
+						buttons = c('excel','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+						scrollX = TRUE,
+						colReorder = TRUE
+					)						
+				)			
 			});
 			##################################################################
 			output$oneproftable<-DT::renderDataTable(peakTable);
@@ -1458,6 +1471,50 @@ observeEvent(input$timeprofile_dblclick, { # - N
 ##############################################################################
 # get EICs for individual profiles ###########################################
 ##############################################################################
+ranges_profiles <- reactiveValues(RTchrom=FALSE, intchrom=FALSE)
+
+observe({ # seconds <-> minutes switch when zoomed ###########################
+	input$profile_EIC_time
+	if(isolate(init$a)=="TRUE" & isolate(ranges_profiles$RTchrom[1]!=FALSE)){
+		if(isolate(input$profile_EIC_time)=="minutes"){
+			isolate(ranges_profiles$RTchrom<-(ranges_profiles$RTchrom/60))
+		}
+		if(isolate(input$profile_EIC_time)=="seconds"){
+			isolate(ranges_profiles$RTchrom<-(ranges_profiles$RTchrom*60))
+		}
+	}
+})
+observeEvent(input$profile_EIC_dblclick, { 
+	brush <- isolate(input$profile_EIC_brush)
+    if (!is.null(brush)) {
+        cat("\n Zoom in_1")
+        isolate(ranges_profiles$RTchrom <- c(brush$xmin, brush$xmax))
+        isolate(ranges_profiles$intchrom <- c(brush$ymin, brush$ymax))
+    } else {
+        cat("\n Zoom out full_1")
+        isolate(ranges_profiles$RTchrom_ <- FALSE)
+        isolate(ranges_profiles$intchrom <- FALSE)
+    }
+})
+observeEvent(input$profile_EIC_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
+    cat("\n Zoom out part_1_a")
+    brush <- isolate(input$profile_EIC_brush)
+    if (is.null(brush)) {
+        cat("\n Zoom out part_1_b")
+        if(isolate(ranges_profiles$intchrom[1])!=FALSE){
+            old_range_mass<-abs(isolate(ranges_profiles$intchrom[2]-ranges_profiles$intchrom[1]))
+            isolate(ranges_profiles$intchrom[1]<-ranges_profiles$intchrom[1]-.3*old_range_mass)
+            isolate(ranges_profiles$intchrom[2]<-ranges_profiles$intchrom[2]+.3*old_range_mass)
+        }
+        if(isolate(ranges_profiles$RTchrom[1])!=FALSE){
+		    old_range_RT<-abs(isolate(ranges_profiles$RTchrom[2]-ranges_profiles$RTchrom[1]))
+		    isolate(ranges_profiles$RTchrom[1]<-ranges_profiles$RTchrom[1]-.1*old_range_RT)
+		    isolate(ranges_profiles$RTchrom[2]<-ranges_profiles$RTchrom[2]+.1*old_range_RT)
+	    }
+    }else{
+        cat("\n Doing hover - and nothing")
+    }   
+})
 maincalc4<-reactive({
 	input$profpeakID
 	if( 	
@@ -1471,7 +1528,7 @@ maincalc4<-reactive({
 			# positioning plot ###############################################
 			timed<-as.POSIXct(paste(peakTable[,1],peakTable[,2],sep=" "))
 			output$profile_position <- renderPlot({
-				par_old<-par(mar=c(1,1,1,1))				
+				par_old<-par(mar=c(1,.3,.3,.3))				
 				plot.new()
 				plot.window(xlim=c(min(timed),max(timed)),ylim=c(0,max(max(as.numeric(as.character(peakTable[,4]))),max(as.numeric(as.character(peakTable[,6]))))))
 				abline(v=timed[as.numeric(isolate(input$profpeakID))],col="darkgrey",lwd=5)
@@ -1488,29 +1545,31 @@ maincalc4<-reactive({
 			fileID<-peakTable[,3]
 			fileID[fileID=="0"]<-peakTable[peakTable[,3]=="0",5]
 			if(any(peakTable[as.numeric(isolate(input$profpeakID)),7]!=0)){
-				load(file.path(logfile[[1]],"MSlist",fileID[as.numeric(isolate(input$profpeakID))]), envir=as.environment(".GlobalEnv"))
-				cat("\n MSlist loaded");	
-cat("\n");cat("DOING STH")	
-				EIC_ID<-unique(MSlist[[8]][MSlist[[8]][,10]==as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),9]);
-				peakit3<<-MSlist[[4]][[2]][c(MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),1]:MSlist[[7]][as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),2]),]		
-				#if(length(peakit3)>7){
-				EICit<-MSlist[[4]][[2]][c(MSlist[[6]][EIC_ID,1]:MSlist[[6]][EIC_ID,2]),]								
-				output$profile_EIC <- renderPlot({
-					par_old<-par(mar=c(2,2,1,1))							
-					if(length(EICit)>7){
-						plot(EICit[,3],EICit[,2],type="h",col="darkgrey",xlab="RT",ylab="Intensity",xlim=c(min(MSlist[[4]][[1]]),max(MSlist[[4]][[1]])))
-					}else{
-						plot(EICit[3],EICit[2],type="h",col="darkgrey",xlab="RT",ylab="Intensity")
-					}
-					if(length(peakit3)>7){	
-						points(peakit3[,3],peakit3[,2],type="h",col="red",lwd=2)
-					}else{
-						points(peakit3[3],peakit3[2],type="h",col="red",lwd=2)				
-					}
-					par(par_old);	
-					env=as.environment(".GlobalEnv")
-				})
-				rm(EIC_ID,peakit3)			
+				use_file_ID<-fileID[as.numeric(isolate(input$profpeakID))]
+	        	if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){
+	        		if(any(names(MSlist)=="File_ID")){
+	        			if(MSlist[["File_ID"]]!=as.character(use_file_ID)){ # File_ID does not match
+							load(file.path(logfile[[1]],"MSlist",as.character(use_file_ID)),envir=as.environment(".GlobalEnv")) 
+	        			}
+	        		}else{ # available MSlist not with File_ID yet
+						load(file.path(logfile[[1]],"MSlist",as.character(use_file_ID)),envir=as.environment(".GlobalEnv"))  
+						MSlist[["File_ID"]]<-as.character(use_file_ID)
+	        		}
+	        	}else{ # no MSlist in GlobalEnv
+					load(file.path(logfile[[1]],"MSlist",as.character(use_file_ID)),envir=as.environment(".GlobalEnv"))  
+	        	}			
+				output$profile_EIC  <- renderPlot({
+		            par(mar=c(4.5,4,.8,.8))
+		            enviMass:::plotchromat(
+		              	MSlist,
+		              	peakIDs=as.numeric(peakTable[as.numeric(isolate(input$profpeakID)),7]),
+		              	RTlim=ranges_profiles$RTchrom,
+		              	Intlim=ranges_profiles$intchrom,
+		              	set_RT=input$profile_EIC_time,
+		              	normalize=FALSE,
+		              	chromat_full=input$profile_EIC_type
+		            );
+		        },res=100)			
 				return(
 					paste("= sample file ID: ",as.character(fileID[as.numeric(isolate(input$profpeakID))])," (",as.character(timed[as.numeric(isolate(input$profpeakID))]),")" )
 				);		
