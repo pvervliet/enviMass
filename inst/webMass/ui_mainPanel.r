@@ -1109,8 +1109,7 @@
 								numericInput("homol_mztol", "+/- m/z tolerance ...", 3), 
 								selectInput("homol_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
 								numericInput("homol_minlength", "Minimum number of homologues in a series:", 6),						
-								HTML('<hr noshade="noshade" />'),			
-			# BAUSTELLE						
+								HTML('<hr noshade="noshade" />'),						
 								div(style = widget_style11,		
 									tags$h5("Advanced settings"),
 									numericInput("homol_vec_size", "Ignore unless a relevant error message is printed (then try to increase size): ", 1E8),
@@ -1118,7 +1117,6 @@
 									selectInput("homol_blind", "Filter peaks by sample-vs-blind intensity ratio:", choices = c("yes"="TRUE","no"="FALSE"), "FALSE"),				
 									numericInput("homol_blind_value", "Sample-vs-blind intensity ratio threshold:", 10)									
 								)
-			# BAUSTELLE	
 							),
 							tabPanel("EIC correlation",	
 								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/eic.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on EIC correlation parameter.</a></p>'),	
@@ -1137,7 +1135,6 @@
 							column(3,numericInput("comp_corr", "Minimum Pearson profile intensity correlation:", value = 0.9, min = 0, max = 1)),
 							column(4,numericInput("corr_del_RT", "RT tolerance window for co-occuring peaks of different profiles [s]:", value = 5, min = 0, max = NA))
 						),		
-			#logfile$parameters$corr_skip_peaks<<-"TRUE"
 						HTML('<hr noshade="noshade" />'), 
 						selectInput("prof_comp_link_only",label="Restrict profile componentization to isotopologue and selected adduct relations only?",choices=c("TRUE","FALSE"),selected = "FALSE", multiple = FALSE),
 						HTML('<hr noshade="noshade" />'),
@@ -1341,11 +1338,9 @@
 					div(style = widget_style3,numericInput("sel_meas_ID", "Type in file ID:", 0)),
 					conditionalPanel(			
 						condition = "input.sel_meas_ID != 0",	
-# > BAUSTELLE
 						textOutput('file_viewer_name'),
 						textOutput('file_viewer_type'),
 						textOutput('file_viewer_mode'),
-# > BAUSTELLE
 						HTML('<hr noshade="noshade" />'),				
 						bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
 							bsCollapsePanel(title="All picked peaks & raw data", 
@@ -1391,12 +1386,7 @@
 									),
 									tabPanel("Hide",HTML('<hr noshade="noshade" />')),
 									inverse=FALSE
-								),			
-								#HTML('<hr noshade="noshade" />'),	
-								#fluidRow(
-								#	column(2,bsButton("peaks_mz_RT_zoom_out","Zoom out",style="info"))			
-								
-								#),									
+								),										
 								plotOutput("plot_peaks_mz_RT", 
 									width = "100%", height = "650px",
 									dblclick = "plot_peaks_mz_RT_dblclick",

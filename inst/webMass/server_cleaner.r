@@ -1,5 +1,8 @@
 	###############################################################################	
 	those_objects<-c(
+		"time_start",
+		"do_flow",
+		"calTim",
 		"these_peaks",
 		"screen_dev_pos",
 		"rat_sam_blank_pos",
