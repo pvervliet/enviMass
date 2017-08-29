@@ -1341,6 +1341,11 @@
 					div(style = widget_style3,numericInput("sel_meas_ID", "Type in file ID:", 0)),
 					conditionalPanel(			
 						condition = "input.sel_meas_ID != 0",	
+# > BAUSTELLE
+						textOutput('file_viewer_name'),
+						textOutput('file_viewer_type'),
+						textOutput('file_viewer_mode'),
+# > BAUSTELLE
 						HTML('<hr noshade="noshade" />'),				
 						bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
 							bsCollapsePanel(title="All picked peaks & raw data", 
@@ -1883,8 +1888,12 @@
 									most component details in the latter subsection for easier navigation."),
 									HTML('<hr noshade="noshade" />'),
 									bsCollapse(multiple = TRUE, open = "col3", id = "collapse3",	
-										bsCollapsePanel("Summary", 											
+										bsCollapsePanel("Summary", 			
 											textOutput('num_peaks_all'),
+											textOutput('num_peaks_remain_replicate'),
+											textOutput('num_peaks_remain_blind'),
+											textOutput('num_peaks_remain'),
+											HTML('<hr noshade="noshade" />'),
 											textOutput('num_comp'),
 											textOutput('reduc'),
 											textOutput('min2_size_comp'),
@@ -2192,7 +2201,7 @@
 										selected="current trend intensity (decreasing)",width='80%'),
 									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no"="FALSE","yes"="TRUE"), selected="FALSE", inline = TRUE),
 									HTML('<hr noshade="noshade" />'),
-									div(style = widget_style3,numericInput("filterProf_count", "Restrict list size (only for export and below table):", 500, min=1)),
+									div(style = widget_style3,numericInput("filterProf_count", "Restrict size of below Profile list table:", 500, min=1)),
 									#conditionalPanel( # IS filter				
 									#		condition = "input.screen_IS == 'yes'",
 									#		tags$h5("IS compounds filter:"),										

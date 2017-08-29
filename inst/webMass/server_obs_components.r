@@ -38,6 +38,7 @@ observe({ # - A
 			#####################################################################
 			# on centroid data ##################################################
 			load(file.path(logfile[[1]],"MSlist",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv"))  
+			load(file.path(logfile[[1]],"peaklist",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv")) 
 			#####################################################################
 			# on isotopologues & adducts ########################################
 			if( 
@@ -65,10 +66,10 @@ observe({ # - A
 				cat("\n Loaded file")
 				# output components summary table ################################
 				if(!is.null(dim(component[["pattern peak list"]]))){
-					num_peaks_all<-dim(component[["pattern peak list"]])[1]
+					num_peaks_remain<-dim(component[["pattern peak list"]])[1]
 					max_peak_ID<<-max(component[["pattern peak list"]][,"peak ID"])
 				}else{
-					num_peaks_all<-dim(component[["adduct peak list"]])[1]
+					num_peaks_remain<-dim(component[["adduct peak list"]])[1]
 					max_peak_ID<<-max(component[["adduct peak list"]][,"peak ID"])
 				}
 				num_comp<-dim(component[["Components"]])[1]
@@ -83,7 +84,7 @@ observe({ # - A
 					(component[["Components"]][,"Target peaks"]=="-") &
 					(component[["Components"]][,"ISTD peaks"]=="-")
 				)
-				reduc<-round((num_peaks_all/num_comp),digits=2)
+				reduc<-round((num_peaks_remain/num_comp),digits=2)
 				num_isot_peaks<-rep(0,num_comp)
 				num_adduc_peaks<-rep(0,num_comp)
 				for(i in 1:num_comp){
@@ -97,8 +98,19 @@ observe({ # - A
 				min2_size_comp<-round((sum((num_isot_peaks+num_adduc_peaks)>1)/num_comp),digits=2)
 				median_size_comp<-round(mean(num_isot_peaks+num_adduc_peaks),digits=2)
 				max_size_comp<-max(num_isot_peaks+num_adduc_peaks)
-				output$num_peaks_all<-renderText(paste("Remaining number of peaks: ",as.character(num_peaks_all),sep=""))
-				output$num_comp<-renderText(paste("Total number of components: ",as.character(num_comp),sep=""))
+				output$num_peaks_all<-renderText(paste("Total number of picked peaks for selected file: ",as.character(length(peaklist[,1])),sep=""))
+				if(logfile$workflow[names(logfile$workflow)=="replicates"]=="yes"){
+					output$num_peaks_remain_replicate<-renderText(paste("Number of peaks removed by replicate filter: ",as.character((sum(peaklist[,colnames(peaklist)=="keep"]==0))),sep=""))
+				}else{
+					output$num_peaks_remain_replicate<-renderText(paste("Number of peaks removed by replicate filter: workflow step not enabled."))
+				}
+				if(logfile$workflow[names(logfile$workflow)=="blind"]=="yes"){
+					output$num_peaks_remain_blind<-renderText(paste("Number of peaks also found in blind files (peaks not removed): ",as.character((sum(peaklist[,colnames(peaklist)=="keep_2"]<Inf))),sep=""))
+				}else{
+					output$num_peaks_remain_blind<-renderText(paste("Number of peaks affected by blind peak detection: workflow step not enabled."))
+				}
+				output$num_peaks_remain<-renderText(paste("Remaining number of peaks: ",as.character(num_peaks_remain),sep=""))
+				output$num_comp<-renderText(paste("Total number of components build from remaining peaks: ",as.character(num_comp),sep=""))
 				output$reduc<-renderText(paste("Reduction factor: ",as.character(reduc),sep=""))
 				output$num_comp_tar<-renderText(paste("Components containing target or suspect compound peaks: ",as.character(num_comp_tar),sep=""))
 				output$num_comp_ISTD<-renderText(paste("Components containing ISTD peaks: ",as.character(num_comp_ISTD),sep=""))
@@ -154,7 +166,7 @@ observe({ # - A
 						extensions = c('Buttons','FixedHeader','ColReorder'),
 						options = list(
 							lengthMenu = c(20, 50, 100, 200, 500),
-							fixedHeader = TRUE,
+							fixedHeader = FALSE,
 							ordering=T,
 							dom = 'Blfrtip',
 							buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
@@ -207,6 +219,9 @@ observe({ # - A
 			output$sel_meas_comp_state1<-renderText("")
 			output$sel_meas_comp_state2<-renderText("")			
 			output$num_peaks_all<-renderText("")
+			output$num_peaks_remain_replicate<-renderText("")
+			output$num_peaks_remain_blind<-renderText("")
+			output$num_peaks_remain<-renderText("")
 			output$num_comp<-renderText("")
 			output$reduc<-renderText("")
 			output$min2_size_comp<-renderText("")
@@ -292,7 +307,7 @@ observe({
                     extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
 						lengthMenu = c(20, 50, 100, 200, 500),
-						fixedHeader = TRUE,
+						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
 						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
@@ -376,7 +391,7 @@ observe({
                     extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
 						lengthMenu = c(20, 50, 100, 200, 500),
-						fixedHeader = TRUE,
+						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
 						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),

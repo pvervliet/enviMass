@@ -18,7 +18,7 @@ conditionalPanel(
 			<li> Data visualization
 			<li> Mass recalibration
 			<!--	<li> RT Alignment 		--> 
-			<li> Quality control
+			<li> Intensity / quality control
 			<li> Profile time series extraction or processing of replicate files 
 			<li> Replicate sample intersection
 			<li> Intensity normalization: median- & ISTD-based

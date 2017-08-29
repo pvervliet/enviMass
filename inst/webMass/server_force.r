@@ -35,7 +35,7 @@ output$force_workflow <- networkD3::renderForceNetwork({
 			}
 			
 			MisNodes[MisNodes[,1]=="peakpicking",1]<-"Peak picking"
-			MisNodes[MisNodes[,1]=="qc",1]<-"Quality control"
+			MisNodes[MisNodes[,1]=="qc",1]<-"Intensity control"
 			MisNodes[MisNodes[,1]=="recal",1]<-"Mass recalibration"
 			MisNodes[MisNodes[,1]=="profiling",1]<-"Profile extraction"		
 			MisNodes[MisNodes[,1]=="trendblind",1]<-"Trend detection"

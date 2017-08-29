@@ -91,6 +91,7 @@
 				if(logfile$workflow[names(logfile$workflow)=="target_screen"]=="yes"){
 					for_file<-as.numeric(measurements[b,"ID"])
 					for_mode<-measurements[b,"Mode"]
+					targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character")
 					######################################################################
 					if(for_mode=="positive"){
 						if(exists("profileList_pos_copy",envir=as.environment(".GlobalEnv"))){rm("profileList_pos_copy",envir=as.environment(".GlobalEnv"))}	
@@ -99,9 +100,7 @@
 						if(exists("links_peaks_pos")){rm("links_peaks_pos")}	
 						load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"))
 						load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"))
-						for_peaks<-which(
-							profileList_pos_copy[["peaks"]][,"sampleIDs"]==for_file
-						)
+						for_peaks<-which(profileList_pos_copy[["peaks"]][,"sampleIDs"]==for_file)
 						peaks<-profileList_pos_copy[["peaks"]][for_peaks,]
 						rm(for_peaks)
 						if(dim(peaks)[1]>0){
@@ -175,7 +174,9 @@
 									got_comp<-unique(collect_comp)
 									collect_all<-""
 									for(n in 1:length(got_comp)){
-										tar<-paste0(strsplit(got_comp[n],"_")[[1]][1:2],collapse="_")
+										tar<-strsplit(got_comp[n],"_")[[1]][1:2]
+										tar_name<-targets[targets[,"ID"]==tar[1],"Name"]
+										tar<-paste(tar_name,tar[2],sep="_")
 										collect_all<-paste0(c(collect_all,
 											paste(tar,
 												paste0(unique(collect_peak[collect_comp==got_comp[n]]),collapse=","),
@@ -278,7 +279,9 @@
 									got_comp<-unique(collect_comp)
 									collect_all<-""
 									for(n in 1:length(got_comp)){
-										tar<-paste0(strsplit(got_comp[n],"_")[[1]][1:2],collapse="_")
+										tar<-strsplit(got_comp[n],"_")[[1]][1:2]
+										tar_name<-targets[targets[,"ID"]==tar[1],"Name"]
+										tar<-paste(tar_name,tar[2],sep="_")
 										collect_all<-paste0(c(collect_all,
 											paste(tar,
 												paste0(unique(collect_peak[collect_comp==got_comp[n]]),collapse=","),
@@ -304,6 +307,7 @@
 				if(logfile$workflow[names(logfile$workflow)=="IS_screen"]=="yes"){
 					for_file<-as.numeric(measurements[b,"ID"])
 					for_mode<-measurements[b,"Mode"]
+					intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 					######################################################################
 					if(for_mode=="positive"){
 						if(exists("profileList_pos_copy",envir=as.environment(".GlobalEnv"))){rm("profileList_pos_copy",envir=as.environment(".GlobalEnv"))}	
@@ -312,9 +316,7 @@
 						if(exists("links_peaks_pos")){rm("links_peaks_pos")}	
 						load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"))
 						load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"))
-						for_peaks<-which(
-							profileList_pos_copy[["peaks"]][,"sampleIDs"]==for_file
-						)
+						for_peaks<-which(profileList_pos_copy[["peaks"]][,"sampleIDs"]==for_file)
 						peaks<-profileList_pos_copy[["peaks"]][for_peaks,]
 						rm(for_peaks)
 						if(dim(peaks)[1]>0){
@@ -388,7 +390,9 @@
 									got_comp<-unique(collect_comp)
 									collect_all<-""
 									for(n in 1:length(got_comp)){
-										tar<-paste0(strsplit(got_comp[n],"_")[[1]][1:2],collapse="_")
+										tar<-strsplit(got_comp[n],"_")[[1]][1:2]
+										tar_name<-intstand[intstand[,"ID"]==tar[1],"Name"]
+										tar<-paste(tar_name,tar[2],sep="_")
 										collect_all<-paste0(c(collect_all,
 											paste(tar,
 												paste0(unique(collect_peak[collect_comp==got_comp[n]]),collapse=","),
@@ -491,7 +495,9 @@
 									got_comp<-unique(collect_comp)
 									collect_all<-""
 									for(n in 1:length(got_comp)){
-										tar<-paste0(strsplit(got_comp[n],"_")[[1]][1:2],collapse="_")
+										tar<-strsplit(got_comp[n],"_")[[1]][1:2]
+										tar_name<-intstand[intstand[,"ID"]==tar[1],"Name"]
+										tar<-paste(tar_name,tar[2],sep="_")
 										collect_all<-paste0(c(collect_all,
 											paste(tar,
 												paste0(unique(collect_peak[collect_comp==got_comp[n]]),collapse=","),

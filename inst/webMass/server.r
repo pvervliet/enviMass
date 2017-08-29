@@ -58,9 +58,6 @@ shinyServer(function(input, output, session){
   ##############################################################################  
   # observe parameter changes ##################################################  
   source("server_variables_out.r", local=TRUE)
-  ##############################################################################  
-  # observe export requests ####################################################  
-  source("server_export.r", local=TRUE)
   ############################################################################## 
   # output screening results ###################################################
   source("server_obs_screening.r", local=TRUE)  

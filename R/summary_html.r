@@ -44,7 +44,7 @@ summary_html<-function(use_summary){
 	
 	use_summary[,2]<-""
 	use_summary[use_summary[,1]=="peakpicking",1]<-"Peak picking"	
-	use_summary[use_summary[,1]=="qc",1]<-"Quality control"	
+	use_summary[use_summary[,1]=="qc",1]<-"Intensity comparison"	
 	use_summary[use_summary[,1]=="pattern",1]<-"Compound patterns"	
 	use_summary[use_summary[,1]=="recal",1]<-"Mass recalibration"				
 	use_summary[use_summary[,1]=="norm",1]<-"Median intensity normalization "				

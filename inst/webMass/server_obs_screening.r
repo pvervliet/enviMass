@@ -56,7 +56,7 @@ observe({
 						                	rownames = FALSE,
 											options = list(
 												lengthMenu = c(25, 50, 100, 200, 1000),
-												fixedHeader = TRUE,
+												fixedHeader = FALSE,
 												ordering=T,
 												dom = 'Blfrtip',
 												buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
@@ -603,7 +603,7 @@ observe({ ####################################################################
 	            extensions = c('Buttons','FixedHeader','ColReorder'),
 				options = list(
 					lengthMenu = c(15, 30, 50, 100),
-					fixedHeader = TRUE,
+					fixedHeader = FALSE,
 					ordering=TRUE,
 					dom = 'Blfrtip',
 					buttons = c('excel','csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
@@ -998,7 +998,7 @@ observe({
 						                	rownames = FALSE,
 											options = list(
 												lengthMenu = c(25, 50, 100, 200, 1000),
-												fixedHeader = TRUE,
+												fixedHeader = FALSE,
 												ordering=T,
 												dom = 'Blfrtip',
 												buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
@@ -1545,7 +1545,7 @@ observe({ ####################################################################
 	            extensions = c('Buttons','FixedHeader','ColReorder'),
 				options = list(
 					lengthMenu = c(15, 30, 50, 100),
-					fixedHeader = TRUE,
+					fixedHeader = FALSE,
 					ordering=TRUE,
 					dom = 'Blfrtip',
 					buttons = c('excel','csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),

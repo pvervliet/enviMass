@@ -192,8 +192,8 @@ observe({
 	                	extensions = c('Buttons','FixedHeader','ColReorder'),
 						options = list(
 							lengthMenu = c(25, 50, 100, 200, 1000),
-							fixedHeader = TRUE,
-							ordering=T,
+							fixedHeader = FALSE,
+							ordering = TRUE,
 							dom = 'Blfrtip',
 							buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 							scrollX = TRUE,
@@ -363,6 +363,17 @@ observe({
 					max_int<-max(max(MSlist[["Peaklist"]][,"max_int"]),max(MSlist[["Scans"]][[2]][,"intensity"]))
 					min_int<-min(min(MSlist[["Peaklist"]][,"max_int"]),min(MSlist[["Scans"]][[2]][,"intensity"]))
 					updateSliderInput(session,"plot_filter_intensity", min=round(log10(min_int),digits=1), max=round(log10(max_int),digits=1), value=c(log10(min_int),log10(max_int)))
+					########################################################################################
+					measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+     				if(any(measurements[,"ID"]==as.character(isolate(input$sel_meas_ID)))){
+    					output$file_viewer_name<-renderText(paste("File name: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_ID)),"Name"],sep=""))
+    					output$file_viewer_type<-renderText(paste("File type: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_ID)),"Type"],sep=""))
+     					output$file_viewer_mode<-renderText(paste("Ionization mode: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_ID)),"Mode"],sep=""))
+   					}else{
+						output$file_viewer_name<-renderText("Invalid file ID")
+						output$file_viewer_type<-renderText("")
+						output$file_viewer_mode<-renderText("")
+   					}
 				}
 				# prepare plotting information #############################################################
 				if(
@@ -760,12 +771,19 @@ observe({
 						output$plot_peaks_3D <- renderPlotly({plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})	
 					}
 					#############################################################################
+				}else{
+					output$file_viewer_name<-renderText("Invalid file ID")
+					output$file_viewer_type<-renderText("")
+					output$file_viewer_mode<-renderText("")					
 				}	
 			}else{
 				output$plot_peaks_mz_RT <- renderPlot({})
 				output$plot_peaks_mz_int <- renderPlot({})
 				output$plot_peaks_RT_int <- renderPlot({})
 				output$plot_peaks_3D <- renderPlotly({plotly::plot_ly(type="scatter3d",mode="markers",showlegend=TRUE)})	
+				output$file_viewer_name<-renderText("Invalid file ID")
+				output$file_viewer_type<-renderText("")
+				output$file_viewer_mode<-renderText("")
 			}
 		}
 	}
@@ -1153,7 +1171,7 @@ maincalc6<-reactive({
 					extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
 						lengthMenu = c(25, 50, 100, 200, 1000),
-						fixedHeader = TRUE,
+						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
 						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
@@ -1335,7 +1353,7 @@ observe({
 					extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
 						lengthMenu = c(15, 30, 50, 100),
-						fixedHeader = TRUE,
+						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
 						buttons = c('excel','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
