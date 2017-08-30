@@ -88,7 +88,7 @@ maincalc<-reactive({
 						session,output,input
 					)  		
 				})	
-				time_diff_part<-(Sys.time()-time_start_part)
+				time_diff_part<-as.numeric(difftime(Sys.time(),time_start_part,units="mins"))
 				calTim[do_flow,2]<<-round(time_diff_part,digits=4)
 				write.table(calTim,file=file.path(as.character(logfile[[1]]),"exports","calTim"))
 				if(class(try_flow)=="try-error"){

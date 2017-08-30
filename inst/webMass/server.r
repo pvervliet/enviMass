@@ -21,11 +21,11 @@ shinyServer(function(input, output, session){
   # define variables, inputs, outputs - if not in server.startup.R #############
   tried<-try(getVolumes()(),silent=FALSE)
   if(!inherits(tried,"try-error")){	
-	#shinyFileChoose(input, "pro_dir3", updateFreq = 30000, roots=getVolumes(), filetypes=c("emp"))
-	#shinyFileSave(input, "download_IS", updateFreq = 30000, roots=getVolumes() )
-	#shinyFileSave(input, "download_target", updateFreq = 30000, roots=getVolumes() )	
+	 shinyFileChoose(input, "pro_dir3", updateFreq = 30000, roots=getVolumes(), filetypes=c("emp"))
+	 shinyFileSave(input, "download_IS", updateFreq = 30000, roots=getVolumes() )
+	 shinyFileSave(input, "download_target", updateFreq = 30000, roots=getVolumes() )	
   }else{
-	createAlert(session,anchorId = "alert_4", alertId="a4", title = NULL, content="logfile select disabled, used folder path input",style = "alarm",append=FALSE,dismiss=TRUE)
+	 createAlert(session,anchorId = "alert_4", alertId="a4", title = NULL, content="logfile select disabled, used folder path input",style = "alarm",append=FALSE,dismiss=TRUE)
   }
   output$textit<-renderText("Waiting...")
   output$dowhat<-renderText("Open")
