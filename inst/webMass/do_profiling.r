@@ -25,54 +25,51 @@
 		if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))){file.remove(file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))}
 		profileList_pos<-startprofiles(
 							logfile,
-							frac=FALSE,
-							sets=as.numeric(logfile$parameters$prof_maxfiles),
-							progbar=logfile$parameters$progressBar,
-							ion_mode="positive",
-							until=logfile$parameters$upto_file,
-							selective=logfile$parameters$prof_select,
-							types=c("sample","blank","spiked"),
-							blind_omit=as.logical(logfile$parameters$blind_omit)
+							frac = FALSE,
+							sets = as.numeric(logfile$parameters$prof_maxfiles),
+							progbar = logfile$parameters$progressBar,
+							ion_mode = "positive",
+							until = logfile$parameters$upto_file,
+							selective = logfile$parameters$prof_select,
+							types = c("sample","blank","spiked"),
+							blind_omit = as.logical(logfile$parameters$blind_omit)
 						)
 		if(any(profileList_pos[[2]][,2]==0)){stop("\n issue in do_profiling: zero intensities detected. Try to rerun the workflow including the peakpicking, using -> Settings -> General -> Reset project including peak picking.")}
 		profileList_pos<-agglomer(
 							profileList_pos,
-							dmass=(as.numeric(logfile$parameters$prof_dmz)+1),
-							ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
-							dret=(as.numeric(logfile$parameters$prof_drt)+10)
+							dmass = (as.numeric(logfile$parameters$prof_dmz)+1),
+							ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+							dret = (as.numeric(logfile$parameters$prof_drt)+10)
 						)
 		if((logfile$workflow[names(logfile$workflow)=="replicates"]=="no")||(logfile$parameters$replicates_prof=="no")){ 				
 			profileList_pos<-partcluster(
-								profileList=profileList_pos,
-								dmass=as.numeric(logfile$parameters$prof_dmz),
-								ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
-								dret=as.numeric(logfile$parameters$prof_drt),
-								from=FALSE,
-								to=FALSE,
-								progbar=logfile$parameters$progressBar,
+								profileList = profileList_pos,
+								dmass = as.numeric(logfile$parameters$prof_dmz),
+								ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+								dret = as.numeric(logfile$parameters$prof_drt),
+								from = FALSE,
+								to = FALSE,
+								progbar = logfile$parameters$progressBar,
 								#progbar=TRUE,
-								plot_it=FALSE,
-								replicates=FALSE,
-								IDs=FALSE,
-								with_test=FALSE
+								plot_it = FALSE,
+								replicates = FALSE,
+								IDs = FALSE,
+								with_test = FALSE
 							)
 		}else{ # run a profiling in the replicate groups first
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[measurements[,"include"]=="TRUE",]
-			measurements<-measurements[measurements[,"Mode"]=="positive",]
-			replicates<-measurements$tag3
-			IDs<-measurements$ID
+			replicates<-measurements[measurements[,"Mode"]=="positive","tag3"]
+			IDs<-measurements[measurements[,"Mode"]=="positive","ID"]
 			profileList_pos<-partcluster(
-								profileList=profileList_pos,
-								dmass=as.numeric(logfile$parameters$prof_dmz),
-								ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
-								dret=as.numeric(logfile$parameters$prof_drt),
-								from=FALSE,
-								to=FALSE,
-								progbar=logfile$parameters$progressBar,
-								plot_it=FALSE,
-								replicates=replicates,
-								IDs
+								profileList = profileList_pos,
+								dmass = as.numeric(logfile$parameters$prof_dmz),
+								ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+								dret = as.numeric(logfile$parameters$prof_drt),
+								from = FALSE,
+								to = FALSE,
+								progbar = logfile$parameters$progressBar,
+								plot_it = FALSE,
+								replicates = replicates,
+								IDs = IDs
 							)
 		}
 		profileList_pos<-enviMass::in_blind(profileList_pos)
@@ -90,52 +87,49 @@
 		if(any(objects()=="profileList_neg")){rm(profileList_neg)}	
 		profileList_neg<-startprofiles(
 							logfile,
-							frac=FALSE,
-							sets=as.numeric(logfile$parameters$prof_maxfiles),
-							progbar=logfile$parameters$progressBar,
-							ion_mode="negative",
-							until=logfile$parameters$upto_file,
-							selective=logfile$parameters$prof_select,
-							types=c("sample","blank","spiked"),
-							blind_omit=as.logical(logfile$parameters$blind_omit)
+							frac = FALSE,
+							sets = as.numeric(logfile$parameters$prof_maxfiles),
+							progbar = logfile$parameters$progressBar,
+							ion_mode = "negative",
+							until = logfile$parameters$upto_file,
+							selective = logfile$parameters$prof_select,
+							types = c("sample","blank","spiked"),
+							blind_omit = as.logical(logfile$parameters$blind_omit)
 						)
 		if(any(profileList_neg[[2]][,2]==0)){stop("\n issue in do_profiling: zero intensities detected - resolve issue!")}
 		profileList_neg<-agglomer(
 							profileList_neg,
-							dmass=(as.numeric(logfile$parameters$prof_dmz)+1),
-							ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
-							dret=(as.numeric(logfile$parameters$prof_drt)+10)
+							dmass = (as.numeric(logfile$parameters$prof_dmz)+1),
+							ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+							dret = (as.numeric(logfile$parameters$prof_drt)+10)
 						)
 		if((logfile$workflow[names(logfile$workflow)=="replicates"]=="no")||(logfile$parameters$replicates_prof=="no")){ 				
 			profileList_neg<-partcluster(
-								profileList=profileList_neg,
-								dmass=as.numeric(logfile$parameters$prof_dmz),
-								ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
-								dret=as.numeric(logfile$parameters$prof_drt),
-								from=FALSE,
-								to=FALSE,
-								progbar=logfile$parameters$progressBar,
-								plot_it=FALSE,
-								replicates=FALSE,
-								IDs=FALSE
+								profileList = profileList_neg,
+								dmass = as.numeric(logfile$parameters$prof_dmz),
+								ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+								dret = as.numeric(logfile$parameters$prof_drt),
+								from = FALSE,
+								to = FALSE,
+								progbar = logfile$parameters$progressBar,
+								plot_it = FALSE,
+								replicates = FALSE,
+								IDs = FALSE
 							)
 		}else{ # run a profiling in the replicate groups first
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[measurements[,"include"]=="TRUE",]
-			measurements<-measurements[measurements[,"Mode"]=="negative",]
-			replicates<-measurements$tag3
-			IDs<-measurements$ID
+			replicates<-measurements[measurements[,"Mode"]=="negative","tag3"]
+			IDs<-measurements[measurements[,"Mode"]=="negative","ID"]
 			profileList_neg<-partcluster(
-								profileList=profileList_neg,
-								dmass=as.numeric(logfile$parameters$prof_dmz),
-								ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
-								dret=as.numeric(logfile$parameters$prof_drt),
-								from=FALSE,
-								to=FALSE,
-								progbar=logfile$parameters$progressBar,
-								plot_it=FALSE,
-								replicates=replicates,
-								IDs
+								profileList = profileList_neg,
+								dmass = as.numeric(logfile$parameters$prof_dmz),
+								ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+								dret = as.numeric(logfile$parameters$prof_drt),
+								from = FALSE,
+								to = FALSE,
+								progbar = logfile$parameters$progressBar,
+								plot_it = FALSE,
+								replicates = replicates,
+								IDs = IDs
 							)
 		}
 		profileList_neg<-enviMass::in_blind(profileList_neg)
