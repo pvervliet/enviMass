@@ -315,10 +315,11 @@ observe({
 						colReorder = TRUE
 					),                    
                     selection = list(mode = 'single', target = 'row')
-                  )
+                  ),
+                  server = FALSE
                 )
                 # output homol. series table #####################################
-                output$homol_series_table <- DT::renderDataTable(
+                output$homol_series_table <- DT::renderDataTable({
                   DT::datatable(
                     data.frame(
                       I(as.character(homol[["Homologue Series"]][,"HS IDs"])),
@@ -330,9 +331,19 @@ observe({
                     filter = 'top',
                     colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]","Max log10 int."),
                     rownames=FALSE,
+                    extensions = c('Buttons','FixedHeader','ColReorder'),
+					options = list(
+						lengthMenu = c(10, 20, 50, 100, 300),
+						fixedHeader = FALSE,
+						ordering=T,
+						dom = 'Blfrtip',
+						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+						scrollX = TRUE,
+						colReorder = TRUE
+					),                       
                     selection = list(mode = 'single', target = 'row')
                   )
-                )
+                },server = FALSE)
                 isolate(ranges_homol$RTchrom<-FALSE) 
                 isolate(ranges_homol$intchrom<-FALSE) 
                 ##################################################################
@@ -399,7 +410,8 @@ observe({
 						colReorder = TRUE
 					),
 					selection = list(mode = 'single', target = 'row')
-                  )
+                  ),
+                  server = FALSE
                )
     }
 })
@@ -416,7 +428,7 @@ observe({
 			  these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
               print(these_series)
               use_these_series<-match(these_series,homol[["Homologue Series"]][,"HS IDs"])
-              output$homol_series_table <- DT::renderDataTable(
+              output$homol_series_table <- DT::renderDataTable({
                   DT::datatable(
                     data.frame(
                       I(as.character(homol[["Homologue Series"]][use_these_series,"HS IDs"])),
@@ -428,9 +440,19 @@ observe({
                     filter = 'top',
                     colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]","Max log10 int."),
                     rownames=FALSE,
+                    extensions = c('Buttons','FixedHeader','ColReorder'),
+					options = list(
+						lengthMenu = c(10, 20, 50, 100, 300, ALL),
+						fixedHeader = FALSE,
+						ordering=T,
+						dom = 'Blfrtip',
+						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+						scrollX = TRUE,
+						colReorder = TRUE
+					),      
                     selection = list(mode = 'single', target = 'row')
                   )
-              )
+              },server = FALSE)
               isolate(ranges_homol$RTchrom<-FALSE) 
               isolate(ranges_homol$intchrom<-FALSE) 
               # output homol. series plot ######################################
@@ -449,7 +471,7 @@ observe({
           }else{
             cat("\n ALL DESELECTED_1")
             # output homol. series table #####################################    
-            output$homol_series_table <- DT::renderDataTable(
+            output$homol_series_table <- DT::renderDataTable({
                   DT::datatable(
                     data.frame(
                       I(as.character(homol[["Homologue Series"]][,"HS IDs"])),
@@ -461,9 +483,19 @@ observe({
                     filter = 'top',
                     colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]","Max log10 int."),
                     rownames=FALSE,
+                    extensions = c('Buttons','FixedHeader','ColReorder'),
+					options = list(
+						lengthMenu = c(10, 20, 50, 100, 300),
+						fixedHeader = FALSE,
+						ordering=T,
+						dom = 'Blfrtip',
+						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+						scrollX = TRUE,
+						colReorder = TRUE
+					),      
                     selection = list(mode = 'single', target = 'row')
                   )
-               )
+               },server = FALSE)
             # output homol. series plot ######################################
             output$homol_plot <- renderPlot({
               par(mar=c(4.5,4.5,.9,.8))

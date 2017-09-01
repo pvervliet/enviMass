@@ -1178,7 +1178,8 @@ maincalc6<-reactive({
 						scrollX = TRUE,
 						colReorder = TRUE
 					)
-				)
+				),
+				server=FALSE
 			)
 			updateNumericInput(session,"profID",value = 0);
 			updateNumericInput(session,"profentry",value = 0);
