@@ -442,7 +442,7 @@ observe({
                     rownames=FALSE,
                     extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
-						lengthMenu = c(10, 20, 50, 100, 300, ALL),
+						lengthMenu = c(10, 20, 50, 100, 300),
 						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
