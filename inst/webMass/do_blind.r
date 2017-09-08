@@ -53,11 +53,13 @@ if((logfile$parameters$subtract_pos_bydate=="TRUE") || (logfile$parameters$subtr
 		if(filetypus[ord[i]]=="sample"){
 			sam_ID<-sampleID[ord[i]]
 			found_blank<-FALSE
-			for(j in (i-1):1){ # backward
-				if((filetypus[ord[j]]=="blank") & (ionmode[ord[i]]==ionmode[ord[j]])){
-					blank_ID<-sampleID[ord[j]]
-					found_blank<-TRUE
-					break;
+			if(i>1){
+				for(j in (i-1):1){ # backward
+					if((filetypus[ord[j]]=="blank") & (ionmode[ord[i]]==ionmode[ord[j]])){
+						blank_ID<-sampleID[ord[j]]
+						found_blank<-TRUE
+						break;
+					}
 				}
 			}
 			if(!found_blank){
