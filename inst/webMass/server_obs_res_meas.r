@@ -199,7 +199,7 @@ observe({
 							scrollX = TRUE,
 							colReorder = TRUE
 						)
-	                )
+	                ),server=FALSE
 	            )
 	}else{
 		output$exp_peaklist <- DT::renderDataTable(
