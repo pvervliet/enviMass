@@ -1,5 +1,7 @@
 	###############################################################################	
 	those_objects<-c(
+		"int_norm_ISTD_pos",
+		"int_norm_ISTD_pos",
 		"time_start",
 		"do_flow",
 		"calTim",

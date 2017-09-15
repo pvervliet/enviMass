@@ -262,6 +262,36 @@ maincalc2<-reactive({
 			# (5) RT Alignment #####################################################
 						
 			# (6) IS-Normalization #################################################
+
+# > BAUSTELLE
+			
+			if(isolate(input$Ion_mode) == "positive"){			
+				if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"))){
+					load(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"))
+					output$int_norm_ISTD_median <- renderPlot({   
+						par(mar = c(.2, 4.5, .9, 8))
+						enviMass:::plot_ISTD_norm(
+							int_norm_ISTD = int_norm_ISTD_pos,
+							logfile = logfile,
+							what = "normalization"
+						)
+			
+					},res = 100) 
+					output$int_norm_ISTD_counts <- renderPlot({   
+						par(mar = c(4.5, 4.5, .9, 8))
+						enviMass:::plot_ISTD_norm(
+							int_norm_ISTD = int_norm_ISTD_pos,
+							logfile = logfile,
+							what = "counts"
+						)
+			
+					},res = 100) 					
+					
+					
+				}
+			}
+			
+if(FALSE){			
 			if(file.exists(file.path(logfile$project_folder,"pics","profnorm_pos"))){
 				if(isolate(input$Ion_mode)=="positive"){
 					exprprofnorm_pos<-list(src=file.path(logfile$project_folder,"pics","profnorm_pos"))
@@ -286,6 +316,11 @@ maincalc2<-reactive({
 					output$profcount<-renderImage(exprprofcount_neg, deleteFile = FALSE)
 				}
 			}			
+			
+}
+
+# < BAUSTELLE	
+
 			# (X) Profiling, trends, blind #########################################		
 			if(file.exists(file.path(logfile$project_folder,"pics","boxprofile_pos"))){
 				if(isolate(input$Ion_mode)=="positive"){
@@ -300,7 +335,7 @@ maincalc2<-reactive({
 				}
 			}
 			if(file.exists(file.path(logfile$project_folder,"results","profileList_pos"))){
-					load(file=file.path(as.character(logfile$project_folder),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
+				load(file=file.path(as.character(logfile$project_folder),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 				if(isolate(input$Ion_mode)=="positive"){
 					assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));				
 				}
@@ -309,7 +344,7 @@ maincalc2<-reactive({
 				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_pos_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			}	
 			if(file.exists(file.path(logfile$project_folder,"results","profileList_neg"))){
-					load(file=file.path(as.character(logfile$project_folder),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
+				load(file=file.path(as.character(logfile$project_folder),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 				if(isolate(input$Ion_mode)=="negative"){
 					assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));				
 				}

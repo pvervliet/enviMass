@@ -2320,9 +2320,30 @@
 										##################################################################
 									)
 							),
-							tabPanel("Normalization",            					
-									imageOutput("profnorm", height="auto"),
-									imageOutput("profcount", height="auto")
+							tabPanel("Normalization",            				
+# > BAUSTELLE
+
+								plotOutput("int_norm_ISTD_median", 
+									dblclick = "int_norm_ISTD_median_dblclick",
+									brush = brushOpts(
+										id = "int_norm_ISTD_median_brush",
+										resetOnNew = TRUE,
+										direction = c("x")
+									)
+								),
+								plotOutput("int_norm_ISTD_counts", 
+									dblclick = "int_norm_ISTD_counts_dblclick",
+									brush = brushOpts(
+										id = "int_norm_ISTD_counts_brush",
+										resetOnNew = TRUE,
+										direction = c("x")
+									)
+								)
+
+
+# < BAUSTELLE							
+									#imageOutput("profnorm", height="auto"),
+									#imageOutput("profcount", height="auto")
 							)#,
 							#id="navbar_prof",inverse=FALSE,collapsible=TRUE,fluid=TRUE
 						)

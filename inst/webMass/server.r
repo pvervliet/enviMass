@@ -62,6 +62,9 @@ shinyServer(function(input, output, session){
   # output screening results ###################################################
   source("server_obs_screening.r", local=TRUE)  
   ############################################################################## 
+  # output screening results ###################################################
+  source("server_obs_plots.r", local=TRUE)  
+  ############################################################################## 
   # observe calibration sets ###################################################
   source("server_obs_calibration.r", local=TRUE)  
   ############################################################################## 
