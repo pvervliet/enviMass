@@ -86,7 +86,7 @@ partcluster<-function(
 				if(!do_replicates){
 					if(TRUE){	# REMOVE STATEMENT!
 					often<-c(often+1)
-					clusters <-.Call("extractProfiles",
+					clusters <-.Call("_enviMass_extractProfiles",
 									  as.numeric(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"m/z"]),       # mz
 									  as.numeric(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"RT"]),       # RT
 									  as.numeric(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"intensity"]),       # intens
@@ -193,7 +193,7 @@ partcluster<-function(
 						those<-!is.na(match(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),6],IDs2))
 						if(sum(those)>1){
 							often<-c(often+1)					
-							clusters_rep <-.Call("extractProfiles",
+							clusters_rep <-.Call("_enviMass_extractProfiles",
 											  as.numeric(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"m/z"][those]),       		# mz
 											  as.numeric(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"RT"][those]),       		# RT
 											  as.numeric(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"intensity"][those]),       # intens
@@ -244,7 +244,7 @@ partcluster<-function(
 						,]
 					);
 					# extract replicates with replicate-preordering ########################
-					clusters <-.Call("extractProfiles",
+					clusters <-.Call("_enviMass_extractProfiles",
 									  as.numeric(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"m/z"]),       # mz
 									  as.numeric(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"RT"]),       # RT
 									  as.numeric(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"intensity"]),       # intens
@@ -336,7 +336,7 @@ partcluster<-function(
 			}
 		}
 	}
-	index <- .Call("indexed",
+	index <- .Call("_enviMass_indexed",
 		as.integer(profileList[[2]][,"profileIDs"]),
 		as.integer(startat),
 		as.integer(26),

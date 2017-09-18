@@ -38,7 +38,7 @@
 						maxRT=use_maxRT,
 						minmz=use_minmass,
 						maxmz=use_maxmass,
-						ion_mode=measurements[i,"Mode"]
+						ion_mode=FALSE#measurements[i,"Mode"]
 					);
 					cat(" file read -"); 
 					##############################################################

@@ -10,65 +10,65 @@
 #' @details enviMass workflow function. Creates a project folder, various subfolders, a logfile, dummy outputs, etc
 #' 
 
-newproject<-function(pro_name,pro_dir,IS,targets){
+newproject <- function(pro_name, pro_dir, IS, targets){
 
   ##############################################################################
   # checks #####################################################################
-  if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in newproject.r!")}
-  if(grepl("\\",pro_dir,fixed=TRUE)){ # project directory established? 
-	pro_dir<-gsub("\\",.Platform$file.sep,pro_dir,fixed=TRUE)
+  if(any(ls() == "logfile")){stop("\n illegal logfile detected #1 in newproject.r!")}
+  if(grepl("\\", pro_dir, fixed = TRUE)){ # project directory established? 
+	pro_dir <- gsub("\\",.Platform$file.sep, pro_dir, fixed = TRUE)
   }
   ##############################################################################
   # create project #############################################################
   if(!file.exists(file.path(pro_dir,pro_name))){ # should have been created in check_path
-	dir.create(file.path(pro_dir,pro_name),recursive=TRUE)              # project folder
+	dir.create(file.path(pro_dir,pro_name), recursive = TRUE)              # project folder
   }
-  dir.create(file.path(pro_dir,pro_name,"files"),recursive=TRUE)      # subfolder
-  dir.create(file.path(pro_dir,pro_name,"MSlist"),recursive=TRUE)     # subfolder
-  dir.create(file.path(pro_dir,pro_name,"peaklist"),recursive=TRUE)   # subfolder  
-  dir.create(file.path(pro_dir,pro_name,"features"),recursive=TRUE)   # subfolder
-  dir.create(file.path(pro_dir,pro_name,"results"),recursive=TRUE)    # subfolder
-	dir.create(file.path(pro_dir,pro_name,"results","screening"),recursive=TRUE)    	# subfolder  
-	dir.create(file.path(pro_dir,pro_name,"results","LOD"),recursive=TRUE)    	# subfolder  
-	dir.create(file.path(pro_dir,pro_name,"results","recalibration"),recursive=TRUE)   # subfolder 
-	dir.create(file.path(pro_dir,pro_name,"results","componentization"),recursive=TRUE)   # subfolder 
-	dir.create(file.path(pro_dir,pro_name,"results","componentization","adducts"),recursive=TRUE)   # subfolder 
-	dir.create(file.path(pro_dir,pro_name,"results","componentization","isotopologues"),recursive=TRUE)   # subfolder 	
-	dir.create(file.path(pro_dir,pro_name,"results","componentization","EIC_corr"),recursive=TRUE)   # subfolder 
-	dir.create(file.path(pro_dir,pro_name,"results","componentization","homologues"),recursive=TRUE)   # subfolder 	
-	dir.create(file.path(pro_dir,pro_name,"results","componentization","components"),recursive=TRUE)   # subfolder 		
-  dir.create(file.path(pro_dir,pro_name,"dataframes"),recursive=TRUE) # subfolder
-  dir.create(file.path(pro_dir,pro_name,"pics"),recursive=TRUE)       # subfolder
-  dir.create(file.path(pro_dir,pro_name,"exports"),recursive=TRUE)    # subfolder
-  dir.create(file.path(pro_dir,pro_name,"quantification"),recursive=TRUE)    # subfolder  
+  dir.create(file.path(pro_dir, pro_name, "files"), recursive = TRUE)      # subfolder
+  dir.create(file.path(pro_dir, pro_name, "MSlist"), recursive = TRUE)     # subfolder
+  dir.create(file.path(pro_dir, pro_name, "peaklist"), recursive = TRUE)   # subfolder  
+  dir.create(file.path(pro_dir, pro_name, "features"), recursive = TRUE)   # subfolder
+  dir.create(file.path(pro_dir, pro_name, "results"), recursive = TRUE)    # subfolder
+	dir.create(file.path(pro_dir, pro_name, "results", "screening"),recursive = TRUE)    	# subfolder  
+	dir.create(file.path(pro_dir, pro_name, "results", "LOD"), recursive = TRUE)    	# subfolder  
+	dir.create(file.path(pro_dir, pro_name, "results", "recalibration"), recursive = TRUE)   # subfolder 
+	dir.create(file.path(pro_dir, pro_name, "results", "componentization"), recursive = TRUE)   # subfolder 
+	dir.create(file.path(pro_dir, pro_name, "results", "componentization", "adducts"), recursive = TRUE)   # subfolder 
+	dir.create(file.path(pro_dir, pro_name, "results", "componentization", "isotopologues"), recursive = TRUE)   # subfolder 	
+	dir.create(file.path(pro_dir, pro_name, "results", "componentization", "EIC_corr"), recursive = TRUE)   # subfolder 
+	dir.create(file.path(pro_dir, pro_name, "results", "componentization", "homologues"), recursive = TRUE)   # subfolder 	
+	dir.create(file.path(pro_dir, pro_name, "results", "componentization", "components"), recursive = TRUE)   # subfolder 		
+  dir.create(file.path(pro_dir, pro_name, "dataframes"), recursive = TRUE) # subfolder
+  dir.create(file.path(pro_dir, pro_name, "pics"), recursive = TRUE)       # subfolder
+  dir.create(file.path(pro_dir, pro_name, "exports"), recursive = TRUE)    # subfolder
+  dir.create(file.path(pro_dir, pro_name, "quantification"), recursive = TRUE)    # subfolder  
   ##############################################################################
   # write compound tables ######################################################  
-  write.table(IS,file=file.path(pro_dir,pro_name,"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)      	  	
-  write.table(targets,file=file.path(pro_dir,pro_name,"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)      	  
+  write.table(IS, file = file.path(pro_dir, pro_name, "dataframes", "IS.txt"), row.names = FALSE, sep = "\t", quote = FALSE)      	  	
+  write.table(targets, file = file.path(pro_dir,pro_name, "dataframes", "targets.txt"), row.names = FALSE, sep = "\t", quote = FALSE)      	  
   # write measurement table #################################################### 
-  measurements<-data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
+  measurements <- data.frame(c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
     c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),
 	c("-"),c("-"),c("-"),c("-"),c("-"),c("-"),c("-"));
-  names(measurements)<-c("ID","Name","Type","Mode","Place","Date","Time","include","copied","peakpicking",
-  "qc","recal","align","norm","profiled","LOD","tag1","tag2","tag3","date_end","time_end",
-  "isotopologues","adducts","homologues","EIC_correlation","blind","ID_2","components_files")
-  write.csv(measurements,file=file.path(pro_dir,pro_name,"dataframes","measurements"),row.names=FALSE)
+  names(measurements) <- c("ID", "Name", "Type", "Mode", "Place", "Date", "Time", "include", "copied", "peakpicking",
+  "qc", "recal", "align", "norm", "profiled", "LOD", "tag1", "tag2", "tag3", "date_end", "time_end",
+  "isotopologues", "adducts", "homologues", "EIC_correlation", "blind", "ID_2", "components_files")
+  write.csv(measurements, file = file.path(pro_dir, pro_name, "dataframes", "measurements"), row.names = FALSE)
   ##############################################################################
   # create & save a logfile ####################################################
-	workflow_depend<-read.table(
+	workflow_depend <- read.table(
 		file="workflow_depend"		
 	)
-	workflow_depend<-as.matrix(workflow_depend)
-	workflow_must<-read.table(
+	workflow_depend <- as.matrix(workflow_depend)
+	workflow_must <- read.table(
 		file="workflow_must"			
 	)
-	workflow_must<-as.matrix(workflow_must)
+	workflow_must <- as.matrix(workflow_must)
 	############################################################################
 	# some checks on matrices ##################################################
-	if(length(colnames(workflow_depend))!=length(rownames(workflow_depend))){
+	if(length(colnames(workflow_depend)) != length(rownames(workflow_depend))){
 		stop("\n Invalid matrix workflow_depend: matrix not quadratic; please revise!")
 	}
-	if(length(colnames(workflow_must))!=length(rownames(workflow_must))){
+	if(length(colnames(workflow_must)) != length(rownames(workflow_must))){
 		stop("\n Invalid matrix workflow_must: matrix not quadratic; please revise!")
 	}	
 	if(any(is.na(match(colnames(workflow_depend),rownames(workflow_depend))))){
@@ -91,214 +91,220 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	}	
 	############################################################################
 	# some checks on script availability #######################################
-	files<-list.files()
+	files <- list.files()
 	for(i in 1:length(colnames(workflow_depend))){
-		if(!any(files==paste("do_",colnames(workflow_depend)[i],".r",sep=""))){
-			stop(paste("Missing do_ scripts.r for node ",colnames(workflow_depend)[i],sep=""))
+		if(!any(files == paste("do_", colnames(workflow_depend)[i],".r", sep = ""))){
+			stop(paste("Missing do_ scripts.r for node ", colnames(workflow_depend)[i],sep = ""))
 		}
-		if(!any(files==paste("dont_",colnames(workflow_depend)[i],".r",sep=""))){
-			stop(paste("Missing dont_ scripts.r for node ",colnames(workflow_depend)[i],sep=""))
+		if(!any(files == paste("dont_", colnames(workflow_depend)[i],".r", sep = ""))){
+			stop(paste("Missing dont_ scripts.r for node ", colnames(workflow_depend)[i], sep = ""))
 		}
 	}
 	############################################################################
-	logfile<-list(0);
+	logfile <- list(0);
     # folder name ##############################################################
-    logfile[[1]]<-file.path(pro_dir,pro_name);
-    names(logfile)[1]<-c("project_folder")
+    logfile[[1]] <- file.path(pro_dir,pro_name);
+    names(logfile)[1] <- c("project_folder")
     # nodes - what MUST be (re)done? initially, everything, also _donts! #######
-	logfile[[2]]<-rep(FALSE,length(colnames(workflow_must)));
-	names(logfile[[2]])<-colnames(workflow_must)
-	names(logfile)[2]<-c("Tasks_to_redo");    
+	logfile[[2]] <- rep(FALSE,length(colnames(workflow_must)));
+	names(logfile[[2]]) <- colnames(workflow_must)
+	names(logfile)[2] <- c("Tasks_to_redo");    
 	# summary project status ###################################################
-    tasks<-names(logfile[[2]]) # based on above Tasks_to_redo
-    doneit<-rep(FALSE,length(tasks))
-    summar<-data.frame(tasks,doneit,stringsAsFactors = FALSE)
-    names(summar)<-c("Tasks","Done?")
-    logfile[[3]]<-summar
-    names(logfile)[3]<-c("summary")
+    tasks <- names(logfile[[2]]) # based on above Tasks_to_redo
+    doneit <- rep(FALSE,length(tasks))
+    summar <- data.frame(tasks,doneit,stringsAsFactors = FALSE)
+    names(summar) <- c("Tasks","Done?")
+    logfile[[3]] <- summar
+    names(logfile)[3] <- c("summary")
     # ProteoWizard MSConvert path ##############################################
-    logfile[[4]]<-"C:/Program Files/ProteoWizard/ProteoWizard 3.0.9283/msconvert.exe"
-    names(logfile)[4]<-c("PW MSconvert path")
+    logfile[[4]] <- "C:/Program Files/ProteoWizard/ProteoWizard 3.0.9283/msconvert.exe"
+    names(logfile)[4] <- c("PW MSconvert path")
     # Parameters settings ######################################################
 		# order of entries not a sequence! #####################################
-		logfile[[5]]<-list(0)
-		names(logfile)[5]<-c("parameters")
+		logfile[[5]] <- list(0)
+		names(logfile)[5] <- c("parameters")
+		logfile$parameters$verbose  <-  "TRUE"
 		# peak picking ###########################################################
-		logfile$parameters$peak_MSlevel<-"1"; 	
-		logfile$parameters$peak_drtgap<-"300"; 
-		logfile$parameters$peak_dmzdens<-"3.5"; 
-		logfile$parameters$peak_minpeak<-"4"; 		
-		logfile$parameters$peak_drtsmall2<-"20"; 		
-		logfile$parameters$peak_drtfill<-"10"; 		
-		logfile$parameters$peak_drtdens2<-"120";
-		logfile$parameters$peak_minint_log10<-"4"; 	 
-		logfile$parameters$peak_SN<-"5"; 	
-		logfile$parameters$peak_SB<-"2"; 	
-		logfile$parameters$peak_recurs<-"3"; 
-		logfile$parameters$peak_ended<-"1"; 	
-		logfile$parameters$peak_weight<-"1"; 	
-		logfile$parameters$peak_maxint_log10<-"6.5"; 	   
-		logfile$parameters$peak_perc_cut<-"0"; 	
-		logfile$parameters$peak_which_intensity<-"maximum"
-		logfile$parameters$cut_RT<-"FALSE"
-		logfile$parameters$cut_RT_min<-"0"
-		logfile$parameters$cut_RT_max<-"25"		# in minutes!
-		logfile$parameters$cut_mass<-"FALSE"
-		logfile$parameters$cut_mass_min<-"0"
-		logfile$parameters$cut_mass_max<-"2000"		
-		logfile$parameters$peak_estimate<-"TRUE"		
+		logfile$parameters$peak_MSlevel  <-  "1"; 	
+		logfile$parameters$peak_drtgap  <-  "300"; 
+		logfile$parameters$peak_dmzdens  <-  "3.5"; 
+		logfile$parameters$peak_minpeak  <-  "4"; 		
+		logfile$parameters$peak_drtsmall2  <-  "20"; 		
+		logfile$parameters$peak_drtfill  <-  "10"; 		
+		logfile$parameters$peak_drtdens2  <-  "120";
+		logfile$parameters$peak_minint_log10  <-  "4"; 	 
+		logfile$parameters$peak_SN  <-  "5"; 	
+		logfile$parameters$peak_SB <- "2"; 	
+		logfile$parameters$peak_recurs <- "3"; 
+		logfile$parameters$peak_ended <- "1"; 	
+		logfile$parameters$peak_weight <- "1"; 	
+		logfile$parameters$peak_maxint_log10 <- "6.5"; 	   
+		logfile$parameters$peak_perc_cut <- "0"; 	
+		logfile$parameters$peak_which_intensity <- "maximum"
+		logfile$parameters$cut_RT <- "FALSE"
+		logfile$parameters$cut_RT_min <- "0"
+		logfile$parameters$cut_RT_max <- "25"		# in minutes!
+		logfile$parameters$cut_mass <- "FALSE"
+		logfile$parameters$cut_mass_min <- "0"
+		logfile$parameters$cut_mass_max <- "2000"		
+		logfile$parameters$peak_estimate <- "TRUE"		
 		# show progbar? ########################################################
-		logfile$parameters$progressBar<-"FALSE";	 
+		logfile$parameters$progressBar <- "FALSE";	 
 		# isotope patterns #####################################################
-		logfile$parameters$resolution<-"Elite_R240000@400";
+		logfile$parameters$resolution <- "Elite_R240000@400";
 		# recalibration ########################################################
-		logfile$parameters$recal_include_pos<-"TRUE"
-		logfile$parameters$recal_use_pos<-"Internal standards"; 	
-		logfile$parameters$recal_dmz_pos<-"3"; 					
-		logfile$parameters$recal_ppm_pos<-"TRUE"; 				
-		logfile$parameters$recal_drt_pos<-"30"; 					
-		logfile$parameters$recal_maxdmz_pos<-"30";					
-		logfile$parameters$recal_include_neg<-"TRUE"		
-		logfile$parameters$recal_use_neg<-"Internal standards"; 	
-		logfile$parameters$recal_dmz_neg<-"3"; 					
-		logfile$parameters$recal_ppm_neg<-"TRUE"; 				
-		logfile$parameters$recal_drt_neg<-"30"; 					
-		logfile$parameters$recal_maxdmz_neg<-"30";			
+		logfile$parameters$recal_include_pos <- "TRUE"
+		logfile$parameters$recal_use_pos <- "Internal standards"; 	
+		logfile$parameters$recal_dmz_pos <- "3"; 					
+		logfile$parameters$recal_ppm_pos <- "TRUE"; 				
+		logfile$parameters$recal_drt_pos <- "30"; 					
+		logfile$parameters$recal_maxdmz_pos <- "30";					
+		logfile$parameters$recal_include_neg <- "TRUE"		
+		logfile$parameters$recal_use_neg <- "Internal standards"; 	
+		logfile$parameters$recal_dmz_neg <- "3"; 					
+		logfile$parameters$recal_ppm_neg <- "TRUE"; 				
+		logfile$parameters$recal_drt_neg <- "30"; 					
+		logfile$parameters$recal_maxdmz_neg <- "30";			
 		# replicate intersection ################################################
-		logfile$parameters$replicate_dmz<-"3";						
-		logfile$parameters$replicate_ppm<-"TRUE";						
-		logfile$parameters$replicate_recalib<-"FALSE";					
-		logfile$parameters$replicate_delRT<-"30";					
-		logfile$parameters$replicate_IS_dInt<-"5";						
+		logfile$parameters$replicate_dmz <- "3";						
+		logfile$parameters$replicate_ppm <- "TRUE";						
+		logfile$parameters$replicate_recalib <- "FALSE";					
+		logfile$parameters$replicate_delRT <- "30";					
+		logfile$parameters$replicate_IS_dInt <- "5";						
 		# trend detection ######################################################
-		logfile$parameters$notrend<-"TRUE";		
-		logfile$parameters$trend_lags<-"4,7,14"; 	
-		logfile$parameters$trend_threshold<-"3";			
+		logfile$parameters$notrend <- "TRUE";		
+		logfile$parameters$trend_lags <- "4,7,14"; 	
+		logfile$parameters$trend_threshold <- "3";			
 		# blind subtraction ####################################################	
-		logfile$parameters$trend_blind<-"yes";				
-		logfile$parameters$blind_threshold<-"100";			
-		logfile$parameters$blind_dmz<-"3";			
-		logfile$parameters$blind_ppm<-"TRUE";			
-		logfile$parameters$blind_drt<-"30";				
-		logfile$parameters$subtract_pos_bydate<-"FALSE";		
-		logfile$parameters$subtract_pos_byfile<-"FALSE";		
-		logfile$parameters$subtract_neg_bydate<-"FALSE";		
-		logfile$parameters$subtract_neg_byfile<-"FALSE";		
-		logfile$parameters$blind_omit<-"FALSE";			
+		logfile$parameters$trend_blind <- "yes";				
+		logfile$parameters$blind_threshold <- "100";			
+		logfile$parameters$blind_dmz <- "3";			
+		logfile$parameters$blind_ppm <- "TRUE";			
+		logfile$parameters$blind_drt <- "30";				
+		logfile$parameters$subtract_pos_bydate <- "FALSE";		
+		logfile$parameters$subtract_pos_byfile <- "FALSE";		
+		logfile$parameters$subtract_neg_bydate <- "FALSE";		
+		logfile$parameters$subtract_neg_byfile <- "FALSE";		
+		logfile$parameters$blind_omit <- "no";			
 		# profiling ############################################################
-		logfile$parameters$prof_maxfiles<-"100";		
-		logfile$parameters$upto_file<-"FALSE";		
-		logfile$parameters$prof_dmz<-"3";		
-		logfile$parameters$prof_ppm<-"TRUE";		
-		logfile$parameters$prof_drt<-"60";			
-		logfile$parameters$prof_comp_maxfiles<-"15"
-		logfile$parameters$prof_select<-"TRUE";		
-		logfile$parameters$replicates_prof<-"yes";		
+		logfile$parameters$prof_maxfiles <- "100";		
+		logfile$parameters$upto_file <- "FALSE";		
+		logfile$parameters$prof_dmz <- "3";		
+		logfile$parameters$prof_ppm <- "TRUE";		
+		logfile$parameters$prof_drt <- "60";			
+		logfile$parameters$prof_comp_maxfiles <- "15"
+		logfile$parameters$prof_select <- "TRUE";		
+		logfile$parameters$replicates_prof <- "yes";		
 		# IS screening #########################################################
-		logfile$parameters$IS_drt1<-"30"; 			# RT tolerance of peaks in sample relative to their expected RT [s]
-		logfile$parameters$IS_drt2<-"10"; 			# RT tolerance of peaks within an isotope pattern [s]
-		logfile$parameters$IS_dmz<-"3";				# m/z tolerance ...
-		logfile$parameters$IS_ppm<-"TRUE";			# ... given in pppm?
-		logfile$parameters$IS_inttol<-"30";			# Intensity tolerance %
-		logfile$parameters$IS_intcut<-"50000";		# Lower intensity threhold
-		logfile$parameters$IS_w1<-"0.8";    		# Matching score
-		logfile$parameters$screen_IS_cutit<-"FALSE";    	# Cut off match combiantions below matching score?	
-		logfile$parameters$screen_IS_maxonly<-"FALSE";    	# Screen only most intense isotopologue peak?	
-		logfile$parameters$screen_IS_restrict<-"FALSE";		# Restrict screening to the latest ...
-		logfile$parameters$screen_IS_restrict_many<-"10";	# ... number of files only?	
+		logfile$parameters$IS_drt1 <- "30"; 			# RT tolerance of peaks in sample relative to their expected RT [s]
+		logfile$parameters$IS_drt2 <- "10"; 			# RT tolerance of peaks within an isotope pattern [s]
+		logfile$parameters$IS_dmz <- "3";				# m/z tolerance ...
+		logfile$parameters$IS_ppm <- "TRUE";			# ... given in pppm?
+		logfile$parameters$IS_inttol <- "30";			# Intensity tolerance %
+		logfile$parameters$IS_intcut <- "50000";		# Lower intensity threhold
+		logfile$parameters$IS_w1 <- "0.8";    		# Matching score
+		logfile$parameters$screen_IS_cutit <- "FALSE";    	# Cut off match combiantions below matching score?	
+		logfile$parameters$screen_IS_maxonly <- "FALSE";    	# Screen only most intense isotopologue peak?	
+		logfile$parameters$screen_IS_restrict <- "FALSE";		# Restrict screening to the latest ...
+		logfile$parameters$screen_IS_restrict_many <- "10";	# ... number of files only?	
 		# target screening #####################################################
-		logfile$parameters$tar_drt1<-"30"; 		# RT tolerance of peaks in sample relative to their expected RT [s]
-		logfile$parameters$tar_drt2<-"10"; 		# RT tolerance of peaks within an isotope pattern [s]
-		logfile$parameters$tar_dmz<-"3";		# m/z tolerance ...
-		logfile$parameters$tar_ppm<-"TRUE";		# ... given in pppm?
-		logfile$parameters$tar_inttol<-"30";	# Intensity tolerance %
-		logfile$parameters$tar_intcut<-"50000";	# Lower intensity threhold
-		logfile$parameters$tar_w1<-"0.8";    	# Matching score	
-		logfile$parameters$screen_target_cutit<-"FALSE";    	# Cut off match combiantions below matching score?		
-		logfile$parameters$screen_target_maxonly<-"FALSE";    	# Screen only most intense isotopologue peak?		
-		logfile$parameters$screen_target_restrict<-"FALSE";		# Restrict screening to the latest ...
-		logfile$parameters$screen_target_restrict_many<-"10";	# ... number of files only?			
+		logfile$parameters$tar_drt1 <- "30"; 		# RT tolerance of peaks in sample relative to their expected RT [s]
+		logfile$parameters$tar_drt2 <- "10"; 		# RT tolerance of peaks within an isotope pattern [s]
+		logfile$parameters$tar_dmz <- "3";		# m/z tolerance ...
+		logfile$parameters$tar_ppm <- "TRUE";		# ... given in pppm?
+		logfile$parameters$tar_inttol <- "30";	# Intensity tolerance %
+		logfile$parameters$tar_intcut <- "50000";	# Lower intensity threhold
+		logfile$parameters$tar_w1 <- "0.8";    	# Matching score	
+		logfile$parameters$screen_target_cutit <- "FALSE";    	# Cut off match combiantions below matching score?		
+		logfile$parameters$screen_target_maxonly <- "FALSE";    	# Screen only most intense isotopologue peak?		
+		logfile$parameters$screen_target_restrict <- "FALSE";		# Restrict screening to the latest ...
+		logfile$parameters$screen_target_restrict_many <- "10";	# ... number of files only?			
 		# IS-based normalization ###############################################
-		logfile$parameters$ISnorm_percfiles<-"90";		# Minimum percentage of files covered by each IS profile %
-		logfile$parameters$ISnorm_numbIS<-"15";			# Minimum number of IS profiles
-		logfile$parameters$ISnorm_medblank<-"FALSE";	# Show median deviation of blank/blind profiles?
-		logfile$parameters$ISnorm_usesubblank<-"TRUE";	# Use subsampling
-		logfile$parameters$ISnorm_numblank<-"100";		# Number of blank/blind profiles in subsample
-		logfile$parameters$ISnorm_medsam<-"FALSE";		# Show median deviation of sample (i.e., non-blank) profiles?
-		logfile$parameters$ISnorm_usesubsam<-"TRUE";	# Use subsampling
-		logfile$parameters$ISnorm_numsam<-"100";		# Number of sample profiles in subsample
-		logfile$parameters$ISnorm_score<-"0.8";			# Screening threshold
+		logfile$parameters$ISnorm_percfiles <- "90";		# Minimum percentage of files covered by each IS profile %
+		logfile$parameters$ISnorm_numbIS <- "15";			# Minimum number of IS profiles
+		logfile$parameters$ISnorm_medblank <- "FALSE";	# Show median deviation of blank/blind profiles?
+		logfile$parameters$ISnorm_usesubblank <- "TRUE";	# Use subsampling
+		logfile$parameters$ISnorm_numblank <- "100";		# Number of blank/blind profiles in subsample
+		logfile$parameters$ISnorm_medsam <- "FALSE";		# Show median deviation of sample (i.e., non-blank) profiles?
+		logfile$parameters$ISnorm_usesubsam <- "TRUE";	# Use subsampling
+		logfile$parameters$ISnorm_numsam <- "100";		# Number of sample profiles in subsample
+		logfile$parameters$ISnorm_score <- "0.8";			# Screening threshold
 		# subtraction ##########################################################
-		logfile$parameters$subtr_IS<-"yes"; 		
-		logfile$parameters$subtr_target<-"yes"; 		
-		logfile$parameters$subtr_blind<-"yes"; 			
-		logfile$parameters$subtr_spiked<-"yes"; 		
+		logfile$parameters$subtr_IS <- "yes"; 		
+		logfile$parameters$subtr_target <- "yes"; 		
+		logfile$parameters$subtr_blind <- "yes"; 			
+		logfile$parameters$subtr_spiked <- "yes"; 		
 		# quantification #######################################################
-		logfile$parameters$quant_files_included<-"100"
-		logfile$parameters$recov_files_included<-"20"
+		logfile$parameters$quant_files_included <- "100"
+		logfile$parameters$recov_files_included <- "20"
 		# isotopologue grouping ################################################		
-		logfile$parameters$isotop_mztol<-"2.5"
-		logfile$parameters$isotop_ppm<-"TRUE"
-		logfile$parameters$isotop_inttol<-"30"
-		logfile$parameters$isotop_rttol<-"5"
-		logfile$parameters$isotop_use_charges<-"FALSE"
+		logfile$parameters$isotop_mztol <- "2.5"
+		logfile$parameters$isotop_ppm <- "TRUE"
+		logfile$parameters$isotop_inttol <- "30"
+		logfile$parameters$isotop_rttol <- "5"
+		logfile$parameters$isotop_use_charges <- "FALSE"
 		# adduct grouping ######################################################
-		logfile$parameters$adducts_rttol<-"5"
-		logfile$parameters$adducts_mztol<-"2.5"
-		logfile$parameters$adducts_ppm<-"TRUE"		
+		logfile$parameters$adducts_rttol <- "5"
+		logfile$parameters$adducts_mztol <- "2.5"
+		logfile$parameters$adducts_ppm <- "TRUE"		
 		# homologues ###########################################################
-		logfile$parameters$homol_units<-c("CH2,C2H4O")
-		logfile$parameters$homol_charges<-c("1,2")
-		logfile$parameters$homol_minmz<-"10"
-		logfile$parameters$homol_maxmz<-"120"
-		logfile$parameters$homol_minrt<-"10"
-		logfile$parameters$homol_maxrt<-"60"
-		logfile$parameters$homol_ppm<-"TRUE"
-		logfile$parameters$homol_mztol<-"2.5"
-		logfile$parameters$homol_rttol<-"20"
-		logfile$parameters$homol_minlength<-"6"
-		logfile$parameters$homol_vec_size<-"1E8"
-		logfile$parameters$homol_blind<-"FALSE"
-		logfile$parameters$homol_blind_value<-"10"		
+		logfile$parameters$homol_units <- c("CH2,C2H4O")
+		logfile$parameters$homol_charges <- c("1,2")
+		logfile$parameters$homol_minmz <- "10"
+		logfile$parameters$homol_maxmz <- "120"
+		logfile$parameters$homol_minrt <- "10"
+		logfile$parameters$homol_maxrt <- "60"
+		logfile$parameters$homol_ppm <- "TRUE"
+		logfile$parameters$homol_mztol <- "2.5"
+		logfile$parameters$homol_rttol <- "20"
+		logfile$parameters$homol_minlength <- "6"
+		logfile$parameters$homol_vec_size <- "1E8"
+		logfile$parameters$homol_blind <- "FALSE"
+		logfile$parameters$homol_blind_value <- "10"		
 		# EIC correlation ######################################################
-		logfile$parameters$EICor_delRT<-"5"		
-		logfile$parameters$EICor_minpeaks<-"15" 	
-		logfile$parameters$EICor_mincor<-".95"
+		logfile$parameters$EICor_delRT <- "5"		
+		logfile$parameters$EICor_minpeaks <- "15" 	
+		logfile$parameters$EICor_mincor <- ".95"
 		# Is this an example project? ##########################################
-		logfile$parameters$is_example<-"FALSE"			
+		logfile$parameters$is_example <- "FALSE"			
 		# Profile componentization #############################################
-		logfile$parameters$dofile_latest_profcomp<-"FALSE" 	
-		logfile$parameters$numfile_latest_profcomp<-"100" 		
-		logfile$parameters$filter_profcomp_pos<-"TRUE"			
-		logfile$parameters$filter_profcomp_neg<-"TRUE"			
-		logfile$parameters$for_which_profcomp_pos<-"all"		
-		logfile$parameters$for_which_profcomp_neg<-"all"		
-		logfile$parameters$prof_comp_link_only<-"FALSE"		
-		logfile$parameters$corr_min_peaks<-"5"					
-		logfile$parameters$comp_corr<-"0.9"					
-		logfile$parameters$corr_del_RT<-"5"					
-		logfile$parameters$corr_skip_peaks<-"TRUE"					
+		logfile$parameters$dofile_latest_profcomp <- "FALSE" 	
+		logfile$parameters$numfile_latest_profcomp <- "100" 		
+		logfile$parameters$filter_profcomp_pos <- "TRUE"			
+		logfile$parameters$filter_profcomp_neg <- "TRUE"			
+		logfile$parameters$for_which_profcomp_pos <- "all"		
+		logfile$parameters$for_which_profcomp_neg <- "all"		
+		logfile$parameters$prof_comp_link_only <- "FALSE"		
+		logfile$parameters$corr_min_peaks <- "5"					
+		logfile$parameters$comp_corr <- "0.9"					
+		logfile$parameters$corr_del_RT <- "5"					
+		logfile$parameters$corr_skip_peaks <- "TRUE"					
+		# Parallelization ######################################################
+		logfile$parameters$parallel <- "TRUE"
+		logfile$parameters$parallel_restrict <- "FALSE"		
+		logfile$parameters$parallel_cores <- "8"	
+		logfile$parameters$parallel_x1 <- "FALSE"	
+		logfile$parameters$parallel_x2 <- "FALSE"	
+		logfile$parameters$parallel_x3 <- "FALSE"		
 
-		
 		# add custom parameters ################################################
-		source(file="workflow_parameters.r",local=TRUE)
+		source(file = "workflow_parameters.r", local = TRUE)
 		if(any(duplicated(names(logfile$parameters)))){stop("Duplicated parameter names found - revise!")}	
 
-
 	# Workflow settings ########################################################
-    logfile$workflow<-0    # based on above Tasks_to_redo
-    names(logfile)[6]<-c("workflow")
+    logfile$workflow <- 0    # based on above Tasks_to_redo
+    names(logfile)[6] <- c("workflow")
 	for(i in 1:length(names(logfile[[2]]))){
 		# use simple initial workflow settings
-		if(any(names(logfile[[2]])[i]==
+		if(any(names(logfile[[2]])[i] ==
 			#c("peakpicking","LOD","profiling","IS_screen","target_screen")
 			c("peakpicking")			
 		)){
-			logfile$workflow[i]<-"yes"; 
+			logfile$workflow[i] <- "yes"; 
 		}else{
-			logfile$workflow[i]<-"no"; 		
+			logfile$workflow[i] <- "no"; 		
 		}
-		names(logfile$workflow)[i]<-names(logfile[[2]])[i]
+		names(logfile$workflow)[i] <- names(logfile[[2]])[i]
 	}
 	################################################################################################
 	# define matrix of downstream workflow dependencies (==1) and ##################################
@@ -307,56 +313,56 @@ newproject<-function(pro_name,pro_dir,IS,targets){
 	# requires only a definition of direct ones - indirect ones will be in workflow_set() ##########
 	# dependencies must simply go after their parent node ########################################## 
 	# order here actually irrelevant, because calculation order set with workflow_schedule() #######
-	logfile[[11]]<-workflow_depend
-	names(logfile)[11]<-"workflow_depend"	
+	logfile[[11]] <- workflow_depend
+	names(logfile)[11] <- "workflow_depend"	
 	################################################################################################
 	# define upstream musts (==1), i.e., upstream nodes on which`s execution a node depends ########
 	# and downstream musts (==2).  (==-1) = MUST NOT be executed (not yet implemented) #############
-	logfile[[12]]<-workflow_must
-	names(logfile)[12]<-"workflow_must"	
+	logfile[[12]] <- workflow_must
+	names(logfile)[12] <- "workflow_must"	
 	################################################################################################	
 	# reorder summary into workflow ################################################################
-	schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+	schedule <- enviMass::workflow_schedule(logfile$workflow_depend, logfile$workflow_must)
 	if(!is.data.frame(schedule)){stop("\nschedule not a data frame")}
-	set_order<-match(schedule[,1],logfile$summary[,1])
-	logfile$summary<-logfile$summary[set_order,]	
+	set_order <- match(schedule[,1], logfile$summary[,1])
+	logfile$summary <- logfile$summary[set_order,]	
 	################################################################################################
     # positive adducts - screening #########################################################
-    logfile[[7]]<-0   
-    names(logfile)[7]<-c("adducts_pos")
-    logfile[[7]]<-c("M+H","M+Na","M+K","M+NH4");
+    logfile[[7]] <- 0   
+    names(logfile)[7] <- c("adducts_pos")
+    logfile[[7]] <- c("M+H","M+Na","M+K","M+NH4");
     # negative adducts - screening #########################################################
-    logfile[[8]]<-0   
-    names(logfile)[8]<-c("adducts_neg")
-    logfile[[8]]<-"M-H";	
+    logfile[[8]] <- 0   
+    names(logfile)[8] <- c("adducts_neg")
+    logfile[[8]] <- "M-H";	
     # isotopes #################################################################      
-    logfile[[9]]<-"";
-    names(logfile)[9]<-c("isotopes")
+    logfile[[9]] <- "";
+    names(logfile)[9] <- c("isotopes")
 	# enviMass version number ##################################################
-    logfile[[10]]<-3.311
-    names(logfile)[10]<-c("version")   
+    logfile[[10]] <- 3.4
+    names(logfile)[10] <- c("version")   
 	# subtraction files ########################################################
-	logfile[[13]]<-"FALSE"
-	names(logfile)[13]<-"Positive_subtraction_files"
-	logfile[[14]]<-"FALSE"
-	names(logfile)[14]<-"Negative_subtraction_files"
+	logfile[[13]] <- "FALSE"
+	names(logfile)[13] <- "Positive_subtraction_files"
+	logfile[[14]] <- "FALSE"
+	names(logfile)[14] <- "Negative_subtraction_files"
     # positive adducts - grouping #########################################################
-    logfile[[15]]<-0   
-    names(logfile)[15]<-c("adducts_pos_group")
-    logfile[[15]]<-c("M+H","M+Na","M+K","M+NH4")
+    logfile[[15]] <- 0   
+    names(logfile)[15] <- c("adducts_pos_group")
+    logfile[[15]] <- c("M+H","M+Na","M+K","M+NH4")
     # negative adducts - grouping #########################################################
-    logfile[[16]]<-0   
-    names(logfile)[16]<-c("adducts_neg_group")
-    logfile[[16]]<-c("M-H","M-","2M-H")
+    logfile[[16]] <- 0   
+    names(logfile)[16] <- c("adducts_neg_group")
+    logfile[[16]] <- c("M-H","M-","2M-H")
 	# calibration model ########################################################
-	cal_models_pos<-list()
-	save(cal_models_pos,file=file.path(logfile$project_folder,"quantification","cal_models_pos"));	
-	cal_models_neg<-list()
-	save(cal_models_neg,file=file.path(logfile$project_folder,"quantification","cal_models_neg"));	
+	cal_models_pos <- list()
+	save(cal_models_pos, file = file.path(logfile$project_folder, "quantification", "cal_models_pos"));	
+	cal_models_neg <- list()
+	save(cal_models_neg, file= file.path(logfile$project_folder, "quantification", "cal_models_neg"));	
     # measurement data.frame ###################################################
-	save(logfile,file=file.path(pro_dir,pro_name,"logfile.emp"));  
+	save(logfile,file = file.path(pro_dir, pro_name, "logfile.emp"));  
 	rm(logfile)
 	##############################################################################
-	return(file.path(pro_dir,pro_name,"logfile.emp"));
+	return(file.path(pro_dir, pro_name, "logfile.emp"));
   
 }

@@ -22,7 +22,7 @@ function(MSlist,plotit=FALSE,n=2000,m=5,endpoints="a"){
   	##############################################################################
   	# order, structure ###########################################################
   	intens_order<-order(MSlist[["Scans"]][[2]][,"intensity"],decreasing=TRUE)
-  	scans<-.Call("indexed",
+  	scans<-.Call("_enviMass_indexed",
     	as.numeric(MSlist[["Scans"]][[2]][,"RT"]),
     	as.integer(length(MSlist[["Scans"]][[1]])),
     	as.integer(3),

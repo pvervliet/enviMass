@@ -11,6 +11,9 @@
 #' @details Rows from matrix a are checked for their presence in matrix b. This is done column-wise if row_order=FALSE, i.e., the first match is sought in the first column, the second in the second, etc. Argument column_order ensures that rows are sorted so that columns contain only increasing numbers - a must for the algorithm to work. Can be skipped if matrices have been sorted accordingly beforehand.
 #' 
 
+
+
+
 rows_compare<-function(a,b,row_order=FALSE,column_order_a=TRUE,column_order_b=TRUE,get_index=FALSE){
 
 	#################################################
@@ -54,7 +57,7 @@ rows_compare<-function(a,b,row_order=FALSE,column_order_a=TRUE,column_order_b=TR
 	#################################################	
 	if(TRUE){
 		results<-rep(0,len1)
-		found <- .Call("compare",
+		found <- .Call("_enviMass_compare",
 			as.matrix(a),
 			as.matrix(b),	
 			as.matrix(results),				

@@ -115,9 +115,9 @@ shinyUI(
 				HTML('
 					<p style="background-color: darkgreen">
 					<font color="#FFFFFF" size="6">
-					&nbsp enviMass v3.31
+					&nbsp enviMass v3.4
 					</font><br/></p>'),
-					windowTitle="enviMass v3.31"
+					windowTitle="enviMass v3.4"
 				)
 		),
 		sidebarLayout(

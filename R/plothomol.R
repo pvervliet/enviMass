@@ -129,7 +129,7 @@ function(
       use_dmasslim<-c(min(homol[["homol_peaks_relat"]][,3]),max(homol[["homol_peaks_relat"]][,3]))
     }
     if(any(plot_those)){
-    	counts<-.Call("moving_count", 
+    	counts<-.Call("_enviMass_moving_count", 
     		homol[["homol_peaks_relat"]][plot_those,,drop=FALSE], 
     		deldel,
     		PACKAGE="enviMass"

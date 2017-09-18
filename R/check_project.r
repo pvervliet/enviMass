@@ -28,6 +28,15 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		say<-"Your logfile is corrupted _1, serious debug required!"
 	}
 	###############################################################################
+	# on parallelization: #########################################################
+	if( (logfile$parameters$parallel == "TRUE") & (logfile$parameters$parallel_restrict == "TRUE") ){
+		available_num_cores <- detectCores(all.tests = FALSE, logical = TRUE)
+		if(available_num_cores < as.numeric(logfile$parameters$parallel_cores)){
+			say <- "Set number of cores/threads to restrict to for parallel processing exceeds available number for your computer.
+				Revise settings under Settings -> General -> Multi-core processing"
+		}
+	}
+	###############################################################################
 	# wrong upstream "must not" executions? #######################################
 	must<-logfile[[12]]
 	for(i in 1:length(must[1,])){

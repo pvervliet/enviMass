@@ -30,7 +30,7 @@ agglomer<-function(
   if(!is.logical(ppm)){stop("ppm must be logical; aborted.")}
   ##############################################################################
   if(ppm){ppm2<-1}else{ppm2<-0}
-  part <- .Call("agglom",
+  part <- .Call("_enviMass_agglom",
     as.numeric(profileList[[2]][,1]),
     as.numeric(profileList[[2]][,3]),
     as.integer(profileList[[2]][,6]),
@@ -42,7 +42,7 @@ agglomer<-function(
   profileList[[2]][,7]<-part;
   profileList[[2]]<-profileList[[2]][order(profileList[[2]][,7],decreasing=FALSE),]
   maxit<-max(profileList[[2]][,7])
-  index<- .Call("indexed",
+  index<- .Call("_enviMass_indexed",
     as.integer(profileList[[2]][,7]),
     as.integer(maxit),
     as.integer(3),

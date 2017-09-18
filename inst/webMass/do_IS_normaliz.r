@@ -98,7 +98,7 @@
 								if( peaks[hits[b],3]>min_count ){
 									profID<-as.numeric(peaks[hits[b],4])
 									timeset[,4:5]<-0;
-									timeset[,c(4,5)] <-.Call("fill_timeset",
+									timeset[,c(4,5)] <-.Call("_enviMass_fill_timeset",
 														as.numeric(timeset),
 														as.numeric(profileList_pos[[2]][(profileList_pos[[7]][profileList_pos[[7]][,4]==profID,1]:profileList_pos[[7]][profileList_pos[[7]][,4]==profID,2]),6]), # sampleIDs
 														as.numeric(profileList_pos[[2]][(profileList_pos[[7]][profileList_pos[[7]][,4]==profID,1]:profileList_pos[[7]][profileList_pos[[7]][,4]==profID,2]),2]), # intensities
@@ -169,7 +169,7 @@
 			for(i in 1:length(peaks[,1])){		
 				profID<-as.numeric(peaks[i,4])
 				timeset[,4:5]<-0;
-				timeset[,c(4,5)] <-.Call("fill_timeset",
+				timeset[,c(4,5)] <-.Call("_enviMass_fill_timeset",
 					as.numeric(timeset),
 					as.numeric(profileList_pos[[2]][(profileList_pos[[7]][profileList_pos[[7]][,4]==profID,1]:profileList_pos[[7]][profileList_pos[[7]][,4]==profID,2]),6]), # sampleIDs
 					as.numeric(profileList_pos[[2]][(profileList_pos[[7]][profileList_pos[[7]][,4]==profID,1]:profileList_pos[[7]][profileList_pos[[7]][,4]==profID,2]),2]), # intensities
@@ -232,7 +232,7 @@
 				corfac<-c(corfac,1)
 			}
 		}
-		corr_intens <- .Call(	"correct_intens",
+		corr_intens <- .Call(	"_enviMass_correct_intens",
 								as.numeric(corfac),	  # correction factor
 								as.integer(sampleID),       
 								as.numeric(profileList_pos[[2]][,2]), # intensities
@@ -494,7 +494,7 @@
 								if( peaks[hits[b],3]>min_count ){
 									profID<-as.numeric(peaks[hits[b],4])
 									timeset[,4:5]<-0;
-									timeset[,c(4,5)] <-.Call("fill_timeset",
+									timeset[,c(4,5)] <-.Call("_enviMass_fill_timeset",
 														as.numeric(timeset),
 														as.numeric(profileList_neg[[2]][(profileList_neg[[7]][profileList_neg[[7]][,4]==profID,1]:profileList_neg[[7]][profileList_neg[[7]][,4]==profID,2]),6]), # sampleIDs
 														as.numeric(profileList_neg[[2]][(profileList_neg[[7]][profileList_neg[[7]][,4]==profID,1]:profileList_neg[[7]][profileList_neg[[7]][,4]==profID,2]),2]), # intensities
@@ -565,7 +565,7 @@
 			for(i in 1:length(peaks[,1])){		
 				profID<-as.numeric(peaks[i,4])
 				timeset[,4:5]<-0;
-				timeset[,c(4,5)] <-.Call("fill_timeset",
+				timeset[,c(4,5)] <-.Call("_enviMass_fill_timeset",
 					as.numeric(timeset),
 					as.numeric(profileList_neg[[2]][(profileList_neg[[7]][profileList_neg[[7]][,4]==profID,1]:profileList_neg[[7]][profileList_neg[[7]][,4]==profID,2]),6]), # sampleIDs
 					as.numeric(profileList_neg[[2]][(profileList_neg[[7]][profileList_neg[[7]][,4]==profID,1]:profileList_neg[[7]][profileList_neg[[7]][,4]==profID,2]),2]), # intensities
@@ -628,12 +628,12 @@
 				corfac<-c(corfac,1)
 			}
 		}
-		corr_intens <- .Call(	"correct_intens",
-								as.numeric(corfac),	  # correction factor
-								as.integer(sampleID),       
-								as.numeric(profileList_neg[[2]][,2]), # intensities
-								as.integer(profileList_neg[[2]][,6]),  
-								PACKAGE="enviMass"
+		corr_intens <- .Call("_enviMass_correct_intens",
+							as.numeric(corfac),	  # correction factor
+							as.integer(sampleID),       
+							as.numeric(profileList_neg[[2]][,2]), # intensities
+							as.integer(profileList_neg[[2]][,6]),  
+							PACKAGE="enviMass"
 							)
 		profileList_neg[[2]][,2]<-corr_intens
 		for(k in 1:length(profileList_neg[[7]][,8])){

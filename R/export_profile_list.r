@@ -71,7 +71,7 @@ export_profile_list<-function(
 		if(length(getit)>1){stop("Debug me - different profiles with same IDs found!")}
         # fill timeset #########################################################
         timeset[,c(4,5)]<-0;
-        timeset[,c(4,5)] <-.Call("fill_timeset",
+        timeset[,c(4,5)] <-.Call("_enviMass_fill_timeset",
                                 as.numeric(timeset),
                                 as.numeric(profileList[[2]][(profileList[[7]][getit,1]:profileList[[7]][getit,2]),6]), # sampleIDs
                                 as.numeric(profileList[[2]][(profileList[[7]][getit,1]:profileList[[7]][getit,2]),2]), # intensities

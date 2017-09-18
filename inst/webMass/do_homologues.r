@@ -191,7 +191,7 @@
 			# insert theta
 			range_mz<-(max(homol[["Peaks in homologue series"]][,"mz"])-min(homol[["Peaks in homologue series"]][,"mz"])) 
 			range_RT<-(max(homol[["Peaks in homologue series"]][,"RT"])-min(homol[["Peaks in homologue series"]][,"RT"])) 
-			homol_peaks_relat[,5]<-.Call("series_relat", 
+			homol_peaks_relat[,5]<-.Call("_enviMass_series_relat", 
 				homol_peaks_relat, 
 				range_mz,
 				range_RT,

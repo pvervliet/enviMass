@@ -191,26 +191,26 @@ maincalc2<-reactive({
 		}
 		
 		
-		if(file.exists(file.path(file_in,"logfile.emp"))){
-			load(file.path(file_in,"logfile.emp"),envir=as.environment(".GlobalEnv"))
+		if(file.exists(file.path(file_in, "logfile.emp"))){
+			load(file.path(file_in, "logfile.emp"), envir = as.environment(".GlobalEnv"))
 			#######################################################################			
-			logfile$project_folder<<-as.character(file_in);
+			logfile$project_folder <<- as.character(file_in);
 			# include version updates #############################################
 			source("server_updates.R", local=TRUE);	 
-			save(logfile,file=file.path(file_in,"logfile.emp"));
-			output$textit<-renderText(logfile$project_folder);
-			output$summa_html<-renderText(enviMass::summary_html(logfile$summary));
-			output$dowhat<-renderText("Opened existing project");
-			output$IS<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
-			output$targets<-DT::renderDataTable(read.table(file=file.path(logfile$project_folder,"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));              
-			measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
-			output$measurements<<-DT::renderDataTable(
+			save(logfile,file = file.path(file_in,"logfile.emp"));
+			output$textit <- renderText(logfile$project_folder);
+			output$summa_html <- renderText(enviMass::summary_html(logfile$summary));
+			output$dowhat <- renderText("Opened existing project");
+			output$IS <- DT::renderDataTable(read.table(file = file.path(logfile$project_folder, "dataframes", "IS.txt"), header = TRUE, sep = "\t", colClasses = "character"));
+			output$targets <- DT::renderDataTable(read.table(file = file.path(logfile$project_folder, "dataframes", "targets.txt"), header = TRUE, sep = "\t", colClasses = "character"));              
+			measurements <- read.csv(file = file.path(logfile$project_folder, "dataframes", "measurements"), colClasses = "character")
+			output$measurements <<- DT::renderDataTable(
 				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 			); 
-			output$sel_meas_comp_state<-renderText("")
+			output$sel_meas_comp_state <- renderText("")
 			# RETRIEVE RESULTS #####################################################
 			enviMass::reset_selections(session)
-			source("server_variables_in.R", local=TRUE)
+			source("server_variables_in.R", local = TRUE)
 			# (1) Peak picking & preprocessing #####################################
 			#path=file.path(logfile$project_folder,"pics","EIC1");
 			#	png(filename = path, bg = "white", width = 1100, height= 300)
@@ -223,102 +223,99 @@ maincalc2<-reactive({
 			#	output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
 			# (2) QC ###############################################################		
 			if(file.exists(file.path(logfile$project_folder,"pics","plotQCa_pos"))){
-			  expr1p<-list(src=file.path(logfile$project_folder,"pics","plotQCa_pos"))
-			  output$plotQCa_pos<-renderImage(expr1p, deleteFile = FALSE)
+			  expr1p<-list(src = file.path(logfile$project_folder,"pics","plotQCa_pos"))
+			  output$plotQCa_pos <- renderImage(expr1p, deleteFile = FALSE)
 			}
 			if(file.exists(file.path(logfile$project_folder,"pics","plotQCb_pos"))){
-			  expr2p<-list(src=file.path(logfile$project_folder,"pics","plotQCb_pos"))
-			  output$plotQCb_pos<-renderImage(expr2p, deleteFile = FALSE)
+			  expr2p<-list(src = file.path(logfile$project_folder,"pics","plotQCb_pos"))
+			  output$plotQCb_pos <- renderImage(expr2p, deleteFile = FALSE)
 			}
 		   if(file.exists(file.path(logfile$project_folder,"pics","plotQCa_neg"))){
-			  expr1n<-list(src=file.path(logfile$project_folder,"pics","plotQCa_neg"))
-			  output$plotQCa_neg<-renderImage(expr1n, deleteFile = FALSE)
+			  expr1n<-list(src = file.path(logfile$project_folder,"pics","plotQCa_neg"))
+			  output$plotQCa_neg <- renderImage(expr1n, deleteFile = FALSE)
 			}
 			if(file.exists(file.path(logfile$project_folder,"pics","plotQCb_neg"))){
-			  expr2n<-list(src=file.path(logfile$project_folder,"pics","plotQCb_neg"))
-			  output$plotQCb_neg<-renderImage(expr2n, deleteFile = FALSE)
+			  expr2n<-list(src = file.path(logfile$project_folder,"pics","plotQCb_neg"))
+			  output$plotQCb_neg <- renderImage(expr2n, deleteFile = FALSE)
 			}
 			# (3) Normalization ####################################################
 			if(file.exists(file.path(logfile$project_folder,"pics","int_distr_pos"))){
-			  expr3p<-list(src=file.path(logfile$project_folder,"pics","int_distr_pos"))
-			  output$pic_int_distr_pos<-renderImage(expr3p, deleteFile = FALSE)
+			  expr3p <- list(src = file.path(logfile$project_folder,"pics","int_distr_pos"))
+			  output$pic_int_distr_pos <- renderImage(expr3p, deleteFile = FALSE)
 			}
 			if(file.exists(file.path(logfile$project_folder,"pics","int_distr_neg"))){
-			  expr3n<-list(src=file.path(logfile$project_folder,"pics","int_distr_neg"))
-			  output$pic_int_distr_neg<-renderImage(expr3n, deleteFile = FALSE)
+			  expr3n <- list(src = file.path(logfile$project_folder,"pics","int_distr_neg"))
+			  output$pic_int_distr_neg <- renderImage(expr3n, deleteFile = FALSE)
 			}
 			# Recalibration, sample peaks ########################################## 
 			path=file.path(logfile$project_folder,"pics","recal_none")
 				png(filename = path, bg = "white")
-				plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
+				plot.new(); plot.window(xlim = c(0, 1), ylim = c(0, 1)); text(0.5,0.5,"nothing selected \n or not available",cex=1)
 				dev.off()
-				exprrec<-list(src=path)
-				output$recal_pic<-renderImage(exprrec, deleteFile = FALSE);		
-				output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);
+				exprrec <- list(src=path)
+				output$recal_pic <- renderImage(exprrec, deleteFile = FALSE);		
+				output$peakhist_pic <- renderImage(exprrec, deleteFile = FALSE);
 
 			
 			# (4) Available measurements ###########################################	
-			# SelectInput - bad: only 999 possible choices	
+			# SelectInput - bad: only 999 choices possible	
 			# (5) RT Alignment #####################################################
 						
 			# (6) IS-Normalization #################################################
 
 # > BAUSTELLE
-			
-			if(isolate(input$Ion_mode) == "positive"){			
-				if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"))){
-					load(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"))
-					output$int_norm_ISTD_median <- renderPlot({   
-						par(mar = c(.2, 4.5, .9, 8))
-						enviMass:::plot_ISTD_norm(
-							int_norm_ISTD = int_norm_ISTD_pos,
-							logfile = logfile,
-							what = "normalization"
-						)
-			
-					},res = 100) 
-					output$int_norm_ISTD_counts <- renderPlot({   
-						par(mar = c(4.5, 4.5, .9, 8))
-						enviMass:::plot_ISTD_norm(
-							int_norm_ISTD = int_norm_ISTD_pos,
-							logfile = logfile,
-							what = "counts"
-						)
-			
-					},res = 100) 					
-					
-					
-				}
+			if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"))){
+				load(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"), envir = as.environment(".GlobalEnv"))
+				output$int_norm_ISTD_pos_median <- renderPlot({   
+					par(mar = c(.2, 4.5, .9, 8))
+					enviMass:::plot_ISTD_norm(
+						int_norm_ISTD = int_norm_ISTD_pos,
+						logfile = logfile,
+						what = "normalization"
+					)
+				},res = 100) 
+				output$int_norm_ISTD_pos_counts <- renderPlot({   
+					par(mar = c(4.5, 4.5, .9, 8))
+					enviMass:::plot_ISTD_norm(
+						int_norm_ISTD = int_norm_ISTD_pos,
+						logfile = logfile,
+						what = "counts"
+					)
+				},res = 100) 					
+			}else{
+				output$int_norm_ISTD_pos_median <- renderPlot({ 
+					plot.new()
+				})
+				output$int_norm_ISTD_pos_counts <- renderPlot({ 
+					plot.new()
+				})					
 			}
-			
-if(FALSE){			
-			if(file.exists(file.path(logfile$project_folder,"pics","profnorm_pos"))){
-				if(isolate(input$Ion_mode)=="positive"){
-					exprprofnorm_pos<-list(src=file.path(logfile$project_folder,"pics","profnorm_pos"))
-					output$profnorm<-renderImage(exprprofnorm_pos, deleteFile = FALSE)
-				}
+			if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg"))){
+				load(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg"), envir = as.environment(".GlobalEnv"))
+				output$int_norm_ISTD_neg_median <- renderPlot({   
+					par(mar = c(.2, 4.5, .9, 8))
+					enviMass:::plot_ISTD_norm(
+						int_norm_ISTD = int_norm_ISTD_neg,
+						logfile = logfile,
+						what = "normalization"
+					)
+				},res = 100) 
+				output$int_norm_ISTD_neg_counts <- renderPlot({   
+					par(mar = c(4.5, 4.5, .9, 8))
+					enviMass:::plot_ISTD_norm(
+						int_norm_ISTD = int_norm_ISTD_neg,
+						logfile = logfile,
+						what = "counts"
+					)
+				},res = 100) 					
+			}else{
+				output$int_norm_ISTD_neg_median <- renderPlot({ 
+					plot.new()
+				})
+				output$int_norm_ISTD_neg_counts <- renderPlot({ 
+					plot.new()
+				})					
 			}
-			if(file.exists(file.path(logfile$project_folder,"pics","profcount_pos"))){
-				if(isolate(input$Ion_mode)=="positive"){
-					exprprofcount_pos<-list(src=file.path(logfile$project_folder,"pics","profcount_pos"))
-					output$profcount<-renderImage(exprprofcount_pos, deleteFile = FALSE)
-				}
-			}
-			if(file.exists(file.path(logfile$project_folder,"pics","profnorm_neg"))){
-				if(isolate(input$Ion_mode)=="negative"){
-					exprprofnorm_neg<-list(src=file.path(logfile$project_folder,"pics","profnorm_neg"))
-					output$profnorm<-renderImage(exprprofnorm_neg, deleteFile = FALSE)
-				}
-			}
-			if(file.exists(file.path(logfile$project_folder,"pics","profcount_neg"))){
-				if(isolate(input$Ion_mode)=="negative"){
-					exprprofcount_neg<-list(src=file.path(logfile$project_folder,"pics","profcount_neg"))
-					output$profcount<-renderImage(exprprofcount_neg, deleteFile = FALSE)
-				}
-			}			
-			
-}
-
 # < BAUSTELLE	
 
 			# (X) Profiling, trends, blind #########################################		

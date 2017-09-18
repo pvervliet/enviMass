@@ -4,14 +4,15 @@ author: Martin Loos, Martin.Loos@eawag.ch
 Copyright (c) 2013 Eawag. All rights reserved.
 */
 
+#include <Rcpp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <R.h>
 #include <Rmath.h>
 #include <Rdefines.h>
-#include <R_ext/Utils.h>
 
+using namespace Rcpp;
 
 #define RMATRIX(m,i,j) (REAL(m)[ INTEGER(GET_DIM(m))[0]*(j)+(i) ])
 #define RMATRIX2(m,i,j) (INTEGER(m)[ INTEGER(GET_DIM(m))[0]*(j)+(i) ])
@@ -20,113 +21,11 @@ Copyright (c) 2013 Eawag. All rights reserved.
 #define RCol(m) (INTEGER(GET_DIM(m))[1])
 
 
-extern "C"{
-
-
-/******************************************************************************/
-/* calculate theta ************************************************************/
-/******************************************************************************/
-
-SEXP series_relat(
-    SEXP homol_peaks_relat,
-    SEXP range_mz,
-    SEXP range_RT
-){
-
-    PROTECT(homol_peaks_relat = AS_NUMERIC(homol_peaks_relat));
-    PROTECT(range_mz = AS_NUMERIC(range_mz));
-    PROTECT(range_RT = AS_NUMERIC(range_RT));
-
-    int len1=(RRow(homol_peaks_relat)-1);
-    int i=0,j=0,n=0,m=0;
-    double aa=0,ab=0,a2=0,ba=0,bb=0,b2=0,c2=0,to_cos,wink;
-
-    SEXP thetas = PROTECT(allocVector(REALSXP,(len1+1)));
-    for(i=0;i<=len1;i++){
-        RVECTOR(thetas,i) = R_PosInf;
-    }
-
-    for(i=0;i<len1;i++){
-        for(j=i;j<=len1;j++){
-            if( RMATRIX(homol_peaks_relat,j,0) != RMATRIX(homol_peaks_relat,i,0) ){
-                j--;
-                break;
-            }
-        }
-        if((j-i)>0){
-            void R_CheckUserInterrupt(void);
-            for(m=i;m<j;m++){
-                aa = (RMATRIX(homol_peaks_relat,m,2) / RVECTOR(range_mz,0));
-                ba = (RMATRIX(homol_peaks_relat,m,3) / RVECTOR(range_RT,0));
-                for(n=(m+1);n<=j;n++){
-                    ab = (RMATRIX(homol_peaks_relat,n,2) / RVECTOR(range_mz,0));
-                    bb = (RMATRIX(homol_peaks_relat,n,3) / RVECTOR(range_RT,0));
-                    a2 = ((aa*aa)+(ab*ab));
-                    b2 = ((ba*ba)+(bb*bb));
-                    c2 = sqrt(a2*b2);
-                    to_cos = (  ((aa*ba)+(ab*bb))   /   c2  );
-                    if(ISNA(to_cos) || ISNAN(to_cos)){
-                        wink = 0;
-                    }else{
-                        wink = acos(to_cos);
-                        wink = (wink * 180 / M_PI);
-                    }
-                    if(!R_FINITE(RVECTOR(thetas,n)) || wink<abs(RVECTOR(thetas,n))){
-                        RVECTOR(thetas,n) = wink;
-                    }
-                }
-            }
-            i = j;
-        }
-    }
-
-    UNPROTECT(4);
-    return thetas;
-
-}
-
-
-/******************************************************************************/
-/* calculate moving counts ****************************************************/
-/******************************************************************************/
-
-SEXP moving_count(
-    SEXP homol_peaks_relat,
-    SEXP deldel
-){
-
-    PROTECT(homol_peaks_relat = AS_NUMERIC(homol_peaks_relat));
-    PROTECT(deldel = AS_NUMERIC(deldel));
-    int len = RRow(homol_peaks_relat);
-    int i=0,n=0;
-
-    SEXP counts = PROTECT(allocVector(REALSXP,len));
-    for(i=0;i<len;i++){
-        RVECTOR(counts,i) = 1;
-    }
-
-    for(i=0;i<(len-1);i++){
-        void R_CheckUserInterrupt(void);
-        for(n=(i+1);n<len;n++){
-            if((RMATRIX(homol_peaks_relat,n,2)-RMATRIX(homol_peaks_relat,i,2))<=RVECTOR(deldel,0)){
-                RVECTOR(counts,i)++;
-                RVECTOR(counts,n)++;
-            }else{
-                break;
-            }
-        }
-    }
-
-    UNPROTECT(3);
-    return counts;
-
-}
-
 
 /******************************************************************************/
 /* compare row-wise ***********************************************************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP compare(
     SEXP a,
     SEXP b,
@@ -161,7 +60,7 @@ SEXP compare(
 /******************************************************************************/
 /* find peak intensities & correct them ***************************************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP correct_intens(
                         SEXP corfac,
                         SEXP sampleID,
@@ -207,12 +106,11 @@ SEXP correct_intens(
 }
 
 
-
 /******************************************************************************/
 /* build groups from profile-profile relation *********************************/
 /******************************************************************************/
-
-      SEXP metagroup(
+// [[Rcpp::export]]
+SEXP metagroup(
                             SEXP proffrom, /* must be sorted */
                             SEXP profto
                             ){
@@ -314,9 +212,8 @@ SEXP correct_intens(
 /******************************************************************************/
 /* count peaks in neigbourhood of dmz and dRT *********************************/
 /******************************************************************************/
-
-
-      SEXP profpeakprof(
+// [[Rcpp::export]]
+SEXP profpeakprof(
                             SEXP ProPeak_pro,
                             SEXP ProPeak_peak,
                             SEXP Peak_peak1,
@@ -349,7 +246,7 @@ SEXP correct_intens(
             PeakPro2 = INTEGER_POINTER(PeakPro);
 
             SEXP relations;
-            PROTECT(relations = allocMatrix(REALSXP, leng2, 3));
+            PROTECT(relations = Rf_allocMatrix(REALSXP, leng2, 3));
             double *relat;
             relat = REAL(relations);
             for(m=0;m<3;m++){
@@ -380,16 +277,16 @@ SEXP correct_intens(
 
 }
 /******************************************************************************/
-/* assort profiles **********##************************************************/
+/* assort profiles ************************************************************/
 /******************************************************************************/
-
-    SEXP extractProfiles(
+// [[Rcpp::export]]
+SEXP extractProfiles(
                         SEXP mz,
                         SEXP RT,
                         SEXP intens,
                         SEXP sam,
                         SEXP orderedint,
-                        SEXP pregroup,       /* integer vector with pre-grouping of peaks >0 */
+                        SEXP pregroup,
                         SEXP dmz,
                         SEXP ppm,
                         SEXP drt,
@@ -406,7 +303,7 @@ SEXP correct_intens(
         PROTECT(dmz = AS_NUMERIC(dmz));
         PROTECT(ppm = AS_INTEGER(ppm));
         PROTECT(drt = AS_NUMERIC(drt));
-        PROTECT(run_pregroup = AS_INTEGER(pregroup));
+        PROTECT(run_pregroup = AS_INTEGER(run_pregroup));
         double *ret, *mass, *intensity;
         mass = NUMERIC_POINTER(mz);
         ret = NUMERIC_POINTER(RT);
@@ -424,7 +321,7 @@ SEXP correct_intens(
         int verbose=0;
         double delmz,delrt,minmz,maxmz,minrt,maxrt,summmz;
         SEXP clusters;
-        PROTECT(clusters = allocMatrix(REALSXP, leng, 15));
+        PROTECT(clusters = Rf_allocMatrix(REALSXP, leng, 15));
         double *clus;
         clus = REAL(clusters);
         for(m=0;m<15;m++){
@@ -666,7 +563,7 @@ SEXP correct_intens(
 /******************************************************************************/
 /* merge profiles **********************************************************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
       SEXP mergeProfiles(
                              SEXP mz_lower,
                              SEXP mz_upper,
@@ -704,7 +601,7 @@ SEXP correct_intens(
            int m,n,i,k=0,clustnumb,maxat=0,maxit=0;
 
            SEXP clusters;
-           PROTECT(clusters = allocMatrix(REALSXP, leng, 9));
+           PROTECT(clusters = Rf_allocMatrix(REALSXP, leng, 9));
            double *clus;
            clus = REAL(clusters);
            for(m=0;m<13;m++){
@@ -853,7 +750,7 @@ SEXP correct_intens(
 /******************************************************************************/
 /* count peaks in neigbourhood of dmz and dRT *********************************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP neighbour(        SEXP mz, /* must be sorted */
                        SEXP rt,
                        SEXP sample,
@@ -885,7 +782,7 @@ SEXP neighbour(        SEXP mz, /* must be sorted */
             double lowmass, lowret, highret;
             int leng = LENGTH(rt);
             SEXP clusters;
-            PROTECT(clusters = allocMatrix(INTSXP, maxsample2, maxsample2));
+            PROTECT(clusters = Rf_allocMatrix(INTSXP, maxsample2, maxsample2));
             int *clus;
             clus = INTEGER(clusters);
             for(m=0;m<maxsample2;m++){
@@ -922,7 +819,7 @@ SEXP neighbour(        SEXP mz, /* must be sorted */
 /******************************************************************************/
 /* agglomerative partitioning of all data based on dmz and dRT ****************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP agglom(           SEXP mz, /* must be sorted */
                        SEXP rt,
                        SEXP sample,
@@ -1088,7 +985,7 @@ SEXP agglom(           SEXP mz, /* must be sorted */
 /******************************************************************************/
 /* assemble indices for return value of agglom ********************************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP indexed(      SEXP index, /* must be sorted */
                    SEXP maxindex,
                    SEXP many
@@ -1104,7 +1001,7 @@ SEXP indexed(      SEXP index, /* must be sorted */
 			int leng = LENGTH(index);
             int n,from,to=0,countit,atind;
             SEXP outit;
-            PROTECT(outit = allocMatrix(INTSXP, maxind, many2));
+            PROTECT(outit = Rf_allocMatrix(INTSXP, maxind, many2));
             int *at;
             at = INTEGER_POINTER(outit);
             for(n=0;n<(maxind*many2);n++){
@@ -1148,7 +1045,7 @@ SEXP indexed(      SEXP index, /* must be sorted */
 /******************************************************************************/
 /* assemble indices for return value of agglom ********************************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP fill_timeset(      SEXP timeset,
                         SEXP sampleID,
                         SEXP intensity,
@@ -1167,7 +1064,7 @@ SEXP fill_timeset(      SEXP timeset,
            int leng2 = INTEGER_VALUE(lengtimeset);
            int m,n;
            SEXP vec;
-           PROTECT(vec = allocMatrix(REALSXP, leng2, 2));
+           PROTECT(vec = Rf_allocMatrix(REALSXP, leng2, 2));
            double *at;
            at = REAL(vec);
            for(m=0;m<2;m++){
@@ -1200,7 +1097,7 @@ SEXP fill_timeset(      SEXP timeset,
 /******************************************************************************/
 /* get maximum difference in an time ordered series of intensities ************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP meandel(      SEXP timeset,
                    SEXP subit,
                    SEXP subrat,
@@ -1233,7 +1130,7 @@ SEXP meandel(      SEXP timeset,
            double intdifto,blindint,atint,maxint,intsum,intcount,meanint,meanint_all,varint,varint_all,nowint;
            int m,n,k,maxat=0,minat,nowat,from,to=0,tosam,doit;
            SEXP scored;
-           PROTECT(scored = allocMatrix(REALSXP,6,lagnumb));
+           PROTECT(scored = Rf_allocMatrix(REALSXP,6,lagnumb));
            double *at;
            at = REAL(scored);
 
@@ -1490,7 +1387,7 @@ SEXP meandel(      SEXP timeset,
 /******************************************************************************/
 /* get maximum difference in an orderes series of intensities *****************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP intdiff(      SEXP timeset,
                    SEXP subit,
                    SEXP subrat,
@@ -1514,7 +1411,7 @@ SEXP intdiff(      SEXP timeset,
            double intdiffor=0, intdifback=0, minint,maxint;
            int m,n,maxat=0,minat,from,to=0,doit;
            SEXP intensidif;
-           PROTECT(intensidif = allocMatrix(REALSXP, 1, 5));
+           PROTECT(intensidif = Rf_allocMatrix(REALSXP, 1, 5));
            double *at;
            at = REAL(intensidif);
 
@@ -1636,7 +1533,7 @@ SEXP intdiff(      SEXP timeset,
 /******************************************************************************/
 /* assemble data for plotting *************************************************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP plot_prof(       SEXP RTlim_low,
                         SEXP RTlim_up,
                         SEXP mzlim_low,
@@ -1694,7 +1591,7 @@ SEXP plot_prof(       SEXP RTlim_low,
 
            if(counter1>0){
                SEXP ans;
-               PROTECT(ans = allocMatrix(REALSXP, counter1, 6));
+               PROTECT(ans = Rf_allocMatrix(REALSXP, counter1, 6));
                double *rans;
                rans = REAL(ans);
                if(whatcol==1){
@@ -1753,7 +1650,7 @@ SEXP plot_prof(       SEXP RTlim_low,
 /******************************************************************************/
 /* RT-binning of data for plotting ********************************************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP binRT_prof(   SEXP RT,
                    SEXP intensity,
                    SEXP binRT,
@@ -1776,7 +1673,7 @@ SEXP binRT_prof(   SEXP RT,
            col = NUMERIC_POINTER(colorit);
            int n,m,l,counter;
            SEXP ans;
-           PROTECT(ans = allocMatrix(REALSXP, leng3-1, 2));
+           PROTECT(ans = Rf_allocMatrix(REALSXP, leng3-1, 2));
            double *rans;
            rans = REAL(ans);
            for(m=0;m<(leng3-1);m++){
@@ -1824,7 +1721,7 @@ SEXP binRT_prof(   SEXP RT,
 
            /* omit 0-entries in ans2, i.e., resize to within mzlimit set in R */
            SEXP ans2;
-           PROTECT(ans2 = allocMatrix(REALSXP, counter, 2));
+           PROTECT(ans2 = Rf_allocMatrix(REALSXP, counter, 2));
            double *rans2;
            rans2 = REAL(ans2);
            n=0;
@@ -1842,7 +1739,7 @@ SEXP binRT_prof(   SEXP RT,
 /******************************************************************************/
 /* RT-binning of data for plotting ********************************************/
 /******************************************************************************/
-
+// [[Rcpp::export]]
 SEXP binmz_prof(   SEXP mz,
                    SEXP intensity,
                    SEXP binmzs,
@@ -1862,7 +1759,7 @@ SEXP binmz_prof(   SEXP mz,
            col = NUMERIC_POINTER(colorit);
            int n,m,l,counter;
            SEXP ans;
-           PROTECT(ans = allocMatrix(REALSXP, leng3-1, 2));
+           PROTECT(ans = Rf_allocMatrix(REALSXP, leng3-1, 2));
            double *rans;
            rans = REAL(ans);
            for(m=0;m<(leng3-1);m++){
@@ -1890,7 +1787,7 @@ SEXP binmz_prof(   SEXP mz,
 
            /* omit 0-entries in ans2, i.e., resize to within mzlimit set in R */
            SEXP ans2;
-           PROTECT(ans2 = allocMatrix(REALSXP, counter, 2));
+           PROTECT(ans2 = Rf_allocMatrix(REALSXP, counter, 2));
            double *rans2;
            rans2 = REAL(ans2);
            n=0;
@@ -1911,4 +1808,3 @@ SEXP binmz_prof(   SEXP mz,
 /******************************************************************************/
 
 
-}

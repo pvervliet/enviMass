@@ -105,7 +105,7 @@ intensup<-function(
         ########################################################################
         # fill timeset #########################################################
         timeset[,4:length(timeset[1,])]<-0;
-        timeset[,c(4,5)] <-.Call("fill_timeset",
+        timeset[,c(4,5)] <-.Call("_enviMass_fill_timeset",
                                 as.numeric(timeset),
                                 as.numeric(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[[7]][k,"end_ID"]),"sampleIDs"]), 
                                 as.numeric(profileList[["peaks"]][(profileList[["index_prof"]][k,"start_ID"]:profileList[[7]][k,"end_ID"]),"intensity"]), 
@@ -120,7 +120,7 @@ intensup<-function(
         if(any(timeset[,4]>0)){ # any non-blind peak present?
 			what<-1 # !=1 -> get raw output, i.e., peak series
 			if(!omit_trend){
-				that<-.Call("meandel",
+				that<-.Call("_enviMass_meandel",
 					as.numeric(timeset),
 					as.integer(subit),
 					as.numeric(subrat),

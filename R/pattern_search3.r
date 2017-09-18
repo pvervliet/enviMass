@@ -92,8 +92,10 @@ pattern_search3<-function(
     pBar <- txtProgressBar(min = 0, max = length(peaklist[, 1]), 
         style = 3)
     inter <- as.numeric(interactive())
-    peakTree <- .Call("kdtree4", as.matrix(peaklist[, 1:3]), 
-        as.integer(inter), pBar, PACKAGE = "nontarget")
+    peakTree <- .Call("kdtree4", 
+        as.matrix(peaklist[, 1:3]), 
+        as.integer(inter), 
+        pBar, PACKAGE = "nontarget")
     close(pBar)
     peakTree <- peakTree[, 1:4, drop = FALSE]
     cat("\n screen ... ")
@@ -192,9 +194,12 @@ pattern_search3<-function(
             }
             if (strsplit(names(quantiz[[6]])[i], "_")[[1]][3] == 
                 "wo") {
-                found <- .Call("search_boxtree", quantiz[[6]][[i]][, 
-                  1:6], quantiz[[6]][[i]][, 16:20], as.numeric(search_bounds), 
-                  as.integer(0), PACKAGE = "nontarget")
+                found <- .Call("search_boxtree", 
+                    quantiz[[6]][[i]][,1:6], 
+                    quantiz[[6]][[i]][,16:20], 
+                    as.numeric(search_bounds), 
+                    as.integer(0), 
+                    PACKAGE = "nontarget")
                 retr_1 <- c(retr_1 + 1)
                 if (found == -2) {
                   done[as.numeric(strsplit(names(quantiz[[6]])[i], 
@@ -219,9 +224,12 @@ pattern_search3<-function(
                   "_")[[1]][1]), as.numeric(strsplit(names(quantiz[[6]])[i], 
                   "_")[[1]][2])] == FALSE) {
                   if (use_marker != "TRUE") {
-                    found <- .Call("search_boxtree", quantiz[[6]][[i]][, 
-                      1:6], quantiz[[6]][[i]][, 16:20], as.numeric(search_bounds), 
-                      as.integer(0), PACKAGE = "nontarget")
+                    found <- .Call("search_boxtree", 
+                        quantiz[[6]][[i]][, 1:6], 
+                        quantiz[[6]][[i]][, 16:20], 
+                        as.numeric(search_bounds), 
+                        as.integer(0), 
+                        PACKAGE = "nontarget")
                     if (found == -2) {
                       done[as.numeric(strsplit(names(quantiz[[6]])[i], 
                         "_")[[1]][1]), as.numeric(strsplit(names(quantiz[[6]])[i], 
@@ -236,9 +244,12 @@ pattern_search3<-function(
                     }
                     retr_1 <- c(retr_1 + 1)
                   } else {
-                    found <- .Call("search_boxtree", quantiz[[6]][[i]][, 
-                      1:6], quantiz[[6]][[i]][, 16:20], as.numeric(search_bounds), 
-                      as.integer(1), PACKAGE = "nontarget")
+                    found <- .Call("search_boxtree", 
+                        quantiz[[6]][[i]][, 1:6], 
+                        quantiz[[6]][[i]][, 16:20], 
+                        as.numeric(search_bounds), 
+                        as.integer(1), 
+                        PACKAGE = "nontarget")
                     retr_1 <- c(retr_1 + 1)
                     if (length(found) > 0) {
                       for (k in 1:length(found)) {
@@ -266,9 +277,11 @@ pattern_search3<-function(
                           1], 3] - rttol)
                         marker_bounds[3, 2] <- (peaklist[relat_pairs[j, 
                           1], 3] + rttol)
-                        found_m <- .Call("search_kdtree", as.matrix(peaklist[, 
-                          1:3]), as.matrix(peakTree), as.matrix(marker_bounds), 
-                          PACKAGE = "nontarget")
+                        found_m <- .Call("search_kdtree", 
+                            as.matrix(peaklist[, 1:3]), 
+                            as.matrix(peakTree), 
+                            as.matrix(marker_bounds), 
+                            PACKAGE = "nontarget")
                         if (length(found_m) > 1) {
                           done[as.numeric(strsplit(names(quantiz[[6]])[i], 
                             "_")[[1]][1]), as.numeric(strsplit(names(quantiz[[6]])[i], 
@@ -311,8 +324,10 @@ pattern_search3<-function(
     charge <- charge[order(from_peak2, decreasing = FALSE)]
     to_peak2 <- to_peak2[order(from_peak2, decreasing = FALSE)]
     from_peak2 <- from_peak2[order(from_peak2, decreasing = FALSE)]
-    groups <- .Call("metagroup", as.integer(from_peak2), as.integer(to_peak2), 
-        PACKAGE = "nontarget")
+    groups <- .Call("metagroup", 
+                as.integer(from_peak2), 
+                as.integer(to_peak2), 
+                PACKAGE = "nontarget")
     to_peak <- to_peak2[use == 1]
     from_peak <- from_peak2[use == 1]
     charge <- charge[use == 1]

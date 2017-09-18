@@ -680,6 +680,16 @@
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/screening.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),	
+				HTML('<p style="background-color:darkgreen"; align="center"> <font color="#FFFFFF"> Intensity normalization using IS-profiles </font></p> '),
+					fluidRow(
+						column(width = 2, radioButtons("IS_normaliz", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Relies on the above profile extraction and internal standard screening (green steps). Intensities of picked peaks in each measurement 
+							are normalized by the median deviation all internal standards have in the measurement from their individual median profile intensity.
+							This approach can replace the less reliable Median intensity normalization above (blue steps). Internal standards must have been spiked at constant concentrations."),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/IS_normalization" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
+						)
+					),	
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  					
 				# block 4 ######################################################					
@@ -737,17 +747,7 @@
 						target="_blank"><p align="right">&#8594; More info.</a></p>'),	
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),  				
-				# block 5 ######################################################
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Intensity normalization using IS-profiles </font></p> '),
-					fluidRow(
-						column(width = 2, radioButtons("IS_normaliz", "Include? ", c("yes"="yes","no"="no")) ),
-						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Relies on the above profile extraction and internal standard screening (green steps). Intensities of picked peaks in each measurement 
-							are normalized by the median deviation all internal standards have in the measurement from their individual median profile intensity.
-							This approach can replace the less reliable Median intensity normalization above (blue steps). Internal standards must have been spiked at constant concentrations."),
-							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/IS_normalization" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
-						)
-					),					
+				# block 5 ######################################################				
 				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Profile filtering </font></p> '),
 					fluidRow(
 						column(width = 2, 
@@ -806,18 +806,17 @@
 							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps and the preceding red step)."),
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/trends.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
-					),							            
-				HTML('<hr noshade="noshade" />'),
-				HTML('<h1 align="center"> &#x21e9; </h1> '),  				
-				# block 6 ######################################################					
-				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
+					),							            									
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("components_profiles", "Include?", c("yes"="yes","no"="no"))),
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","Aggregate and filter filewise componentization results across profiles; Group profiles with similar intensity patterns."),
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profile_components.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
-					)#,
+					),
+				HTML('<hr noshade="noshade" />'),
+				HTML('<h1 align="center"> &#x21e9; </h1> ')
 				#HTML('<hr noshade="noshade" />') 
 				################################################################
 	
@@ -1166,8 +1165,15 @@
             ),			
             # GENERAL SETTINGS #################################################
             tabPanel("General",
-				div(style = widget_style3,
+				div(style = widget_style10,
 					textInput("PWpath", "Path to Proteowizard MSConvert (use / and include .exe)", value = "C:/Program Files/ProteoWizard/ProteoWizard 3.0.5140/msconvert.exe")
+				),
+				div(style = widget_style10,
+					tags$h5("Multi-core processing"),
+					selectInput("parallel", "Enable parallelized workflow processing?", choices = c("TRUE", "FALSE"), selected = "TRUE"),
+					HTML('<hr noshade="noshade" />'), 
+					selectInput("parallel_restrict", "Restrict number of cores/threads?", choices = c("TRUE", "FALSE"), selected = "FALSE"),
+					numericInput("parallel_cores", "... maximum number of cores/threads to use:", 4)
 				),
 				div(style = widget_style11,
 					tags$h5("Debug tools"),
@@ -1330,7 +1336,116 @@
         ########################################################################
         tabPanel("Results", 	
 			tabsetPanel( 
-				######################################################################################################################
+				######################################################################################################################s
+				tabPanel("Intensity control",
+					tabsetPanel(
+						tabPanel("Positive ionization ",
+							HTML('<hr noshade="noshade" />'),
+							bsCollapse(multiple = TRUE, open = NULL, id = "collapse_intens_control_pos",
+								bsCollapsePanel(title="Quantile intensity distributions", 
+									tags$h5("Quantile distribution of peak intensities:"),           
+									imageOutput("plotQCa_pos", height="auto"),
+									tags$h5("Outliers:"),
+									imageOutput("plotQCb_pos", height="auto")
+								),
+								bsCollapsePanel(title="Boxplot intensity distributions", 
+									tags$h5("Intensity distribution for median intensity normalization:"),                    
+									imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
+								),
+								bsCollapsePanel(title="IS-based intensity normalization", 
+
+# > BAUSTELLE
+
+									plotOutput("int_norm_ISTD_pos_median", 
+										dblclick = "int_norm_ISTD_pos_median_dblclick",
+										click = "int_norm_ISTD_pos_median_click",
+										brush = brushOpts(
+											id = "int_norm_ISTD_pos_median_brush",
+											resetOnNew = TRUE,
+											direction = c("x")
+										),
+										height = "500px"
+									),
+									plotOutput("int_norm_ISTD_pos_counts", 
+										dblclick = "int_norm_ISTD_pos_counts_dblclick",
+										click = "int_norm_ISTD_pos_counts_click",
+										brush = brushOpts(
+											id = "int_norm_ISTD_pos_counts_brush",
+											resetOnNew = TRUE,
+											direction = c("x")
+										),
+										height = "300px"
+									),
+									HTML('<hr noshade="noshade" />'),
+									tags$p(align = "justify", "The top panel above shows the deviation of a peak intensity from the median log-intensity of its profile (gray dots), 
+										for each internal standard (ISTD) and over all the positive ionization files used during profiling. The deviation is expressed as an intensity 
+										ratio between peak and median intensity; positive deviations hence indicate ISTD peak intensities above their longer-termed profile median. \n\n
+										Files are ordered by their Date/Time, with gray and orange lines highlighting sample and blank measurements, respectively. 
+										In turn, the red dots denote the median deviation over all internal standards for each such file; this value is then used for the intensity 
+										normalization of all peaks derived from a file. The red line in the lower panel highlights the number of such ISTD peaks found per file."),
+									tags$p(align = "justify", "In comparison, the green and blue lines of this lower panel show the overall peak count for randomly sampled non-ISTD 
+										profiles which either contain blank peaks (blue line) or are not found by any picked peaks in blank measurements at all (green line). Their
+										median intensity deviations from the individual profile medians are shown as blue and green dots in the top panel, too.")
+# < BAUSTELLE			
+
+								)	
+							)
+						),
+						tabPanel("Negative ionization ",
+							HTML('<hr noshade="noshade" />'),
+							bsCollapse(multiple = TRUE, open = NULL, id = "collapse_intens_control_neg",
+								bsCollapsePanel(title="Quantile intensity distributions", 
+									tags$h5("Quantile distribution of peak intensities:"),           
+									imageOutput("plotQCa_neg", height="auto"),
+									tags$h5("Outliers:"),
+									imageOutput("plotQCb_neg", height="auto")
+								),
+								bsCollapsePanel(title="Boxplot intensity distributions", 
+									tags$h5("Intensity distribution for median intensity normalization:"),                    
+									imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
+								),
+								bsCollapsePanel(title="IS-based intensity normalization", 
+# > BAUSTELLE
+
+									plotOutput("int_norm_ISTD_neg_median", 
+										dblclick = "int_norm_ISTD_neg_median_dblclick",
+										click = "int_norm_ISTD_neg_median_click",
+										brush = brushOpts(
+											id = "int_norm_ISTD_neg_median_brush",
+											resetOnNew = TRUE,
+											direction = c("x")
+										),
+										height = "500px"
+									),
+									plotOutput("int_norm_ISTD_neg_counts", 
+										dblclick = "int_norm_ISTD_neg_counts_dblclick",
+										click = "int_norm_ISTD_neg_counts_click",
+										brush = brushOpts(
+											id = "int_norm_ISTD_neg_counts_brush",
+											resetOnNew = TRUE,
+											direction = c("x")
+										),
+										height = "300px"
+									),
+									HTML('<hr noshade="noshade" />'),
+									tags$p(align = "justify", "The top panel above shows the deviation of a peak intensity from the median log-intensity of its profile (gray dots), 
+										for each internal standard (ISTD) and over all the negative ionization files used during profiling. The deviation is expressed as an intensity 
+										ratio between peak and median intensity; positive deviations hence indicate ISTD peak intensities above their longer-termed profile median. \n\n
+										Files are ordered by their Date/Time, with gray and orange lines highlighting sample and blank measurements, respectively. 
+										In turn, the red dots denote the median deviation over all internal standards for each such file; this value is then used for the intensity 
+										normalization of all peaks derived from a file. The red line in the lower panel highlights the number of such ISTD peaks found per file."),
+									tags$p(align = "justify", "In comparison, the green and blue lines of this lower panel show the overall peak count for randomly sampled non-ISTD 
+										profiles which either contain blank peaks (blue line) or are not found by any picked peaks in blank measurements at all (green line). Their
+										median intensity deviations from the individual profile medians are shown as blue and green dots in the top panel, too.")
+
+# < BAUSTELLE			
+
+								)	
+							)						
+						)
+					)	
+				),
+				###################################################################################################################### 
                 tabPanel("Data viewer",
 					HTML('<hr noshade="noshade" />'),
 					tags$p(align="justify","This tab plots the centroided data points and picked peaks for an individual file - please first specify the ID of this file. 
@@ -1437,41 +1552,6 @@
 					)
                 ),
 				######################################################################################################################
-				tabPanel("Intensity control",
-					tabsetPanel(
-						tabPanel("Positive ionization ",
-							HTML('<hr noshade="noshade" />'),
-							bsCollapse(multiple = TRUE, open = NULL, id = "collapse_intens_control_pos",
-								bsCollapsePanel(title="Quantile intensity distributions", 
-									tags$h5("Quantile distribution of peak intensities:"),           
-									imageOutput("plotQCa_pos", height="auto"),
-									tags$h5("Outliers:"),
-									imageOutput("plotQCb_pos", height="auto")
-								),
-								bsCollapsePanel(title="Boxplot intensity distributions", 
-									tags$h5("Intensity distribution for median intensity normalization:"),                    
-									imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
-								)
-							)
-						),
-						tabPanel("Negative ionization ",
-							HTML('<hr noshade="noshade" />'),
-							bsCollapse(multiple = TRUE, open = NULL, id = "collapse_intens_control_neg",
-								bsCollapsePanel(title="Quantile intensity distributions", 
-									tags$h5("Quantile distribution of peak intensities:"),           
-									imageOutput("plotQCa_neg", height="auto"),
-									tags$h5("Outliers:"),
-									imageOutput("plotQCb_neg", height="auto")
-								),
-								bsCollapsePanel(title="Boxplot intensity distributions", 
-									tags$h5("Intensity distribution for median intensity normalization:"),                    
-									imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
-								)
-							)						
-						)
-					)	
-				),
-				###################################################################################################################### 
 				tabPanel("Processing",      
 					HTML('<hr noshade="noshade" />'),				
 					tags$p(align="justify","Preprocessing and summary results of this tab are shown for each file individually; please first specify the ID of the file of interest. 
@@ -2319,32 +2399,7 @@
 										)
 										##################################################################
 									)
-							),
-							tabPanel("Normalization",            				
-# > BAUSTELLE
-
-								plotOutput("int_norm_ISTD_median", 
-									dblclick = "int_norm_ISTD_median_dblclick",
-									brush = brushOpts(
-										id = "int_norm_ISTD_median_brush",
-										resetOnNew = TRUE,
-										direction = c("x")
-									)
-								),
-								plotOutput("int_norm_ISTD_counts", 
-									dblclick = "int_norm_ISTD_counts_dblclick",
-									brush = brushOpts(
-										id = "int_norm_ISTD_counts_brush",
-										resetOnNew = TRUE,
-										direction = c("x")
-									)
-								)
-
-
-# < BAUSTELLE							
-									#imageOutput("profnorm", height="auto"),
-									#imageOutput("profcount", height="auto")
-							)#,
+							)
 							#id="navbar_prof",inverse=FALSE,collapsible=TRUE,fluid=TRUE
 						)
 					)

@@ -82,28 +82,28 @@ plotaprofile<-function(
 	sampletype<-sampletype[ord];
     timeset<-matrix(nrow=length(atPOSIX),ncol=(5+(4*length(lags))),0);
     for(i in 1:length(sampleID)){
-      if(sampletype[i]=="sample"){
-        timeset[i,2]<-as.numeric(sampleID[i]);
+      if(sampletype[i] == "sample"){
+        timeset[i,2] <- as.numeric(sampleID[i]);
       }
-      if(sampletype[i]=="blank"){
-        timeset[i,3]<-as.numeric(sampleID[i]);
+      if(sampletype[i] == "blank"){
+        timeset[i,3] <- as.numeric(sampleID[i]);
       }
     }
-    latestID<-timeset[length(timeset[,2]),2]
-	numtime<-(as.numeric(atdate)+as.numeric(attime2/(24*60)))
-	colnames(timeset)<-c("above blank?","sampleID","blankID","sample_int","blank_int",rep("lag_int",length(lags)),rep("del_int",length(lags)),rep("max_time",length(lags)),rep("blind_int",length(lags)))	
+    latestID <- timeset[length(timeset[,2]),2]
+	numtime <- (as.numeric(atdate) + as.numeric(attime2 / (24 * 60)))
+	colnames(timeset) <- c("above blank?","sampleID","blankID","sample_int","blank_int",rep("lag_int",length(lags)),rep("del_int",length(lags)),rep("max_time",length(lags)),rep("blind_int",length(lags)))	
     ############################################################################
-    timeset[,4:5]<-0;
-    timeset[,c(4,5)]<-.Call("fill_timeset",
-                                as.numeric(timeset),
-                                as.numeric(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),6]), # sampleIDs
-                                as.numeric(profileList[[2]][(profileList[[7]][profileList[[7]][,4]==profileID,1]:profileList[[7]][profileList[[7]][,4]==profileID,2]),2]), # intensities
-                                as.integer(length(timeset[,1])),
-                                PACKAGE="enviMass"
-							)
- 	what<-2 # !=1 -> get raw output, i.e., smoothed series
-	notrend=1 # !=1 -> no global trends, only maximum intensity AFTER blind subtraction
-	that1<-.Call("meandel",
+    timeset[,4:5] <- 0;
+    timeset[,c(4,5)] <- .Call("_enviMass_fill_timeset",
+							as.numeric(timeset),
+							as.numeric(profileList[[2]][(profileList[[7]][profileList[[7]][,4] == profileID, 1]:profileList[[7]][profileList[[7]][,4] == profileID,2]), 6]), # sampleIDs
+							as.numeric(profileList[[2]][(profileList[[7]][profileList[[7]][,4] == profileID, 1]:profileList[[7]][profileList[[7]][,4] == profileID,2]), 2]), # intensities
+							as.integer(length(timeset[,1])),
+							PACKAGE = "enviMass"
+						)
+ 	what <- 2 # !=1 -> get raw output, i.e., smoothed series
+	notrend = 1 # !=1 -> no global trends, only maximum intensity AFTER blind subtraction
+	that1 <- .Call("_enviMass_meandel",
 				as.numeric(timeset),
 				as.integer(subit),
 				as.numeric(subrat),
@@ -114,10 +114,10 @@ plotaprofile<-function(
 				as.integer(notrend),
 				PACKAGE="enviMass"
 	)
-   	that1<-matrix(nrow=length(atPOSIX),ncol=(5+(4*length(lags))),that1);
+   	that1 <- matrix(nrow = length(atPOSIX), ncol = (5 + (4 * length(lags))), that1);
 	colnames(that1)<-c("above blank?","sampleID","blankID","sample_int","blank_int",rep("lag_int",length(lags)),rep("del_int",length(lags)),rep("max_time",length(lags)),rep("blind_int",length(lags)))	
-	what<-1 # !=1 -> get maximum intensities
-	that2<-.Call("meandel",
+	what <- 1 # !=1 -> get maximum intensities
+	that2 <- .Call("_enviMass_meandel",
 				as.numeric(timeset),
 				as.integer(subit),
 				as.numeric(subrat),
@@ -126,7 +126,7 @@ plotaprofile<-function(
 				as.numeric(lags),
 				as.numeric(threshold),
 				as.integer(notrend),
-				PACKAGE="enviMass"
+				PACKAGE = "enviMass"
 	)
 	############################################################################
 	# retrieve peak IDs ########################################################
