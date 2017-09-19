@@ -1014,7 +1014,7 @@
 				HTML('<hr noshade="noshade" />'),
 				sliderInput("ISnorm_percfiles", "Minimum of files covered by each IS profile (%)", min = 0, max = 100, value = 90, step= 1),
 				sliderInput("ISnorm_score", "Screening threshold", min = 0, max = 1, value = 0.8, step= .01),
-				numericInput("ISnorm_numbIS", "Minimum number of IS profiles", 15),
+				numericInput("ISnorm_numbIS", "Minimum number of IS profile peaks", 15),
 				HTML('<hr noshade="noshade" />'),
 				checkboxInput("ISnorm_medblank", "Show median deviation of blank/blind profiles?", FALSE),
 				checkboxInput("ISnorm_usesubblank", "Use subsampling", FALSE),
@@ -1382,7 +1382,9 @@
 										ratio between peak and median intensity; positive deviations hence indicate ISTD peak intensities above their longer-termed profile median. \n\n
 										Files are ordered by their Date/Time, with gray and orange lines highlighting sample and blank measurements, respectively. 
 										In turn, the red dots denote the median deviation over all internal standards for each such file; this value is then used for the intensity 
-										normalization of all peaks derived from a file. The red line in the lower panel highlights the number of such ISTD peaks found per file."),
+										normalization of all peaks derived from a file. The red line in the lower panel highlights the number of such ISTD peaks found per file. Please 
+										note that the intensity normalization is only conducted if the preset number of ISTD peaks was reached per file (red dashed line; cp. Settings -> 
+										Normalization -> Minimum number of IS profile peaks)."),
 									tags$p(align = "justify", "In comparison, the green and blue lines of this lower panel show the overall peak count for randomly sampled non-ISTD 
 										profiles which either contain blank peaks (blue line) or are not found by any picked peaks in blank measurements at all (green line). Their
 										median intensity deviations from the individual profile medians are shown as blue and green dots in the top panel, too.")
@@ -1433,7 +1435,9 @@
 										ratio between peak and median intensity; positive deviations hence indicate ISTD peak intensities above their longer-termed profile median. \n\n
 										Files are ordered by their Date/Time, with gray and orange lines highlighting sample and blank measurements, respectively. 
 										In turn, the red dots denote the median deviation over all internal standards for each such file; this value is then used for the intensity 
-										normalization of all peaks derived from a file. The red line in the lower panel highlights the number of such ISTD peaks found per file."),
+										normalization of all peaks derived from a file. The red line in the lower panel highlights the number of such ISTD peaks found per file. Please 
+										note that the intensity normalization is only conducted if the preset number of ISTD peaks was reached per file (red dashed line; cp. Settings -> 
+										Normalization -> Minimum number of IS profile peaks)."),
 									tags$p(align = "justify", "In comparison, the green and blue lines of this lower panel show the overall peak count for randomly sampled non-ISTD 
 										profiles which either contain blank peaks (blue line) or are not found by any picked peaks in blank measurements at all (green line). Their
 										median intensity deviations from the individual profile medians are shown as blue and green dots in the top panel, too.")

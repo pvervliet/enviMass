@@ -161,7 +161,7 @@ function(
 
 		########################################################################
 		plot.new()
-		plot.window(xlim = use_xlim, ylim = c(count_IS[1]-1, count_IS[2]+1))	
+		plot.window(xlim = use_xlim, ylim = c(count_IS[1]-1, max(c(count_IS[2]+1, as.numeric(logfile$parameters$ISnorm_numbIS)))))
 		for(k in 1:length(int_norm_ISTD$lis_delint_IS)){
 			if(timeset[k,3] != 0){
 				abline(v = k, col = "orange", lwd = 1)
@@ -181,6 +181,7 @@ function(
 			countit <- c(countit, length(int_norm_ISTD$lis_delint_IS[[k]]))	
 		}
 		lines(countit, col = "red", lwd = 1.5)
+		abline(h = as.numeric(logfile$parameters$ISnorm_numbIS), col = "red", lwd = 1, lty = 2)
 		mtext("Number of IS peaks", side = 2, line = 2.5, col = "red", cex = 1)			
 		if( logfile$parameters$ISnorm_medblank=="TRUE" ){	
 		plot.window( xlim = use_xlim, ylim = c(count_b[1] - 1, count_b[2] + 1) )	

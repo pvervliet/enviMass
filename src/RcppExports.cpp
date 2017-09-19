@@ -5,6 +5,31 @@
 
 using namespace Rcpp;
 
+// series_relat
+SEXP series_relat(SEXP homol_peaks_relat, SEXP range_mz, SEXP range_RT);
+RcppExport SEXP _enviMass_series_relat(SEXP homol_peaks_relatSEXP, SEXP range_mzSEXP, SEXP range_RTSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type homol_peaks_relat(homol_peaks_relatSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type range_mz(range_mzSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type range_RT(range_RTSEXP);
+    rcpp_result_gen = Rcpp::wrap(series_relat(homol_peaks_relat, range_mz, range_RT));
+    return rcpp_result_gen;
+END_RCPP
+}
+// moving_count
+SEXP moving_count(SEXP homol_peaks_relat, SEXP deldel);
+RcppExport SEXP _enviMass_moving_count(SEXP homol_peaks_relatSEXP, SEXP deldelSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type homol_peaks_relat(homol_peaks_relatSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type deldel(deldelSEXP);
+    rcpp_result_gen = Rcpp::wrap(moving_count(homol_peaks_relat, deldel));
+    return rcpp_result_gen;
+END_RCPP
+}
 // compare
 SEXP compare(SEXP a, SEXP b, SEXP results);
 RcppExport SEXP _enviMass_compare(SEXP aSEXP, SEXP bSEXP, SEXP resultsSEXP) {
@@ -272,6 +297,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_enviMass_series_relat", (DL_FUNC) &_enviMass_series_relat, 3},
+    {"_enviMass_moving_count", (DL_FUNC) &_enviMass_moving_count, 2},
     {"_enviMass_compare", (DL_FUNC) &_enviMass_compare, 3},
     {"_enviMass_correct_intens", (DL_FUNC) &_enviMass_correct_intens, 4},
     {"_enviMass_metagroup", (DL_FUNC) &_enviMass_metagroup, 2},

@@ -156,8 +156,8 @@
 			}
 			##########################################################################
 			# expand peak relations for faster plotting ##############################
-			max_at<-50000
-			homol_peaks_relat<-matrix(ncol=9,nrow=max_at)
+			max_at <- 50000
+			homol_peaks_relat <- matrix(ncol=9,nrow=max_at)
 			at<-1
 			for(i in 1:dim(homol[["Peaks in homologue series"]])[1]){
 				if(homol[["Peaks in homologue series"]][i,"HS IDs"]==0){next}
@@ -185,31 +185,31 @@
 				homol_peaks_relat[(at:(at+len-1)),9]<-homol[["Peaks in homologue series"]][those,"RT"]				
 				at<-(at+len)	
 			}
-			homol_peaks_relat<-homol_peaks_relat[1:(at-1),]
-			if(any(homol_peaks_relat[,3]<0)){stop("\n Debug do_homologues at homol_peaks_relat processing.")}
-			homol_peaks_relat<-homol_peaks_relat[order(homol_peaks_relat[,1],(1/homol_peaks_relat[,3])),]
+			homol_peaks_relat <- homol_peaks_relat[1:(at-1),]
+			if(any(homol_peaks_relat[,3] < 0)){stop("\n Debug do_homologues at homol_peaks_relat processing.")}
+			homol_peaks_relat <- homol_peaks_relat[order(homol_peaks_relat[,1],(1/homol_peaks_relat[,3])),]
 			# insert theta
-			range_mz<-(max(homol[["Peaks in homologue series"]][,"mz"])-min(homol[["Peaks in homologue series"]][,"mz"])) 
-			range_RT<-(max(homol[["Peaks in homologue series"]][,"RT"])-min(homol[["Peaks in homologue series"]][,"RT"])) 
-			homol_peaks_relat[,5]<-.Call("_enviMass_series_relat", 
+			range_mz <- (max(homol[["Peaks in homologue series"]][,"mz"])-min(homol[["Peaks in homologue series"]][,"mz"])) 
+			range_RT <- (max(homol[["Peaks in homologue series"]][,"RT"])-min(homol[["Peaks in homologue series"]][,"RT"])) 
+			homol_peaks_relat[,5] <- .Call("_enviMass_series_relat", 
 				homol_peaks_relat, 
 				range_mz,
 				range_RT,
-				PACKAGE="enviMass"
+				PACKAGE = "enviMass"
 			)
 			# resort to plot longest series segments on top of shorter ones
-			homol_peaks_relat<-homol_peaks_relat[order(homol_peaks_relat[,3],decreasing = FALSE),]
-			homol[[7]]<-homol_peaks_relat
-			names(homol)[7]<-"homol_peaks_relat"		
+			homol_peaks_relat <- homol_peaks_relat[order(homol_peaks_relat[,3] ,decreasing = FALSE),]
+			homol[[7]] <- homol_peaks_relat
+			names(homol)[7] <- "homol_peaks_relat"		
 			##########################################################################	
 			# intersect with target & ISTD screening results #########################
 			if(
-				(logfile$workflow[names(logfile$workflow)=="target_screen"]=="yes")	||
-				(logfile$workflow[names(logfile$workflow)=="IS_screen"]=="yes")
+				(logfile$workflow[names(logfile$workflow)=="target_screen"] == "yes")	||
+				(logfile$workflow[names(logfile$workflow)=="IS_screen"] == "yes")
 			){
 				cat("Annotating compounds ... ")
-				for_file<-as.numeric(measurements[b,"ID"])
-				for_mode<-measurements[b,"Mode"]
+				for_file <- as.numeric(measurements[b,"ID"])
+				for_mode <- measurements[b,"Mode"]
 				######################################################################
 				if(for_mode=="positive" & (any(intstand[,"ion_mode"] =="positive") || any(targets[,"ion_mode"] =="positive"))){
 					if(exists("profileList_pos_copy",envir=as.environment(".GlobalEnv"))){rm("profileList_pos_copy",envir=as.environment(".GlobalEnv"))}	

@@ -340,7 +340,7 @@ if(
 	save(profileList_pos, file = file.path(as.character(logfile[[1]]), "results", "profileList_pos"));
 	save(links_profiles_pos, file = file.path(as.character(logfile[[1]]), "results", "links_profiles_pos"));	
 	save(int_norm_ISTD_pos, file = file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"));
-	rm(links_profiles_pos, profileList_pos, int_norm_ISTD_pos)
+	rm(links_profiles_pos, profileList_pos)
 	####################################################################################
 
 }
@@ -664,7 +664,7 @@ if(
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 	save(links_profiles_neg,file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"));	
 	save(int_norm_ISTD_neg, file = file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg"));
-	rm(links_profiles_neg, profileList_neg, int_norm_ISTD_neg)
+	rm(links_profiles_neg, profileList_neg)
 	####################################################################################
 
 }

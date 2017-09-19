@@ -23,6 +23,106 @@ using namespace Rcpp;
 
 
 /******************************************************************************/
+/* calculate theta ************************************************************/
+/******************************************************************************/
+// [[Rcpp::export]]
+SEXP series_relat(
+    SEXP homol_peaks_relat,
+    SEXP range_mz,
+    SEXP range_RT
+){
+
+    PROTECT(homol_peaks_relat = AS_NUMERIC(homol_peaks_relat));
+    PROTECT(range_mz = AS_NUMERIC(range_mz));
+    PROTECT(range_RT = AS_NUMERIC(range_RT));
+
+    int len1 = (RRow(homol_peaks_relat)-1);
+    int i = 0, j = 0, n = 0, m = 0;
+    double aa = 0, ab = 0, a2 = 0, ba = 0 , bb = 0, b2 = 0, c2 = 0, to_cos, wink;
+
+    SEXP thetas = PROTECT(Rf_allocVector(REALSXP, (len1 + 1)));
+    for(i = 0;i <= len1; i++){
+        RVECTOR(thetas,i) = R_PosInf;
+    }
+
+    for(i = 0; i < len1; i++){
+        for(j = i; j <= len1; j++){
+            if( RMATRIX(homol_peaks_relat, j, 0) != RMATRIX(homol_peaks_relat, i, 0) ){
+                j--;
+                break;
+            }
+        }
+        if((j-i)> 0 ){
+            void R_CheckUserInterrupt(void);
+            for(m = i; m < j; m++){
+                aa = (RMATRIX(homol_peaks_relat,m,2) / RVECTOR(range_mz,0));
+                ba = (RMATRIX(homol_peaks_relat,m,3) / RVECTOR(range_RT,0));
+                for(n = (m + 1); n <= j; n++){
+                    ab = (RMATRIX(homol_peaks_relat,n,2) / RVECTOR(range_mz,0));
+                    bb = (RMATRIX(homol_peaks_relat,n,3) / RVECTOR(range_RT,0));
+                    a2 = ((aa * aa) + (ab * ab));
+                    b2 = ((ba * ba) + (bb * bb));
+                    c2 = sqrt(a2 * b2);
+                    to_cos = (  ((aa * ba) + (ab * bb))   /   c2  );
+                    if(ISNA(to_cos) || ISNAN(to_cos)){
+                        wink = 0;
+                    }else{
+                        wink = acos(to_cos);
+                        wink = (wink * 180 / M_PI);
+                    }
+                    if(!R_FINITE(RVECTOR(thetas, n)) || wink<abs(RVECTOR(thetas, n))){
+                        RVECTOR(thetas,n) = wink;
+                    }
+                }
+            }
+            i = j;
+        }
+    }
+
+    UNPROTECT(4);
+    return thetas;
+
+}
+
+
+/******************************************************************************/
+/* calculate moving counts ****************************************************/
+/******************************************************************************/
+// [[Rcpp::export]]
+SEXP moving_count(
+    SEXP homol_peaks_relat,
+    SEXP deldel
+){
+
+    PROTECT(homol_peaks_relat = AS_NUMERIC(homol_peaks_relat));
+    PROTECT(deldel = AS_NUMERIC(deldel));
+    int len = RRow(homol_peaks_relat);
+    int i=0,n=0;
+
+    SEXP counts = PROTECT(Rf_allocVector(REALSXP,len));
+    for(i = 0; i < len; i++){
+        RVECTOR(counts, i) = 1;
+    }
+
+    for(i = 0; i < (len - 1); i++){
+        void R_CheckUserInterrupt(void);
+        for(n = (i + 1); n < len; n++){
+            if((RMATRIX(homol_peaks_relat, n, 2) - RMATRIX(homol_peaks_relat, i, 2)) <= RVECTOR(deldel, 0)){
+                RVECTOR(counts, i)++;
+                RVECTOR(counts, n)++;
+            }else{
+                break;
+            }
+        }
+    }
+
+    UNPROTECT(3);
+    return counts;
+
+}
+
+
+/******************************************************************************/
 /* compare row-wise ***********************************************************/
 /******************************************************************************/
 // [[Rcpp::export]]
@@ -34,22 +134,22 @@ SEXP compare(
         PROTECT(a = AS_NUMERIC(a));
         PROTECT(b = AS_NUMERIC(b));
         PROTECT(results = AS_NUMERIC(results));
-        int dims, len1, len2, i=0, m=0, n=0;
-        len1=RRow(a);
-        len2=RRow(b);
-        dims=RCol(a);
+        int dims, len1, len2, i = 0, m = 0, n = 0;
+        len1 = RRow(a);
+        len2 = RRow(b);
+        dims = RCol(a);
 
-        for(i=0;i<len1;i++){
-            for(m=0;m<dims;m++){
-                while( RMATRIX(b,n,m)<RMATRIX(a,i,m) ){
+        for(i = 0; i < len1; i++){
+            for(m = 0; m < dims; m++){
+                while( RMATRIX(b, n, m) < RMATRIX(a, i, m) ){
                     n++;
-                    if(n>=len2){break;}
+                    if(n >= len2){break;}
                 }
-                if(n>=len2){break;}
-                if(RMATRIX(b,n,m)>RMATRIX(a,i,m)){break;}
-                if(m==(dims-1)){RMATRIX(results,i,0)=(n+1);}
+                if(n >= len2){break;}
+                if(RMATRIX(b, n, m) > RMATRIX(a, i, m)){break;}
+                if(m == (dims - 1)){RMATRIX(results, i, 0) = (n + 1);}
             }
-            if(n>=len2){break;}
+            if(n >= len2){break;}
         }
 
         UNPROTECT(3);
@@ -122,28 +222,28 @@ SEXP metagroup(
             int *profto2;
             profto2 = INTEGER_POINTER(profto);
             int leng = LENGTH(proffrom);
-            int n,m,g,k,atwhat,atto_n,atfrom_n,stay;
+            int n, m, g, k, atwhat, atto_n, atfrom_n, stay;
 
             SEXP group;
             PROTECT(group = NEW_INTEGER(leng));
             int *grouped;
             grouped = INTEGER_POINTER(group);
-            for(n=0;n<leng;n++){*(grouped+n) = 0;}
+            for(n = 0; n < leng; n++){*(grouped+n) = 0;}
             SEXP from;
             PROTECT(from = NEW_INTEGER(leng));
             int *atfrom;    /* stores indices */
             atfrom = INTEGER_POINTER(from);
-            for(n=0;n<leng;n++){*(atfrom+n) = 0;}
-            SEXP to=0;        /* stores profile IDs */
+            for(n = 0; n < leng; n++){*(atfrom + n) = 0;}
+            SEXP to = 0;        /* stores profile IDs */
             PROTECT(to = NEW_INTEGER(leng));
             int *atto;
             atto = INTEGER_POINTER(to);
-            for(n=0;n<leng;n++){*(atto+n) = 0;}
+            for(n = 0; n < leng; n++){*(atto+n) = 0;}
 
-            g=1;
-            for(n=0;n<leng;n++){
-                if(*(grouped+n)==0){
-                    *(grouped+n)=g;
+            g = 1;
+            for(n = 0; n < leng; n++){
+                if(*(grouped+n) == 0){
+                    *(grouped+n) = g;
                     /* initialize  */
                     *(atto)=*(proffrom2+n); /* cause it could be there repeatedly */
                     *(atto+1)=*(profto2+n);
