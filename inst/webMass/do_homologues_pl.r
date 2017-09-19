@@ -8,6 +8,8 @@
 	}else{
 		for_IDs<-measurements[(measurements$include=="TRUE") & (measurements$homologues=="FALSE") ,]$ID		
 	}
+	intstand <- read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+	targets <- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
 	####################################################################################	
 	if(length(for_IDs)){
 		if(logfile$parameters$homol_units[1]!="FALSE"){
@@ -24,12 +26,11 @@
 			use_maxmz<-as.numeric(logfile$parameters$homol_maxmz)		
 		}
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
-		clusterExport(cl = clus, varlist = c("mzfilter", "elements", "use_minmz", "use_maxmz", "isotopes"), envir = environment())
+		clusterExport(cl = clus, varlist = c("mzfilter", "elements", "use_minmz", "use_maxmz", "isotopes", "measurements", "intstand", "targets"), envir = environment())
 		cluster_results <- clusterApplyLB(cl = clus, 
 			x = for_IDs, 
 			fun = enviMass:::homol_search2_wrap, 
-			logfile = logfile,
-			measurements = measurements
+			logfile = logfile
 		)
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 	}
