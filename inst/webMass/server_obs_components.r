@@ -21,30 +21,30 @@ observe({ # - A
 	input$sel_meas_comp 
 	if(verbose){cat("\n in Comp_A")}
 	if(isolate(init$a)=="TRUE"){
-		do_isot<-(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes")
-		do_addu<-(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes")
-		do_homol<-(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes")	
-		do_EIC<-(logfile$workflow[names(logfile$workflow)=="EIC_correlation"]=="yes")
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		do_isot <- (logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes")
+		do_addu <- (logfile$workflow[names(logfile$workflow)=="adducts"]=="yes")
+		do_homol <- (logfile$workflow[names(logfile$workflow)=="homologues"]=="yes")	
+		do_EIC <- (logfile$workflow[names(logfile$workflow)=="EIC_correlation"]=="yes")
+		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if( 
 			(!is.na(isolate(input$sel_meas_comp))) &
-			(isolate(input$sel_meas_comp)!="") &
-			(any(measurements$ID==isolate(input$sel_meas_comp))) # check existence ...
+			(isolate(input$sel_meas_comp) != "") &
+			(any(measurements$ID == isolate(input$sel_meas_comp))) # check existence ...
 		){ # ... finds emtpy folder otherwise
-			output$sel_meas_comp_state<-renderText("For this file:")
-			output$comp_file_name<-renderText(paste("File name: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_comp)),"Name"],sep=""))
-			output$comp_file_type<-renderText(paste("File type: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_comp)),"Type"],sep=""))
-			output$comp_file_mode<-renderText(paste("Ionization mode: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas_comp)),"Mode"],sep=""))
+			output$sel_meas_comp_state <- renderText("For this file:")
+			output$comp_file_name <- renderText(paste("File name: ", measurements[measurements[,"ID"] == as.character(isolate(input$sel_meas_comp)),"Name"],sep=""))
+			output$comp_file_type <- renderText(paste("File type: ", measurements[measurements[,"ID"] == as.character(isolate(input$sel_meas_comp)),"Type"],sep=""))
+			output$comp_file_mode <- renderText(paste("Ionization mode: ", measurements[measurements[,"ID"] == as.character(isolate(input$sel_meas_comp)),"Mode"],sep=""))
 			#####################################################################
 			# on centroid data ##################################################
-			load(file.path(logfile[[1]],"MSlist",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv"))  
-			load(file.path(logfile[[1]],"peaklist",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv")) 
+			load(file.path(logfile[[1]], "MSlist", isolate(input$sel_meas_comp)), envir = as.environment(".GlobalEnv"))  
+			load(file.path(logfile[[1]], "peaklist", isolate(input$sel_meas_comp)), envir = as.environment(".GlobalEnv")) 
 			#####################################################################
 			# on isotopologues & adducts ########################################
 			if( 
-				file.exists(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp))) &
+				file.exists(file.path(logfile[[1]], "results", "componentization", "components", isolate(input$sel_meas_comp))) &
 				(do_isot | do_addu) &
-				measurements[measurements$ID==isolate(input$sel_meas_comp),"include"]=="TRUE"
+				(measurements[measurements$ID==isolate(input$sel_meas_comp),"include"] == "TRUE")
 			){
 				#################################################################
 				if(do_isot){ # update selection entries for the atom bound estimations
@@ -66,11 +66,11 @@ observe({ # - A
 				cat("\n Loaded file")
 				# output components summary table ################################
 				if(!is.null(dim(component[["pattern peak list"]]))){
-					num_peaks_remain<-dim(component[["pattern peak list"]])[1]
-					max_peak_ID<<-max(component[["pattern peak list"]][,"peak ID"])
+					num_peaks_remain <- dim(component[["pattern peak list"]])[1]
+					max_peak_ID <<- max(component[["pattern peak list"]][,"peak ID"])
 				}else{
-					num_peaks_remain<-dim(component[["adduct peak list"]])[1]
-					max_peak_ID<<-max(component[["adduct peak list"]][,"peak ID"])
+					num_peaks_remain <- dim(component[["adduct peak list"]])[1]
+					max_peak_ID <<- max(component[["adduct peak list"]][,"peak ID"])
 				}
 				num_comp<-dim(component[["Components"]])[1]
 				num_comp_tar<-sum(component[["Components"]][,"Target peaks"]!="-")
@@ -121,7 +121,7 @@ observe({ # - A
 				output$max_size_comp<-renderText(paste("Max number of peaks in a component: ",as.character(max_size_comp),sep=""))				
 				output$num_comp_nontarget<-renderText(paste("Number of nontarget components with at least one non-blind peak: ",as.character(comp_nontarget),sep=""))
 				# output component table #########################################
-				comp_table_full<<-component[["Components"]][,c(
+				comp_table_full <<- component[["Components"]][,c(
 					"Component ID |",
 					"Monois. peak ID |",
 					"Monois. m/z |",
@@ -140,7 +140,7 @@ observe({ # - A
 					"Total peak number",
 					"Blind peak number",
 					"z"
-				),drop=FALSE]
+				), drop = FALSE]
 				comp_table_full[,4]<-round(comp_table_full[,4],digits=2)
 				comp_table_full[,5]<-(comp_table_full[,5]/60)
 				comp_table_full[,5]<-round(comp_table_full[,5],digits=2)				

@@ -1,7 +1,7 @@
 # Run homologue series detection
 	
 	####################################################################################
-    measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+    measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character");
 	#measurements[,names(measurements)=="homologues"]<-"FALSE"
 	if(mute(logfile$parameters$prof_select=="TRUE")){
 		for_IDs<-measurements[(measurements$include=="TRUE") & (measurements$homologues=="FALSE") & (measurements$profiled!="FALSE"),]$ID
@@ -35,10 +35,9 @@
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 	}
 	measurements[!is.na(match(measurements$ID, for_IDs)),"homologues"] <- "TRUE"
-	write.csv(measurements,file=file.path(logfile[[1]], "dataframes", "measurements"), row.names = FALSE);
-	rm(measurements)	
+	write.csv(measurements,file=file.path(logfile[[1]], "dataframes", "measurements"), row.names = FALSE);	
 	####################################################################################	
-	rm(mzfilter, elements, use_minmz, use_maxmz, measurements, use_mztol)
+	rm(mzfilter, elements, use_minmz, use_maxmz, measurements)
 	####################################################################################	
 
 	

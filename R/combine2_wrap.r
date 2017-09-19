@@ -49,16 +49,30 @@ function(
 		homol, 
 		rules = c(FALSE, FALSE, FALSE), 
 		dont = FALSE
-	)	
+	)		
 	component[[1]][,17]<-as.character(component[[1]][,17]) # please debug in nontarget!
 	component[[1]][,18]<-as.character(component[[1]][,18]) # please debug in nontarget!
 	named<-colnames(component[[1]]) # add 2 columns for target / ISTD screening intersection
-	component[[1]]<-cbind(component[[1]],rep("-",dim(component[[1]])[1]),rep("-",dim(component[[1]])[1]),rep("-",dim(component[[1]])[1]),rep("-",dim(component[[1]])[1]))
+	component[[1]]<-cbind(
+		component[[1]],
+		rep("-",dim(component[[1]])[1]),
+		rep("-",dim(component[[1]])[1]),
+		rep(0,dim(component[[1]])[1]),
+		rep(0,dim(component[[1]])[1]),
+		rep(0,dim(component[[1]])[1]),
+		rep(0,dim(component[[1]])[1]),
+		rep(0,dim(component[[1]])[1]),
+		rep(0,dim(component[[1]])[1]),
+		rep(0,dim(component[[1]])[1])
+	)
 	component[[1]][,19]<-as.character(component[[1]][,19]) # please debug in nontarget!
 	component[[1]][,20]<-as.character(component[[1]][,20]) # please debug in nontarget!
-	component[[1]][,21]<-as.character(component[[1]][,21]) # please debug in nontarget!
-	component[[1]][,22]<-as.character(component[[1]][,22]) # please debug in nontarget!
-	colnames(component[[1]])<-c(named,"Target peaks","ISTD peaks","Total peak number","Blind peak number")
+	#component[[1]][,21]<-as.character(component[[1]][,21]) # please debug in nontarget!
+	#component[[1]][,22]<-as.character(component[[1]][,22]) # please debug in nontarget!
+	colnames(component[[1]])<-c(named,
+		"Target peaks","ISTD peaks","Total peak number","Blind peak number",
+		"Monois. peak ID |","Monois. m/z |","Monois. RT |","Monois. int. |","Monois. sample/blind int. ratio"
+	)
 	##########################################################################
 	# extend component table (1) - mark TARGET peaks #########################
 	# feasible via profileList_XXX_copy and links_peaks_pos
