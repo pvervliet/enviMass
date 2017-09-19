@@ -7,6 +7,8 @@
 # REMOVE OLD RESULTS ###################################################################
 if(file.exists(file.path(as.character(logfile[[1]]),"results","links_profiles_pos"))){file.remove(file.path(as.character(logfile[[1]]),"results","links_profiles_pos"))}
 if(file.exists(file.path(as.character(logfile[[1]]),"results","links_profiles_neg"))){file.remove(file.path(as.character(logfile[[1]]),"results","links_profiles_neg"))}
+if(file.exists(file.path(as.character(logfile[[1]]),"results","int_norm_ISTD_pos"))){file.remove(file.path(as.character(logfile[[1]]),"results","int_norm_ISTD_pos"))}
+if(file.exists(file.path(as.character(logfile[[1]]),"results","int_norm_ISTD_neg"))){file.remove(file.path(as.character(logfile[[1]]),"results","int_norm_ISTD_neg"))}
 if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 if(any(objects()=="profileList_pos")){rm(profileList_pos)}	
 if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_pos")){rm(links_peaks_pos,envir=as.environment(".GlobalEnv"))}
@@ -20,8 +22,6 @@ if(any(objects()=="links_peaks_neg")){rm(links_peaks_neg)}
 if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_neg")){rm(links_profiles_neg,envir=as.environment(".GlobalEnv"))}
 if(any(objects()=="links_profiles_neg")){rm(links_profiles_neg)}	
 ########################################################################################
-
-
 
 
 
@@ -209,11 +209,11 @@ if(
 		}	
 	}
 	# -> screen other profiles #########################################################
-	if( logfile$parameters$ISnorm_medblank == "TRUE" || logfile$parameters$ISnorm_medsam == "TRUE" ){
-		lis_delint_nb <- list()
-		lis_median_nb <- list()
-		lis_delint_b <- list()
-		lis_median_b <- list()			
+	lis_delint_nb <- list()
+	lis_median_nb <- list()
+	lis_delint_b <- list()
+	lis_median_b <- list()	
+	if( logfile$parameters$ISnorm_medblank == "TRUE" || logfile$parameters$ISnorm_medsam == "TRUE" ){		
 		################################################################################
 		if(logfile$parameters$ISnorm_medsam == "TRUE"){
 			sam_IDs <- profileList_pos[["sampleID"]][profileList_pos[["type"]] != "blank"]
@@ -232,7 +232,8 @@ if(
 				ids_nb <- ids_nb[unused_profile[ids_nb]]
 			}
 			if(logfile$parameters$ISnorm_usesubsam == "TRUE" & (length(ids_nb) > as.numeric(logfile$parameters$ISnorm_numsam))){
-				ids_nb <- ids_nb[1:as.numeric(logfile$parameters$ISnorm_numsam)]
+				ids_nb <- sample(ids_nb, size = as.numeric(logfile$parameters$ISnorm_numsam), replace = FALSE)
+				#ids_nb <- ids_nb[1:as.numeric(logfile$parameters$ISnorm_numsam)]
 			}
 			if( length(ids_nb) ){
 				for(i in ids_nb){
@@ -262,7 +263,8 @@ if(
 				ids_b <- ids_b[unused_profile[ids_b]]
 			}
 			if(logfile$parameters$ISnorm_usesubblank == "TRUE" & (length(ids_b) > as.numeric(logfile$parameters$ISnorm_numblank))){
-				ids_b <- ids_b[1:as.numeric(logfile$parameters$ISnorm_numblank)]
+				ids_b <- sample(ids_b, size = as.numeric(logfile$parameters$ISnorm_numblank), replace = FALSE)
+				#ids_b <- ids_b[1:as.numeric(logfile$parameters$ISnorm_numblank)]
 			}
 			if( length(ids_b) ){
 				for(i in ids_b){
@@ -301,27 +303,37 @@ if(
 		profileList_pos[["index_prof"]][k,"mean_int"] <- mean(profileList_pos[["peaks"]][(profileList_pos[["index_prof"]][k,"start_ID"]:profileList_pos[["index_prof"]][k,"end_ID"]),"intensity"])
 	}
 	# -> data structure to store results for later / intermediate plotting #############
-	int_norm_ISTD_pos <- list()
-	int_norm_ISTD_pos[[1]] <- lis_delint_IS
-	int_norm_ISTD_pos[[2]] <- lis_median_IS
+	int_norm_ISTD_pos <<- list()
+	int_norm_ISTD_pos[[1]] <<- lis_delint_IS
+	int_norm_ISTD_pos[[2]] <<- lis_median_IS
 	#int_norm_ISTD_pos[[3]] <- lis_RT_IS
-	int_norm_ISTD_pos[[4]] <- use_corfac
-	int_norm_ISTD_pos[[5]] <- lis_delint_nb
-	int_norm_ISTD_pos[[6]] <- lis_median_nb
-	int_norm_ISTD_pos[[7]] <- lis_delint_b
-	int_norm_ISTD_pos[[8]] <- lis_median_b
-	int_norm_ISTD_pos[[9]] <- profileList_pos[["datetime"]]
-	int_norm_ISTD_pos[[10]] <- profileList_pos[["type"]]
-	int_norm_ISTD_pos[[11]] <- profileList_pos[["sampleID"]]	
-	names(int_norm_ISTD_pos) <- c("lis_delint_IS", " lis_median_IS", "lis_RT_IS", "use_corfac", "lis_delint_nb", 
+	int_norm_ISTD_pos[[4]] <<- use_corfac
+	int_norm_ISTD_pos[[5]] <<- lis_delint_nb
+	int_norm_ISTD_pos[[6]] <<- lis_median_nb
+	int_norm_ISTD_pos[[7]] <<- lis_delint_b
+	int_norm_ISTD_pos[[8]] <<- lis_median_b
+	int_norm_ISTD_pos[[9]] <<- profileList_pos[["datetime"]]
+	int_norm_ISTD_pos[[10]] <<- profileList_pos[["type"]]
+	int_norm_ISTD_pos[[11]] <<- profileList_pos[["sampleID"]]	
+	names(int_norm_ISTD_pos) <<- c("lis_delint_IS", " lis_median_IS", "lis_RT_IS", "use_corfac", "lis_delint_nb", 
 		"lis_median_nb", "lis_delint_b", "lis_median_b", "atPOSIX", "sampletype", "sampleID")
 	# -> save data & derive plots ######################################################
-	
-
-
-
-
-
+	output$int_norm_ISTD_pos_median <- renderPlot({   
+		par(mar = c(.2, 4.5, .9, 8))
+		enviMass:::plot_ISTD_norm(
+			int_norm_ISTD = int_norm_ISTD_pos,
+			logfile = logfile,
+			what = "normalization"
+		)
+	},res = 100) 
+	output$int_norm_ISTD_pos_counts <- renderPlot({   
+		par(mar = c(4.5, 4.5, .9, 8))
+		enviMass:::plot_ISTD_norm(
+			int_norm_ISTD = int_norm_ISTD_pos,
+			logfile = logfile,
+			what = "counts"
+		)
+	},res = 100) 					
 	####################################################################################
 
 	# -> save data #####################################################################
@@ -491,18 +503,168 @@ if(
 
 	####################################################################################
 	# run normalization ################################################################
-
-
-
-
-
-
+	# -> screen IS intensity profiles ##################################################
+	min_count <- floor(length(profileList_neg[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles) / 100);
+	lis_delint_IS <- list()
+	lis_median_IS <- list()
+	#lis_RT_IS <- list()
+	for(p in 1:length(profileList_neg[["sampleID"]])){
+		lis_delint_IS[[p]] <- numeric(0)
+		lis_median_IS[[p]] <- numeric(0)
+		#lis_RT_IS[[p]] <- numeric(0)
+	}
+	unused_profile <- rep(TRUE, dim(profileList_neg[["index_prof"]])[1])
+	for(i in 1:length(links_profiles_neg)){
+		if(!length(links_profiles_neg[[i]]$IS)) next
+		these <- which((links_profiles_neg[[i]]$IS$Counts >= min_count) & (links_profiles_neg[[i]]$IS$max_score >= as.numeric(logfile$parameters$ISnorm_score) ) )
+		if(!length(these)) next
+		at_profile <- as.numeric(names(links_profiles_neg)[i])
+		unused_profile[at_profile] <- FALSE
+		if(profileList_neg[["index_prof"]][at_profile,"number_peaks_total"] < min_count) next
+		for_peaks <- profileList_neg[["index_prof"]][at_profile,"start_ID"]:profileList_neg[["index_prof"]][at_profile,"end_ID"]
+		median_intensity <- median( log10(profileList_neg[["peaks"]][for_peaks, "intensity"]) )
+		for(j in for_peaks){
+			at_file <- match(profileList_neg[["peaks"]][j,"sampleIDs"], profileList_neg[["sampleID"]])
+			at_int <- log10(profileList_neg[["peaks"]][j,"intensity"][[1]])
+			#at_RT <- profileList_neg[["peaks"]][j,"RT"]
+			lis_delint_IS[[at_file]] <- c(lis_delint_IS[[at_file]], (at_int - median_intensity))
+			lis_median_IS[[at_file]] <- c(lis_median_IS[[at_file]], median_intensity)
+			#lis_RT_IS[[at_file]] <- c(lis_RT_IS[[at_file]], at_RT)
+		}	
+	}
+	# -> screen other profiles #########################################################
+	lis_delint_nb <- list()
+	lis_median_nb <- list()
+	lis_delint_b <- list()
+	lis_median_b <- list()	
+	if( logfile$parameters$ISnorm_medblank == "TRUE" || logfile$parameters$ISnorm_medsam == "TRUE" ){		
+		################################################################################
+		if(logfile$parameters$ISnorm_medsam == "TRUE"){
+			sam_IDs <- profileList_neg[["sampleID"]][profileList_neg[["type"]] != "blank"]
+			for(p in 1:length(sam_IDs)){
+				lis_delint_nb[[p]] <- numeric(0)
+				lis_median_nb[[p]] <- numeric(0)
+			}
+			names(lis_delint_nb) <- sam_IDs
+			names(lis_median_nb) <- sam_IDs
+			ids_nb <- order(profileList_neg[["index_prof"]][,"number_peaks_sample"], decreasing = TRUE) 
+			ids_nb <- ids_nb[
+				( profileList_neg[["index_prof"]][ids_nb, "number_peaks_sample"] > 0 ) & 
+				( profileList_neg[["index_prof"]][ids_nb, "number_peaks_blind"] == 0 )
+			]
+			if( length(ids_nb) ){
+				ids_nb <- ids_nb[unused_profile[ids_nb]]
+			}
+			if(logfile$parameters$ISnorm_usesubsam == "TRUE" & (length(ids_nb) > as.numeric(logfile$parameters$ISnorm_numsam))){
+				ids_nb <- sample(ids_nb, size = as.numeric(logfile$parameters$ISnorm_numsam), replace = FALSE)
+				#ids_nb <- ids_nb[1:as.numeric(logfile$parameters$ISnorm_numsam)]
+			}
+			if( length(ids_nb) ){
+				for(i in ids_nb){
+					for_peaks <- profileList_neg[["index_prof"]][i,"start_ID"]:profileList_neg[["index_prof"]][i,"end_ID"]
+					median_intensity <- median( log10(profileList_neg[["peaks"]][for_peaks, "intensity"]) )
+					for(j in for_peaks){
+						at_file <- match(profileList_neg[["peaks"]][j, "sampleIDs"], sam_IDs)
+						at_int <- log10(profileList_neg[["peaks"]][j, "intensity"][[1]])
+						lis_delint_nb[[at_file]] <- c(lis_delint_nb[[at_file]], (at_int - median_intensity))
+						lis_median_nb[[at_file]] <- c(lis_median_nb[[at_file]], median_intensity)
+					}	
+				}
+			}
+		}
+		################################################################################
+		if(logfile$parameters$ISnorm_medblank == "TRUE"){
+			blank_IDs <- profileList_neg[["sampleID"]][profileList_neg[["type"]] == "blank"]
+			for(p in 1:length(profileList_neg[["sampleID"]])){
+				lis_delint_b[[p]] <- numeric(0)
+				lis_median_b[[p]] <- numeric(0)
+			}		
+			names(lis_delint_b) <- blank_IDs 
+			names(lis_median_b) <- blank_IDs 
+			ids_b <- order(profileList_neg[["index_prof"]][, "number_peaks_blind"], decreasing =TRUE) 
+			ids_b <- ids_b[( profileList_neg[["index_prof"]][ids_b, "number_peaks_blind"] > 0 )]
+			if( length(ids_b) ){
+				ids_b <- ids_b[unused_profile[ids_b]]
+			}
+			if(logfile$parameters$ISnorm_usesubblank == "TRUE" & (length(ids_b) > as.numeric(logfile$parameters$ISnorm_numblank))){
+				ids_b <- sample(ids_b, size = as.numeric(logfile$parameters$ISnorm_numblank), replace = FALSE)
+				#ids_b <- ids_b[1:as.numeric(logfile$parameters$ISnorm_numblank)]
+			}
+			if( length(ids_b) ){
+				for(i in ids_b){
+					for_peaks <- profileList_neg[["index_prof"]][i,"start_ID"]:profileList_neg[["index_prof"]][i,"end_ID"]
+					median_intensity <- median( log10(profileList_neg[["peaks"]][for_peaks, "intensity"]) )
+					for(j in for_peaks){
+						at_file <- match(profileList_neg[["peaks"]][j, "sampleIDs"], sam_IDs)
+						at_int <- log10(profileList_neg[["peaks"]][j, "intensity"][[1]])
+						lis_delint_b[[at_file]] <- c(lis_delint_b[[at_file]], (at_int - median_intensity))
+						lis_median_b[[at_file]] <- c(lis_median_b[[at_file]], median_intensity)
+					}	
+				}
+			}
+		}
+		################################################################################
+	}
+	# -> correct intensities - replace in profileList, recalculate mean_int ############
+	corfac <- rep(1, length(lis_delint_IS)) # default: no correction, factor =1
+	use_corfac <- rep(FALSE, length(lis_delint_IS))
+	for(k in 1:length(lis_delint_IS)){
+		if( length(lis_delint_IS[[k]]) >= as.numeric(logfile$parameters$ISnorm_numbIS) ){
+			corfac[k] <- (10 ^ median(lis_delint_IS[[k]]))
+			use_corfac[k] <- TRUE 
+		}
+	}
+	sampleID <- profileList_neg[["sampleID"]];
+	corr_intens <- .Call("_enviMass_correct_intens",
+						as.numeric(corfac),	  # correction factor
+						as.integer(sampleID),       
+						as.numeric(profileList_neg[["peaks"]][,"intensity"]), # intensities
+						as.integer(profileList_neg[["peaks"]][,"sampleIDs"]),  
+						PACKAGE = "enviMass"
+					)
+	profileList_neg[["peaks"]][,"intensity"] <- corr_intens
+	for(k in 1:dim(profileList_neg[["index_prof"]])[1]){
+		profileList_neg[["index_prof"]][k,"mean_int"] <- mean(profileList_neg[["peaks"]][(profileList_neg[["index_prof"]][k,"start_ID"]:profileList_neg[["index_prof"]][k,"end_ID"]),"intensity"])
+	}
+	# -> data structure to store results for later / intermediate plotting #############
+	int_norm_ISTD_neg <<- list()
+	int_norm_ISTD_neg[[1]] <<- lis_delint_IS
+	int_norm_ISTD_neg[[2]] <<- lis_median_IS
+	#int_norm_ISTD_neg[[3]] <<- lis_RT_IS
+	int_norm_ISTD_neg[[4]] <<- use_corfac
+	int_norm_ISTD_neg[[5]] <<- lis_delint_nb
+	int_norm_ISTD_neg[[6]] <<- lis_median_nb
+	int_norm_ISTD_neg[[7]] <<- lis_delint_b
+	int_norm_ISTD_neg[[8]] <<- lis_median_b
+	int_norm_ISTD_neg[[9]] <<- profileList_neg[["datetime"]]
+	int_norm_ISTD_neg[[10]] <<- profileList_neg[["type"]]
+	int_norm_ISTD_neg[[11]] <<- profileList_neg[["sampleID"]]	
+	names(int_norm_ISTD_neg) <<- c("lis_delint_IS", " lis_median_IS", "lis_RT_IS", "use_corfac", "lis_delint_nb", 
+		"lis_median_nb", "lis_delint_b", "lis_median_b", "atPOSIX", "sampletype", "sampleID")
+	# -> save data & derive plots ######################################################
+	output$int_norm_ISTD_neg_median <- renderPlot({   
+		par(mar = c(.2, 4.5, .9, 8))
+		enviMass:::plot_ISTD_norm(
+			int_norm_ISTD = int_norm_ISTD_neg,
+			logfile = logfile,
+			what = "normalization"
+		)
+	},res = 100) 
+	output$int_norm_ISTD_neg_counts <- renderPlot({   
+		par(mar = c(4.5, 4.5, .9, 8))
+		enviMass:::plot_ISTD_norm(
+			int_norm_ISTD = int_norm_ISTD_neg,
+			logfile = logfile,
+			what = "counts"
+		)
+	},res = 100) 					
 	####################################################################################
 
 	####################################################################################
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 	save(links_profiles_neg,file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"));	
-	rm(links_profiles_neg,profileList_neg)
+	save(int_norm_ISTD_neg, file = file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg"));
+	rm(links_profiles_neg, profileList_neg, int_norm_ISTD_neg)
 	####################################################################################
 
 }

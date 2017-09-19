@@ -2093,6 +2093,11 @@ if(logfile$version < 3.4){
 		logfile$parameters$verbose<<-"TRUE"
 	}
 	################################################################################################	
+	if(!any(names(logfile) == "isotopes")){
+		logfile[[9]] <<- "";
+		names(logfile)[9] <<- c("isotopes")
+	}
+	################################################################################################	
 #logfile$version<<-3.4
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));

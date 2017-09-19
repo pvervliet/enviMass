@@ -35,7 +35,11 @@ maincalc <- reactive({
 		if(do_flow == 0){	# check only once, initially at do_flow==0! really?
 			enviMass::reset_selections(session)
     		if( (isolate(input$ignore_large_files) == "TRUE") || (logfile$parameters$is_example == "TRUE")){ ignorefiles <- TRUE }else{ ignorefiles <- FALSE }
-			say <- enviMass::check_project(isotopes, adducts, skipcheck = isolate(input$do_project_check), ignorefiles = ignorefiles, write_tables = FALSE); # because of write_tables=TRUE only here, this check must remain here!
+			say <- enviMass::check_project(
+				isotopes, adducts, 
+				skipcheck = isolate(input$do_project_check), 
+				ignorefiles = ignorefiles, 
+				write_tables = FALSE); # because of write_tables = TRUE only here, this check must remain here!
 			output$dowhat <<- renderText(say)
 			enviMass::reset_selections(session)
 		}else{

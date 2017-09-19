@@ -14,37 +14,59 @@
 #' @details enviMass workflow function; run before further calculations are started in the workflow.
 #' 
 
-check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write_tables=FALSE,...){
+check_project<-function(
+	isotopes,
+	adducts,
+	skipcheck = FALSE,
+	ignorefiles = FALSE,
+	write_tables = FALSE,
+	...
+){
 	
-	say<-"Project consistent"
+	say <- "Project consistent"
 	if(skipcheck){
 		return(say);
 	}
-	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in check_project.r!")}
+	if(any(ls() == "logfile")){stop("\n illegal logfile detected #1 in check_project.r!")}
 	###############################################################################	
-	if(!all(names(logfile)==c("project_folder","Tasks_to_redo","summary","PW MSconvert path","parameters","workflow",
-	"adducts_pos","adducts_neg","isotopes","version","workflow_depend","workflow_must","Positive_subtraction_files",
-	"Negative_subtraction_files","adducts_pos_group","adducts_neg_group"))){
-		say<-"Your logfile is corrupted _1, serious debug required!"
+	if(!all(names(logfile) == c(
+		"project_folder",
+		"Tasks_to_redo",
+		"summary",
+		"PW MSconvert path",
+		"parameters",
+		"workflow",
+		"adducts_pos",
+		"adducts_neg",
+		"isotopes",
+		"version",
+		"workflow_depend",
+		"workflow_must",
+		"Positive_subtraction_files",
+		"Negative_subtraction_files",
+		"adducts_pos_group",
+		"adducts_neg_group"))
+	){
+		say <- "Your logfile is corrupted _1,  project debug required!"
 	}
 	###############################################################################
 	# on parallelization: #########################################################
 	if( (logfile$parameters$parallel == "TRUE") & (logfile$parameters$parallel_restrict == "TRUE") ){
 		available_num_cores <- detectCores(all.tests = FALSE, logical = TRUE)
 		if(available_num_cores < as.numeric(logfile$parameters$parallel_cores)){
-			say <- "Set number of cores/threads to restrict to for parallel processing exceeds available number for your computer.
-				Revise settings under Settings -> General -> Multi-core processing"
+			say <- "Selected number of cores/threads to restrict to for parallel processing exceeds available number for your computer.
+				Please revise settings under Settings -> General -> Multi-core processing."
 		}
 	}
 	###############################################################################
 	# wrong upstream "must not" executions? #######################################
-	must<-logfile[[12]]
+	must <- logfile[[12]]
 	for(i in 1:length(must[1,])){
 		for(j in 1:length(must[,i])){	
-			if(must[j,i]==-1){
-				if(logfile$workflow[names(logfile$workflow)==colnames(must)[i]]=="yes"){
-					if(logfile$workflow[names(logfile$workflow)==rownames(must)[j]]=="yes"){
-						say<-paste("wokflow step",names(logfile$workflow)[i],"excludes",names(logfile$workflow)[j],"- adapt workflow settings!")
+			if(must[j,i] == -1){
+				if(logfile$workflow[names(logfile$workflow) == colnames(must)[i]] == "yes"){
+					if(logfile$workflow[names(logfile$workflow) == rownames(must)[j]] == "yes"){
+						say <- paste("wokflow step",names(logfile$workflow)[i],"excludes",names(logfile$workflow)[j],"- adapt workflow settings!")
 					}
 				}
 			}		
@@ -52,51 +74,51 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	}
 	##############################################################################
 	# directories available? ##################################################### 
-	if(!file.exists(file.path(logfile[[1]],"files"))& ignorefiles=="FALSE"){say<-"files directory missing!"}
-	if(!file.exists(file.path(logfile[[1]],"MSlist"))& ignorefiles=="FALSE"){say<-"MSlist directory missing!"}  
-	if(!file.exists(file.path(logfile[[1]],"features"))){say<-"features directory missing!"}
-	if(!file.exists(file.path(logfile[[1]],"results"))){say<-"results directory missing!"}
-	if(!file.exists(file.path(logfile[[1]],"results","screening"))){say<-"results/screening directory missing!"} 
-	if(!file.exists(file.path(logfile[[1]],"quantification"))){say<-"results/quantification directory missing!"} 
-	if(!file.exists(file.path(logfile[[1]],"results","LOD"))){say<-"results/LOD directory missing!"} 
-	if(!file.exists(file.path(logfile[[1]],"results","recalibration"))){say<-"results/recalibration directory missing!"} 	
-	if(!file.exists(file.path(logfile[[1]],"dataframes"))){say<-"dataframes directory missing!"}
-	if(!file.exists(file.path(logfile[[1]],"pics"))){say<-"pics directory missing!"}
-	if(!file.exists(file.path(logfile[[1]],"exports"))){say<-"exports directory missing!"}  
+	if(!file.exists(file.path(logfile[[1]], "files"))& ignorefiles=="FALSE"){say <- "files directory missing!"}
+	if(!file.exists(file.path(logfile[[1]], "MSlist"))& ignorefiles=="FALSE"){say <- "MSlist directory missing!"}  
+	if(!file.exists(file.path(logfile[[1]], "features"))){say <- "features directory missing!"}
+	if(!file.exists(file.path(logfile[[1]], "results"))){say <- "results directory missing!"}
+	if(!file.exists(file.path(logfile[[1]], "results", "screening"))){say <- "results/screening directory missing!"} 
+	if(!file.exists(file.path(logfile[[1]], "quantification"))){say <- "results/quantification directory missing!"} 
+	if(!file.exists(file.path(logfile[[1]], "results", "LOD"))){say <- "results/LOD directory missing!"} 
+	if(!file.exists(file.path(logfile[[1]], "results", "recalibration"))){say <- "results/recalibration directory missing!"} 	
+	if(!file.exists(file.path(logfile[[1]], "dataframes"))){say <- "dataframes directory missing!"}
+	if(!file.exists(file.path(logfile[[1]], "pics"))){say <- "pics directory missing!"}
+	if(!file.exists(file.path(logfile[[1]], "exports"))){say <- "exports directory missing!"}  
 	##############################################################################
 	# compounds available & ok? ##################################################
-	intstand_check<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
-	targets_check<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character",blank.lines.skip=TRUE);
-	say<-enviMass::check_compounds(intstand_check,targets_check,isotopes,adducts,logfile,write_tables=TRUE)
-	if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}	
-	
+	intstand_check <- read.table(file = file.path(logfile[[1]], "dataframes", "IS.txt"), header = TRUE, sep = "\t", colClasses = "character", blank.lines.skip = TRUE);
+	targets_check <- read.table(file = file.path(logfile[[1]], "dataframes", "targets.txt"), header = TRUE, sep = "\t", colClasses = "character", blank.lines.skip = TRUE);
+	say1 <- enviMass::check_compounds(intstand_check, targets_check, isotopes, adducts, logfile, write_tables = TRUE)
+	if(say1 != "Project consistent"){say <- say1}
+	if(any(ls() == "logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}		
 	# enough compounds for recalibration available? ##############################
-	if(logfile$workflow[names(logfile$workflow)=="recal"]=="yes"){
+	if(logfile$workflow[names(logfile$workflow) == "recal"] == "yes"){
 		# check for positive mode
-		if(logfile$parameters$recal_include_pos=="TRUE"){
-			if(logfile$parameters$recal_use_pos=="Internal standards"){
-				IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-				IS<-IS[IS[,"ion_mode"]=="positive",,drop=FALSE]
-				if(length(IS[IS[,"use_for_recalibration"]=="TRUE",1])<10){
-					say<-"Not enough internal standards available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"   
+		if(logfile$parameters$recal_include_pos == "TRUE"){
+			if(logfile$parameters$recal_use_pos == "Internal standards"){
+				IS <- read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+				IS <- IS[IS[,"ion_mode"] == "positive",, drop = FALSE]
+				if(length(IS[IS[,"use_for_recalibration"] == "TRUE", 1]) < 10){
+					say <- "Not enough internal standards available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"   
 				}
 			}
-			if(logfile$parameters$recal_use_pos=="Target compounds"){
-				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-				targets<-targets[targets[,"ion_mode"]=="positive",,drop=FALSE]
-				if(length(targets[targets[,"use_for_recalibration"]=="TRUE",1])<10){
-					say<-"Not enough target compounds available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"    
+			if(logfile$parameters$recal_use_pos == "Target compounds"){
+				targets <- read.table(file = file.path(logfile[[1]], "dataframes"," targets.txt"), header = TRUE, sep = "\t", colClasses = "character");
+				targets <- targets[targets[,"ion_mode"] == "positive",, drop = FALSE]
+				if(length(targets[targets[,"use_for_recalibration"] == "TRUE", 1]) < 10){
+					say <- "Not enough target compounds available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"    
 				}
 			}
-			if(logfile$parameters$recal_use_pos=="both"){
-				IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");	  
-				IS<-IS[IS[,"ion_mode"]=="positive",,drop=FALSE]
-				a<-length(IS[IS[,8]=="TRUE",1])
-				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");  
-				targets<-targets[targets[,"ion_mode"]=="positive",,drop=FALSE]
-				b<-length(targets[targets[,9]=="TRUE",1])
-				if((a<10)||(b<10)){
-					say<-"Not enough target compounds + internal standards available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"    
+			if(logfile$parameters$recal_use_pos == "both"){
+				IS <- read.table(file = file.path(logfile[[1]], "dataframes", "IS.txt"), header = TRUE, sep = "\t", colClasses = "character");	  
+				IS <- IS[IS[,"ion_mode"] == "positive",, drop = FALSE]
+				a <- length(IS[IS[,8] == "TRUE",1])
+				targets <- read.table(file = file.path(logfile[[1]], "dataframes", "targets.txt"), header = TRUE, sep = "\t", colClasses = "character");  
+				targets <- targets[targets[,"ion_mode"] == "positive",, drop = FALSE]
+				b <- length(targets[targets[,9] == "TRUE", 1])
+				if((a < 10)||(b < 10)){
+					say <- "Not enough target compounds + internal standards available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"    
 				}
 			}
 		}
@@ -106,25 +128,25 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 				IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 				IS<-IS[IS[,"ion_mode"]=="negative",,drop=FALSE]
 				if(length(IS[IS[,"use_for_recalibration"]=="TRUE",1])<10){
-					say<-"Not enough internal standards available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
+					say <- "Not enough internal standards available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
 				}
 			}
 			if(logfile$parameters$recal_use_neg=="Target compounds"){
-				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-				targets<-targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
-				if(length(targets[targets[,"use_for_recalibration"]=="TRUE",1])<10){
-					say<-"Not enough target compounds available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
+				targets <- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+				targets <- targets[targets[,"ion_mode"] == "negative",, drop = FALSE]
+				if(length(targets[targets[,"use_for_recalibration"] == "TRUE", 1]) < 10){
+					say <- "Not enough target compounds available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
 				}
 			}
 			if(logfile$parameters$recal_use_neg=="both"){
-				IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");	  
-				IS<-IS[IS[,"ion_mode"]=="positive",,drop=FALSE]
-				a<-length(IS[IS[,8]=="TRUE",1])
-				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");  
-				targets<-targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
-				b<-length(targets[targets[,9]=="TRUE",1])
-				if((a<10)||(b<10)){
-					say<-"Not enough target compounds + internal standards available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
+				IS <- read.table(file = file.path(logfile[[1]], "dataframes", "IS.txt"), header = TRUE, sep = "\t", colClasses = "character");	  
+				IS <- IS[IS[,"ion_mode"] == "positive",, drop = FALSE]
+				a <- length(IS[IS[,8] == "TRUE", 1])
+				targets <- read.table(file = file.path(logfile[[1]], "dataframes", "targets.txt"), header = TRUE, sep = "\t", colClasses = "character");  
+				targets <- targets[targets[,"ion_mode"] == "negative",, drop = FALSE]
+				b <- length(targets[targets[,9] == "TRUE", 1])
+				if((a < 10)||(b < 10)){
+					say <- "Not enough target compounds + internal standards available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
 				}
 			}	
 		}
@@ -132,25 +154,25 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 	##############################################################################
 	# parameters ok? #############################################################
 	# (1) on trend time lags #####################################################
-	if(logfile$workflow[names(logfile$workflow)=="trendblind"]=="yes"){
-		lags<-as.numeric(strsplit(as.character(logfile$parameters$trend_lags),",")[[1]])
-		if(any(is.na(lags))){say<-"Invalid trend lags - have you used comma separated numerics?"}
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		if(!any(measurements[,"include"]=="TRUE")){
-			say<-"No file included into workflow; nothing to be calculated."
+	if(logfile$workflow[names(logfile$workflow) == "trendblind"] == "yes"){
+		lags<-as.numeric(strsplit(as.character(logfile$parameters$trend_lags), ",")[[1]])
+		if(any(is.na(lags))){say< - "Invalid trend lags - have you used comma separated numerics?"}
+		measurements<-read.csv(file = file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character");
+		if(!any(measurements[,"include"] == "TRUE")){
+			say <- "No file included into workflow; nothing to be calculated."
 			return(say)
 		}
-		measurements<-measurements[measurements[,"include"]=="TRUE",]
-		dated<-measurements[,"Date"]
-		timed<-measurements[,"Time"]
-		datetime<-c()
+		measurements <- measurements[measurements[,"include"] == "TRUE",]
+		dated <- measurements[,"Date"]
+		timed <- measurements[,"Time"]
+		datetime <- c()
 		if (length(timed) > 0) {
 			for(i in 1:length(timed)){
-				datetime<-c(datetime,paste(dated[i],timed[i],"CET",sep=" "))
+				datetime<-c(datetime, paste(dated[i], timed[i], "CET", sep = " "))
 			}
-			atPOSIX<-as.POSIXct(datetime);
-			atPOSIX<-as.numeric(atPOSIX)
-			if(min(lags)>(((max(atPOSIX)-min(atPOSIX))/(24*60*60))+1)){say<-"Trend lags longer than time span of the measurements ... abort"}
+			atPOSIX <- as.POSIXct(datetime);
+			atPOSIX <- as.numeric(atPOSIX)
+			if(min(lags) > (((max(atPOSIX) - min(atPOSIX)) / (24 * 60 * 60)) + 1)){say <- "Trend lags longer than time span of the measurements ... abort"}
 		}
 		rm(lags); ##############################################################################
 		if(
@@ -494,7 +516,7 @@ check_project<-function(isotopes,adducts,skipcheck=FALSE,ignorefiles=FALSE,write
 		if(logfile$parameters$external$homol_units[1]!="FALSE"){
 			these<-enviPat::check_chemform(isotopes,logfile$parameters$external$homol_units)[,1] 
 			if(any(these!="FALSE")){
-				say<-"Invalid chemical formulas for predefined homologue series units found - please revise" 
+				say <- "Invalid chemical formulas for predefined homologue series units found - please revise" 
 			}  
 		}
 	} 

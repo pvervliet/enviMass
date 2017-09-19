@@ -806,8 +806,10 @@
 							This interpolation and subtraction is only applicable if the separate blind filter step is disabled (see above blue steps and the preceding red step)."),
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/trends.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
-					),							            									
-				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
+					),				
+				HTML('<hr noshade="noshade" />'),
+				HTML('<h1 align="center"> &#x21e9; </h1> '),					
+				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
 					fluidRow(
 						column(width = 2, radioButtons("components_profiles", "Include?", c("yes"="yes","no"="no"))),
 						column(width = 10, offset = 0.3,
@@ -815,9 +817,7 @@
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profile_components.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),
-				HTML('<hr noshade="noshade" />'),
-				HTML('<h1 align="center"> &#x21e9; </h1> ')
-				#HTML('<hr noshade="noshade" />') 
+				HTML('<hr noshade="noshade" />')
 				################################################################
 	
         ),

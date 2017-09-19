@@ -7,7 +7,7 @@
 		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))		
 	){
 	
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
+		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="profileList_pos")){rm(profileList_pos)}
@@ -244,157 +244,46 @@
 			profileList_pos[[7]][k,16]<-mean(profileList_pos[[2]][(profileList_pos[[7]][k,1]:profileList_pos[[7]][k,2]),2])
 		}
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);	
+		
+# > BAUSTELLE
+
 		# derive plots #####################################################################
-		path=file.path(logfile[[1]],"pics","profnorm_pos")
-		png(filename = path, bg = "white", width = 1800, height = 440)    	
-			ylimit_del=c(0,0)
-			count_IS=c(10000,0)
-			count_b=c(10000,0)
-			count_nb=c(10000,0)
-			for( k in 1:length(lis_delint_IS) ){
-				if(length(lis_delint_IS[[k]])>0){ # on IS
-					if( min(lis_delint_IS[[k]])<ylimit_del[1] ){
-						ylimit_del[1]<-min(lis_delint_IS[[k]])
-					}
-					if( max(lis_delint_IS[[k]])>ylimit_del[2] ){
-						ylimit_del[2]<-max(lis_delint_IS[[k]])
-					}
-				}
-				if(length(lis_delint_IS[[k]])<count_IS[1]){
-					count_IS[1]<-length(lis_delint_IS[[k]])
-				}
-				if(length(lis_delint_IS[[k]])>count_IS[2]){
-					count_IS[2]<-length(lis_delint_IS[[k]])
-				}
-				if( logfile$parameters$ISnorm_medblank=="TRUE" ){ # on blank
-					if(length(lis_delint_b[[k]])>0){ 
-						if( median(lis_delint_b[[k]])<ylimit_del[1] ){
-							ylimit_del[1]<-median(lis_delint_b[[k]])
-						}
-						if( median(lis_delint_b[[k]])>ylimit_del[2] ){
-							ylimit_del[2]<-median(lis_delint_b[[k]])
-						}
-					}
-					if(length(lis_delint_b[[k]])<count_b[1]){
-						count_b[1]<-length(lis_delint_b[[k]])
-					}
-					if(length(lis_delint_b[[k]])>count_b[2]){
-						count_b[2]<-length(lis_delint_b[[k]])
-					}
-				}
-				if( logfile$parameters$ISnorm_medsam=="TRUE" ){ # on non-blank
-					if(length(lis_delint_nb[[k]])>0){ 
-						if( median(lis_delint_nb[[k]])<ylimit_del[1] ){
-							ylimit_del[1]<-median(lis_delint_nb[[k]])
-						}
-						if( median(lis_delint_nb[[k]])>ylimit_del[2] ){
-							ylimit_del[2]<-median(lis_delint_nb[[k]])
-						}
-					}
-					if(length(lis_delint_nb[[k]])<count_nb[1]){
-						count_nb[1]<-length(lis_delint_nb[[k]])
-					}
-					if(length(lis_delint_nb[[k]])>count_nb[2]){
-						count_nb[2]<-length(lis_delint_nb[[k]])
-					}
-				}					
-			}				
-			par(mar=c(5,4.5,1,10))
-			plot.new()
-			plot.window(xlim=c(-1,length(timeset[,1])+1),ylim=c(ylimit_del[1]-0.3,ylimit_del[2]))
-			box();
-			axis(side=1,at=seq(1,length(lis_delint_IS),1),labels=sampleID,las=2,cex.axis=1)
-			axis(side=2,cex.axis=1.3);
-			title(xlab="Temporal sequence of file IDs",ylab="Deviation from median log10 intensity",cex.lab=1.5)
-			abline(h=0,col="red")	
-			for(k in 1:length(lis_delint_IS)){
-				if(timeset[k,3]!=0){
-					abline(v=k,col="orange")
-				}
-				points( rep(k,length(lis_delint_IS[[k]])),lis_delint_IS[[k]],pch=19,cex=0.7,col="lightgrey" )
-			}
-			if( (logfile$parameters$ISnorm_medblank=="TRUE") ){	
-				for(k in 1:length(lis_delint_b)){
-					if(length(lis_delint_b[[k]])>0){
-						points(k,median(lis_delint_b[[k]]),pch=21,cex=1.7,bg="blue")
-					}	
-				}
-			}
-			if( (logfile$parameters$ISnorm_medsam=="TRUE") ){	
-				for(k in 1:length(lis_delint_nb)){
-					if(length(lis_delint_nb[[k]])>0){ 
-						points(k,median(lis_delint_nb[[k]]),pch=21,cex=1.7,bg="green3")
-					}
-				}
-			}
-			for(k in 1:length(lis_delint_IS)){
-				points( k, median(lis_delint_IS[[k]]) , pch=21,cex=1.7, bg="red")
-			}			
-			plot.window(xlim=c(0,10),ylim=c(0,10))
-			legend(-0.2,3,
-				pch=c(21,19,21,21,19),
-				pt.cex=1.7,cex=1.3,bty="n",
-				legend=c(	"IS median deviation",
-							"IS single profile deviation",
-							"Blank median deviation",
-							"Non-blank median deviation",
-							"Blank file"),
-				pt.bg=c("red","lightgrey","blue","green3","white"),
-				col=c("black","lightgrey","black","black","white")
+		int_norm_ISTD_pos <<- list()
+		int_norm_ISTD_pos[[1]] <<- lis_delint_IS
+		int_norm_ISTD_pos[[2]] <<- lis_median_IS
+		#int_norm_ISTD_pos[[3]] <- lis_RT_IS
+		int_norm_ISTD_pos[[4]] <<- use_corfac
+		int_norm_ISTD_pos[[5]] <<- list()#lis_delint_nb
+		int_norm_ISTD_pos[[6]] <<- list()#lis_median_nb
+		int_norm_ISTD_pos[[7]] <<- list()#lis_delint_b
+		int_norm_ISTD_pos[[8]] <<- list()#lis_median_b
+		int_norm_ISTD_pos[[9]] <<- profileList_pos[["datetime"]]
+		int_norm_ISTD_pos[[10]] <<- profileList_pos[["type"]]
+		int_norm_ISTD_pos[[11]] <<- profileList_pos[["sampleID"]]	
+		names(int_norm_ISTD_pos) <<- c("lis_delint_IS", " lis_median_IS", "lis_RT_IS", "use_corfac", "lis_delint_nb", 
+			"lis_median_nb", "lis_delint_b", "lis_median_b", "atPOSIX", "sampletype", "sampleID")
+		# -> save data & derive plots ######################################################
+		output$int_norm_ISTD_pos_median <- renderPlot({   
+			par(mar = c(.2, 4.5, .9, 8))
+			enviMass:::plot_ISTD_norm(
+				int_norm_ISTD = int_norm_ISTD_pos,
+				logfile = logfile,
+				what = "normalization"
 			)
-			lines(x=c(-0.2,-0.1),y=c(.45,.45),col="orange")
-		dev.off() 				
-		exprprofnorm_pos<-list(src=file.path(logfile[[1]],"pics","profnorm_pos"))
-		if(isolate(input$Ion_mode)=="positive"){
-			output$profnorm<-renderImage(exprprofnorm_pos, deleteFile = FALSE)
-		}
-		# on peak counts 
-		path=file.path(logfile[[1]],"pics","profcount_pos")
-		png(filename = path, bg = "white", width = 2000, height = 480)    	
-			par(mar=c(5,4.5,1,10))
-			plot.new()
-			plot.window(xlim=c(-1,length(timeset[,1])+1),ylim=c(count_IS[1]-1,count_IS[2]+1))	
-			axis(side=1,at=seq(1,length(lis_delint_IS),1),labels=sampleID,las=2,cex.axis=1)
-			axis(2,col="blue",col.ticks="red",col.axis="red",cex.axis=1.3);
-			box()
-			title(xlab="Temporal sequence of file IDs",ylab="",cex.lab=1.5)
-			for(k in 1:length(lis_delint_IS)){
-				if(timeset[k,3]!=0){
-					abline(v=k,col="orange")
-				}
-			}
-			countit<-c()	
-			for(k in 1:length(lis_delint_IS)){
-				countit<-c(countit,length(lis_delint_IS[[k]]))	
-			}
-			lines(countit,col="red",lwd=2)
-			mtext("Number of IS peaks", side = 2, line =2.5, col="red",cex=1.5)			
-			if( logfile$parameters$ISnorm_medblank=="TRUE" ){	
-				plot.window( xlim=c(-1,length(timeset[,1])+1),ylim=c(count_b[1]-1,count_b[2]+1) )	
-				countit<-c()	
-				for( k in 1:length(lis_delint_IS) ){
-					countit<-c(countit,length(lis_delint_b[[k]]))	
-				}
-				lines(countit,col="blue",lwd=2)
-				axis(4,col="blue",col.ticks="blue",col.axis="blue",cex.axis=1.3)
-				mtext("Number of blank peaks", side = 4, line =2.3, col="blue", cex=1.5)
-			}
-			if( logfile$parameters$ISnorm_medsam=="TRUE" ){	
-				plot.window( xlim=c(-1,length(timeset[,1])+1),ylim=c(count_nb[1]-1,count_nb[2]+1) )	
-				countit<-c()	
-				for( k in 1:length(lis_delint_IS) ){
-					countit<-c(countit,length(lis_delint_nb[[k]]))	
-				}
-				lines(countit,col="green3",lwd=2)
-				axis(4,col="green3",col.ticks="green3",col.axis="green3",line=4.5,cex.axis=1.3)
-				mtext("Number of non-blank peaks", side = 4, line =6.8,col="green3", cex=1.5)	
-			}
-		dev.off() 
-		exprprofcount_pos<-list(src=file.path(logfile[[1]],"pics","profcount_pos"))
-		if(isolate(input$Ion_mode)=="positive"){
-			output$profcount<-renderImage(exprprofcount_pos, deleteFile = FALSE)
-		}
+		},res = 100) 
+		output$int_norm_ISTD_pos_counts <- renderPlot({   
+			par(mar = c(4.5, 4.5, .9, 8))
+			enviMass:::plot_ISTD_norm(
+				int_norm_ISTD = int_norm_ISTD_pos,
+				logfile = logfile,
+				what = "counts"
+			)
+		},res = 100) 
+		save(int_norm_ISTD_pos, file = file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"));
 		####################################################################################
+
+# < BAUSTELLE
+
 	}
 
 	########################################################################################
@@ -641,157 +530,47 @@
 		}
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);	
 		# derive plots #####################################################################
-		path=file.path(logfile[[1]],"pics","profnorm_neg")
-		png(filename = path, bg = "white", width = 2000, height = 480)    	
-			ylimit_del=c(0,0)
-			count_IS=c(10000,0)
-			count_b=c(10000,0)
-			count_nb=c(10000,0)
-			for( k in 1:length(lis_delint_IS) ){
-				if(length(lis_delint_IS[[k]])>0){ # on IS
-					if( min(lis_delint_IS[[k]])<ylimit_del[1] ){
-						ylimit_del[1]<-min(lis_delint_IS[[k]])
-					}
-					if( max(lis_delint_IS[[k]])>ylimit_del[2] ){
-						ylimit_del[2]<-max(lis_delint_IS[[k]])
-					}
-				}
-				if(length(lis_delint_IS[[k]])<count_IS[1]){
-					count_IS[1]<-length(lis_delint_IS[[k]])
-				}
-				if(length(lis_delint_IS[[k]])>count_IS[2]){
-					count_IS[2]<-length(lis_delint_IS[[k]])
-				}
-				
-				if( (logfile$parameters$ISnorm_medblank=="TRUE") ){ # on blank
-					if(length(lis_delint_b[[k]])>0){ 
-						if( median(lis_delint_b[[k]])<ylimit_del[1] ){
-							ylimit_del[1]<-median(lis_delint_b[[k]])
-						}
-						if( median(lis_delint_b[[k]])>ylimit_del[2] ){
-							ylimit_del[2]<-median(lis_delint_b[[k]])
-						}
-					}
-					if(length(lis_delint_b[[k]])<count_b[1]){
-						count_b[1]<-length(lis_delint_b[[k]])
-					}
-					if(length(lis_delint_b[[k]])>count_b[2]){
-						count_b[2]<-length(lis_delint_b[[k]])
-					}
-				}
-				
-				if( (logfile$parameters$ISnorm_medsam=="TRUE") ){ # on non-blank
-					if(length(lis_delint_nb[[k]])>0){ 
-						if( median(lis_delint_nb[[k]])<ylimit_del[1] ){
-							ylimit_del[1]<-median(lis_delint_nb[[k]])
-						}
-						if( median(lis_delint_nb[[k]])>ylimit_del[2] ){
-							ylimit_del[2]<-median(lis_delint_nb[[k]])
-						}
-					}
-					if(length(lis_delint_nb[[k]])<count_nb[1]){
-						count_nb[1]<-length(lis_delint_nb[[k]])
-					}
-					if(length(lis_delint_nb[[k]])>count_nb[2]){
-						count_nb[2]<-length(lis_delint_nb[[k]])
-					}
-				}					
-			}				
-			par(mar=c(5,4.5,1,10))
-			plot.new()
-			plot.window(xlim=c(-1,length(timeset[,1])+1),ylim=c(ylimit_del[1]-0.3,ylimit_del[2]))
-			box();
-			axis(side=1,at=seq(1,length(lis_delint_IS),1),labels=sampleID,las=2,cex.axis=1)
-			axis(side=2,cex.axis=1.3);
-			title(xlab="Temporal sequence of file IDs",ylab="Deviation from median log10 intensity",cex.lab=1.5)
-			abline(h=0,col="red")	
-			for(k in 1:length(lis_delint_IS)){
-				if(timeset[k,3]!=0){
-					abline(v=k,col="orange")
-				}
-				points( rep(k,length(lis_delint_IS[[k]])),lis_delint_IS[[k]],pch=19,cex=0.7,col="lightgrey" )
-			}
-			if( (logfile$parameters$ISnorm_medblank=="TRUE") ){	
-				for(k in 1:length(lis_delint_b)){
-					if(length(lis_delint_b[[k]])>0){
-						points(k,median(lis_delint_b[[k]]),pch=21,cex=1.7,bg="blue")
-					}	
-				}
-			}
-			if( (logfile$parameters$ISnorm_medsam=="TRUE") ){	
-				for(k in 1:length(lis_delint_nb)){
-					if(length(lis_delint_nb[[k]])>0){ 
-						points(k,median(lis_delint_nb[[k]]),pch=21,cex=1.7,bg="green3")
-					}
-				}
-			}
-			for(k in 1:length(lis_delint_IS)){
-				points( k, median(lis_delint_IS[[k]]) , pch=21,cex=1.7, bg="red")
-			}			
-			plot.window(xlim=c(0,10),ylim=c(0,10))
-			legend(-0.2,3,
-				pch=c(21,19,21,21,19),
-				pt.cex=1.7,cex=1.3,bty="n",
-				legend=c(	"IS median deviation",
-							"IS single profile deviation",
-							"Blank median deviation",
-							"Non-blank median deviation",
-							"Blank file"),
-				pt.bg=c("red","lightgrey","blue","green3","white"),
-				col=c("black","lightgrey","black","black","white")
+
+# > BAUSTELLE
+
+		# derive plots #####################################################################
+		int_norm_ISTD_neg <<- list()
+		int_norm_ISTD_neg[[1]] <<- lis_delint_IS
+		int_norm_ISTD_neg[[2]] <<- lis_median_IS
+		#int_norm_ISTD_neg[[3]] <- lis_RT_IS
+		int_norm_ISTD_neg[[4]] <<- use_corfac
+		int_norm_ISTD_neg[[5]] <<- list()#lis_delint_nb
+		int_norm_ISTD_neg[[6]] <<- list()#lis_median_nb
+		int_norm_ISTD_neg[[7]] <<- list()#lis_delint_b
+		int_norm_ISTD_neg[[8]] <<- list()#lis_median_b
+		int_norm_ISTD_neg[[9]] <<- profileList_neg[["datetime"]]
+		int_norm_ISTD_neg[[10]] <<- profileList_neg[["type"]]
+		int_norm_ISTD_neg[[11]] <<- profileList_neg[["sampleID"]]	
+		names(int_norm_ISTD_neg) <<- c("lis_delint_IS", " lis_median_IS", "lis_RT_IS", "use_corfac", "lis_delint_nb", 
+			"lis_median_nb", "lis_delint_b", "lis_median_b", "atPOSIX", "sampletype", "sampleID")
+		# -> save data & derive plots ######################################################
+		output$int_norm_ISTD_neg_median <- renderPlot({   
+			par(mar = c(.2, 4.5, .9, 8))
+			enviMass:::plot_ISTD_norm(
+				int_norm_ISTD = int_norm_ISTD_neg,
+				logfile = logfile,
+				what = "normalization"
 			)
-			lines(x=c(-0.2,-0.1),y=c(.45,.45),col="orange")
-		dev.off() 				
-		exprprofnorm_neg<-list(src=file.path(logfile[[1]],"pics","profnorm_neg"))
-		if(isolate(input$Ion_mode)=="negative"){
-			output$profnorm<-renderImage(exprprofnorm_neg, deleteFile = FALSE)
-		}
-		# on peak counts 
-		path=file.path(logfile[[1]],"pics","profcount_neg")
-		png(filename = path, bg = "white", width = 2000, height = 480)    	
-			par(mar=c(5,4.5,1,10))
-			plot.new()
-			plot.window(xlim=c(-1,length(timeset[,1])+1),ylim=c(count_IS[1]-1,count_IS[2]+1))	
-			axis(side=1,at=seq(1,length(lis_delint_IS),1),labels=sampleID,las=2,cex.axis=1)
-			axis(2,col="blue",col.ticks="red",col.axis="red",cex.axis=1.3);
-			box()
-			title(xlab="Temporal sequence of file IDs",ylab="",cex.lab=1.5)
-			for(k in 1:length(lis_delint_IS)){
-				if(timeset[k,3]!=0){
-					abline(v=k,col="orange")
-				}
-			}
-			countit<-c()	
-			for(k in 1:length(lis_delint_IS)){
-				countit<-c(countit,length(lis_delint_IS[[k]]))	
-			}
-			lines(countit,col="red",lwd=2)
-			mtext("Number of IS peaks", side = 2, line =2.5, col="red",cex=1.5)			
-			if( logfile$parameters$ISnorm_medblank=="TRUE" ){	
-				plot.window( xlim=c(-1,length(timeset[,1])+1),ylim=c(count_b[1]-1,count_b[2]+1) )	
-				countit<-c()	
-				for(k in 1:length(lis_delint_IS)){
-					countit<-c(countit,length(lis_delint_b[[k]]))	
-				}
-				lines(countit,col="blue",lwd=2)
-				axis(4,col="blue",col.ticks="blue",col.axis="blue",cex.axis=1.3)
-				mtext("Number of blank peaks", side = 4, line =2.3, col="blue", cex=1.5)
-			}
-			if( logfile$parameters$ISnorm_medsam=="TRUE" ){	
-				plot.window( xlim=c(-1,length(timeset[,1])+1),ylim=c(count_nb[1]-1,count_nb[2]+1) )	
-				countit<-c()	
-				for(k in 1:length(lis_delint_IS)){
-					countit<-c(countit,length(lis_delint_nb[[k]]))	
-				}
-				lines(countit,col="green3",lwd=2)
-				axis(4,col="green3",col.ticks="green3",col.axis="green3",line=4.5,cex.axis=1.3)
-				mtext("Number of non-blank peaks", side = 4, line =6.8,col="green3", cex=1.5)	
-			}
-		dev.off() 
-		exprprofcount_neg<-list(src=file.path(logfile[[1]],"pics","profcount_neg"))
-		if(isolate(input$Ion_mode)=="negative"){
-			output$profcount<-renderImage(exprprofcount_neg, deleteFile = FALSE)
-		}
+		},res = 100) 
+		output$int_norm_ISTD_neg_counts <- renderPlot({   
+			par(mar = c(4.5, 4.5, .9, 8))
+			enviMass:::plot_ISTD_norm(
+				int_norm_ISTD = int_norm_ISTD_neg,
+				logfile = logfile,
+				what = "counts"
+			)
+		},res = 100) 
+		save(int_norm_ISTD_neg, file = file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg"));
+		####################################################################################
+
+# < BAUSTELLE
+
+
 		####################################################################################
 
 	}

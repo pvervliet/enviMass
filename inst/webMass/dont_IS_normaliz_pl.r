@@ -7,6 +7,8 @@
 # REMOVE OLD RESULTS ###################################################################
 if(file.exists(file.path(as.character(logfile[[1]]),"results","links_profiles_pos"))){file.remove(file.path(as.character(logfile[[1]]),"results","links_profiles_pos"))}
 if(file.exists(file.path(as.character(logfile[[1]]),"results","links_profiles_neg"))){file.remove(file.path(as.character(logfile[[1]]),"results","links_profiles_neg"))}
+if(file.exists(file.path(as.character(logfile[[1]]),"results","int_norm_ISTD_pos"))){file.remove(file.path(as.character(logfile[[1]]),"results","int_norm_ISTD_pos"))}
+if(file.exists(file.path(as.character(logfile[[1]]),"results","int_norm_ISTD_neg"))){file.remove(file.path(as.character(logfile[[1]]),"results","int_norm_ISTD_neg"))}
 if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 if(any(objects()=="profileList_pos")){rm(profileList_pos)}	
 if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_pos")){rm(links_peaks_pos,envir=as.environment(".GlobalEnv"))}
@@ -170,6 +172,15 @@ if(
 	####################################################################################	
 
 	####################################################################################
+	output$int_norm_ISTD_pos_median <- renderPlot({ 
+		plot.new()
+	})
+	output$int_norm_ISTD_pos_counts <- renderPlot({ 
+		plot.new()
+	})					
+	####################################################################################
+	
+	####################################################################################
 	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
 	save(links_profiles_pos,file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"));	
 	rm(links_profiles_pos,profileList_pos)
@@ -325,6 +336,17 @@ if(
 		}
 		if(with_bar){close(pBar)}
 	}
+	####################################################################################
+
+	####################################################################################
+	output$int_norm_ISTD_neg_median <- renderPlot({ 
+		plot.new()
+	})
+	output$int_norm_ISTD_neg_counts <- renderPlot({ 
+		plot.new()
+	})					
+	####################################################################################
+
 	####################################################################################
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 	save(links_profiles_neg,file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"));	

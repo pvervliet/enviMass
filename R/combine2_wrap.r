@@ -60,21 +60,21 @@ function(
 	component[[1]][,22]<-as.character(component[[1]][,22]) # please debug in nontarget!
 	colnames(component[[1]])<-c(named,"Target peaks","ISTD peaks","Total peak number","Blind peak number")
 	##########################################################################
-	# extend component table (1) - mark target peaks #########################
+	# extend component table (1) - mark TARGET peaks #########################
 	# feasible via profileList_XXX_copy and links_peaks_pos
 	if(logfile$workflow[names(logfile$workflow)=="target_screen"]=="yes"){
 		######################################################################
-		if(for_mode=="positive"){
+		if(for_mode == "positive"){
 			if(exists("profileList_pos_copy")){rm("profileList_pos_copy")}	
 			if(exists("links_peaks_pos")){rm("links_peaks_pos")}	
-			load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"), envir = environment())
-			load(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"), envir = environment())
-			for_peaks<-which(
-				profileList_pos_copy[["peaks"]][,"sampleIDs"]==for_file
+			load(file = file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"), envir = environment())
+			load(file = file.path(as.character(logfile[[1]]),"results","links_peaks_pos"), envir = environment())
+			for_peaks <- which(
+				profileList_pos_copy[["peaks"]][,"sampleIDs"] == for_file
 			)
-			peaks<-profileList_pos_copy[["peaks"]][for_peaks,]
+			peaks <- profileList_pos_copy[["peaks"]][for_peaks,]
 			rm(for_peaks)
-			if(dim(peaks)[1]>0){
+			if(dim(peaks)[1] > 0){
 				# a check ...
 				load(file=file.path(logfile[[1]],"peaklist",as.character(for_file)), envir = environment()); # Peaklist  
 				rm(peaklist)
@@ -83,50 +83,53 @@ function(
 					collect_comp<-c()
 					collect_peak<-c()
 					##########################################################
-					if(component[["Components"]][i,"ID pattern peaks |"]!="-"){
-						those <- as.numeric(strsplit(component[["Components"]][i,"ID pattern peaks |"],",")[[1]])
+					if(component[["Components"]][i,"ID pattern peaks |"] != "-"){
+						those <- as.numeric(strsplit(component[["Components"]][i, "ID pattern peaks |"], ",")[[1]])
+						these <- as.numeric(those)
+						these2 <- these
+						these <- match(these, peaks[,"peakIDs"])
+						for(n in 1:length(these) ){
+							if(peaks[these[n], "links"] != 0){
+								if(these2[n] != peaks[these[n], "peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
+								got <- unlist(links_peaks_pos[[peaks[these[n], "links"]]]$target)
+								if(!length(got)) next
+								got <- got[seq(1, length(got), 2)]
+								collect_comp <- c(collect_comp, got)
+								collect_peak <- c(collect_peak, rep(these[n], length(got)))	
+							}
+						}
+					}	
+					##########################################################
+					if(component[["Components"]][i,"ID adduct peaks |"] != "-"){
+						those <- as.numeric(strsplit(component[["Components"]][i,"ID adduct peaks |"],",")[[1]])
+						these <- as.numeric(those)
+						these2 <- these
+						these <- match(these, peaks[,"peakIDs"])
+						for(n in 1:length(these) ){
+							if(peaks[these[n], "links"] != 0){
+								if(these2[n] != peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
+								got <- unlist(links_peaks_pos[[peaks[these[n], "links"]]]$target)
+								if(!length(got)) next
+								got <- got[seq(1, length(got), 2)]
+								collect_comp <- c(collect_comp, got)
+								collect_peak <- c(collect_peak, rep(these[n], length(got)))	
+							}
+						}
+					}	
+					##########################################################
+					if(component[["Components"]][i,"ID interfering peaks |"] != "-"){
+						those <- as.numeric(strsplit(component[["Components"]][i, "ID interfering peaks |"], ",")[[1]])
 						these <- as.numeric(those)
 						these2 <- these
 						these <- match(these,peaks[,"peakIDs"])
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"] != 0){
-								if(these2[n] != peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
-								got <- unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
-								got <- got[seq(1,length(got),2)]
-								collect_comp <- c(collect_comp,got)
-								collect_peak <- c(collect_peak,rep(these[n],length(got)))	
-							}
-						}
-					}	
-					##########################################################
-					if(component[["Components"]][i,"ID adduct peaks |"]!="-"){
-						those<-as.numeric(strsplit(component[["Components"]][i,"ID adduct peaks |"],",")[[1]])
-						these<-as.numeric(those)
-						these2<-these
-						these<-match(these,peaks[,"peakIDs"])
-						for(n in 1:length(these) ){
-							if(peaks[these[n],"links"]!=0){
-								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-								got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
-								got <- got[seq(1,length(got),2)]
-								collect_comp<-c(collect_comp,got)
-								collect_peak<-c(collect_peak,rep(these[n],length(got)))	
-							}
-						}
-					}	
-					##########################################################
-					if(component[["Components"]][i,"ID interfering peaks |"]!="-"){
-						those<-as.numeric(strsplit(component[["Components"]][i,"ID interfering peaks |"],",")[[1]])
-						these<-as.numeric(those)
-						these2<-these
-						these<-match(these,peaks[,"peakIDs"])
-						for(n in 1:length(these) ){
-							if(peaks[these[n],"links"]!=0){
-								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 4")} # TEST
-								got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
-								got <- got[seq(1,length(got),2)]
-								collect_comp<-c(collect_comp,got)
-								collect_peak<-c(collect_peak,rep(these[n],length(got)))	
+								if(these2[n] != peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 4")} # TEST
+								got <- unlist(links_peaks_pos[[peaks[these[n], "links"]]]$target)
+								if(!length(got)) next
+								got <- got[seq(1, length(got), 2)]
+								collect_comp <- c(collect_comp, got)
+								collect_peak <- c(collect_peak, rep(these[n], length(got)))	
 							}
 						}
 					}	
@@ -184,7 +187,8 @@ function(
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"]!=0){
 								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
-								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
+								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$target)
+								if(!length(got)) next
 								got <- got[seq(1,length(got),2)]
 								collect_comp<-c(collect_comp,got)
 								collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -200,7 +204,8 @@ function(
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"]!=0){
 								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
+								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$target)
+								if(!length(got)) next
 								got <- got[seq(1,length(got),2)]
 								collect_comp<-c(collect_comp,got)
 								collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -216,7 +221,8 @@ function(
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"]!=0){
 								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
+								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$target)
+								if(!length(got)) next
 								got <- got[seq(1,length(got),2)]
 								collect_comp<-c(collect_comp,got)
 								collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -280,7 +286,8 @@ function(
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"]!=0){
 								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
-								got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
+								got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]]$IS)
+								if(!length(got)) next
 								got <- got[seq(1,length(got),2)]
 								collect_comp<-c(collect_comp,got)
 								collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -296,7 +303,8 @@ function(
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"]!=0){
 								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-								got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
+								got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]]$IS)
+								if(!length(got)) next
 								got <- got[seq(1,length(got),2)]
 								collect_comp<-c(collect_comp,got)
 								collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -312,7 +320,8 @@ function(
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"]!=0){
 								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-								got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
+								got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]]$IS)
+								if(!length(got)) next
 								got <- got[seq(1,length(got),2)]
 								collect_comp<-c(collect_comp,got)
 								collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -371,7 +380,8 @@ function(
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"]!=0){
 							if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
-							got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
+							got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$IS)
+							if(!length(got)) next
 							got <- got[seq(1,length(got),2)]
 							collect_comp<-c(collect_comp,got)
 							collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -387,7 +397,8 @@ function(
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"]!=0){
 								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
+								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$IS)
+								if(!length(got)) next
 								got <- got[seq(1,length(got),2)]
 								collect_comp<-c(collect_comp,got)
 								collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -403,7 +414,8 @@ function(
 						for(n in 1:length(these) ){
 							if(peaks[these[n],"links"]!=0){
 								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
-								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
+								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$IS)
+								if(!length(got)) next
 								got <- got[seq(1,length(got),2)]
 								collect_comp<-c(collect_comp,got)
 								collect_peak<-c(collect_peak,rep(these[n],length(got)))	

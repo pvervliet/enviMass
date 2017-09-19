@@ -1,5 +1,6 @@
 	###############################################################################	
 	those_objects<-c(
+		"affected_table",
 		"int_norm_ISTD_pos",
 		"int_norm_ISTD_pos",
 		"time_start",

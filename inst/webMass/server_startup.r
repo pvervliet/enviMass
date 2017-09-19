@@ -97,30 +97,20 @@ observe({
 					output$recal_pic<-renderImage(exprrec, deleteFile = FALSE);		
 					output$peakhist_pic<-renderImage(exprrec, deleteFile = FALSE);	
 				# (Y) IS normalization #################################################
-				path=file.path(logfile$project_folder,"pics","profnorm_pos")
-					png(filename = path, bg = "white")
-					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-					dev.off()
-					expr30p<-list(src=path)
-					output$profnorm_pos<-renderImage(expr30p, deleteFile = FALSE)		
-				path=file.path(logfile$project_folder,"pics","profcount_pos")
-					png(filename = path, bg = "white")
-					plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-					dev.off()
-					expr31p<-list(src=path)
-					output$profcount_pos<-renderImage(expr31p, deleteFile = FALSE)
-				path=file.path(logfile$project_folder,"pics","profnorm_neg")
-					png(filename = path, bg = "white")
-					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-					dev.off()
-					expr30n<-list(src=path)
-					output$profnorm_neg<-renderImage(expr30n, deleteFile = FALSE)		
-				path=file.path(logfile$project_folder,"pics","profcount_neg")
-					png(filename = path, bg = "white")
-					plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-					dev.off()
-					expr31n<-list(src=path)
-					output$profcount_neg<-renderImage(expr31n, deleteFile = FALSE)		
+# > BAUSTELLE
+				output$int_norm_ISTD_pos_median <- renderPlot({ 
+					plot.new()
+				})
+				output$int_norm_ISTD_pos_counts <- renderPlot({ 
+					plot.new()
+				})	
+				output$int_norm_ISTD_neg_median <- renderPlot({ 
+					plot.new()
+				})
+				output$int_norm_ISTD_neg_counts <- renderPlot({ 
+					plot.new()
+				})	
+# < BAUSTELLE
 				# (X) Profiling, trends, blind ########################################
 				path=file.path(logfile$project_folder,"pics","boxprofile_pos")
 					png(filename = path, bg = "white")
@@ -134,6 +124,7 @@ observe({
 					dev.off()
 					expr4n<-list(src=path)
 					output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)
+	
 				# Parse selectable isotopes ###########################################
 				elements<-unique(as.character(isotopes[1:295,1]))
 				elements<-elements[order(elements)]
