@@ -1,6 +1,7 @@
 homol_search2_wrap <-function(
 	x,
-	logfile
+	logfile,
+	measurements
 ){
 
 	##########################################################################
@@ -146,7 +147,7 @@ homol_search2_wrap <-function(
 	# insert theta
 	range_mz<-(max(homol[["Peaks in homologue series"]][,"mz"])-min(homol[["Peaks in homologue series"]][,"mz"])) 
 	range_RT<-(max(homol[["Peaks in homologue series"]][,"RT"])-min(homol[["Peaks in homologue series"]][,"RT"])) 
-	homol_peaks_relat[,5]<-.Call("_enviMass_series_relat", 
+	homol_peaks_relat[,5] <- .Call("_enviMass_series_relat", 
 		homol_peaks_relat, 
 		range_mz,
 		range_RT,
@@ -183,50 +184,50 @@ homol_search2_wrap <-function(
 						that <- match(homol[["Peaks in homologue series"]][i, "peak ID"], peaks[,"peakIDs"])
 						if(is.na(that)){next}
 						if(peaks[that,"links"] == 0){next}
-						got_tar<-unlist(links_peaks_pos[[peaks[that,"links"]]][[1]])
-						got_IS<-unlist(links_peaks_pos[[peaks[that,"links"]]][[2]])
-						if(!length(got_tar)&!length(got_IS)){next} # compounds in links entry?
+						got_tar <- unlist(links_peaks_pos[[peaks[that,"links"]]][[1]])
+						got_IS < -unlist(links_peaks_pos[[peaks[that,"links"]]][[2]])
+						if(!length(got_tar) & !length(got_IS)){next} # compounds in links entry?
 						# check if matches belong to homologuous compounds ####
 						if(length(got_tar)){
 							keep_tar<-rep(TRUE,length(got_tar))
 							for(j in 1:length(got_tar)){
 					# > BAUSTELLE
 							}
-							got_tar<-got_tar[keep_tar];
+							got_tar <- got_tar[keep_tar];
 						}
 						if(length(got_IS)){
-							keep_IS<-rep(TRUE,length(got_IS))
+							keep_IS <- rep(TRUE,length(got_IS))
 							for(j in 1:length(got_IS)){
 					# > BAUSTELLE
 							}
-							got_IS<-got_IS[keep_IS]
+							got_IS <- got_IS[keep_IS]
 						}
-						if(!length(got_tar)&!length(got_IS)){next} # any homologuous compounds?					
+						if(!length(got_tar) & !length(got_IS)){next} # any homologuous compounds?					
 						# collect series mass differences for each peak ########
-						series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][i,"HS IDs"],"/")[[1]])
-						list_delmass[[i]]<-homol[["Homologue Series"]][series[1],"m/z increment"]
+						series <- as.numeric(strsplit(homol[["Peaks in homologue series"]][i,"HS IDs"],"/")[[1]])
+						list_delmass[[i]] <- homol[["Homologue Series"]][series[1],"m/z increment"]
 						for(j in series[-1]){
-							if(homol[["Homologue Series"]][j,"HS IDs"]!=j){stop("\n Debug do_homologues at_1.")} # just a check
-							list_delmass[[i]]<-c(list_delmass[[i]],homol[["Homologue Series"]][j,"m/z increment"])
+							if(homol[["Homologue Series"]][j,"HS IDs"] != j){stop("\n Debug do_homologues at_1.")} # just a check
+							list_delmass[[i]] <- c(list_delmass[[i]], homol[["Homologue Series"]][j,"m/z increment"])
 						}
-						list_delmass[[i]]<-unique(list_delmass[[i]])
+						list_delmass[[i]] <- unique(list_delmass[[i]])
 						# check & add target compounds ##########################
 						if(length(got_tar)){
-							got_tar<-unique(got_tar) # wtf?
+							got_tar <- unique(got_tar) # wtf?
 							for(j in 1:length(got_tar)){
-								this_target<-strsplit(got_tar[j],"_")[[1]]
-								at_target<-match(this_target[[1]],targets[,"ID"])
+								this_target <- strsplit(got_tar[j], "_")[[1]]
+								at_target <- match(this_target[[1]], targets[,"ID"])
 								if(!length(at_target)){stop("\n Debug do_homologues at_2.")} # just a check
 								# -> calculate mass differences for chains ######
 					# > BAUSTELLE										
 								# -> check if all chain masses were found #######
 					# > BAUSTELLE										
 								# -> make entry #################################
-								use_label<-paste0(c(this_target[[1]],targets[at_target,"Name"],this_target[[2]],this_target[[3]]),collapse="_")
-								if(homol[["Peaks in homologue series"]][i,"Targets"]==""){ # first enty?
-									homol[["Peaks in homologue series"]][i,"Targets"]<-use_label
+								use_label <- paste0(c(this_target[[1]], targets[at_target,"Name"], this_target[[2]], this_target[[3]]), collapse = "_")
+								if(homol[["Peaks in homologue series"]][i,"Targets"] == ""){ # first enty?
+									homol[["Peaks in homologue series"]][i,"Targets"] <- use_label
 								}else{
-									homol[["Peaks in homologue series"]][i,"Targets"]<-paste0(c(homol[["Peaks in homologue series"]][i,"Targets"],use_label),collapse=", ")
+									homol[["Peaks in homologue series"]][i,"Targets"] <- paste0(c(homol[["Peaks in homologue series"]][i,"Targets"],use_label),collapse=", ")
 								}
 							}
 						}

@@ -1,7 +1,7 @@
 # Run homologue series detection
 	
 	####################################################################################
-    measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+    measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	#measurements[,names(measurements)=="homologues"]<-"FALSE"
 	if(mute(logfile$parameters$prof_select=="TRUE")){
 		for_IDs<-measurements[(measurements$include=="TRUE") & (measurements$homologues=="FALSE") & (measurements$profiled!="FALSE"),]$ID
@@ -28,11 +28,12 @@
 		cluster_results <- clusterApplyLB(cl = clus, 
 			x = for_IDs, 
 			fun = enviMass:::homol_search2_wrap, 
-			logfile = logfile
+			logfile = logfile,
+			measurements = measurements
 		)
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 	}
-	measurements[!is.na(match(measurements$ID,for_IDs)),"homologues"]<-"TRUE"
+	measurements[!is.na(match(measurements$ID,for_IDs)),"homologues"] <- "TRUE"
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 	rm(measurements)	
 	####################################################################################	
