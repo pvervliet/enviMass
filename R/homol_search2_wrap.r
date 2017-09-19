@@ -6,7 +6,8 @@ homol_search2_wrap <-function(
 
 	##########################################################################
 	# LOAD FILES & REMOVE OLD RESULTS ########################################
-	for_file<-x
+	for_file <- x
+	for_mode<-measurements[measurements$ID == for_file,"Mode"]	
 	if( file.exists(file.path(logfile[[1]],"results","componentization","homologues",for_file) ) ){
 		file.remove(file.path(logfile[[1]],"results","componentization","homologues",for_file) )
 	}			
@@ -164,8 +165,6 @@ homol_search2_wrap <-function(
 		(logfile$workflow[names(logfile$workflow)=="IS_screen"]=="yes")
 	){
 		cat("Annotating compounds ... ")
-		for_file<-as.numeric(measurements[b,"ID"])
-		for_mode<-measurements[b,"Mode"]
 		######################################################################
 		if(for_mode=="positive" & (any(intstand[,"ion_mode"] =="positive") || any(targets[,"ion_mode"] =="positive"))){
 			if(exists("profileList_pos_copy",envir = as.environment(".GlobalEnv"))){rm("profileList_pos_copy", envir = as.environment(".GlobalEnv"))}	

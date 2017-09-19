@@ -24,7 +24,7 @@
 			use_maxmz<-as.numeric(logfile$parameters$homol_maxmz)		
 		}
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
-		clusterExport(cl = clus, varlist = c("mzfilter","elements","use_minmz","use_maxmz","isotopes"), envir = environment())
+		clusterExport(cl = clus, varlist = c("mzfilter", "elements", "use_minmz", "use_maxmz", "isotopes"), envir = environment())
 		cluster_results <- clusterApplyLB(cl = clus, 
 			x = for_IDs, 
 			fun = enviMass:::homol_search2_wrap, 
@@ -33,11 +33,11 @@
 		)
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 	}
-	measurements[!is.na(match(measurements$ID,for_IDs)),"homologues"] <- "TRUE"
-	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+	measurements[!is.na(match(measurements$ID, for_IDs)),"homologues"] <- "TRUE"
+	write.csv(measurements,file=file.path(logfile[[1]], "dataframes", "measurements"), row.names = FALSE);
 	rm(measurements)	
 	####################################################################################	
-	rm(mzfilter,elements,use_minmz,use_maxmz,measurements,use_mztol)
+	rm(mzfilter, elements, use_minmz, use_maxmz, measurements, use_mztol)
 	####################################################################################	
 
 	
