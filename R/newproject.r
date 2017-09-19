@@ -338,7 +338,7 @@ newproject <- function(pro_name, pro_dir, IS, targets){
     # isotopes #################################################################      
     logfile[[9]] <- "";
     names(logfile)[9] <- c("isotopes")
-	# enviMass version number ##################################################
+	# enviMass VERSION NUMBER ##################################################
     logfile[[10]] <- 3.4
     names(logfile)[10] <- c("version")   
 	# subtraction files ########################################################
