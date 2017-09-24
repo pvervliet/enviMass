@@ -2077,7 +2077,16 @@ if(logfile$version < 3.4){
 		schedule<-enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
 		set_order<-match(schedule[,1],logfile$summary[,1])
 		logfile$summary<<-logfile$summary[set_order,]
-		############################################################################################		
+		############################################################################################
+		enviMass::workflow_set(
+			down="pattern",
+			except=FALSE,
+			down_TF=c("TRUE","FALSE"),
+			check_node=TRUE, 	
+			single_file=FALSE
+		)		
+		shinyjs::info(paste0("Peak intensity distribution checks now run as default - please recalculate your project!"));
+		
 	}
 	################################################################################################	
 	################################################################################################
@@ -2098,7 +2107,7 @@ if(logfile$version < 3.4){
 		names(logfile)[9] <<- c("isotopes")
 	}
 	################################################################################################	
-#logfile$version<<-3.4
+	logfile$version<<-3.4
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
@@ -2106,6 +2115,25 @@ if(logfile$version < 3.4){
 	
 }
 
+
+if(logfile$version < 3.41){
+
+	cat("\n Updating to version 3.41 ...")
+	################################################################################################
+	# intensity QC now included per default ########################################################
+	logfile$workflow[names(logfile$workflow)=="qc"] <<- "yes"
+
+
+	
+	
+	################################################################################################	
+	#logfile$version<<-3.41
+	################################################################################################		
+	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
 
 
 ########################################################################

@@ -593,10 +593,10 @@
 				</font></p> '),
 				HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Intensity control filter </font></p> '),
 					fluidRow(
-						column(width = 2, radioButtons("qc", "Include?", c("yes"="yes","no"="no"), inline = TRUE)),          
+						#column(width = 2, radioButtons("qc", "Include?", c("yes"="yes","no"="no"), inline = TRUE)),          
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","The quantile distributions of peak intensities are compared between files to detect outliers."),
-							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/QC.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')								
+							tags$p(align="justify","The quantile distributions of peak intensities are compared between files to detect outliers.")#,
+							#HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/QC.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')								
 						)
 					),
 				HTML('<hr noshade="noshade" />'),
@@ -1342,27 +1342,59 @@
 						tabPanel("Positive ionization ",
 							HTML('<hr noshade="noshade" />'),
 							bsCollapse(multiple = TRUE, open = NULL, id = "collapse_intens_control_pos",
-								bsCollapsePanel(title="Quantile intensity distributions", 
-									tags$h5("Quantile distribution of peak intensities:"),           
-									imageOutput("plotQCa_pos", height="auto"),
-									tags$h5("Outliers:"),
-									imageOutput("plotQCb_pos", height="auto")
-								),
-								bsCollapsePanel(title="Boxplot intensity distributions", 
-									tags$h5("Intensity distribution for median intensity normalization:"),                    
-									imageOutput("pic_int_distr_pos", width = "100%", height = "250px")
-								),
-								bsCollapsePanel(title="IS-based intensity normalization", 
+								bsCollapsePanel(title = "Boxplot peak intensity distributions", 
 
-# > BAUSTELLE
-
+									plotOutput("int_box_pos", 
+										dblclick = "int_box_pos_dblclick",
+										click = "int_box_pos_click",
+										brush = brushOpts(
+											id = "int_box_pos_brush",
+											resetOnNew = TRUE,
+											direction = c("x"),
+											delay = 0
+										),
+										height = "500px"
+									),								
+									HTML('<hr noshade="noshade" />'),
+									tags$p(align = "justify", "The above plot compares the log intensity distribution of picked peaks among all the included positive ionization mode files, using boxplots. 
+									Files are ordered by their Date/Time.
+									For larger number of files, boxplot statistics are simplified to dots (median) and two lines connecting the first and third quartiles with the lower and upper
+									whiskers, respectively. For smaller numbers of files depicted (e.g., after zooming), conventional boxplots are provided, i.e., 
+									the distance between the first and third quartiles is additionally outlined by a box and the intensity median by a bold line in this box.
+									Whiskers are set as the most extreme (lower and upper) data point which departs no more than 1.5 times the quartile range from the median. 
+									Peak intensities departing further than that are given as gray dots."),
+									tags$p(align = "justify", "In addition, the number of peaks picked for each file is indicated as a red cross, and associated with the right axis.")
+								),
+								bsCollapsePanel(title = "Quantile peak intensity distributions", 
+									plotOutput("int_quantiles_pos", 
+										height = "330px"
+									),					
+									HTML('<h1 align="center"> &#x21e7; </h1> '),
+									plotOutput("int_maxmed_pos", 
+										dblclick = "int_maxmed_pos_dblclick",
+										click = "int_maxmed_pos_click",
+										brush = brushOpts(
+											id = "int_maxmed_pos_brush",
+											resetOnNew = TRUE,
+											delay = 0
+										),
+										height = "450px"
+									),	
+									HTML('<hr noshade="noshade" />'),
+									tags$p(align = "justify", "The above top panel shows the log intensity quantile distribution of picked peaks for each of the included positive ionization 
+									mode files (gray lines). The red line shows the mean intensity for a quantile over all these files. In turn, the bottom plot details the maximum and median intensity 
+									deviation from this mentioned mean for each file, with files stated by their IDs and connected by the gray line for their temporal order. 
+									Please note that top panel quantiles distributions become highlighted for depicted files upon any zooming in the bottom plot.")
+								),
+								bsCollapsePanel(title = "IS-based intensity normalization", 
 									plotOutput("int_norm_ISTD_pos_median", 
 										dblclick = "int_norm_ISTD_pos_median_dblclick",
 										click = "int_norm_ISTD_pos_median_click",
 										brush = brushOpts(
 											id = "int_norm_ISTD_pos_median_brush",
 											resetOnNew = TRUE,
-											direction = c("x")
+											direction = c("x"),
+											delay = 0
 										),
 										height = "500px"
 									),
@@ -1388,34 +1420,63 @@
 									tags$p(align = "justify", "In comparison, the green and blue lines of this lower panel show the overall peak count for randomly sampled non-ISTD 
 										profiles which either contain blank peaks (blue line) or are not found by any picked peaks in blank measurements at all (green line). Their
 										median intensity deviations from the individual profile medians are shown as blue and green dots in the top panel, too.")
-# < BAUSTELLE			
-
 								)	
 							)
 						),
 						tabPanel("Negative ionization ",
 							HTML('<hr noshade="noshade" />'),
 							bsCollapse(multiple = TRUE, open = NULL, id = "collapse_intens_control_neg",
-								bsCollapsePanel(title="Quantile intensity distributions", 
-									tags$h5("Quantile distribution of peak intensities:"),           
-									imageOutput("plotQCa_neg", height="auto"),
-									tags$h5("Outliers:"),
-									imageOutput("plotQCb_neg", height="auto")
+								bsCollapsePanel(title = "Boxplot peak intensity distributions", 
+									plotOutput("int_box_neg", 
+										dblclick = "int_box_neg_dblclick",
+										click = "int_box_neg_click",
+										brush = brushOpts(
+											id = "int_box_neg_brush",
+											resetOnNew = TRUE,
+											direction = c("x"),
+											delay = 0
+										),
+										height = "500px"
+									),								
+									HTML('<hr noshade="noshade" />'),
+									tags$p(align = "justify", "The above plot compares the log intensity distribution of picked peaks among all the included negative ionization mode files, using boxplots. 
+									For larger number of files, boxplot statistics are simplified to dots (median) and two lines connecting the first and third quartiles with the lower and upper
+									whiskers, respectively. For smaller numbers of files depicted (e.g., after zooming), conventional boxplots are provided, i.e., 
+									the distance between the first and third quartiles is additionally outlined by a box and the intensity median by a bold line in this box.
+									Whiskers are set as the most extreme (lower and upper) data point which departs no more than 1.5 times the quartile range from the median. 
+									Peak intensities departing further than that are given as gray dots."),
+									tags$p(align = "justify", "In addition, the number of peaks picked for each file is indicated as a red cross, and associated with the right axis.")	
 								),
-								bsCollapsePanel(title="Boxplot intensity distributions", 
-									tags$h5("Intensity distribution for median intensity normalization:"),                    
-									imageOutput("pic_int_distr_neg", width = "100%", height = "250px")
+								bsCollapsePanel(title = "Quantile peak intensity distributions", 
+									plotOutput("int_quantiles_neg", 
+										height = "330px"
+									),		
+									HTML('<h1 align="center"> &#x21e7; </h1> '),
+									plotOutput("int_maxmed_neg", 
+										dblclick = "int_maxmed_neg_dblclick",
+										click = "int_maxmed_neg_click",
+										brush = brushOpts(
+											id = "int_maxmed_neg_brush",
+											resetOnNew = TRUE,
+											delay = 0
+										),
+										height = "450px"
+									),	
+									HTML('<hr noshade="noshade" />'),
+									tags$p(align = "justify", "The above top panel shows the quantile log intensity distribution of picked peaks for each of the included negative ionization 
+									mode files (gray lines). The red line shows the mean intensity for a quantile over all these files. In turn, the bottom plot details the maximum and median intensity 
+									deviation from this mentioned mean for each file, with files stated by their IDs and connected by the gray line for their temporal order. 
+									Please note that top panel quantiles distributions become highlighted for depicted files upon any zooming in the bottom plot.")
 								),
-								bsCollapsePanel(title="IS-based intensity normalization", 
-# > BAUSTELLE
-
+								bsCollapsePanel(title = "IS-based intensity normalization", 
 									plotOutput("int_norm_ISTD_neg_median", 
 										dblclick = "int_norm_ISTD_neg_median_dblclick",
 										click = "int_norm_ISTD_neg_median_click",
 										brush = brushOpts(
 											id = "int_norm_ISTD_neg_median_brush",
 											resetOnNew = TRUE,
-											direction = c("x")
+											direction = c("x"),
+											delay = 0
 										),
 										height = "500px"
 									),
@@ -1425,7 +1486,8 @@
 										brush = brushOpts(
 											id = "int_norm_ISTD_neg_counts_brush",
 											resetOnNew = TRUE,
-											direction = c("x")
+											direction = c("x"),
+											delay = 0
 										),
 										height = "300px"
 									),
@@ -1441,9 +1503,6 @@
 									tags$p(align = "justify", "In comparison, the green and blue lines of this lower panel show the overall peak count for randomly sampled non-ISTD 
 										profiles which either contain blank peaks (blue line) or are not found by any picked peaks in blank measurements at all (green line). Their
 										median intensity deviations from the individual profile medians are shown as blue and green dots in the top panel, too.")
-
-# < BAUSTELLE			
-
 								)	
 							)						
 						)

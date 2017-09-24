@@ -25,7 +25,7 @@ shinyServer(function(input, output, session){
 	 shinyFileSave(input, "download_IS", updateFreq = 30000, roots=getVolumes() )
 	 shinyFileSave(input, "download_target", updateFreq = 30000, roots=getVolumes() )	
   }else{
-	 createAlert(session,anchorId = "alert_4", alertId="a4", title = NULL, content="logfile select disabled, used folder path input",style = "alarm",append=FALSE,dismiss=TRUE)
+	 createAlert(session,anchorId = "alert_4", alertId="a4", title = NULL, content="logfile select via explorer disabled, please use folder path input instead",style = "alarm",append=FALSE,dismiss=TRUE)
   }
   output$textit<-renderText("Waiting...")
   output$dowhat<-renderText("Open")

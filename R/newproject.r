@@ -295,11 +295,8 @@ newproject <- function(pro_name, pro_dir, IS, targets){
     logfile$workflow <- 0    # based on above Tasks_to_redo
     names(logfile)[6] <- c("workflow")
 	for(i in 1:length(names(logfile[[2]]))){
-		# use simple initial workflow settings
-		if(any(names(logfile[[2]])[i] ==
-			#c("peakpicking","LOD","profiling","IS_screen","target_screen")
-			c("peakpicking")			
-		)){
+		# use simple initial workflow settings as defaults
+		if(any(names(logfile[[2]])[i] == c("peakpicking", "qc") )){
 			logfile$workflow[i] <- "yes"; 
 		}else{
 			logfile$workflow[i] <- "no"; 		

@@ -1,5 +1,6 @@
 	###############################################################################	
-	those_objects<-c(
+	those_objects <- c(
+		"int_distrib",
 		"affected_table",
 		"int_norm_ISTD_pos",
 		"int_norm_ISTD_pos",

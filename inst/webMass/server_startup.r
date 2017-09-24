@@ -51,6 +51,17 @@ observe({
 				#	output$EIC1<-renderImage(expr_peak, deleteFile = FALSE);
 				#	output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
 				# (1) QC ###############################################################
+# > BAUSTELLE
+
+				output$int_box_pos <- renderPlot({ 
+					plot.new()
+				})
+				output$int_box_neg <- renderPlot({ 
+					plot.new()
+				})	
+
+				
+if(FALSE){
 				path=file.path(logfile$project_folder,"pics","plotQCa_pos")
 					png(filename = path, bg = "white")
 					plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
@@ -75,6 +86,10 @@ observe({
 					dev.off()
 					expr2n<-list(src=path)
 					output$plotQCb_neg<-renderImage(expr2n, deleteFile = FALSE)
+}
+
+
+# < BAUSTELLE
 				# (3) Normalization ####################################################
 				path=file.path(logfile$project_folder,"pics","int_distr_pos")
 					png(filename = path, bg = "white")
@@ -164,21 +179,21 @@ maincalc2<-reactive({
 		source("server_cleaner.R", local=TRUE);	  
 		##########################################################################
 		cat("observed openit")
-		file_in<-NA
+		file_in <- NA
 		try({
-			file_in<-as.character(parseFilePaths(getVolumes()(),isolate(input$pro_dir3))[1,4])
+			file_in <- as.character(parseFilePaths(getVolumes()(), isolate(input$pro_dir3))[1,4])
 		})
 		if(is.na(file_in)){ # take string input, format properly
 			#cat("\n is NA! \n");cat(file_in);
-			file_in<-as.character(isolate(input$pro_dir2))
-			if(grepl("\\",file_in,fixed=TRUE)){
-				file_in<-gsub("\\",.Platform$file.sep,file_in,fixed=TRUE)
+			file_in <- as.character(isolate(input$pro_dir2))
+			if(grepl("\\", file_in, fixed = TRUE)){
+				file_in <- gsub("\\", .Platform$file.sep, file_in, fixed = TRUE)
 			}
 		}else{ # take file selection input - should be properly formatted already
 			#cat("\n is not NA! \n");cat(file_in);
-			file_in<-strsplit(file_in,.Platform$file.sep)[[1]]			
-			file_in<-file_in[-length(file_in)]
-			file_in<-paste0(file_in,collapse=.Platform$file.sep)
+			file_in <- strsplit(file_in, .Platform$file.sep)[[1]]			
+			file_in <- file_in[-length(file_in)]
+			file_in <- paste0(file_in, collapse = .Platform$file.sep)
 		}
 		
 		
@@ -213,29 +228,99 @@ maincalc2<-reactive({
 			#	output$EIC1<-renderImage(expr_peak, deleteFile = FALSE);
 			#	output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
 			# (2) QC ###############################################################		
-			if(file.exists(file.path(logfile$project_folder,"pics","plotQCa_pos"))){
-			  expr1p<-list(src = file.path(logfile$project_folder,"pics","plotQCa_pos"))
-			  output$plotQCa_pos <- renderImage(expr1p, deleteFile = FALSE)
+			
+# > BAUSTELLE			
+			if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_distrib"))){
+				load(file.path(as.character(logfile[[1]]), "results", "int_distrib"), envir = as.environment(".GlobalEnv"))
+				####################################################
+				output$int_box_pos <- renderPlot({   
+					par(mar = c(5.8, 4.5, .9, 8))
+					enviMass:::plot_int_distrib(
+						int_distrib,
+						ion_mode = "positive",
+						measurements = measurements,
+						what = "boxplot"
+					)
+				},res = 100) 
+				output$int_box_neg <- renderPlot({   
+					par(mar = c(5.8, 4.5, .9, 8))
+					enviMass:::plot_int_distrib(
+						int_distrib,
+						ion_mode = "negative",
+						measurements = measurements,
+						what = "boxplot"
+					)
+				},res = 100) 					
+				####################################################
+				output$int_quantiles_pos <- renderPlot({   
+					par(mar = c(4.5, 4.5, .9, 8))
+					enviMass:::plot_int_distrib(
+						int_distrib,
+						ion_mode = "positive",
+						measurements = measurements,
+						what = "quantiles_distrib"
+					)
+				},res = 100) 	
+				output$int_quantiles_neg <- renderPlot({   
+					par(mar = c(4.5, 4.5, .9, 8))
+					enviMass:::plot_int_distrib(
+						int_distrib,
+						ion_mode = "negative",
+						measurements = measurements,
+						what = "quantiles_distrib"
+					)
+				},res = 100) 				
+				####################################################				
+				output$int_maxmed_pos <- renderPlot({   
+					par(mar = c(4.5, 4.5, .9, 8))
+					enviMass:::plot_int_distrib(
+						int_distrib,
+						ion_mode = "positive",
+						measurements = measurements,
+						what = "quantiles_out"
+					)		
+				},res = 100) 
+				output$int_maxmed_neg <- renderPlot({   
+					par(mar = c(4.5, 4.5, .9, 8))
+					enviMass:::plot_int_distrib(
+						int_distrib,
+						ion_mode = "negative",
+						measurements = measurements,
+						what = "quantiles_out"
+					)		
+				},res = 100) 					
+				####################################################				
+			}else{
+				####################################################
+				output$int_box_pos <- renderPlot({ 
+					plot.new(); plot.window(xlim = c(0, 10), ylim =c(0, 10)); text(5, 5, "Data not available")
+				})	
+				output$int_box_neg <- renderPlot({ 
+					plot.new(); plot.window(xlim = c(0, 10), ylim =c(0, 10)); text(5, 5, "Data not available")
+				})						
+				output$int_quantiles_pos <- renderPlot({ 
+					plot.new(); plot.window(xlim = c(0, 10), ylim =c(0, 10)); text(5, 5, "Data not available")
+				})	
+				output$int_quantiles_neg <- renderPlot({ 
+					plot.new(); plot.window(xlim = c(0, 10), ylim =c(0, 10)); text(5, 5, "Data not available")
+				})					
+				output$int_maxmed_pos <- renderPlot({ 
+					plot.new(); plot.window(xlim = c(0, 10), ylim =c(0, 10)); text(5, 5, "Data not available")
+				})					
+				output$int_maxmed_neg <- renderPlot({ 
+					plot.new(); plot.window(xlim = c(0, 10), ylim =c(0, 10)); text(5, 5, "Data not available")
+				})		
+				####################################################				
 			}
-			if(file.exists(file.path(logfile$project_folder,"pics","plotQCb_pos"))){
-			  expr2p<-list(src = file.path(logfile$project_folder,"pics","plotQCb_pos"))
-			  output$plotQCb_pos <- renderImage(expr2p, deleteFile = FALSE)
-			}
-		   if(file.exists(file.path(logfile$project_folder,"pics","plotQCa_neg"))){
-			  expr1n<-list(src = file.path(logfile$project_folder,"pics","plotQCa_neg"))
-			  output$plotQCa_neg <- renderImage(expr1n, deleteFile = FALSE)
-			}
-			if(file.exists(file.path(logfile$project_folder,"pics","plotQCb_neg"))){
-			  expr2n<-list(src = file.path(logfile$project_folder,"pics","plotQCb_neg"))
-			  output$plotQCb_neg <- renderImage(expr2n, deleteFile = FALSE)
-			}
+# < BAUSTELLE			
+			
 			# (3) Normalization ####################################################
-			if(file.exists(file.path(logfile$project_folder,"pics","int_distr_pos"))){
-			  expr3p <- list(src = file.path(logfile$project_folder,"pics","int_distr_pos"))
+			if(file.exists(file.path(logfile$project_folder, "pics", "int_distr_pos"))){
+			  expr3p <- list(src = file.path(logfile$project_folder, "pics", "int_distr_pos"))
 			  output$pic_int_distr_pos <- renderImage(expr3p, deleteFile = FALSE)
 			}
-			if(file.exists(file.path(logfile$project_folder,"pics","int_distr_neg"))){
-			  expr3n <- list(src = file.path(logfile$project_folder,"pics","int_distr_neg"))
+			if(file.exists(file.path(logfile$project_folder, "pics", "int_distr_neg"))){
+			  expr3n <- list(src = file.path(logfile$project_folder, "pics", "int_distr_neg"))
 			  output$pic_int_distr_neg <- renderImage(expr3n, deleteFile = FALSE)
 			}
 			# Recalibration, sample peaks ########################################## 
@@ -243,7 +328,7 @@ maincalc2<-reactive({
 				png(filename = path, bg = "white")
 				plot.new(); plot.window(xlim = c(0, 1), ylim = c(0, 1)); text(0.5,0.5,"nothing selected \n or not available",cex=1)
 				dev.off()
-				exprrec <- list(src=path)
+				exprrec <- list(src = path)
 				output$recal_pic <- renderImage(exprrec, deleteFile = FALSE);		
 				output$peakhist_pic <- renderImage(exprrec, deleteFile = FALSE);
 
