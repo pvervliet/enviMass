@@ -1182,7 +1182,7 @@
 					selectInput("do_project_check", "Skip the project check before calculations?", choices = c("TRUE","FALSE"), selected="FALSE"),					
 					selectInput("ignore_large_files", "Ignore .mzXML and MSlist files during check?", choices = c("TRUE","FALSE"), selected="FALSE"),	
 					HTML('<hr noshade="noshade" />'), 				
-					textInput("upto_file", "Up to file with ID:", value = "FALSE"),
+					textInput("upto_file", "Include latest files only up to file with ID:", value = "FALSE"),
 					HTML('<hr noshade="noshade" />'), 
 					tags$h6("Reset project excluding peak picking:"),
 					bsButton("reset_1","Reset",style="danger"),

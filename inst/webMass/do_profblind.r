@@ -30,6 +30,27 @@ if(
 	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
 	rm(profileList_pos,envir=as.environment(".GlobalEnv"))
 	##############################################################################
+
+
+# BAUSTELLE >
+with_check<-TRUE
+	###################################################################################
+	if(with_check){
+		###############################################################################
+		# profile IDs correct? ########################################################
+		for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
+			if(
+				!all(profileList_pos[["peaks"]][	
+					profileList_pos[["index_prof"]][i, "start_ID"]:profileList_pos[["index_prof"]][i, "end_ID"]
+				,"profileIDs"] == i)
+			){
+				stop("\n Debug do_IS_normaliz.r at #2")
+			}
+		}
+		################################################################################	
+	}
+# < BAUSTELLE
+
 	
 }
 ##################################################################################

@@ -165,18 +165,19 @@ observe({ # - A
 						rownames=FALSE,
 						extensions = c('Buttons','FixedHeader','ColReorder'),
 						options = list(
-							lengthMenu = c(20, 50, 100, 200, 500),
+							lengthMenu = list(c(25, 50, 200, -1), list('25', '50', '200', 'All')),
 							fixedHeader = FALSE,
 							ordering=T,
 							dom = 'Blfrtip',
 							buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 							scrollX = TRUE,
+							scrollY = "800px",
 							colReorder = TRUE
 						),
 						filter = 'top',
 	                    selection = list(mode = 'single', target = 'row')
 					),
-					server = FALSE
+					server = TRUE
 				)
 				#################################################################
 				if((length(component[["pattern peak list"]])>1) & (do_isot)){found_isos<-TRUE}else{found_isos<-FALSE}
@@ -306,17 +307,18 @@ observe({
                     rownames=FALSE,
                     extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
-						lengthMenu = c(20, 50, 100, 200, 500),
+						lengthMenu = list(c(25, 50, 200, -1), list('25', '50', '200', 'All')),
 						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
 						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 						scrollX = TRUE,
+						scrollY = "800px",
 						colReorder = TRUE
 					),                    
                     selection = list(mode = 'single', target = 'row')
                   ),
-                  server = FALSE
+                  server = TRUE
                 )
                 # output homol. series table #####################################
                 output$homol_series_table <- DT::renderDataTable({
@@ -333,17 +335,18 @@ observe({
                     rownames=FALSE,
                     extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
-						lengthMenu = c(10, 20, 50, 100, 300),
+						lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
 						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
 						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 						scrollX = TRUE,
+						scrollY = "800px",
 						colReorder = TRUE
 					),                       
                     selection = list(mode = 'single', target = 'row')
                   )
-                },server = FALSE)
+                }, server = TRUE)
                 isolate(ranges_homol$RTchrom<-FALSE) 
                 isolate(ranges_homol$intchrom<-FALSE) 
                 ##################################################################
@@ -401,17 +404,18 @@ observe({
                     rownames=FALSE,
                     extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
-						lengthMenu = c(20, 50, 100, 200, 500),
+						lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
 						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
 						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 						scrollX = TRUE,
+						scrollY = "800px",
 						colReorder = TRUE
 					),
 					selection = list(mode = 'single', target = 'row')
                   ),
-                  server = FALSE
+                  server = TRUE
                )
     }
 })
@@ -442,17 +446,18 @@ observe({
                     rownames=FALSE,
                     extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
-						lengthMenu = c(10, 20, 50, 100, 300),
+						lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
 						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
 						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 						scrollX = TRUE,
+						scrollY = "800px",
 						colReorder = TRUE
 					),      
                     selection = list(mode = 'single', target = 'row')
                   )
-              },server = FALSE)
+              },server = TRUE)
               isolate(ranges_homol$RTchrom<-FALSE) 
               isolate(ranges_homol$intchrom<-FALSE) 
               # output homol. series plot ######################################
@@ -483,19 +488,20 @@ observe({
                     filter = 'top',
                     colnames=c("Series ID","Peak IDs","m/z difference","RT difference [s]","Max log10 int."),
                     rownames=FALSE,
-                    extensions = c('Buttons','FixedHeader','ColReorder'),
+                    extensions = c('Buttons', 'FixedHeader', 'ColReorder'),
 					options = list(
-						lengthMenu = c(10, 20, 50, 100, 300),
+						lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
 						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
 						buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 						scrollX = TRUE,
+						scrollY = "800px",
 						colReorder = TRUE
 					),      
                     selection = list(mode = 'single', target = 'row')
                   )
-               },server = FALSE)
+               },server = TRUE)
             # output homol. series plot ######################################
             output$homol_plot <- renderPlot({
               par(mar=c(4.5,4.5,.9,.8))

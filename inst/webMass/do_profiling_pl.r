@@ -70,11 +70,11 @@
 		profileList_pos[["peaks"]] <- profileList_pos[["peaks"]][order(profileList_pos[["peaks"]][,"m/z"], decreasing = FALSE),]
 		#########################################################################################
 		if(any(profileList_pos[[2]][,2] == 0)){stop("\n issue in do_profiling: zero intensities detected. Try to rerun the workflow including the peakpicking, using -> Settings -> General -> Reset project including peak picking.")}
-		profileList_pos<-agglomer(
+		profileList_pos <- agglomer(
 			profileList_pos,
-			dmass = (as.numeric(logfile$parameters$prof_dmz)+1),
+			dmass = (as.numeric(logfile$parameters$prof_dmz) + 1),
 			ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
-			dret = (as.numeric(logfile$parameters$prof_drt)+10)
+			dret = (as.numeric(logfile$parameters$prof_drt) + 10)
 		)
 		#########################################################################################
 		profileList_pos <- partcluster_pl(
@@ -119,20 +119,20 @@
 	
 		#########################################################################################
 		# set up profileList_neg ################################################################
-	    profileList_neg<-list(0)
-	    profileList_neg[[1]]<-data.frame(TRUE,FALSE,FALSE,FALSE)    # state
-	    colnames(profileList_neg[[1]])<-c("peaks?","agglom?","profiling","trends?")
-	    profileList_neg[[2]]<-0  # peaks
-	    profileList_neg[[3]]<-0  # datetime
-	    profileList_neg[[4]]<-0  # time
-	    profileList_neg[[5]]<-0  # place
-	    profileList_neg[[6]]<-0  # index_agglom
-	    profileList_neg[[7]]<-0  # index_prof
-	    profileList_neg[[8]]<-0  # parameters
-	    profileList_neg[[9]]<-0  # sample type
-	    names(profileList_neg)<-c("state","peaks","datetime","sampleID","place",
-			"index_agglom","index_prof","parameters","type")
-		for_files<-enviMass:::get_measurement_IDs(
+	    profileList_neg <- list(0)
+	    profileList_neg[[1]] <- data.frame(TRUE, FALSE, FALSE, FALSE)    # state
+	    colnames(profileList_neg[[1]]) <- c("peaks?", "agglom?", "profiling", "trends?")
+	    profileList_neg[[2]] <- 0  # peaks
+	    profileList_neg[[3]] <- 0  # datetime
+	    profileList_neg[[4]] <- 0  # time
+	    profileList_neg[[5]] <- 0  # place
+	    profileList_neg[[6]] <- 0  # index_agglom
+	    profileList_neg[[7]] <- 0  # index_prof
+	    profileList_neg[[8]] <- 0  # parameters
+	    profileList_neg[[9]] <- 0  # sample type
+	    names(profileList_neg) <- c("state", "peaks", "datetime", "sampleID", "place",
+			"index_agglom", "index_prof", "parameters", "type")
+		for_files <- enviMass:::get_measurement_IDs(
 				logfile,
 				sets = as.numeric(logfile$parameters$prof_maxfiles),
 				ion_mode = "positive",
@@ -142,10 +142,10 @@
 				places = FALSE,
 				check_exist = TRUE
 			)
-    	profileList_neg[["datetime"]]<-for_files[["datetime"]];
-    	profileList_neg[["sampleID"]]<-for_files[["sampleID"]];
-		profileList_neg[["place"]]<-for_files[["locus"]];
-    	profileList_neg[["type"]]<-for_files[["typus"]];
+    	profileList_neg[["datetime"]] <- for_files[["datetime"]];
+    	profileList_neg[["sampleID"]] <- for_files[["sampleID"]];
+		profileList_neg[["place"]] <- for_files[["locus"]];
+    	profileList_neg[["type"]] <- for_files[["typus"]];
 		#########################################################################################
 		# load peaks into profileList_neg #######################################################
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})

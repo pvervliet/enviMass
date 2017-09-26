@@ -418,7 +418,7 @@ SEXP extractProfiles(
         double drt2 = NUMERIC_VALUE(drt);
         int leng = LENGTH(RT);
         int n,m,k,peak_number,clustnumb=0,at_assigned_peak=0,at_cluster,found_cluster=0,reset_RT,reset_mass;
-        int verbose=0;
+        bool verbose = false;
         double delmz,delrt,minmz,maxmz,minrt,maxrt,summmz;
         SEXP clusters;
         PROTECT(clusters = Rf_allocMatrix(REALSXP, leng, 15));
@@ -437,13 +437,13 @@ SEXP extractProfiles(
         assigned_peaks = new int[leng];
 
         /* OVER PEAKS */
-        if(verbose==1){Rprintf("\n\nStart clustering: ");};
+        if(verbose){Rprintf("\n\nStart clustering: ");};
         for(n=0;n<leng;n++){ /* function not called for smaller sets! */
 
-            if(verbose==1){Rprintf("\n next peak: ");};
+            if(verbose){Rprintf("\n next peak: ");};
             if(clus[(9*leng)+(*(ordint+n)-1)]==0){
 
-                if(verbose==1){Rprintf("not yet assigned: ");};
+                if(verbose){Rprintf("not yet assigned: ");};
 
                 peak_number=0;
                 find_group[peak_number]=(*(ordint+n)-1);
@@ -455,14 +455,14 @@ SEXP extractProfiles(
                 peak_number++;
 
                 /* FIND OTHER PEAK BELONGING TO THIS GROUP */
-                if( (do_group==1) & (*(group+(*(ordint+n)-1))!=0) & (n<(leng-1)) ){
-                    if(verbose==1){Rprintf("find other peaks: ");};
+                if( (do_group) & (*(group+(*(ordint+n)-1))!=0) & (n<(leng-1)) ){
+                    if(verbose){Rprintf("find other peaks: ");};
                     for(m=(n+1);m<leng;m++){ /* over remaining peaks */
                         if( ((*(group+(*(ordint+m)-1)))!=0) & ((*(group+(*(ordint+n)-1))) == (*(group+(*(ordint+m)-1)))) ){
-                            if( (verbose==1) & (clus[(9*leng)+(*(ordint+m)-1)]!=0) ){Rprintf("\n \n DEBUG ME _1 !");}
-                            if( verbose==1 ){Rprintf("* ");};
+                            if( (verbose) & (clus[(9*leng)+(*(ordint+m)-1)]!=0) ){Rprintf("\n \n DEBUG ME _1 !");}
+                            if(verbose){Rprintf("* ");};
                             find_group[peak_number]=(*(ordint+m)-1);
-                            if( (verbose==1) & (*(samp+(*(ordint+n)-1))==*(samp+(*(ordint+m)-1))) ){Rprintf("\n \n DEBUG ME _2 !");}
+                            if( (verbose) & (*(samp+(*(ordint+n)-1))==*(samp+(*(ordint+m)-1))) ){Rprintf("\n \n DEBUG ME _2 !");}
                             if( *(mass+(*(ordint+m)-1))<minmz ){
                                 minmz=*(mass+(*(ordint+m)-1));
                             }/*else{*/
@@ -485,7 +485,7 @@ SEXP extractProfiles(
 
                 /* INITIALIZE FIRST CLUSTER */
                 if(clustnumb==0){
-                    if(verbose==1){Rprintf(" made first cluster.");};
+                    if(verbose){Rprintf(" made first cluster.");};
                     if(ppm2==1){
                         delmz=(dmz2*minmz/1e6);
                     }else{
@@ -499,7 +499,7 @@ SEXP extractProfiles(
                         clus[(2*leng)]=(minrt-delrt);                   /* low RT boundary ****************/
                         clus[(3*leng)]=(maxrt+delrt);                   /* high RT boundary ***************/
                     }else{
-                        if(verbose==1){Rprintf(" DEBUG RT range#1?");};
+                        if(verbose){Rprintf(" DEBUG RT range#1?");};
                         clus[(2*leng)]=minrt;
                         clus[(3*leng)]=maxrt;
                     }
@@ -546,7 +546,7 @@ SEXP extractProfiles(
                            (minrt>=clus[(2*leng)+m]) &&
                            (maxrt<=clus[(3*leng)+m])
                         ){
-                            if(verbose==1){Rprintf(" + ");};
+                            if(verbose){Rprintf(" + ");};
                             /* adapt properties of existing cluster */
                             clus[(4*leng)+m]=(clus[(4*leng)+m]+peak_number);     /* number of peaks ****************/
                             clus[(5*leng)+m]=(clus[(5*leng)+m]+summmz);          /* mass sum ***********************/
@@ -584,7 +584,7 @@ SEXP extractProfiles(
                                     clus[(2*leng)+m]=(clus[(13*leng)+m]-delrt);             /* low RT boundary ****************/
                                     clus[(3*leng)+m]=(clus[(14*leng)+m]+delrt);             /* high RT boundary ***************/
                                 }else{
-                                    if(verbose==1){Rprintf(" DEBUG RT range#2?");};
+                                    if(verbose){Rprintf(" DEBUG RT range#2?");};
                                     clus[(2*leng)+m]=clus[(13*leng)+m];
                                     clus[(3*leng)+m]=clus[(14*leng)+m];
                                 }
@@ -598,16 +598,16 @@ SEXP extractProfiles(
                             found_cluster=1;
                             break; /* assign to most intense */
                         }else{
-                            if(verbose==1){Rprintf(" - ");};
+                            if(verbose){Rprintf(" - ");};
                         }
                     }else{
-                        if(verbose==1){Rprintf(" - ");};
+                        if(verbose){Rprintf(" - ");};
                     }
                 }
 
                 /* NOT ASSIGNABLE TO EXISTING CLUSTER = MAKE NEW ONE */
                 if(found_cluster==0){
-                    if(verbose==1){Rprintf(" not assignable - create new cluster.");};
+                    if(verbose){Rprintf(" not assignable - create new cluster.");};
                     if(ppm2==1){
                         delmz=(dmz2*minmz/1e6);
                     }else{
@@ -621,7 +621,7 @@ SEXP extractProfiles(
                         clus[(2*leng)+clustnumb]=(minrt-delrt);             /* low RT boundary ****************/
                         clus[(3*leng)+clustnumb]=(maxrt+delrt);             /* high RT boundary ***************/
                     }else{
-                        if(verbose==1){Rprintf(" DEBUG RT range#3?");};
+                        if(verbose){Rprintf(" DEBUG RT range#3?");};
                         clus[(2*leng)+clustnumb]=minrt;
                         clus[(3*leng)+clustnumb]=maxrt;
                     }
@@ -644,7 +644,7 @@ SEXP extractProfiles(
                 }
 
             }else{
-                if(verbose==1){Rprintf("already assigned. ");};
+                if(verbose){Rprintf("already assigned. ");};
             }
 
         }

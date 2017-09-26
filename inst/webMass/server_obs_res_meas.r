@@ -191,15 +191,16 @@ observe({
 	                	selection = list(mode = 'multiple', target = 'row'),
 	                	extensions = c('Buttons','FixedHeader','ColReorder'),
 						options = list(
-							lengthMenu = c(25, 50, 100, 200, 1000),
+							lengthMenu = list(c(200, 500, 1000, -1), list('200', '500', '1000', 'All')),
 							fixedHeader = FALSE,
 							ordering = TRUE,
 							dom = 'Blfrtip',
 							buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 							scrollX = TRUE,
+							scrollY = "800px",
 							colReorder = TRUE
 						)
-	                ),server=FALSE
+	                ),server = TRUE
 	            )
 	}else{
 		output$exp_peaklist <- DT::renderDataTable(
@@ -1170,7 +1171,7 @@ maincalc6<-reactive({
                     selection = list(mode = 'single', target = 'row'),
 					extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
-						lengthMenu = c(25, 50, 100, 200, 1000),
+						lengthMenu = list(c(25, 50, 100, 200, -1), list('25', '50', '100', '200', 'All')),
 						fixedHeader = FALSE,
 						ordering=T,
 						dom = 'Blfrtip',
@@ -1179,7 +1180,7 @@ maincalc6<-reactive({
 						colReorder = TRUE
 					)
 				),
-				server=FALSE
+				server = TRUE
 			)
 			updateNumericInput(session,"profID",value = 0);
 			updateNumericInput(session,"profentry",value = 0);

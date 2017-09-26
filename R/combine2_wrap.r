@@ -451,11 +451,25 @@ function(
 		######################################################################		
 	}
 	##########################################################################
+	# extend component table (3) - add monoisotopic peak characteristics #####
+	if(exists("peaklist", envir = as.environment(".GlobalEnv"))){rm("peaklist", envir = as.environment(".GlobalEnv"))}	
+	if(exists("peaklist")){rm("peaklist")}	
+	load(file = file.path(logfile[[1]], "peaklist", as.character(for_file)), envir = environment()); # Peaklist  
+	peaklist <- peaklist[order(peaklist[,10], decreasing = FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
+	for(i in 1:dim(component[["Components"]])[1]){
+		those <- as.numeric(strsplit(component[["Components"]][i, "ID pattern peaks |"], ",")[[1]])
+		those <- match(those,peaklist[,"peak_ID"])
+		those <- those[order(peaklist[those,"m/z"])]
+		those <- those[1]
+		component[["Components"]][i,"Monois. peak ID |"] <- (peaklist[those,"peak_ID"])
+		component[["Components"]][i,"Monois. m/z |"] <- (peaklist[those,"m/z_corr"])
+		component[["Components"]][i,"Monois. RT |"] <- (peaklist[those,"RT_corr"])				
+		component[["Components"]][i,"Monois. int. |"] <- (peaklist[those,"int_corr"])
+		component[["Components"]][i,"Monois. sample/blind int. ratio"] <- (peaklist[those,"keep_2"])
+	}
+	##########################################################################
 	# extend component table (3) - mark blind peaks by asterisk ##############				
 	if(logfile$workflow[names(logfile$workflow) == "blind"] == "yes"){	
-		if(exists("peaklist")){rm("peaklist")}	
-		load(file = file.path(logfile[[1]], "peaklist", as.character(for_file)), envir = environment()); # Peaklist  
-		peaklist <- peaklist[order(peaklist[,10], decreasing = FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
 		for(i in 1:dim(component[[1]])[1]){
 			len_tot <- 0
 			len_blind <- 0

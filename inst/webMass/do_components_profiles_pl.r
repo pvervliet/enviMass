@@ -26,9 +26,8 @@ if(
 	peaks <- peaks[ord,]
 	use_entries_profiles<-enviMass::find_empty(links_profiles_pos) # also finds gaps
 	profileList_pos[["index_prof"]][,"links"]<-0
-	with_bar<-TRUE
-	##############################################################################	
-
+	with_bar <- TRUE	
+	
 	##############################################################################	
 	# (1) ANNOTATE TARGET & ISTD SCREENING MACTHES stored in links_peaks_pos #####
 	# -> now in do_IS_normali_pl.r ###############################################
@@ -41,43 +40,43 @@ if(
 		cat("\n Retrieving EIC correlation links ")
 		# (2.1) INSERT EIC LINKS #################################################
 		##########################################################################
-		forIDs<-profileList_pos[["sampleID"]]
-		for_files<-list.files(file.path(logfile[[1]],"results","componentization","EIC_corr"))
-		keep<-match(forIDs,for_files) # which files are available?
+		forIDs <- profileList_pos[["sampleID"]]
+		for_files <- list.files(file.path(logfile[[1]],"results","componentization","EIC_corr"))
+		keep <- match(forIDs,for_files) # which files are available?
 		if(any(is.na(keep))){cat("\n Just note: not all files found in profiles have EIC correlation results (1). \n")}
 		TRUE_IDs <- (measurements$ID[measurements$EIC_correlation=="TRUE"]) # for files which have run through that step
 		keep2 <- match(forIDs, TRUE_IDs) # ensure file availability
-		forIDs<-forIDs[!is.na(keep) & !is.na(keep2)]
+		forIDs <- forIDs[!is.na(keep) & !is.na(keep2)]
 		if(logfile$parameters$dofile_latest_profcomp=="TRUE"){ # restrict to latest files
 			atPOSIX<-profileList_pos[["datetime"]];
 			matchID<-profileList_pos[["sampleID"]];
 			atdate<-c();attime<-c();
 			for(i in 1:length(atPOSIX)){
-				atdate<-c(atdate, strsplit(atPOSIX[i]," ")[[1]][1]);
-				attime<-c(attime, strsplit(atPOSIX[i]," ")[[1]][2]);
+				atdate <- c(atdate, strsplit(atPOSIX[i]," ")[[1]][1]);
+				attime <- c(attime, strsplit(atPOSIX[i]," ")[[1]][2]);
 			}
-			attime<-as.difftime(attime);
-			atdate<-as.Date(atdate, tz="GMT");
-			ord<-order(as.numeric(atdate),as.numeric(attime),matchID,decreasing=TRUE);
-			matchID<-matchID[ord];
-			forIDs<-forIDs[match(forIDs,matchID)]
-			if(length(forIDs)>as.numeric(logfile$parameters$numfile_latest_profcomp)){
-				forIDs<-forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
+			attime <- as.difftime(attime);
+			atdate <- as.Date(atdate, tz="GMT");
+			ord <- order(as.numeric(atdate), as.numeric(attime), matchID, decreasing=TRUE);
+			matchID <- matchID[ord];
+			forIDs <- forIDs[match(forIDs, matchID)]
+			if(length(forIDs) > as.numeric(logfile$parameters$numfile_latest_profcomp)){
+				forIDs <- forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
 		}
-		not_found1<-0;inserted1<-0
-		if(length(forIDs)>0){
+		not_found1 <- 0; inserted1 <- 0
+		if(length(forIDs) > 0){
 			if(with_bar){pBar <- txtProgressBar(min = 0, max = length(forIDs), style = 3)}
 			for(i in 1:length(forIDs)){
 				if(with_bar){setTxtProgressBar(pBar, i, title = NULL, label = NULL)}
-				load(file=file.path(logfile[[1]],"results","componentization","EIC_corr",forIDs[i]))
+				load(file = file.path(logfile[[1]], "results", "componentization", "EIC_corr", forIDs[i]))
 				#
 				#EIC_pairs<-EIC_pairs[EIC_pairs[,4]>=logfile$parameters$EICor_mincor,,drop=FALSE]		
 				#
-				if(length(EIC_pairs[,1])==0){next}
+				if(length(EIC_pairs[,1]) == 0){next}
 				# find profiles for first peak
-				get1<-cbind(
-					rep(as.numeric(forIDs[i]),length(EIC_pairs[,1])),EIC_pairs[,1] # first column sorted correctly
+				get1 <- cbind(
+					rep(as.numeric(forIDs[i]), length(EIC_pairs[,1])), EIC_pairs[,1] # first column sorted correctly
 				)
 				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
 				# find profiles for second peak

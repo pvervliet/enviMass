@@ -90,7 +90,7 @@ partcluster_pl<-function(
 	if(length(cluster_results) > 1){
 		for(i in 2:length(cluster_results)){ # insert profileIDs
 			cluster_results[[i]][,"profileIDs"] <- (
-				cluster_results[[i]][,"profileIDs"] + max(cluster_results[[i-1]][,"profileIDs"])
+				cluster_results[[i]][,"profileIDs"] + max(cluster_results[[i - 1]][,"profileIDs"])
 			)
 		}
 	}
@@ -99,8 +99,8 @@ partcluster_pl<-function(
 	########################################################################################
 	# assemble profile index matrix ########################################################
 	index <- .Call("_enviMass_indexed",
-		as.integer(profileList[["peaks"]][,"profileIDs"]),
-		as.integer(max(profileList[["peaks"]][,"profileIDs"])),	
+		as.integer(profileList[["peaks"]][, "profileIDs"]),
+		as.integer(max(profileList[["peaks"]][, "profileIDs"])),	
 		as.integer(26),
 		PACKAGE="enviMass"
 	)
@@ -158,7 +158,7 @@ partcluster_pl<-function(
 	sample_IDs <- as.numeric(profileList[["sampleID"]])
 	sample_types <- profileList[["type"]]
     for(k in m:n){
-		sub_mat <- profileList[["peaks"]][profileList[["index_prof"]][k,1]:  profileList[["index_prof"]][k,2], c(1:3, 6), drop=FALSE]
+		sub_mat <- profileList[["peaks"]][profileList[["index_prof"]][k,1]:profileList[["index_prof"]][k, 2], c(1:3, 6), drop = FALSE]
 		len <- dim(sub_mat)[1]
 		mean_mass <- (sum(sub_mat[,1])/len)
 		mean_mz[k] <- mean_mass
@@ -167,18 +167,18 @@ partcluster_pl<-function(
 		max_int[k] <- max(sub_mat[,2])
 		min_RT[k] <- min(sub_mat[,3])	
 		max_RT[k] <- max(sub_mat[,3])	
-		var_mz <- (sum((sub_mat[,1]-mean_mass)^2)/(len-1))
-		Mass_defect[k] <- (round(mean_mass)-mean_mass)
+		var_mz <- (sum((sub_mat[,1] - mean_mass)^2) / (len - 1))
+		Mass_defect[k] <- (round(mean_mass) - mean_mass)
 		are_blind <- sub_mat[,4] %in% (sample_IDs[sample_types == "blank"])
 		count_blind[k] <- sum(are_blind)
 		count_sam[k] <- (len - count_blind[k])
 		if(count_blind[k] > 0){ 
-			mean_int_blind[k] <- (sum(sub_mat[are_blind,"intensity"])/(len-1))
-			max_int_blind[k] <- max(sub_mat[are_blind,"intensity"])
+			mean_int_blind[k] <- (sum(sub_mat[are_blind, "intensity"]) / (len - 1))
+			max_int_blind[k] <- max(sub_mat[are_blind, "intensity"])
 		}
 		if(count_sam[k] > 0){
-			mean_int_sample[k] <- (sum(sub_mat[!are_blind,"intensity"])/(len-1))
-			max_int_sample[k] <- max(sub_mat[!are_blind,"intensity"])
+			mean_int_sample[k] <- (sum(sub_mat[!are_blind, "intensity"]) / (len - 1))
+			max_int_sample[k] <- max(sub_mat[!are_blind, "intensity"])
 		}	
 	}
 	profileList[["index_prof"]][,"mean_mz"] <- mean_mz

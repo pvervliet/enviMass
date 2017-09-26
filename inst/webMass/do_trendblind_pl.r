@@ -83,17 +83,17 @@
 		for_split <- (size_MB / 2)
 		for_split <- round( dim(profileList_pos[["index_prof"]])[1] / for_split )
 		#for_split<-round( dim(profileList_pos[["index_prof"]])[1] / (dim(summary(clus))[1]) )
-		along <- split(along, ceiling(seq_along(along)/for_split))
-		clus_peaks<-list()
-		clus_profs<-list()
+		along <- split(along, ceiling(seq_along(along) / for_split))
+		clus_peaks <- list()
+		clus_profs <- list()
 		for(i in 1:length(along)){
-			clus_peaks[[i]]<-profileList_pos[["peaks"]][
-				(profileList_pos[["index_prof"]][along[[i]][1],"start_ID"]):(profileList_pos[["index_prof"]][along[[i]][length(along[[i]])],"end_ID"])
+			clus_peaks[[i]] <- profileList_pos[["peaks"]][
+				(profileList_pos[["index_prof"]][along[[i]][1], "start_ID"]):(profileList_pos[["index_prof"]][along[[i]][length(along[[i]])], "end_ID"])
 			,,drop=FALSE]
-			clus_profs[[i]]<-profileList_pos[["index_prof"]][along[[i]][1]:along[[i]][length(along[[i]])],,drop=FALSE]
-			start_at<-(clus_profs[[i]][1,"start_ID"][[1]]-1)
-			clus_profs[[i]][,1]<-(clus_profs[[i]][,1]-start_at)
-			clus_profs[[i]][,2]<-(clus_profs[[i]][,2]-start_at)
+			clus_profs[[i]] <- profileList_pos[["index_prof"]][along[[i]][1]:along[[i]][length(along[[i]])],, drop = FALSE]
+			start_at <- (clus_profs[[i]][1, "start_ID"][[1]] - 1)
+			clus_profs[[i]][,1] <- (clus_profs[[i]][,1] - start_at)
+			clus_profs[[i]][,2] <- (clus_profs[[i]][,2] - start_at)
 		}
 		##############################################################################	
 		clusterEvalQ(cl = clus,{rm(list=ls()); gc(verbose=FALSE); NULL})
@@ -110,27 +110,27 @@
 			USE.NAMES = FALSE,
 			.scheduling = c("dynamic")
 		)
-		clusterEvalQ(cl = clus,{rm(list=ls()); gc(verbose=FALSE); NULL})
+		clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose = FALSE); NULL})
 		##############################################################################				
-		# assort results into original profileList
+		# assort results into original profileList ###################################
 		for(i in 1:length(cluster_results)){ # insert trend results into index_prof
 			profileList_pos[["index_prof"]][
 				cluster_results[[i]][1,"profile_ID"]:cluster_results[[i]][dim(cluster_results[[i]])[1],"profile_ID"]
-			,]<-cluster_results[[i]]
-		
+			,c("deltaint_newest", "deltaint_global", "absolute_mean_dev", "newest_intensity")] <- 
+				cluster_results[[i]][,c("deltaint_newest", "deltaint_global", "absolute_mean_dev", "newest_intensity")]
 		}
 		rm(cluster_results, clus_peaks, clus_profs)
-		profileList_pos[[1]][[4]]<-TRUE;
+		profileList_pos[["state"]][[4]] <- TRUE;
 		##############################################################################	
-		profileList_pos<<-profileList_pos
+		profileList_pos <<- profileList_pos
 		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
 		png(filename = file.path(as.character(logfile[[1]]),"pics","boxprofile_pos"), width = 800, bg = "white")    
 		enviMass::profiledist(profileList_pos)	# generate the trend boxplots
 		dev.off()
-		expr4p<-list(src=file.path(logfile[[1]],"pics","boxprofile_pos"))
+		expr4p <- list(src=file.path(logfile[[1]],"pics","boxprofile_pos"))
 		output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)
 		if(isolate(input$Ion_mode)=="positive"){
-			profileList<<-profileList_pos;
+			profileList <<- profileList_pos;
 		}
 		##############################################################################	
 		
@@ -247,15 +247,15 @@
 		)
 		clusterEvalQ(cl = clus,{rm(list=ls()); gc(verbose=FALSE); NULL})
 		##############################################################################				
-		# assort results into original profileList
+		# assort results into original profileList ###################################
 		for(i in 1:length(cluster_results)){ # insert trend results into index_prof
 			profileList_neg[["index_prof"]][
 				cluster_results[[i]][1,"profile_ID"]:cluster_results[[i]][dim(cluster_results[[i]])[1],"profile_ID"]
-			,]<-cluster_results[[i]]
-		
+			,c("deltaint_newest", "deltaint_global", "absolute_mean_dev", "newest_intensity")] <- 
+				cluster_results[[i]][,c("deltaint_newest", "deltaint_global", "absolute_mean_dev", "newest_intensity")]
 		}
 		rm(cluster_results, clus_peaks, clus_profs)
-		profileList_neg[[1]][[4]]<-TRUE;
+		profileList_neg[["state"]][[4]] <- TRUE;
 		##############################################################################	
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);

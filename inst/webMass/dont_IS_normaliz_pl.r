@@ -30,6 +30,7 @@ if(
 	logfile$workflow[names(logfile$workflow) == "components_profiles"] == "yes" # only if needed downstream ...
 ){
 
+
 	####################################################################################	
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="profileList_pos")){rm(profileList_pos)}	
@@ -42,7 +43,7 @@ if(
 	load(file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"));	
 	links_profiles_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	use_entries_profiles<-enviMass::find_empty(links_profiles_pos) # also finds gaps
+	use_entries_profiles <- enviMass::find_empty(links_profiles_pos) # also finds gaps
 	profileList_pos[["index_prof"]][,"links"]<-0
 	with_bar<-FALSE
 	####################################################################################
