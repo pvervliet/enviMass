@@ -19,7 +19,7 @@
 	if(logfile$parameters$prof_select=="TRUE"){
 		measurements<-measurements[measurements[,names(measurements) == "profiled"] == "TRUE",]	
 	}
-	with_check <- TRUE
+	with_check <- FALSE
 	############################################################################################
 
 	############################################################################################		
@@ -88,7 +88,6 @@
 		)	
 		########################################################################################
 		if(with_check){
-		
 			####################################################################################
 			# profile IDs correct? #############################################################
 			for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
@@ -101,13 +100,12 @@
 				}
 			}
 			####################################################################################	
-			
 		}
 		#########################################################################################
 		profileList_pos <<- profileList_pos
-		save(profileList_pos, file = file.path(as.character(logfile[[1]]), "results", "profileList_pos"), compress = FALSE);
+		save(profileList_pos, file = file.path(as.character(logfile[[1]]), "results", "profileList_pos"), compress = FALSE)
 		profileList_pos_copy <- profileList_pos
-		save(profileList_pos_copy, file = file.path(as.character(logfile[[1]]), "results", "profileList_pos_copy"), compress = FALSE); # used for screening - does not include modifications of downstream compound subtraction		
+		save(profileList_pos_copy, file = file.path(as.character(logfile[[1]]), "results", "profileList_pos_copy"), compress = FALSE) # used for screening - does not include modifications of downstream compound subtraction		
 		rm(profileList_pos_copy)
 		links_peaks_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol; links_profiles_pos defined in do_components_profiles.r
 		save(links_peaks_pos, file = file.path(as.character(logfile[[1]]), "results", "links_peaks_pos"));	
@@ -179,6 +177,21 @@
 			IDs = FALSE,
 			clus = clus
 		)	
+		########################################################################################
+		if(with_check){
+			####################################################################################
+			# profile IDs correct? #############################################################
+			for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
+				if(
+					!all(profileList_pos[["peaks"]][	
+						profileList_pos[["index_prof"]][i, "start_ID"]:profileList_pos[["index_prof"]][i, "end_ID"]
+					,"profileIDs"] == i)
+				){
+					stop("\n Debug partcluster_pl.r at #1")
+				}
+			}
+			####################################################################################	
+		}
 		#########################################################################################
 		profileList_neg<<-profileList_neg
 		save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),compress=FALSE);
