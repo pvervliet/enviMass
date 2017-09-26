@@ -19,11 +19,12 @@
 	if(logfile$parameters$prof_select=="TRUE"){
 		measurements<-measurements[measurements[,names(measurements) == "profiled"] == "TRUE",]	
 	}
+	with_check <- TRUE
 	############################################################################################
 
 	############################################################################################		
 	if(any(measurements[,"Mode"]=="positive")){
-	
+	 
 		#########################################################################################
 		# set up profileList_pos ################################################################
 	    profileList_pos <- list(0)
@@ -85,6 +86,23 @@
 			IDs = FALSE,
 			clus = clus
 		)	
+		########################################################################################
+		if(with_check){
+		
+			####################################################################################
+			# profile IDs correct? #############################################################
+			for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
+				if(
+					!all(profileList_pos[["peaks"]][	
+						profileList_pos[["index_prof"]][i, "start_ID"]:profileList_pos[["index_prof"]][i, "end_ID"]
+					,"profileIDs"] == i)
+				){
+					stop("\n Debug partcluster_pl.r at #1")
+				}
+			}
+			####################################################################################	
+			
+		}
 		#########################################################################################
 		profileList_pos <<- profileList_pos
 		save(profileList_pos, file = file.path(as.character(logfile[[1]]), "results", "profileList_pos"), compress = FALSE);

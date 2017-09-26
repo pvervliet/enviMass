@@ -94,7 +94,7 @@ partcluster_pl<-function(
 			)
 		}
 	}
-	profileList[["peaks"]] <- do.call(rbind,cluster_results)
+	profileList[["peaks"]] <- do.call(rbind, cluster_results)
 	rm(cluster_results, clus_agglom, clus_peaks)
 	########################################################################################
 	# assemble profile index matrix ########################################################

@@ -21,9 +21,9 @@ if(
 	load(file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"));	
 	load(file.path(as.character(logfile[[1]]),"results","links_profiles_pos")); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
 	measurements<-read.csv(file=file.path(logfile[[1]], "dataframes", "measurements"),colClasses = "character");
-	peaks<-profileList_pos[["peaks"]][,c("sampleIDs", "peakIDs", "profileIDs", "RT")] # to retrieve relations with, sampleID, peakID, profileID, RT
-	ord<-order(peaks[,"sampleIDs"], peaks[,"peakIDs"], peaks[,"profileIDs"],decreasing=FALSE)
-	peaks<-peaks[ord,]
+	peaks <- profileList_pos[["peaks"]][,c("sampleIDs", "peakIDs", "profileIDs", "RT")] # to retrieve relations with, sampleID, peakID, profileID, RT
+	ord <- order(peaks[,"sampleIDs"], peaks[,"peakIDs"], peaks[,"profileIDs"],decreasing=FALSE)
+	peaks <- peaks[ord,]
 	use_entries_profiles<-enviMass::find_empty(links_profiles_pos) # also finds gaps
 	profileList_pos[["index_prof"]][,"links"]<-0
 	with_bar<-TRUE
@@ -298,7 +298,7 @@ if(
 					}else{ # ... or retrieve them
 						these <- profileList_pos[["peaks"]][
 							profileList_pos[["index_prof"]][prof1,"start_ID"]:profileList_pos[["index_prof"]][prof1,"end_ID"]
-						,"sampleIDs"]
+						,"sampleIDs"]						
 						those <- profileList_pos[["peaks"]][
 							profileList_pos[["index_prof"]][prof2,"start_ID"]:profileList_pos[["index_prof"]][prof2,"end_ID"]
 						,"sampleIDs"]						

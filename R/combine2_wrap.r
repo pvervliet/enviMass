@@ -89,9 +89,6 @@ function(
 			peaks <- profileList_pos_copy[["peaks"]][for_peaks,]
 			rm(for_peaks)
 			if(dim(peaks)[1] > 0){
-				# a check ...
-				load(file=file.path(logfile[[1]],"peaklist",as.character(for_file)), envir = environment()); # Peaklist  
-				rm(peaklist)
 				peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
 				for(i in 1:dim(component[["Components"]])[1]){
 					collect_comp<-c()
@@ -185,9 +182,6 @@ function(
 			peaks<-profileList_neg_copy[["peaks"]][for_peaks,]
 			rm(for_peaks)
 			if(dim(peaks)[1]>0){
-				# a check ...
-				load(file=file.path(logfile[[1]],"peaklist",as.character(for_file)), envir = environment()); # Peaklist  
-				rm(peaklist)
 				peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
 				for(i in 1:dim(component[[1]])[1]){
 					collect_comp<-c()
@@ -284,9 +278,6 @@ function(
 			peaks<-profileList_pos_copy[["peaks"]][for_peaks,]
 			rm(for_peaks)
 			if(dim(peaks)[1]>0){
-				# a check ...
-				load(file=file.path(logfile[[1]],"peaklist",as.character(for_file)), envir = environment()); # Peaklist  
-				rm(peaklist)
 				peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
 				for(i in 1:dim(component[[1]])[1]){
 					collect_comp<-c()
@@ -378,9 +369,6 @@ function(
 			peaks<-profileList_neg_copy[["peaks"]][for_peaks,]
 			rm(for_peaks)
 			if(dim(peaks)[1]>0){
-				# a check ...
-				load(file=file.path(logfile[[1]],"peaklist",as.character(for_file)), envir = environment()); # Peaklist  
-				rm(peaklist)
 				peaks<-peaks[order(peaks[,"peakIDs"],decreasing=FALSE),]
 				for(i in 1:dim(component[[1]])[1]){
 					collect_comp<-c()
@@ -464,41 +452,42 @@ function(
 	}
 	##########################################################################
 	# extend component table (3) - mark blind peaks by asterisk ##############				
-	if(logfile$workflow[names(logfile$workflow)=="blind"]=="yes"){	
+	if(logfile$workflow[names(logfile$workflow) == "blind"] == "yes"){	
 		if(exists("peaklist")){rm("peaklist")}	
-		peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
+		load(file = file.path(logfile[[1]], "peaklist", as.character(for_file)), envir = environment()); # Peaklist  
+		peaklist <- peaklist[order(peaklist[,10], decreasing = FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
 		for(i in 1:dim(component[[1]])[1]){
-			len_tot<-0
-			len_blind<-0
-			if(component[["Components"]][i,"ID pattern peaks |"]!="-"){
-				those<-as.numeric(strsplit(component[[1]][i,"ID pattern peaks |"],",")[[1]])
-				these<-as.numeric(those)
-				these2<-these
-				these<-match(these,peaklist[,"peak_ID"])
-				len_tot<-(len_tot+length(these))
+			len_tot <- 0
+			len_blind <- 0
+			if(component[["Components"]][i, "ID pattern peaks |"] != "-"){
+				those <- as.numeric(strsplit(component[[1]][i, "ID pattern peaks |"], ",")[[1]])
+				these <- as.numeric(those)
+				these2 <- these
+				these <- match(these, peaklist[,"peak_ID"])
+				len_tot <- (len_tot + length(these))
 				for(j in 1:length(these)){
-					if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 5")} # TEST
-					if(peaklist[these[j],"keep_2"]<as.numeric(logfile$parameters$blind_threshold)){
-						those[j]<-paste0(those[j],"*")
-						len_blind<-(len_blind+1)
+					if(these2[j] != peaklist[these[j], "peak_ID"]){stop("Debug do_components.files.r - issue 5")} # TEST
+					if(peaklist[these[j],"keep_2"] < as.numeric(logfile$parameters$blind_threshold)){
+						those[j] <- paste0(those[j],"*")
+						len_blind <- (len_blind+1)
 					}
 				}
-				component[["Components"]][i,"ID pattern peaks |"]<-paste0(those,collapse=",")
+				component[["Components"]][i,"ID pattern peaks |"] <- paste0(those,collapse=",")
 			}
-			if(component[["Components"]][i,"ID adduct peaks |"]!="-"){
-				those<-as.numeric(strsplit(component[[1]][i,"ID adduct peaks |"],",")[[1]])
-				these<-as.numeric(those)
-				these2<-these
-				these<-match(these,peaklist[,"peak_ID"])
-				len_tot<-(len_tot+length(these))
+			if(component[["Components"]][i,"ID adduct peaks |"] != "-"){
+				those <- as.numeric(strsplit(component[[1]][i,"ID adduct peaks |"], ",")[[1]])
+				these <- as.numeric(those)
+				these2 <- these
+				these <- match(these, peaklist[,"peak_ID"])
+				len_tot <- (len_tot + length(these))
 				for(j in 1:length(these)){
-					if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 6")} # TEST
-					if(peaklist[these[j],"keep_2"]<as.numeric(logfile$parameters$blind_threshold)){
-						those[j]<-paste0(those[j],"*")
-						len_blind<-(len_blind+1)
+					if(these2[j] != peaklist[these[j], "peak_ID"]){stop("Debug do_components.files.r - issue 6")} # TEST
+					if(peaklist[these[j],"keep_2"] < as.numeric(logfile$parameters$blind_threshold)){
+						those[j] <- paste0(those[j],"*")
+						len_blind <- (len_blind+1)
 					}
 				}
-				component[["Components"]][i,"ID adduct peaks |"]<-paste0(those,collapse=",")
+				component[["Components"]][i, "ID adduct peaks |"] <- paste0(those,collapse=",")
 			}
 			if(component[["Components"]][i,"ID interfering peaks |"]!="-"){
 				those<-as.numeric(strsplit(component[[1]][i,"ID interfering peaks |"],",")[[1]])
