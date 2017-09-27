@@ -2,8 +2,8 @@
 
 	output$dowhat<-renderText("Peak picking ... please wait");
 	if(any(search()=="package:nlme")){detach(package:nlme,force=TRUE);addit<-TRUE}else{addit<-FALSE}
-    measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-    leng<-dim(measurements)[1];         
+    measurements <- read.csv(file = file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character");
+    leng <- dim(measurements)[1];         
 	
 #measurements[,"peakpicking"]<-"FALSE"
 
@@ -13,73 +13,73 @@
 				##################################################################
 				cat(paste("\n    Peak picking sample ",as.character(i)," of ",as.character(leng)," with ID ",measurements[i,"ID"],": "));    
 				if(logfile$parameters$cut_RT=="TRUE"){
-					use_minRT<-(as.numeric(logfile$parameters$cut_RT_min)*60)
-					use_maxRT<-(as.numeric(logfile$parameters$cut_RT_max)*60)
+					use_minRT <- (as.numeric(logfile$parameters$cut_RT_min)*60)
+					use_maxRT <- (as.numeric(logfile$parameters$cut_RT_max)*60)
 					cat("(filter RT range)")
 				}else{
-					use_minRT<-FALSE
-					use_maxRT<-FALSE				
+					use_minRT <- FALSE
+					use_maxRT <- FALSE				
 				}		
-				if(logfile$parameters$cut_mass=="TRUE"){
-					use_minmass<-as.numeric(logfile$parameters$cut_mass_min)
-					use_maxmass<-as.numeric(logfile$parameters$cut_mass_max)
+				if(logfile$parameters$cut_mass == "TRUE"){
+					use_minmass <- as.numeric(logfile$parameters$cut_mass_min)
+					use_maxmass <- as.numeric(logfile$parameters$cut_mass_max)
 					cat("(filter mass range)")
 				}else{
-					use_minmass<-FALSE
-					use_maxmass<-FALSE				
+					use_minmass <- FALSE
+					use_maxmass <- FALSE				
 				}				
 				##################################################################
 				if(#logfile$parameters$is_example=="FALSE"
-					file.exists(file.path(logfile[[1]],"files",paste0(as.character(measurements[i,"ID"]),".mzXML")))
+					file.exists(file.path(logfile[[1]], "files", paste0(as.character(measurements[i,"ID"]), ".mzXML")))
 				){
 					MSlist<-enviPick::readMSdata(
-						filepath.mzXML=file.path(logfile[[1]],"files",paste0(as.character(measurements[i,1]),".mzXML")),
-						MSlevel=logfile$parameters$peak_MSlevel,  # MSlevel
-						progbar=logfile$parameters$progressBar, # progbar
-						minRT=use_minRT,
-						maxRT=use_maxRT,
-						minmz=use_minmass,
-						maxmz=use_maxmass,
-						ion_mode=FALSE#measurements[i,"Mode"]
+						filepath.mzXML = file.path(logfile[[1]], "files", paste0(as.character(measurements[i,1]), ".mzXML")),
+						MSlevel = logfile$parameters$peak_MSlevel,  # MSlevel
+						progbar = logfile$parameters$progressBar, # progbar
+						minRT = use_minRT,
+						maxRT = use_maxRT,
+						minmz = use_minmass,
+						maxmz = use_maxmass,
+						ion_mode = FALSE#measurements[i,"Mode"]
 					);
 					cat(" file read -"); 
 					##############################################################
-					if(logfile$parameters$peak_estimate=="TRUE"){
-						use_peak_perc_cut<-0
-						estim_values<-try({enviMass::dens_filter(MSlist,plotit=FALSE,n=2000,m=5)},silent=TRUE)
-						if(class(estim_values)!="try-error"){
-							use_peak_dmzdens<-estim_values[[1]]
-							use_peak_minint_log10<-estim_values[[2]]
-							if(as.numeric(logfile$parameters$peak_maxint_log10)<use_peak_minint_log10){
-								use_peak_maxint_log10<-log10(max(MSlist[["Scans"]][[2]][,"intensity"])+1)
+					if( logfile$parameters$peak_estimate == "TRUE" ){
+						use_peak_perc_cut <- 0
+						estim_values <- try({enviMass::dens_filter(MSlist, plotit = FALSE, n = 2000, m = 5)}, silent = TRUE)
+						if( (class(estim_values) != "try-error") & (!all(is.na(estim_values))) ){
+							use_peak_dmzdens <- estim_values[[1]]
+							use_peak_minint_log10 <- estim_values[[2]]
+							if(as.numeric(logfile$parameters$peak_maxint_log10) < use_peak_minint_log10){
+								use_peak_maxint_log10 <- log10(max(MSlist[["Scans"]][[2]][,"intensity"])+1)
 							}else{
-								use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)
+								use_peak_maxint_log10 <- as.numeric(logfile$parameters$peak_maxint_log10)
 							} 
 							len1<-dim(MSlist[["Scans"]][[2]])[1]
-							MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][
-								MSlist[["Scans"]][[2]][,"intensity"]>=(10^use_peak_minint_log10)
+							MSlist[["Scans"]][[2]] <- MSlist[["Scans"]][[2]][
+								MSlist[["Scans"]][[2]][,"intensity"] >= (10^use_peak_minint_log10)
 							,]
-							len2<-dim(MSlist[["Scans"]][[2]])[1]
-							cat(paste(" ",as.character(len1-len2),"of",as.character(len1),"data points discarded by absolute threshold -"))
+							len2 <- dim(MSlist[["Scans"]][[2]])[1]
+							cat(paste(" ", as.character(len1-len2), "of", as.character(len1), "data points discarded by absolute threshold -"))
 							cat(" data filtered -"); 
 						}else{
-							use_peak_dmzdens<-as.numeric(logfile$parameters$peak_dmzdens)
-							use_peak_minint_log10<-as.numeric(logfile$parameters$peak_minint_log10)
-							use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)					
-							use_peak_perc_cut<-as.numeric(logfile$parameters$peak_perc_cut)
+							use_peak_dmzdens <- as.numeric(logfile$parameters$peak_dmzdens)
+							use_peak_minint_log10 <- as.numeric(logfile$parameters$peak_minint_log10)
+							use_peak_maxint_log10 <- as.numeric(logfile$parameters$peak_maxint_log10)					
+							use_peak_perc_cut <- as.numeric(logfile$parameters$peak_perc_cut)
 							cat(" no data filtering possible -"); 
 						}	
 					}else{
-						use_peak_dmzdens<-as.numeric(logfile$parameters$peak_dmzdens)
-						use_peak_minint_log10<-as.numeric(logfile$parameters$peak_minint_log10)
-						use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)					
-						use_peak_perc_cut<-as.numeric(logfile$parameters$peak_perc_cut)
-						if(use_peak_perc_cut>0){ # not to be used with filtering estimates - that uses absolute threshold intensities
+						use_peak_dmzdens <- as.numeric(logfile$parameters$peak_dmzdens)
+						use_peak_minint_log10 <- as.numeric(logfile$parameters$peak_minint_log10)
+						use_peak_maxint_log10 <- as.numeric(logfile$parameters$peak_maxint_log10)					
+						use_peak_perc_cut <- as.numeric(logfile$parameters$peak_perc_cut)
+						if(use_peak_perc_cut > 0){ # not to be used with filtering estimates - that uses absolute threshold intensities
 							len1<-dim(MSlist[["Scans"]][[2]])[1]
-							MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][
-								MSlist[["Scans"]][[2]][,"intensity"]>=quantile(MSlist[["Scans"]][[2]][,"intensity"],(use_peak_perc_cut/100))
+							MSlist[["Scans"]][[2]] <- MSlist[["Scans"]][[2]][
+								MSlist[["Scans"]][[2]][,"intensity"] >= quantile(MSlist[["Scans"]][[2]][,"intensity"],(use_peak_perc_cut/100))
 							,]
-							len2<-dim(MSlist[["Scans"]][[2]])[1]
+							len2 <- dim(MSlist[["Scans"]][[2]])[1]
 							cat(paste(" ",as.character(len1-len2),"of",as.character(len1),"data points discarded by fraction -"))
 						}
 					}	
@@ -114,16 +114,18 @@
 				);
 				cat(" partitioned -");
 				##################################################################
-				MSlist<-enviMass:::mzclust_pl(
+				MSlist <- enviMass:::mzclust_pl(
 					MSlist,
-					use_peak_dmzdens,
-					ppm=TRUE,
-					60,
-					as.numeric(logfile$parameters$peak_minpeak),
-					10^use_peak_maxint_log10,
-					progbar=as.logical(logfile$parameters$progressBar),
-					merged=TRUE,from=FALSE,to=FALSE
-				);
+					dmzdens = use_peak_dmzdens,
+					ppm = TRUE,
+					drtdens = 60,
+					minpeak = as.numeric(logfile$parameters$peak_minpeak),
+					maxint = (10^use_peak_maxint_log10),
+					progbar = FALSE,
+					merged = TRUE, 
+					from = FALSE, 
+					to = FALSE
+				); 
 				cat(" clustered -");
 				############################################################################
 				minpeak <- as.numeric(logfile$parameters$peak_minpeak)
@@ -200,9 +202,9 @@
 				MSlist[["Scans"]][[2]]<-do.call(rbind,cluster_results)
 				rm(cluster_results, clus_EICs, clus_centroids)
 				# build index #############################################################	
-				maxit<-max(MSlist[["Scans"]][[2]]);
+				maxit <- max(MSlist[["Scans"]][[2]][,7]);
 				# generate peak ID table ##################################################
-				if(maxit>0){
+				if(maxit > 0 ){
 					index <- .Call("indexed",
 						as.integer(MSlist[["Scans"]][[2]][,"peakID"]),
 						as.numeric(MSlist[["Scans"]][[2]][,"intensity"]),
@@ -212,8 +214,8 @@
 						PACKAGE="enviPick"
 					)
 					if(any(index[,2]!=0)){
-						index<-index[index[,2]!=0,,drop=FALSE];
-						partID<-.Call("partID",
+						index <- index[index[,2]!=0,,drop=FALSE]; # necessary?
+						partID <- .Call("partID",
 							as.integer(index),
 							as.integer(length(MSlist[["Scans"]][[2]][,"peakID"])),
 							PACKAGE="enviPick"  
@@ -224,29 +226,29 @@
 					}
 				}
 				############################################################################
-				maxit<-max(MSlist[["Scans"]][[2]][,7]);
+				maxit <- max(MSlist[["Scans"]][[2]][,7]);
 				# generate peaklist ########################################################
 				if(maxit>0){
-					peaklist<-matrix(0,ncol=11,nrow=maxit)
-					colnames(peaklist)<-c("m/z","var_m/z","max_int","sum_int","RT","minRT","maxRT","part_ID","EIC_ID","peak_ID","Score")
+					peaklist<-matrix(0, ncol = 11, nrow = maxit)
+					colnames(peaklist) <- c("m/z", "var_m/z", "max_int", "sum_int", "RT", "minRT", "maxRT", "part_ID", "EIC_ID", "peak_ID", "Score")
 					for(k in 1:length(MSlist[["Peak_index"]][,1])){
-						peaklist[k,1]<-mean(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],1])
-						peaklist[k,2]<-var(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],1])
-						peaklist[k,3]<-max(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2])
-						peaklist[k,4]<-sum(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2])
-						peaklist[k,5]<-(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],3][
-							MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2]==max(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2])[1]
+						peaklist[k,1] <- mean(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],1])
+						peaklist[k,2] <- var(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],1])
+						peaklist[k,3] <- max(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2])
+						peaklist[k,4] <- sum(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2])
+						peaklist[k,5] <- (MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],3][
+							MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2] == max(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2])[1]
 						])[1]
-						peaklist[k,6]<-min(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],3])
-						peaklist[k,7]<-max(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],3])        
-						peaklist[k,8:10]<-MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1],5:7]
-						peaklist[k,11]<-0;
+						peaklist[k,6] <- min(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],3])
+						peaklist[k,7] <- max(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],3])        
+						peaklist[k,8:10] <- MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1],5:7]
+						peaklist[k,11] <- 0;
 					}
 					peaklist<-peaklist[order(peaklist[,3],decreasing=TRUE),];
-					MSlist[["Peaklist"]]<-peaklist;
-					MSlist[["Results"]][[6]]<-length(peaklist[,1])
+					MSlist[["Peaklist"]] <- peaklist;
+					MSlist[["Results"]][[6]] <- length(peaklist[,1])
 				}else{
-					MSlist[["Results"]][[6]]<-"No peaks picked"
+					MSlist[["Results"]][[6]] <- "No peaks picked"
 				}
 				############################################################################
 				MSlist[["State"]][[5]]<-TRUE;

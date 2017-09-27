@@ -16,9 +16,8 @@ if(length(for_IDs)){
 		for_file <- x
 		if(any(objects(envir = as.environment(".GlobalEnv")) == "peaklist")){rm(peaklist, envir = as.environment(".GlobalEnv"))}
 		if(any(objects() == "peaklist")){rm(peaklist)}
-		load(file = file.path(logfile[[1]], "peaklist", for_file), envir = as.environment(".GlobalEnv"));
-		keep <- rep(Inf, length(peaklist[,1])) 
-		peaklist[,colnames(peaklist)=="keep"] <- keep_2
+		load(file = file.path(logfile[[1]], "peaklist", for_file), envir = as.environment(".GlobalEnv")); 
+		peaklist[,colnames(peaklist)=="keep"] <- 1
 		save(peaklist,file = file.path(logfile[[1]], "peaklist", for_file))
 		rm(peaklist)
 		return("done")

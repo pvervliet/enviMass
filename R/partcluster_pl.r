@@ -22,7 +22,7 @@
 #' @seealso \code{\link{startprofiles}}, \code{\link{agglomer}}
 
 
-partcluster_pl<-function(
+partcluster_pl <- function(
 	profileList,
 	dmass = 3,
 	ppm = TRUE,

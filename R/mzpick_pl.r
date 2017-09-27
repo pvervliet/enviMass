@@ -10,7 +10,7 @@ mzpick_pl <- function(
 	m <- 1
 	n <- length(clus_EICs[,1])
     for(i in m:n){
-		if(clus_EICs[i,3]>=minpeak){
+		if(clus_EICs[i,3] >= minpeak){
 		  # same RT, interpolate ###################################################
 		  out1 <- .Call("gapfill",
 			as.numeric(clus_centroids[clus_EICs[i,"start_ID"]:clus_EICs[i,"end_ID"],"RT"]),

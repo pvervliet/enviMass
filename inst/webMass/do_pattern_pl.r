@@ -65,7 +65,7 @@ if(length(intstand$Formula[intstand$Formula != "-"]) > 0){ # any IS formulas ava
 		with_mode <- intstand[i,"ion_mode"]
 		use_for_recal <- as.logical(intstand[i,"use_for_recalibration"])
 		restrict_adduct <- as.logical(intstand[i,"restrict_adduct"])
-		take_all <- cluster_results[[len+1]] # use all adducts for recal?
+		take_all <- cluster_results[[i]][[len + 1]] # use all adducts for recal?
 		#############################################################
 		for(j in 1:len){
 			if(cluster_results[[i]][[j]][1] == "nothing"){next}
@@ -160,7 +160,7 @@ if(length(targets$Formula[targets$Formula != "-"]) > 0){ # any IS formulas avail
 	RT_neg_target <- c()
 	at_neg <- 1
 	for(i in 1:length(index)){
-		len <- (length(cluster_results[[i]]) -1)
+		len <- (length(cluster_results[[i]]) - 1)
 		RT <- (as.numeric(targets[i,"RT"]) * 60)
 		if(targets[i,"RT_tolerance"] != "FALSE"){
 			delRT <- (as.numeric(targets[i,"RT_tolerance"]) * 60)
@@ -168,9 +168,9 @@ if(length(targets$Formula[targets$Formula != "-"]) > 0){ # any IS formulas avail
 			delRT <- as.numeric(logfile$parameters$IS_drt1)
 		}		
 		with_mode <- targets[i,"ion_mode"]
-		use_for_recal <- as.logical(targets[i,"use_for_recalibration"])
-		restrict_adduct <- as.logical(targets[i,"restrict_adduct"])
-		take_all <- cluster_results[[len+1]] # use all adducts for recal?
+		use_for_recal <- as.logical(targets[i, "use_for_recalibration"])
+		restrict_adduct <- as.logical(targets[i, "restrict_adduct"])
+		take_all <- cluster_results[[i]][[len+1]] # use all adducts for recal? used for what???
 		#############################################################
 		for(j in 1:len){
 			if(cluster_results[[i]][[j]][1] == "nothing"){next}

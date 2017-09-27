@@ -688,7 +688,10 @@ if(
 	##############################################################################	
 	# (6) Filter #################################################################
 	cut_delRT_EIC<<-NA
-	if(logfile$parameters$filter_profcomp_pos=="TRUE"){
+	if(
+		(logfile$parameters$filter_profcomp_pos=="TRUE") &
+		( (logfile$workflow[names(logfile$workflow)=="isotopologues"] == "yes") || (logfile$workflow[names(logfile$workflow)=="adducts"]=="yes") )
+	){
 		# (6.1) by ISTD - first get their characteristics on delRT and correl. ###
 		fil1<-enviMass::analyseA_links_profiles(
 				links_profiles = links_profiles_pos, 
@@ -1522,7 +1525,10 @@ if(
 	##############################################################################	
 	# (6) Filter #################################################################
 	cut_delRT_EIC<<-NA
-	if(logfile$parameters$filter_profcomp_neg=="TRUE"){
+	if(
+		(logfile$parameters$filter_profcomp_neg=="TRUE") &
+		( (logfile$workflow[names(logfile$workflow)=="isotopologues"] == "yes") || (logfile$workflow[names(logfile$workflow)=="adducts"]=="yes") )
+	){
 		# (6.1) by ISTD - first get their characteristics on delRT and correl. ###
 		fil1<-enviMass::analyseA_links_profiles(
 				links_profiles = links_profiles_neg, 

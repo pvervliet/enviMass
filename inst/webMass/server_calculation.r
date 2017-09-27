@@ -69,7 +69,8 @@ maincalc <- reactive({
 				}else{
 					num_cores <- as.numeric(logfile$parameters$parallel_cores)
 				}
-				clus <<- makeCluster(getOption("cl.cores", num_cores))		
+				clus <<- makeCluster(getOption("cl.cores", num_cores))
+				#	stopCluster(clus)
 				clusterEvalQ(cl = clus,{library(enviMass, verbose = FALSE); NULL})
 				cat("done.\n")				
 			}
@@ -126,7 +127,13 @@ maincalc <- reactive({
 				do_flow <<- 1000
 				try_flow_message <- paste0("Workflow problem encoutered at project node ", at_node, ". Revise settings or report the problem. Details: ", try_flow[1]);
 				shinytoastr::toastr_warning(try_flow_message, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
-				#shinyjs::info(try_flow_message);			
+				if( (logfile$parameters$parallel == "TRUE") & (any(objects() == "clus")) ){
+					cat("\n Closing worker sessions ... ")
+					stopCluster(clus)
+					if(any(objects() == "clus")){rm(clus)}
+					if(any(objects(envir = as.environment(".GlobalEnv")) == "clus")){rm(clus, envir = as.environment(".GlobalEnv"))}
+					cat("done. ")				
+				}						
 			}
 		}
 		########################################################################

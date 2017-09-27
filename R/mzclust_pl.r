@@ -1,15 +1,16 @@
 mzclust_pl <-
-function(           MSlist,
-                    dmzdens=10,
-                    ppm=TRUE,
-                    drtdens=60,
-                    minpeak=4,
-                    maxint=1E6,
-                    progbar=FALSE,
-                    merged=TRUE,
-                    from=FALSE,
-                    to=FALSE
-                     ){
+function(           
+	MSlist,
+	dmzdens=10,
+	ppm=TRUE,
+	drtdens=60,
+	minpeak=4,
+	maxint=1E6,
+	progbar=FALSE,
+	merged=TRUE,
+	from=FALSE,
+	to=FALSE
+){
 
     ############################################################################
     if(!is.logical(ppm)){stop("invalid ppm argument, TRUE or FALSE")}

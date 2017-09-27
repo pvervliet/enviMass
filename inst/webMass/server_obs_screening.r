@@ -603,15 +603,17 @@ observe({ ####################################################################
 	            extensions = c('Buttons','FixedHeader','ColReorder'),
 				options = list(
 					lengthMenu = c(15, 30, 50, 100),
+					lengthMenu = list(c(15, 30, 50, 100, -1), list('15', '30', '50', '100', 'All')),
 					fixedHeader = FALSE,
 					ordering=TRUE,
 					dom = 'Blfrtip',
 					buttons = c('excel','csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 					scrollX = TRUE,
+					scrollY = "800px",
 					colReorder = TRUE
 				)
 			)				
-		},server = FALSE)
+		}, server = TRUE)
 		isolate(ranges_screening$RTchrom_pos<-FALSE)
 		isolate(ranges_screening$intchrom_pos<-FALSE)	
 		isolate(refresh_screening$pos<-FALSE)
@@ -1544,12 +1546,13 @@ observe({ ####################################################################
 				selection = list(mode = 'single', target = 'row'),
 	            extensions = c('Buttons','FixedHeader','ColReorder'),
 				options = list(
-					lengthMenu = c(15, 30, 50, 100),
+					lengthMenu = list(c(15, 30, 50, 100, -1), list('15', '30', '50', '100', 'All')),
 					fixedHeader = FALSE,
 					ordering=TRUE,
 					dom = 'Blfrtip',
 					buttons = c('excel','csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 					scrollX = TRUE,
+					scrollY = "800px",
 					colReorder = TRUE
 				)
 			)				
