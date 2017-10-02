@@ -27,7 +27,7 @@
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 	}
 	####################################################################################	
-	measurements[!is.na(match(measurements$ID,for_IDs)),"components_files"]<-"TRUE"
+	measurements[!is.na(match(measurements$ID,for_IDs)),"EIC_correlation"]<-"TRUE"
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);		
 	rm(measurements)
 

@@ -4,6 +4,7 @@
 	if(any(search()=="package:nlme")){detach(package:nlme,force=TRUE);addit<-TRUE}else{addit<-FALSE}
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
     leng<-dim(measurements)[1];         
+	
     for(i in 1:leng){ 
         # (measurement included & not yet picked) OR (peakpick forced) 
             if( (measurements[i,"include"]=="TRUE") & (measurements[i,"peakpicking"]=="FALSE") ){
@@ -68,14 +69,14 @@
 							cat(" no data filtering possible -"); 
 						}	
 					}else{
-						use_peak_dmzdens<-as.numeric(logfile$parameters$peak_dmzdens)
-						use_peak_minint_log10<-as.numeric(logfile$parameters$peak_minint_log10)
-						use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)					
-						use_peak_perc_cut<-as.numeric(logfile$parameters$peak_perc_cut)
+						use_peak_dmzdens <- as.numeric(logfile$parameters$peak_dmzdens)
+						use_peak_minint_log10 <- as.numeric(logfile$parameters$peak_minint_log10)
+						use_peak_maxint_log10 <- as.numeric(logfile$parameters$peak_maxint_log10)					
+						use_peak_perc_cut <- as.numeric(logfile$parameters$peak_perc_cut)
 						if(use_peak_perc_cut>0){ # not to be used with filtering estimates - that uses absolute threshold intensities
 							len1<-dim(MSlist[["Scans"]][[2]])[1]
-							MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][
-								MSlist[["Scans"]][[2]][,"intensity"]>=quantile(MSlist[["Scans"]][[2]][,"intensity"],(use_peak_perc_cut/100))
+							MSlist[["Scans"]][[2]] <- MSlist[["Scans"]][[2]][
+								MSlist[["Scans"]][[2]][,"intensity"] >= quantile(MSlist[["Scans"]][[2]][,"intensity"],(use_peak_perc_cut/100))
 							,]
 							len2<-dim(MSlist[["Scans"]][[2]])[1]
 							cat(paste(" ",as.character(len1-len2),"of",as.character(len1),"data points discarded by fraction -"))
@@ -83,25 +84,25 @@
 					}	
 					##############################################################
 				}else{ # no mzXML files for example projects -> use MSlist
-					load(file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"]))); 
-					MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][ # re-set
-						order(MSlist[["Scans"]][[2]][,"RT"],decreasing=FALSE)
+					load(file = file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"]))); 
+					MSlist[["Scans"]][[2]] <- MSlist[["Scans"]][[2]][ # re-set
+						order(MSlist[["Scans"]][[2]][,"RT"], decreasing = FALSE)
 					,]
-					MSlist[["Scans"]][[2]][,"partID"]<-0
-					MSlist[["Scans"]][[2]][,"clustID"]<-0					
-					MSlist[["Scans"]][[2]][,"peakID"]<-0
-					use_peak_dmzdens<-as.numeric(logfile$parameters$peak_dmzdens)
-					use_peak_minint_log10<-0
-					use_peak_maxint_log10<-as.numeric(logfile$parameters$peak_maxint_log10)					
-					use_peak_perc_cut<-0
+					MSlist[["Scans"]][[2]][,"partID"] <- 0
+					MSlist[["Scans"]][[2]][,"clustID"] <- 0					
+					MSlist[["Scans"]][[2]][,"peakID"] <- 0
+					use_peak_dmzdens <- as.numeric(logfile$parameters$peak_dmzdens)
+					use_peak_minint_log10 <- 0
+					use_peak_maxint_log10 <- as.numeric(logfile$parameters$peak_maxint_log10)					
+					use_peak_perc_cut <- 0
 					cat("example MSlist loaded -"); 
 				}
 				##################################################################
-				if(any(MSlist[["Scans"]][[2]][,"intensity"]==0)){
+				if(any(MSlist[["Scans"]][[2]][,"intensity"] == 0)){
 					cat("\n Note in do_peakpicking: zero intensities found and discarded.")
-					MSlist[["Scans"]][[2]]<-MSlist[["Scans"]][[2]][MSlist[["Scans"]][[2]][,"intensity"]!=0,,drop=FALSE]
+					MSlist[["Scans"]][[2]] <- MSlist[["Scans"]][[2]][MSlist[["Scans"]][[2]][,"intensity"]!=0,,drop=FALSE]
 				}	
-				MSlist<-enviPick::mzagglom(
+				MSlist <- enviPick::mzagglom(
 					MSlist,
 					((use_peak_dmzdens*2)+1),
 					ppm=TRUE,  
@@ -124,28 +125,29 @@
 				);
 				cat(" clustered -");
 				##################################################################
-				MSlist<-enviPick::mzpick(       
-					MSlist,
-					as.numeric(logfile$parameters$peak_minpeak),  # minpeak
-					as.numeric(logfile$parameters$peak_drtsmall2),  # drtsmall2
-					as.numeric(logfile$parameters$peak_drtfill),  # drtfill                
-					as.numeric(logfile$parameters$peak_drtdens2),  # drtdens2
-					as.numeric(logfile$parameters$peak_recurs), # recurs
-					as.numeric(logfile$parameters$peak_weight), # weight
-					as.numeric(logfile$parameters$peak_SB), # SB
-					as.numeric(logfile$parameters$peak_SN),  # SN               
-					10^use_peak_minint_log10,  # minint
-					10^use_peak_maxint_log10, # maxint
-					as.numeric(logfile$parameters$peak_ended), # ended
-					progbar=logfile$parameters$progressBar,
-					from=FALSE,to=FALSE
+				MSlist <- enviPick::mzpick(      
+					MSlist = MSlist,
+					minpeak = as.numeric(logfile$parameters$peak_minpeak), 
+					drtsmall = as.numeric(logfile$parameters$peak_drtsmall2), 
+					drtfill = as.numeric(logfile$parameters$peak_drtfill),        
+					drttotal = as.numeric(logfile$parameters$peak_drtdens2),  
+					recurs = as.numeric(logfile$parameters$peak_recurs),
+					weight = as.numeric(logfile$parameters$peak_weight),
+					SB = as.numeric(logfile$parameters$peak_SB),
+					SN = as.numeric(logfile$parameters$peak_SN),               
+					minint = (10^use_peak_minint_log10),
+					maxint = (10^use_peak_maxint_log10),
+					ended = as.numeric(logfile$parameters$peak_ended),
+					progbar = logfile$parameters$progressBar,
+					from = FALSE,
+					to = FALSE
 				);
-				if(any(MSlist[["Peaklist"]][,3]==0)){stop("\n do_peakpicking: zero intensities found - resolve issue before proceding.")}
-				MSlist[[9]]<-as.character(measurements[i,"ID"]);
-				names(MSlist)[9]<-"File_ID";
-				save(MSlist,file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"])));   
-				peaklist<-MSlist[["Peaklist"]];
-				if(length(peaklist)==0){
+				if(any(MSlist[["Peaklist"]][,3] == 0)){stop("\n do_peakpicking: zero intensities found - resolve issue before proceding.")}
+				MSlist[[9]] <- as.character(measurements[i,"ID"]);
+				names(MSlist)[9] <- "File_ID";
+				save(MSlist, file = file.path(logfile[[1]], "MSlist", as.character(measurements[i,"ID"])));   
+				peaklist <- MSlist[["Peaklist"]];
+				if(length(peaklist) == 0){
 					stop("No peaks picked - wrong parameters (e.g., intensity thresholds too high)?")
 				}
 				##################################################################

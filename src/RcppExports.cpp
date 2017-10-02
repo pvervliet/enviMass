@@ -85,26 +85,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// extractProfiles
-SEXP extractProfiles(SEXP mz, SEXP RT, SEXP intens, SEXP sam, SEXP orderedint, SEXP pregroup, SEXP dmz, SEXP ppm, SEXP drt, SEXP run_pregroup);
-RcppExport SEXP _enviMass_extractProfiles(SEXP mzSEXP, SEXP RTSEXP, SEXP intensSEXP, SEXP samSEXP, SEXP orderedintSEXP, SEXP pregroupSEXP, SEXP dmzSEXP, SEXP ppmSEXP, SEXP drtSEXP, SEXP run_pregroupSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type mz(mzSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type RT(RTSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type intens(intensSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type sam(samSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type orderedint(orderedintSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type pregroup(pregroupSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type dmz(dmzSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type ppm(ppmSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type drt(drtSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type run_pregroup(run_pregroupSEXP);
-    rcpp_result_gen = Rcpp::wrap(extractProfiles(mz, RT, intens, sam, orderedint, pregroup, dmz, ppm, drt, run_pregroup));
-    return rcpp_result_gen;
-END_RCPP
-}
 // mergeProfiles
 SEXP mergeProfiles(SEXP mz_lower, SEXP mz_upper, SEXP RT_lower, SEXP RT_upper, SEXP intens, SEXP sam, SEXP orderedint, SEXP orderedsam, SEXP supress);
 RcppExport SEXP _enviMass_mergeProfiles(SEXP mz_lowerSEXP, SEXP mz_upperSEXP, SEXP RT_lowerSEXP, SEXP RT_upperSEXP, SEXP intensSEXP, SEXP samSEXP, SEXP orderedintSEXP, SEXP orderedsamSEXP, SEXP supressSEXP) {
@@ -267,6 +247,37 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// extractProfiles
+IntegerVector extractProfiles(NumericMatrix peaks, IntegerVector in_order, double dmass, bool ppm, double dret);
+RcppExport SEXP _enviMass_extractProfiles(SEXP peaksSEXP, SEXP in_orderSEXP, SEXP dmassSEXP, SEXP ppmSEXP, SEXP dretSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type peaks(peaksSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type in_order(in_orderSEXP);
+    Rcpp::traits::input_parameter< double >::type dmass(dmassSEXP);
+    Rcpp::traits::input_parameter< bool >::type ppm(ppmSEXP);
+    Rcpp::traits::input_parameter< double >::type dret(dretSEXP);
+    rcpp_result_gen = Rcpp::wrap(extractProfiles(peaks, in_order, dmass, ppm, dret));
+    return rcpp_result_gen;
+END_RCPP
+}
+// extractProfiles_replicates
+IntegerVector extractProfiles_replicates(NumericMatrix peaks, IntegerVector in_order, double dmass, bool ppm, double dret, IntegerVector pregroup);
+RcppExport SEXP _enviMass_extractProfiles_replicates(SEXP peaksSEXP, SEXP in_orderSEXP, SEXP dmassSEXP, SEXP ppmSEXP, SEXP dretSEXP, SEXP pregroupSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type peaks(peaksSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type in_order(in_orderSEXP);
+    Rcpp::traits::input_parameter< double >::type dmass(dmassSEXP);
+    Rcpp::traits::input_parameter< bool >::type ppm(ppmSEXP);
+    Rcpp::traits::input_parameter< double >::type dret(dretSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type pregroup(pregroupSEXP);
+    rcpp_result_gen = Rcpp::wrap(extractProfiles_replicates(peaks, in_order, dmass, ppm, dret, pregroup));
+    return rcpp_result_gen;
+END_RCPP
+}
 // result_exists
 bool result_exists(NumericMatrix check_nodes_sub, List results_peaks, int at_size);
 RcppExport SEXP _enviMass_result_exists(SEXP check_nodes_subSEXP, SEXP results_peaksSEXP, SEXP at_sizeSEXP) {
@@ -303,7 +314,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_enviMass_correct_intens", (DL_FUNC) &_enviMass_correct_intens, 4},
     {"_enviMass_metagroup", (DL_FUNC) &_enviMass_metagroup, 2},
     {"_enviMass_profpeakprof", (DL_FUNC) &_enviMass_profpeakprof, 6},
-    {"_enviMass_extractProfiles", (DL_FUNC) &_enviMass_extractProfiles, 10},
     {"_enviMass_mergeProfiles", (DL_FUNC) &_enviMass_mergeProfiles, 9},
     {"_enviMass_neighbour", (DL_FUNC) &_enviMass_neighbour, 7},
     {"_enviMass_agglom", (DL_FUNC) &_enviMass_agglom, 6},
@@ -314,6 +324,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_enviMass_plot_prof", (DL_FUNC) &_enviMass_plot_prof, 11},
     {"_enviMass_binRT_prof", (DL_FUNC) &_enviMass_binRT_prof, 5},
     {"_enviMass_binmz_prof", (DL_FUNC) &_enviMass_binmz_prof, 4},
+    {"_enviMass_extractProfiles", (DL_FUNC) &_enviMass_extractProfiles, 5},
+    {"_enviMass_extractProfiles_replicates", (DL_FUNC) &_enviMass_extractProfiles_replicates, 6},
     {"_enviMass_result_exists", (DL_FUNC) &_enviMass_result_exists, 3},
     {"_enviMass_while_checked", (DL_FUNC) &_enviMass_while_checked, 5},
     {NULL, NULL, 0}

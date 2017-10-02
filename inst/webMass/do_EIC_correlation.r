@@ -38,12 +38,12 @@
 			##########################################################################	
 			# EXTRACT CANDIDATE PAIRS ################################################
 			cat("pairing - ")
-			ord<-order(peaklist[,"RT_corr"],decreasing=FALSE)
-			peaklist<-peaklist[ord,,drop=FALSE]
-			use_peak<-MSlist[[7]][peaklist[,10],3]>=as.numeric(logfile$parameters$EICor_minpeaks) # too few data points - included above; but interferes with do_componentization.r strategy!
-			at<-1
-			paired<-matrix(ncol=4,nrow=1E7,0)
-			len<-dim(paired)[1]
+			ord <- order(peaklist[,"RT_corr"],decreasing=FALSE)
+			peaklist <- peaklist[ord,,drop=FALSE]
+			use_peak <- MSlist[[7]][peaklist[,10],3]>=as.numeric(logfile$parameters$EICor_minpeaks) # too few data points - included above; but interferes with do_componentization.r strategy!
+			at <- 1
+			paired <- matrix(ncol=4,nrow=1E7,0)
+			len <- dim(paired)[1]
 			for(i in 1:(length(peaklist[,1])-1)){
 				if(!use_peak[i]){next} # enough data points?
 				for(j in (i+1):length(peaklist[,1])){

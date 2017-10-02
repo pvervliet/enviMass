@@ -6,6 +6,7 @@
     leng <- dim(measurements)[1];         
 	
 #measurements[,"peakpicking"]<-"FALSE"
+ i<-1
 
     for(i in 1:leng){ 
             if( (measurements[i,"include"]=="TRUE") & (measurements[i,"peakpicking"]=="FALSE") ){
@@ -19,7 +20,7 @@
 				}else{
 					use_minRT <- FALSE
 					use_maxRT <- FALSE				
-				}		
+				}
 				if(logfile$parameters$cut_mass == "TRUE"){
 					use_minmass <- as.numeric(logfile$parameters$cut_mass_min)
 					use_maxmass <- as.numeric(logfile$parameters$cut_mass_max)
@@ -114,7 +115,7 @@
 				);
 				cat(" partitioned -");
 				##################################################################
-				MSlist <- enviMass:::mzclust_pl(
+				MSlist <- enviMass:::mzclust_pl( # no parallelization implemented yet
 					MSlist,
 					dmzdens = use_peak_dmzdens,
 					ppm = TRUE,
@@ -126,8 +127,18 @@
 					from = FALSE, 
 					to = FALSE
 				); 
-				cat(" clustered -");
-				############################################################################
+				cat(" clustered -");				
+				##################################################################
+				
+				
+
+				
+				
+				
+				
+				
+# > BAUSTELLE				
+				
 				minpeak <- as.numeric(logfile$parameters$peak_minpeak)
                 drtsmall <- as.numeric(logfile$parameters$peak_drtsmall2)
                 drtfill <- as.numeric(logfile$parameters$peak_drtdens2)
@@ -135,48 +146,95 @@
                 recurs <- as.numeric(logfile$parameters$peak_recurs)
                 weight <- as.numeric(logfile$parameters$peak_weight)
                 SB <- as.numeric(logfile$parameters$peak_SB)
-                SN <- as.numeric(logfile$parameters$peak_SN)    
-                minint <- 10^use_peak_minint_log10
-                maxint <- 10^use_peak_maxint_log10
+                SN <- as.numeric(logfile$parameters$peak_SN)
+                minint <- (10^use_peak_minint_log10)
+                maxint <- (10^use_peak_maxint_log10)
                 ended <- as.numeric(logfile$parameters$peak_ended)
 				Retens <- MSlist[["Scans"]][[1]]
-				MSlist[[7]]<-0;
-				MSlist[[8]]<-0;
-				MSlist[[4]][[2]][,7]<-rep(0,length(MSlist[[4]][[2]][,4]));
-				############################################################################
-				# check inputs #############################################################
-				if(!length(MSlist)==8){stop("This is not an MSlist object")}
-				if(minpeak<=0){stop("minpeak must be >0!")};
-				if(drtsmall<=0 || drtsmall<=0){stop("drt must be >0!")};
+				MSlist[[7]] <- 0;
+				MSlist[[8]] <- 0;
+				MSlist[[4]][[2]][,7] <- rep(0,length(MSlist[[4]][[2]][,4]));
+				####################################################################
+				# check inputs #####################################################
+				if(minpeak <= 0){stop("minpeak must be >0!")};
+				if(drtsmall <= 0 || drtsmall<=0){stop("drt must be >0!")};
 				if(!is.loaded("pickpeak")){stop(".Call to pickpeak failed!")};
 				if(!is.loaded("gapfill")){stop(".Call to gapfill failed!")};
 				if(!is.loaded("picklist")){stop(".Call to picklist failed!")};
-				if(minint>=maxint){stop("Revise your minint & maxint settings!")}
-				if(ended<1){stop("Wrong ended argument!")}
-				if(!is.integer(recurs)){recurs<-ceiling(recurs);recurs<-as.integer(recurs)}
-				if(!is.integer(ended)){ended<-ceiling(ended);ended<-as.integer(ended)}
-				if(!is.integer(minpeak)){minpeak<-ceiling(minpeak);minpeak<-as.integer(minpeak)}
-				if(!is.list(MSlist)){stop("Invalid MSlist argument!")}
-				if(!MSlist[[1]][[3]]){stop("MSlist invalid. Use mzMLtoMSlist, mzpart and mzclust first.")}
-				############################################################################
-				along<-seq(1,dim(MSlist[["EIC_index"]])[1],1)
+				if(minint >= maxint){stop("Revise your minint & maxint settings!")}
+				if(ended < 1){stop("Wrong ended argument!")}
+				if(!is.integer(recurs)){recurs <- ceiling(recurs); recurs <- as.integer(recurs)}
+				if(!is.integer(ended)){ended <- ceiling(ended); ended <- as.integer(ended)}
+				if(!is.integer(minpeak)){minpeak <- ceiling(minpeak); minpeak <- as.integer(minpeak)}
+				#####################################################################
+				
+				
+				
+				
+dim(MSlist0[["Scans"]][[2]])==dim(MSlist[["Scans"]][[2]])		
+				
+				
+				
+				
+if(FALSE){				
+
+				clus_EICs <- list()
+				clus_EICs_orig <- list() # for converting back				
+				clus_centroids <- list()
+				
+				clus_EICs[[1]] <- MSlist[["EIC_index"]]
+				clus_EICs_orig[[1]] <- MSlist[["EIC_index"]] # for converting back				
+				clus_centroids[[1]] <- MSlist[["Scans"]][[2]]		
+				
+				
+}			
+				
+				
+				
+				
+				along <- seq(1,dim(MSlist[["EIC_index"]])[1],1)
 				size_MB <- (as.numeric(object.size(MSlist[["Scans"]][[2]])) / 1048576)
 				for_split <- (size_MB / 5)
 				for_split <- round( dim(MSlist[["EIC_index"]])[1] / for_split )
 				#for_split<-round( dim(profileList[["index_prof"]])[1] / (dim(summary(clus))[1]) )
-				along<-split(along, ceiling(seq_along(along)/for_split))
-				clus_EICs<-list()
-				clus_centroids<-list()
+				along <- split(along, ceiling(seq_along(along)/for_split))
+				clus_EICs <- list()			
+				clus_centroids <- list()
 				for(m in 1:length(along)){
-					clus_centroids[[m]]<-MSlist[["Scans"]][[2]][
-						(MSlist[["EIC_index"]][along[[m]][1],"start_ID"]):(MSlist[["EIC_index"]][along[[m]][length(along[[m]])],"end_ID"])
+					
+					clus_centroids[[m]] <- MSlist[["Scans"]][[2]][
+						(MSlist[["EIC_index"]][along[[m]][1], "start_ID"]):(MSlist[["EIC_index"]][along[[m]][length(along[[m]])], "end_ID"])
 					,,drop=FALSE]
-					clus_EICs[[m]]<-MSlist[["EIC_index"]][along[[m]][1]:along[[m]][length(along[[m]])],,drop=FALSE]
-					start_at<-(clus_EICs[[m]][1,"start_ID"][[1]]-1)
-					clus_EICs[[m]][,"start_ID"]<-(clus_EICs[[m]][,"start_ID"]-start_at)
-					clus_EICs[[m]][,"end_ID"]<-(clus_EICs[[m]][,"end_ID"]-start_at)
+					clus_EICs[[m]] <- MSlist[["EIC_index"]][along[[m]], , drop = FALSE]
+					start_at <- (clus_EICs[[m]][1, "start_ID"][[1]] - 1)
+					clus_EICs[[m]][,"start_ID"] <- (clus_EICs[[m]][,"start_ID"] - start_at)
+					clus_EICs[[m]][,"end_ID"] <- (clus_EICs[[m]][,"end_ID"] - start_at)
+					
 				}
-				clusterEvalQ(cl = clus,{rm(list=ls()); gc(verbose=FALSE); NULL})
+
+# > KEEP
+with_test<-TRUE
+if(with_test){
+for(m in 1:length(clus_EICs)){
+	for(n in 1:dim(clus_EICs[[m]])[1]){
+	
+		if(any(clus_centroids[[m]][clus_EICs[[m]][n,"start_ID"]:clus_EICs[[m]][n,"end_ID"],"clustID"]==0)) stop("FUCKED_1")
+		if(length(unique(clus_centroids[[m]][clus_EICs[[m]][n,"start_ID"]:clus_EICs[[m]][n,"end_ID"],"clustID"]))>1) stop("FUCKED_2")		
+		
+		
+	}
+}
+}
+# < KEEP		
+
+
+		
+m<-2
+min(clus_EICs[[m]][,"start_ID"])
+max(clus_EICs[[m]][,"end_ID"])
+
+
+				clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose = FALSE); NULL})
 				clusterExport(cl = clus, 
 					varlist = c("minpeak", "drtsmall", "drtfill", "drttotal", "recurs", "weight", "SB", "SN", "minint", "maxint", "ended" ,"Retens"), 
 					envir = environment())	
@@ -190,41 +248,82 @@
 					USE.NAMES = FALSE,
 					.scheduling = c("dynamic")
 				)
-				clusterEvalQ(cl = clus,{rm(list=ls()); gc(verbose=FALSE); NULL})
+				clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose = FALSE); NULL})
+
+dim(MSlist0[["Scans"]][[2]]) == dim(MSlist[["Scans"]][[2]])
+cluster_results0 <- cluster_results
+
 				# assort results into original profileList ###############################
-				if(length(cluster_results)>1){
+				if(length(cluster_results) > 1){
 					for(m in 2:length(cluster_results)){ # insert profileIDs
-						cluster_results[[m]][,"peakID"]<-(
-							cluster_results[[m]][,"peakID"]+max(cluster_results[[m-1]][,"peakID"])
+						those <- (cluster_results[[m]][,"peakID"] != 0)
+						cluster_results[[m]][those, "peakID"] <- (
+							cluster_results[[m]][those, "peakID"] + max(cluster_results[[m-1]][, "peakID"])
 						)
 					}
 				}
-				MSlist[["Scans"]][[2]]<-do.call(rbind,cluster_results)
-				rm(cluster_results, clus_EICs, clus_centroids)
+
+				
+m<-1
+those <- (cluster_results[[m]][,"peakID"] != 0)
+min(cluster_results[[m]][those,7])
+max(cluster_results[[m]][those,7])
+
+			
+				
+				for(m in 1:length(cluster_results)){ # insert results -> non-EIC centroids not included!
+				
+					MSlist[["Scans"]][[2]][cluster_results[[m]][, "measureID"],] <- cluster_results[[m]]
+					
+				}
+				
+				
+				#rm(cluster_results, clus_EICs, clus_centroids)
 				# build index #############################################################	
-				maxit <- max(MSlist[["Scans"]][[2]][,7]);
+				maxit <- max(MSlist[[4]][[2]][,7]);
 				# generate peak ID table ##################################################
-				if(maxit > 0 ){
+
+dim(MSlist0[["Scans"]][[2]])==dim(MSlist[["Scans"]][[2]])	
+				
+all(MSlist[["Scans"]][[2]][,7]==MSlist0[["Scans"]][[2]][,7])		
+all(MSlist[["Scans"]][[2]][3,]==MSlist0[["Scans"]][[2]][3,]) 
+
+
+# > KEEP
+with_test<-TRUE
+if(with_test){
+	IDpeak <- MSlist0[["Scans"]][[2]][,7]
+	IDpeak <- IDpeak[IDpeak!=0]
+	IDpeak <- unique(IDpeak)	
+	if(any(diff(IDpeak)>1)) stop("ARRRGGG")
+}
+# < KEEP
+
+#next;
+
+				if(maxit > 0){
 					index <- .Call("indexed",
-						as.integer(MSlist[["Scans"]][[2]][,"peakID"]),
-						as.numeric(MSlist[["Scans"]][[2]][,"intensity"]),
+						as.integer(MSlist[[4]][[2]][,7]),
+						as.numeric(MSlist[[4]][[2]][,2]),
 						as.integer(minpeak),
 						as.numeric(maxint),
 						as.integer(maxit),
-						PACKAGE="enviPick"
+						PACKAGE = "enviPick"
 					)
-					if(any(index[,2]!=0)){
-						index <- index[index[,2]!=0,,drop=FALSE]; # necessary?
+					if(any(index[,2] != 0)){
+						index <- index[index[,2] != 0,, drop = FALSE];
 						partID <- .Call("partID",
 							as.integer(index),
-							as.integer(length(MSlist[["Scans"]][[2]][,"peakID"])),
-							PACKAGE="enviPick"  
+							as.integer(length(MSlist[[4]][[2]][,7])),
+							PACKAGE = "enviPick"  
 						)
-						MSlist[["Scans"]][[2]][,"peakID"]<-partID
-						colnames(index)<-c("start_ID","end_ID","number_peaks");
-						MSlist[[7]]<-index
+						MSlist[[4]][[2]][,7] <- partID
+						colnames(index) <- c("start_ID", "end_ID", "number_peaks");
+						MSlist[[7]] <- index
 					}
 				}
+	
+# < BAUSTELLE
 				############################################################################
 				maxit <- max(MSlist[["Scans"]][[2]][,7]);
 				# generate peaklist ########################################################
@@ -244,7 +343,7 @@
 						peaklist[k,8:10] <- MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1],5:7]
 						peaklist[k,11] <- 0;
 					}
-					peaklist<-peaklist[order(peaklist[,3],decreasing=TRUE),];
+					peaklist<-peaklist[order(peaklist[,3], decreasing = TRUE),];
 					MSlist[["Peaklist"]] <- peaklist;
 					MSlist[["Results"]][[6]] <- length(peaklist[,1])
 				}else{
@@ -254,57 +353,57 @@
 				MSlist[["State"]][[5]]<-TRUE;
 				MSlist[["Results"]][[7]]<-length(MSlist[["Scans"]][[2]][MSlist[["Scans"]][[2]][,7]!=0,2])  
 				############################################################################
-				MSlist[["Parameters"]][[2]][22]<-as.character(minpeak)
-				MSlist[["Parameters"]][[2]][23]<-as.character(drtsmall) 	
-				MSlist[["Parameters"]][[2]][24]<-as.character(drtfill) 	
-				MSlist[["Parameters"]][[2]][25]<-as.character(drttotal) 	
-				MSlist[["Parameters"]][[2]][26]<-as.character(recurs) 	
-				MSlist[["Parameters"]][[2]][27]<-as.character(weight) 	
-				MSlist[["Parameters"]][[2]][28]<-as.character(SB) 	
-				MSlist[["Parameters"]][[2]][29]<-as.character(SN) 	
-				MSlist[["Parameters"]][[2]][30]<-as.character(minint) 	
-				MSlist[["Parameters"]][[2]][31]<-as.character(maxint) 	
-				MSlist[["Parameters"]][[2]][32]<-as.character(ended) 	
-				MSlist[["Parameters"]][[2]][33]<-as.character(1) 	
-				MSlist[["Parameters"]][[2]][34]<-as.character(length(MSlist[[6]][,1]))			
+				MSlist[["Parameters"]][[2]][22] <- as.character(minpeak)
+				MSlist[["Parameters"]][[2]][23] <- as.character(drtsmall) 	
+				MSlist[["Parameters"]][[2]][24] <- as.character(drtfill) 	
+				MSlist[["Parameters"]][[2]][25] <- as.character(drttotal) 	
+				MSlist[["Parameters"]][[2]][26] <- as.character(recurs) 	
+				MSlist[["Parameters"]][[2]][27] <- as.character(weight) 	
+				MSlist[["Parameters"]][[2]][28] <- as.character(SB) 	
+				MSlist[["Parameters"]][[2]][29] <- as.character(SN) 	
+				MSlist[["Parameters"]][[2]][30] <- as.character(minint) 	
+				MSlist[["Parameters"]][[2]][31] <- as.character(maxint) 	
+				MSlist[["Parameters"]][[2]][32] <- as.character(ended) 	
+				MSlist[["Parameters"]][[2]][33] <- as.character(1) 	
+				MSlist[["Parameters"]][[2]][34] <- as.character(length(MSlist[[6]][,1]))			
 				############################################################################	
-				if(any(MSlist[["Peaklist"]][,3]==0)){stop("\n do_peakpicking: zero intensities found - resolve issue before proceding.")}
-				save(MSlist,file=file.path(logfile[[1]],"MSlist",as.character(measurements[i,"ID"])));   
-				peaklist<-MSlist[["Peaklist"]];
-				if(length(peaklist)==0){
+				if(any(MSlist[["Peaklist"]][,3] == 0)){stop("\n do_peakpicking: zero intensities found - resolve issue before proceding.")}
+				save(MSlist, file = file.path(logfile[[1]], "MSlist", as.character(measurements[i,"ID"])));   
+				peaklist <- MSlist[["Peaklist"]];
+				if(length(peaklist) == 0){
 					stop("No peaks picked - wrong parameters (e.g., intensity thresholds too high)?")
 				}
 				##################################################################
-				peaklist<-cbind(peaklist,
-					rep(0,length(peaklist[,4])),
-					rep(0,length(peaklist[,4])),
+				peaklist <- cbind(peaklist,
+					rep(0, length(peaklist[,4])),
+					rep(0, length(peaklist[,4])),
 					peaklist[,5] # replace by rep(0) as soon as do_align.r is build!
 				)	
-				colnames(peaklist)[12]<-"m/z_corr";
-				colnames(peaklist)[13]<-"int_corr";
-				colnames(peaklist)[14]<-"RT_corr";      
-				keep1<-rep(1,length(peaklist[,1])) 		# replicates, 1 == TRUE
-				keep2<-rep(Inf,length(peaklist[,1])) 	# blind indicators, Inf == not affected
-				peaklist<-cbind(peaklist,keep1,keep2) 	
-				colnames(peaklist)[15]<-"keep";
-				colnames(peaklist)[16]<-"keep_2";
-				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,"ID"])));   
+				colnames(peaklist)[12] <- "m/z_corr";
+				colnames(peaklist)[13] <- "int_corr";
+				colnames(peaklist)[14] <- "RT_corr";      
+				keep1 <- rep(1, length(peaklist[,1])) 		# replicates, 1 == TRUE
+				keep2 <- rep(Inf, length(peaklist[,1])) 	# blind indicators, Inf == not affected
+				peaklist <- cbind(peaklist, keep1, keep2) 	
+				colnames(peaklist)[15] <- "keep";
+				colnames(peaklist)[16] <- "keep_2";
+				save(peaklist, file = file.path(logfile[[1]], "peaklist", as.character(measurements[i,"ID"])));   
 				cat(" plotted -");  
-				path=file.path(logfile[[1]],"pics",paste("peakhist_",as.character(measurements[i,"ID"]),sep=""))
+				path = file.path(logfile[[1]], "pics", paste0("peakhist_", as.character(measurements[i,"ID"])))
 				png(filename = path, bg = "white")    
-				a<-hist(log10(MSlist[["Scans"]][[2]][,2]),breaks=200,plot=FALSE)
-				hist(log10(MSlist[["Scans"]][[2]][,2]),breaks=a$breaks,
-					xlim=c(min(a$breaks),max(a$breaks)),ylim=c(0,max(a$counts)),
-					xlab="log10(Intensity)",main="All data points (white histrogram), those in peaks (red) and their count ratio (blue points)",cex.main=.8)
-				b<-hist(log10(MSlist[["Scans"]][[2]][MSlist[["Scans"]][[2]][,7]!=0,2]),breaks=a$breaks,col="red",add=TRUE)        
-				atfrac<-(b$counts/a$counts)
-				plot.window(xlim=c(min(a$breaks),max(a$breaks)),ylim=c(0,1))
-				points(a$mids[!is.na(atfrac)],atfrac[!is.na(atfrac)],col="blue",cex=.5,pch=19)
+				a <- hist(log10(MSlist[["Scans"]][[2]][,2]), breaks = 200, plot = FALSE)
+				hist(log10(MSlist[["Scans"]][[2]][,2]), breaks = a$breaks,
+					xlim = c(min(a$breaks), max(a$breaks)), ylim = c(0,max(a$counts)),
+					xlab = "log10(Intensity)",main="All data points (white histrogram), those in peaks (red) and their count ratio (blue points)",cex.main=.8)
+				b<-hist(log10(MSlist[["Scans"]][[2]][MSlist[["Scans"]][[2]][,7] != 0, 2]), breaks = a$breaks, col = "red", add = TRUE)        
+				atfrac <- (b$counts/a$counts)
+				plot.window(xlim = c(min(a$breaks), max(a$breaks)), ylim = c(0, 1))
+				points(a$mids[!is.na(atfrac)], atfrac[!is.na(atfrac)], col = "blue", cex = .5, pch = 19)
 				axis(4)
 				dev.off() 				
-				path=file.path(logfile[[1]],"pics",paste("peakmzRT_",as.character(measurements[i,1]),sep=""))
+				path = file.path(logfile[[1]], "pics", paste("peakmzRT_", as.character(measurements[i,1]), sep = ""))
 				png(filename = path, bg = "white")    
-				plot(MSlist[["Peaklist"]][,1],MSlist[["Peaklist"]][,5],xlab="m/z",ylab="RT",pch=19,cex=0.3,main="Picked peaks")
+				plot(MSlist[["Peaklist"]][,1], MSlist[["Peaklist"]][,5], xlab = "m/z", ylab = "RT", pch = 19, cex = 0.3, main = "Picked peaks")
 				dev.off()
 				if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){rm(MSlist,envir=as.environment(".GlobalEnv"))}
 				if(any(objects()=="MSlist")){rm(MSlist)}
