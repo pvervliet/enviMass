@@ -124,6 +124,7 @@ newproject <- function(pro_name, pro_dir, IS, targets){
 		logfile[[5]] <- list(0)
 		names(logfile)[5] <- c("parameters")
 		logfile$parameters$verbose  <-  "TRUE"
+		logfile$parameters$test  <-  "FALSE"
 		# peak picking ###########################################################
 		logfile$parameters$peak_MSlevel  <-  "1"; 	
 		logfile$parameters$peak_drtgap  <-  "300"; 

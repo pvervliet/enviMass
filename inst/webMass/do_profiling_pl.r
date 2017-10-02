@@ -17,9 +17,8 @@
     measurements <- read.csv(file=file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character");
 	measurements <- measurements[measurements[,"include"] == "TRUE",, drop = FALSE]
 	if(logfile$parameters$prof_select=="TRUE"){
-		measurements<-measurements[measurements[,names(measurements) == "profiled"] == "TRUE",]	
+		measurements<-measurements[measurements[,names(measurements) == "profiled"] == "TRUE",]
 	}
-	with_check <- FALSE
 	############################################################################################
 
 	############################################################################################		
@@ -85,9 +84,9 @@
 			replicates = FALSE,
 			IDs = FALSE,
 			clus = clus
-		)	
+		)
 		########################################################################################
-		if(with_check){
+		if(mute(as.logical(logfile$parameters$test))){
 			####################################################################################
 			# profile IDs correct? #############################################################
 			for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
@@ -176,9 +175,9 @@
 			replicates = FALSE,
 			IDs = FALSE,
 			clus = clus
-		)	
+		)			
 		########################################################################################
-		if(with_check){
+		if(mute(as.logical(logfile$parameters$test))){
 			####################################################################################
 			# profile IDs correct? #############################################################
 			for(i in 1:dim(profileList_pos[["index_prof"]])[1]){

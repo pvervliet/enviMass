@@ -25,10 +25,6 @@ profpeakprof <- function(ProPeak_pro, ProPeak_peak, Peak_peak1, Peak_peak2, Peak
     .Call('_enviMass_profpeakprof', PACKAGE = 'enviMass', ProPeak_pro, ProPeak_peak, Peak_peak1, Peak_peak2, Peak_score, PeakPro)
 }
 
-extractProfiles <- function(mz, RT, intens, sam, orderedint, pregroup, dmz, ppm, drt, run_pregroup) {
-    .Call('_enviMass_extractProfiles', PACKAGE = 'enviMass', mz, RT, intens, sam, orderedint, pregroup, dmz, ppm, drt, run_pregroup)
-}
-
 mergeProfiles <- function(mz_lower, mz_upper, RT_lower, RT_upper, intens, sam, orderedint, orderedsam, supress) {
     .Call('_enviMass_mergeProfiles', PACKAGE = 'enviMass', mz_lower, mz_upper, RT_lower, RT_upper, intens, sam, orderedint, orderedsam, supress)
 }
@@ -67,6 +63,14 @@ binRT_prof <- function(RT, intensity, binRT, colorit, what) {
 
 binmz_prof <- function(mz, intensity, binmzs, colorit) {
     .Call('_enviMass_binmz_prof', PACKAGE = 'enviMass', mz, intensity, binmzs, colorit)
+}
+
+extractProfiles <- function(peaks, in_order, dmass, ppm, dret) {
+    .Call('_enviMass_extractProfiles', PACKAGE = 'enviMass', peaks, in_order, dmass, ppm, dret)
+}
+
+extractProfiles_replicates <- function(peaks, in_order, dmass, ppm, dret, pregroup) {
+    .Call('_enviMass_extractProfiles_replicates', PACKAGE = 'enviMass', peaks, in_order, dmass, ppm, dret, pregroup)
 }
 
 result_exists <- function(check_nodes_sub, results_peaks, at_size) {

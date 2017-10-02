@@ -38,10 +38,9 @@ partcluster_pl <- function(
 	if(!is.numeric(dret)){stop("dret must be numeric; aborted.")}
 	if(!is.logical(ppm)){stop("ppm must be logical; aborted.")}
 	startat <- c(0);
-	if(ppm){ppm2 = 1}else{ppm2 = 2};
-	do_replicates <- FALSE; 
-	replic <- FALSE
-	if(any(replicates != "FALSE")){
+	do_replicates<-FALSE
+	replic_ID <- "FALSE"
+	if(any(replicates!="FALSE")){
 		replic <- replicates[duplicated(replicates)]
 		replic <- unique(replic)			  
 		replic <- replic[replic != "FALSE"]
@@ -51,7 +50,13 @@ partcluster_pl <- function(
 			}
 			do_replicates <- TRUE
 		}
+		if(do_replicates){
+			IDs_rep <- match(replicates, replic, nomatch = 0)	
+			replic_ID <- IDs_rep[match(profileList[["peaks"]][,"sampleIDs"], IDs)]
+		}
 	}
+	m = 1
+	n = length(profileList[["index_agglom"]][,1])
 	########################################################################################
 	# assign blocks & clean agglom index in each block
 	along<-seq(1,dim(profileList[["index_agglom"]])[1],1)
@@ -73,7 +78,7 @@ partcluster_pl <- function(
 	}
 	clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose=FALSE); NULL})
 	clusterExport(cl = clus, 
-		varlist = c("dmass", "ppm2", "dret", "do_replicates", "replic", "IDs"), 
+		varlist = c("dmass", "ppm", "dret", "do_replicates", "replic_ID"), 
 		envir = environment())	
 	cluster_results <- clusterMap(
 		cl = clus,
@@ -95,7 +100,7 @@ partcluster_pl <- function(
 		}
 	}
 	profileList[["peaks"]] <- do.call(rbind, cluster_results)
-	rm(cluster_results, clus_agglom, clus_peaks)
+	rm(cluster_results, clus_agglom, clus_peaks)		
 	########################################################################################
 	# assemble profile index matrix ########################################################
 	index <- .Call("_enviMass_indexed",
