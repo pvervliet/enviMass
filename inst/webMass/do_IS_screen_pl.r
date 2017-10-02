@@ -62,29 +62,29 @@
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
 
 		###############################################################################################
-		# restrict to latest files? ###################################################################		
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
-		if(logfile$parameters$screen_IS_restrict=="TRUE"){
-			measurements<-measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
-			measurements<-measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
-			starttime<-as.difftime(measurements[,"Time"]);
-			startdate<-as.Date(measurements[,"Date"], tz="GMT");
-			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
-			if(length(numstart)>as.numeric(logfile$parameters$screen_IS_restrict_many)){	
-				retain_sample<-rep(FALSE,max(as.numeric(measurements[,"ID"])))			
+		# restrict to latest files? ###################################################################	
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");		
+		maxID <- max(as.numeric(measurements[,"ID"]))
+		if(logfile$parameters$screen_IS_restrict == "TRUE"){
+			measurements <- measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
+			measurements <- measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
+			starttime <- as.difftime(measurements[,"Time"]);
+			startdate <- as.Date(measurements[,"Date"], tz="GMT");
+			numstart <- (as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
+			if( length(numstart) > as.numeric(logfile$parameters$screen_IS_restrict_many) ){	
+				retain_sample <- rep(FALSE, maxID)			
 				retain_sample[
 					as.numeric(measurements[
 						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_IS_restrict_many)])
 					,"ID"])
-				]<-TRUE
+				] <- TRUE
 			}else{
-				retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))			
+				retain_sample <- rep(TRUE, maxID)
 			}
 		}else{
-			retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))		
+			retain_sample <- rep(TRUE, maxID)		
 		}
 		rm(measurements)
-
 		
 		peaks <- profileList_pos[["index_prof"]];
 		peaklist <- peaks[,c("mean_mz","mean_int","mean_RT")];
@@ -378,28 +378,31 @@
 		RT_tol_inside<-as.numeric(logfile$parameters$IS_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
 
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");			
-		if(logfile$parameters$screen_IS_restrict=="TRUE"){
-			measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
-			measurements<-measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
-			starttime<-as.difftime(measurements[,"Time"]);
-			startdate<-as.Date(measurements[,"Date"], tz="GMT");
-			numstart<-(as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
-			if(length(numstart)>as.numeric(logfile$parameters$screen_IS_restrict_many)){	
-				retain_sample<-rep(FALSE,max(as.numeric(measurements[,"ID"])))			
+		###############################################################################################
+		# restrict to latest files? ###################################################################
+		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");		
+		maxID <- max(as.numeric(measurements[,"ID"]))
+		if(logfile$parameters$screen_IS_restrict == "TRUE"){
+			measurements <- measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
+			measurements <- measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
+			starttime <- as.difftime(measurements[,"Time"]);
+			startdate <- as.Date(measurements[,"Date"], tz="GMT");
+			numstart <- (as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
+			if( length(numstart) > as.numeric(logfile$parameters$screen_IS_restrict_many) ){	
+				retain_sample <- rep(FALSE, maxID)			
 				retain_sample[
 					as.numeric(measurements[
 						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_IS_restrict_many)])
 					,"ID"])
-				]<-TRUE
+				] <- TRUE
 			}else{
-				retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))
+				retain_sample <- rep(TRUE, maxID)
 			}
 		}else{
-			retain_sample<-rep(TRUE,max(as.numeric(measurements[,"ID"])))		
+			retain_sample <- rep(TRUE, maxID)		
 		}
 		rm(measurements)
-
+		
 		peaks<-profileList_neg[["index_prof"]];
 		peaklist<-peaks[,c("mean_mz","mean_int","mean_RT")];
 		# screen centroids
@@ -454,7 +457,9 @@
 						for(k in 1:length(profs)){ # over their matched profile peaks = k		
 							if(profileList_neg[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # a check
 							for(m in profileList_neg[[7]][profs[k],1]:profileList_neg[[7]][profs[k],2]){ # over their sample peaks		
-								if(retain_sample[profileList_neg[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?									
+								
+								if(retain_sample[profileList_neg[[2]][m,"sampleIDs"]] == FALSE ){next} # Is this file among the latest ones?									
+								
 								delmass<-abs(profileList_neg[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
 									if(delmass>(mztol/1000)){next}
