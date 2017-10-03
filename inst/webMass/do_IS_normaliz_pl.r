@@ -28,7 +28,7 @@ if(any(objects()=="links_profiles_neg")){rm(links_profiles_neg)}
 ########################################################################################
 # on POSITIVE profiles #################################################################
 if(
-	file.exists(file.path(logfile[[1]],"results","profileList_pos"))  
+	file.exists(file.path(logfile[[1]],"results","profileList_pos")) & as.logical(logfile$parameters$ISnorm_include_pos)
 ){
 
 	####################################################################################	
@@ -180,7 +180,14 @@ if(
 	####################################################################################
 	# run normalization ################################################################
 	# -> screen IS intensity profiles ##################################################
-	min_count <- floor(length(profileList_pos[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles) / 100);
+	if(as.logical(logfile$parameters$screen_IS_restrict)){ # relative to number of screened files
+		min_count <- min(c(
+			floor(as.numeric(logfile$parameters$screen_IS_restrict_many) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100),
+			floor(length(profileList_pos[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100)
+		))
+	}else{
+		min_count <- floor(length(profileList_pos[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100);	
+	}	
 	lis_delint_IS <- list()
 	lis_median_IS <- list()
 	#lis_RT_IS <- list()
@@ -192,7 +199,7 @@ if(
 	unused_profile <- rep(TRUE, dim(profileList_pos[["index_prof"]])[1])
 	for(i in 1:length(links_profiles_pos)){
 		if(!length(links_profiles_pos[[i]]$IS)) next
-		these <- which((links_profiles_pos[[i]]$IS$Counts >= min_count) & (links_profiles_pos[[i]]$IS$max_score >= as.numeric(logfile$parameters$ISnorm_score) ) )
+		these <- which((links_profiles_pos[[i]]$IS$Counts >= min_count) & (links_profiles_pos[[i]]$IS$max_score >= as.numeric(logfile$parameters$ISnorm_score_pos) ) )
 		if(!length(these)) next
 		at_profile <- as.numeric(names(links_profiles_pos)[i])
 		unused_profile[at_profile] <- FALSE
@@ -213,9 +220,9 @@ if(
 	lis_median_nb <- list()
 	lis_delint_b <- list()
 	lis_median_b <- list()	
-	if( logfile$parameters$ISnorm_medblank == "TRUE" || logfile$parameters$ISnorm_medsam == "TRUE" ){		
+	if( logfile$parameters$ISnorm_medblank_pos == "TRUE" || logfile$parameters$ISnorm_medsam_pos == "TRUE" ){		
 		################################################################################
-		if(logfile$parameters$ISnorm_medsam == "TRUE"){
+		if(logfile$parameters$ISnorm_medsam_pos == "TRUE"){
 			sam_IDs <- profileList_pos[["sampleID"]][profileList_pos[["type"]] != "blank"]
 			for(p in 1:length(sam_IDs)){
 				lis_delint_nb[[p]] <- numeric(0)
@@ -231,9 +238,9 @@ if(
 			if( length(ids_nb) ){
 				ids_nb <- ids_nb[unused_profile[ids_nb]]
 			}
-			if(logfile$parameters$ISnorm_usesubsam == "TRUE" & (length(ids_nb) > as.numeric(logfile$parameters$ISnorm_numsam))){
-				ids_nb <- sample(ids_nb, size = as.numeric(logfile$parameters$ISnorm_numsam), replace = FALSE)
-				#ids_nb <- ids_nb[1:as.numeric(logfile$parameters$ISnorm_numsam)]
+			if(logfile$parameters$ISnorm_usesubsam_pos == "TRUE" & (length(ids_nb) > as.numeric(logfile$parameters$ISnorm_numsam_pos))){
+				ids_nb <- sample(ids_nb, size = as.numeric(logfile$parameters$ISnorm_numsam_pos), replace = FALSE)
+				#ids_nb <- ids_nb[1:as.numeric(logfile$parameters$ISnorm_numsam_pos)]
 			}
 			if( length(ids_nb) ){
 				for(i in ids_nb){
@@ -249,29 +256,29 @@ if(
 			}
 		}
 		################################################################################
-		if(logfile$parameters$ISnorm_medblank == "TRUE"){
-			blank_IDs <- profileList_pos[["sampleID"]][profileList_pos[["type"]] == "blank"]
+		if((logfile$parameters$ISnorm_medblank_pos == "TRUE") & (any(profileList_pos[["type"]] == "blank"))){
+			all_IDs <- profileList_pos[["sampleID"]]
 			for(p in 1:length(profileList_pos[["sampleID"]])){
 				lis_delint_b[[p]] <- numeric(0)
 				lis_median_b[[p]] <- numeric(0)
 			}		
-			names(lis_delint_b) <- blank_IDs 
-			names(lis_median_b) <- blank_IDs 
+			names(lis_delint_b) <- all_IDs 
+			names(lis_median_b) <- all_IDs 
 			ids_b <- order(profileList_pos[["index_prof"]][, "number_peaks_blind"], decreasing =TRUE) 
 			ids_b <- ids_b[( profileList_pos[["index_prof"]][ids_b, "number_peaks_blind"] > 0 )]
 			if( length(ids_b) ){
 				ids_b <- ids_b[unused_profile[ids_b]]
 			}
-			if(logfile$parameters$ISnorm_usesubblank == "TRUE" & (length(ids_b) > as.numeric(logfile$parameters$ISnorm_numblank))){
-				ids_b <- sample(ids_b, size = as.numeric(logfile$parameters$ISnorm_numblank), replace = FALSE)
-				#ids_b <- ids_b[1:as.numeric(logfile$parameters$ISnorm_numblank)]
+			if(logfile$parameters$ISnorm_usesubblank_pos == "TRUE" & (length(ids_b) > as.numeric(logfile$parameters$ISnorm_numblank_pos))){
+				ids_b <- sample(ids_b, size = as.numeric(logfile$parameters$ISnorm_numblank_pos), replace = FALSE)
+				#ids_b <- ids_b[1:as.numeric(logfile$parameters$ISnorm_numblank_pos)]
 			}
 			if( length(ids_b) ){
 				for(i in ids_b){
 					for_peaks <- profileList_pos[["index_prof"]][i,"start_ID"]:profileList_pos[["index_prof"]][i,"end_ID"]
 					median_intensity <- median( log10(profileList_pos[["peaks"]][for_peaks, "intensity"]) )
 					for(j in for_peaks){
-						at_file <- match(profileList_pos[["peaks"]][j, "sampleIDs"], sam_IDs)
+						at_file <- match(profileList_pos[["peaks"]][j, "sampleIDs"], all_IDs)
 						at_int <- log10(profileList_pos[["peaks"]][j, "intensity"][[1]])
 						lis_delint_b[[at_file]] <- c(lis_delint_b[[at_file]], (at_int - median_intensity))
 						lis_median_b[[at_file]] <- c(lis_median_b[[at_file]], median_intensity)
@@ -285,7 +292,7 @@ if(
 	corfac <- rep(1, length(lis_delint_IS)) # default: no correction, factor =1
 	use_corfac <- rep(FALSE, length(lis_delint_IS))
 	for(k in 1:length(lis_delint_IS)){
-		if( length(lis_delint_IS[[k]]) >= as.numeric(logfile$parameters$ISnorm_numbIS) ){
+		if( length(lis_delint_IS[[k]]) >= as.numeric(logfile$parameters$ISnorm_numbIS_pos) ){
 			corfac[k] <- (10 ^ median(lis_delint_IS[[k]]))
 			use_corfac[k] <- TRUE 
 		}
@@ -334,12 +341,9 @@ if(
 			what = "counts"
 		)
 	},res = 100) 					
-	####################################################################################
-
-
-# BAUSTELLE >
 	###################################################################################
-	if(with_check){
+	###################################################################################
+	if(as.logical(logfile$parameters$test)){
 		###############################################################################
 		# profile IDs correct? ########################################################
 		for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
@@ -353,9 +357,6 @@ if(
 		}
 		################################################################################	
 	}
-# < BAUSTELLE
-
-
 	# -> save data #####################################################################
 	save(profileList_pos, file = file.path(as.character(logfile[[1]]), "results", "profileList_pos"));
 	save(links_profiles_pos, file = file.path(as.character(logfile[[1]]), "results", "links_profiles_pos"));	
@@ -374,7 +375,7 @@ if(
 ########################################################################################
 # on NEGATIVE profiles #################################################################
 if(
-	file.exists(file.path(logfile[[1]],"results","profileList_neg"))  
+	file.exists(file.path(logfile[[1]],"results","profileList_neg")) & as.logical(logfile$parameters$ISnorm_include_neg)
 ){
 
 	####################################################################################	
@@ -517,14 +518,22 @@ if(
 		if(with_bar){close(pBar)}
 	}
 	if(!length(links_profiles_neg)){
-		stop("Not enough internal standard (ISTD) screening matches detected to run the ISTD normalization, positive ionization - remove this workflow step?")
+		stop("Not enough internal standard (ISTD) screening matches detected to run the ISTD normalization, negative ionization - remove this workflow step?")
 	}
 	####################################################################################	
 
 	####################################################################################
 	# run normalization ################################################################
 	# -> screen IS intensity profiles ##################################################
-	min_count <- floor(length(profileList_neg[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles) / 100);
+	if(as.logical(logfile$parameters$screen_IS_restrict)){ # relative to number of screened files
+		min_count <- min(c(
+			floor(as.numeric(logfile$parameters$screen_IS_restrict_many) * as.numeric(logfile$parameters$ISnorm_percfiles_neg) / 100),
+			floor(length(profileList_neg[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_neg) / 100)
+		))
+	}else{
+		min_count <- floor(length(profileList_neg[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_neg) / 100);	
+	}
+
 	lis_delint_IS <- list()
 	lis_median_IS <- list()
 	#lis_RT_IS <- list()
@@ -536,7 +545,7 @@ if(
 	unused_profile <- rep(TRUE, dim(profileList_neg[["index_prof"]])[1])
 	for(i in 1:length(links_profiles_neg)){
 		if(!length(links_profiles_neg[[i]]$IS)) next
-		these <- which((links_profiles_neg[[i]]$IS$Counts >= min_count) & (links_profiles_neg[[i]]$IS$max_score >= as.numeric(logfile$parameters$ISnorm_score) ) )
+		these <- which((links_profiles_neg[[i]]$IS$Counts >= min_count) & (links_profiles_neg[[i]]$IS$max_score >= as.numeric(logfile$parameters$ISnorm_score_neg) ) )
 		if(!length(these)) next
 		at_profile <- as.numeric(names(links_profiles_neg)[i])
 		unused_profile[at_profile] <- FALSE
@@ -557,9 +566,9 @@ if(
 	lis_median_nb <- list()
 	lis_delint_b <- list()
 	lis_median_b <- list()	
-	if( logfile$parameters$ISnorm_medblank == "TRUE" || logfile$parameters$ISnorm_medsam == "TRUE" ){		
+	if( logfile$parameters$ISnorm_medblank_neg == "TRUE" || logfile$parameters$ISnorm_medsam_neg == "TRUE" ){		
 		################################################################################
-		if(logfile$parameters$ISnorm_medsam == "TRUE"){
+		if(logfile$parameters$ISnorm_medsam_neg == "TRUE"){
 			sam_IDs <- profileList_neg[["sampleID"]][profileList_neg[["type"]] != "blank"]
 			for(p in 1:length(sam_IDs)){
 				lis_delint_nb[[p]] <- numeric(0)
@@ -575,9 +584,9 @@ if(
 			if( length(ids_nb) ){
 				ids_nb <- ids_nb[unused_profile[ids_nb]]
 			}
-			if(logfile$parameters$ISnorm_usesubsam == "TRUE" & (length(ids_nb) > as.numeric(logfile$parameters$ISnorm_numsam))){
-				ids_nb <- sample(ids_nb, size = as.numeric(logfile$parameters$ISnorm_numsam), replace = FALSE)
-				#ids_nb <- ids_nb[1:as.numeric(logfile$parameters$ISnorm_numsam)]
+			if(logfile$parameters$ISnorm_usesubsam_neg == "TRUE" & (length(ids_nb) > as.numeric(logfile$parameters$ISnorm_numsam_neg))){
+				ids_nb <- sample(ids_nb, size = as.numeric(logfile$parameters$ISnorm_numsam_neg), replace = FALSE)
+				#ids_nb <- ids_nb[1:as.numeric(logfile$parameters$ISnorm_numsam_neg)]
 			}
 			if( length(ids_nb) ){
 				for(i in ids_nb){
@@ -593,8 +602,8 @@ if(
 			}
 		}
 		################################################################################
-		if(logfile$parameters$ISnorm_medblank == "TRUE"){
-			blank_IDs <- profileList_neg[["sampleID"]][profileList_neg[["type"]] == "blank"]
+		if((logfile$parameters$ISnorm_medblank_neg == "TRUE") & (any(profileList_pos[["type"]] == "blank"))){
+			all_IDs <- profileList_neg[["sampleID"]][profileList_neg[["type"]] == "blank"]
 			for(p in 1:length(profileList_neg[["sampleID"]])){
 				lis_delint_b[[p]] <- numeric(0)
 				lis_median_b[[p]] <- numeric(0)
@@ -606,16 +615,16 @@ if(
 			if( length(ids_b) ){
 				ids_b <- ids_b[unused_profile[ids_b]]
 			}
-			if(logfile$parameters$ISnorm_usesubblank == "TRUE" & (length(ids_b) > as.numeric(logfile$parameters$ISnorm_numblank))){
-				ids_b <- sample(ids_b, size = as.numeric(logfile$parameters$ISnorm_numblank), replace = FALSE)
-				#ids_b <- ids_b[1:as.numeric(logfile$parameters$ISnorm_numblank)]
+			if(logfile$parameters$ISnorm_usesubblank_neg == "TRUE" & (length(ids_b) > as.numeric(logfile$parameters$ISnorm_numblank_neg))){
+				ids_b <- sample(ids_b, size = as.numeric(logfile$parameters$ISnorm_numblank_neg), replace = FALSE)
+				#ids_b <- ids_b[1:as.numeric(logfile$parameters$ISnorm_numblank_neg)]
 			}
 			if( length(ids_b) ){
 				for(i in ids_b){
 					for_peaks <- profileList_neg[["index_prof"]][i,"start_ID"]:profileList_neg[["index_prof"]][i,"end_ID"]
 					median_intensity <- median( log10(profileList_neg[["peaks"]][for_peaks, "intensity"]) )
 					for(j in for_peaks){
-						at_file <- match(profileList_neg[["peaks"]][j, "sampleIDs"], sam_IDs)
+						at_file <- match(profileList_neg[["peaks"]][j, "sampleIDs"], all_IDs)
 						at_int <- log10(profileList_neg[["peaks"]][j, "intensity"][[1]])
 						lis_delint_b[[at_file]] <- c(lis_delint_b[[at_file]], (at_int - median_intensity))
 						lis_median_b[[at_file]] <- c(lis_median_b[[at_file]], median_intensity)
@@ -629,7 +638,7 @@ if(
 	corfac <- rep(1, length(lis_delint_IS)) # default: no correction, factor =1
 	use_corfac <- rep(FALSE, length(lis_delint_IS))
 	for(k in 1:length(lis_delint_IS)){
-		if( length(lis_delint_IS[[k]]) >= as.numeric(logfile$parameters$ISnorm_numbIS) ){
+		if( length(lis_delint_IS[[k]]) >= as.numeric(logfile$parameters$ISnorm_numbIS_neg) ){
 			corfac[k] <- (10 ^ median(lis_delint_IS[[k]]))
 			use_corfac[k] <- TRUE 
 		}
@@ -679,7 +688,21 @@ if(
 		)
 	},res = 100) 					
 	####################################################################################
-
+	###################################################################################
+	if(as.logical(logfile$parameters$test)){
+		###############################################################################
+		# profile IDs correct? ########################################################
+		for(i in 1:dim(profileList_neg[["index_prof"]])[1]){
+			if(
+				!all(profileList_neg[["peaks"]][	
+					profileList_neg[["index_prof"]][i, "start_ID"]:profileList_neg[["index_prof"]][i, "end_ID"]
+				,"profileIDs"] == i)
+			){
+				stop("\n Debug do_IS_normaliz.r at #4")
+			}
+		}
+		################################################################################	
+	}
 	####################################################################################
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 	save(links_profiles_neg,file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"));	

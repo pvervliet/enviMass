@@ -4,7 +4,8 @@
 	if( 
 		any(measurements[,"Mode"]=="positive") & 
 		file.exists(file.path(as.character(logfile[[1]]),"results","pattern_pos_IS"))  &
-		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))		
+		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))	&
+		as.logical(logfile$parameters$ISnorm_include_pos)		
 	){
 	
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
@@ -23,7 +24,7 @@
 		load(file=file.path(logfile[[1]],"results","patternDelRT_pos_IS"),envir=as.environment(".GlobalEnv"));
 		peaks<-profileList_pos[[7]];
 		peaklist<-peaks[,c(14,16,15)];
-		treshscore<-as.numeric(logfile$parameters$ISnorm_score)
+		treshscore<-as.numeric(logfile$parameters$ISnorm_score_pos)
 		we1=(1-as.numeric(logfile$parameters$IS_w1))
 		we2=(1-we1)
 		cat("- screening:");
@@ -78,7 +79,7 @@
 		}
 		# screen IS intensity profiles #####################################################
 		cat("- on IS profiles");
-		min_count<-floor(length(profileList_pos[[4]])*as.numeric(logfile$parameters$ISnorm_percfiles)/100);
+		min_count<-floor(length(profileList_pos[[4]])*as.numeric(logfile$parameters$ISnorm_percfiles_pos)/100);
 		lis_delint_IS<-list(0)
 		lis_median_IS<-list(0)
 		stillin<-rep(TRUE,length(peaks[,1]))
@@ -129,14 +130,14 @@
 			}
 		}
 		# screen other profiles ###############################################################
-		if( (logfile$parameters$ISnorm_medblank=="TRUE" || logfile$parameters$ISnorm_medsam=="TRUE") ){
+		if( (logfile$parameters$ISnorm_medblank_pos=="TRUE" || logfile$parameters$ISnorm_medsam_pos=="TRUE") ){
 			cat("- on blank / non-blank profiles");
 			peaks<-peaks[stillin,];
 			peaks<-peaks[sample(1:length(peaks[,1]),length(peaks[,1]), replace = FALSE),];
-			if(logfile$parameters$ISnorm_medblank=="TRUE"){ # use blank
+			if(logfile$parameters$ISnorm_medblank_pos=="TRUE"){ # use blank
 				count_b<-0
-				if( logfile$parameters$ISnorm_usesubblank=="TRUE" ){ # use subsampling
-					max_count_b<-as.numeric(logfile$parameters$ISnorm_numblank)
+				if( logfile$parameters$ISnorm_usesubblank_pos=="TRUE" ){ # use subsampling
+					max_count_b<-as.numeric(logfile$parameters$ISnorm_numblank_pos)
 				}else{
 					max_count_b<-length(peaks[,1])
 				}
@@ -144,10 +145,10 @@
 				count_b<-0
 				max_count_b<-0
 			}
-			if(logfile$parameters$ISnorm_medsam=="TRUE"){ # use nonblank
+			if(logfile$parameters$ISnorm_medsam_pos=="TRUE"){ # use nonblank
 				count_nb<-0
-				if( logfile$parameters$ISnorm_usesubsam=="TRUE" ){ # use subsampling
-					max_count_nb<-as.numeric(logfile$parameters$ISnorm_numsam)
+				if( logfile$parameters$ISnorm_usesubsam_pos=="TRUE" ){ # use subsampling
+					max_count_nb<-as.numeric(logfile$parameters$ISnorm_numsam_pos)
 				}else{
 					max_count_nb<-length(peaks[,1])
 				}
@@ -177,7 +178,7 @@
 					PACKAGE="enviMass"
 				)
 				if(	 # for blind #############################################3
-					(logfile$parameters$ISnorm_medblank=="TRUE") &&
+					(logfile$parameters$ISnorm_medblank_pos=="TRUE") &&
 					(any(timeset[,5]>0)) &&
 					(count_b<max_count_b)
 				){ 
@@ -200,7 +201,7 @@
 					next;
 				}
 				if(	 # for non-blind ##########################################
-					(logfile$parameters$ISnorm_medsam=="TRUE") &&
+					(logfile$parameters$ISnorm_medsam_pos=="TRUE") &&
 					(any(timeset[,4]>0)) &&
 					(count_nb<max_count_nb)
 				){ 
@@ -226,7 +227,7 @@
 		cat("- correcting intensities");
 		corfac<-c()
 		for(k in 1:length(lis_delint_IS)){
-			if( length(lis_delint_IS[[k]])>as.numeric(logfile$parameters$ISnorm_numbIS) ){
+			if( length(lis_delint_IS[[k]])>as.numeric(logfile$parameters$ISnorm_numbIS_pos) ){
 				corfac<-c( corfac,10^median(lis_delint_IS[[k]]) )
 			}else{			
 				corfac<-c(corfac,1)
@@ -290,7 +291,8 @@
 	if( 
 		any(measurements[,"Mode"]=="negative") & 
 		file.exists(file.path(as.character(logfile[[1]]),"results","pattern_neg_IS")) &
-		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg"))			
+		file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg")) &
+		as.logical(logfile$parameters$ISnorm_include_neg)		
 	){
 		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 		if(any(objects()=="peaklist")){rm(peaklist)}
@@ -308,7 +310,7 @@
 		load(file=file.path(logfile[[1]],"results","patternDelRT_neg_IS"),envir=as.environment(".GlobalEnv"));
 		peaks<-profileList_neg[[7]];
 		peaklist<-peaks[,c(14,16,15)];
-		treshscore<-as.numeric(logfile$parameters$ISnorm_score)
+		treshscore<-as.numeric(logfile$parameters$ISnorm_score_neg)
 		we1=(1-as.numeric(logfile$parameters$IS_w1))
 		we2=(1-we1)
 		cat("- screening:");
@@ -363,7 +365,7 @@
 			  }
 		}
 		# screen IS intensity profiles #####################################################
-		min_count<-floor(length(profileList_neg[[4]])*as.numeric(logfile$parameters$ISnorm_percfiles)/100);
+		min_count<-floor(length(profileList_neg[[4]])*as.numeric(logfile$parameters$ISnorm_percfiles_neg)/100);
 		lis_delint_IS<-list(0)
 		lis_median_IS<-list(0)
 		stillin<-rep(TRUE,length(peaks[,1]))
@@ -414,14 +416,14 @@
 			}
 		}
 		# screen other profiles ###############################################################
-		if( logfile$parameters$ISnorm_medblank=="TRUE" || logfile$parameters$ISnorm_medsam=="TRUE" ){
+		if( logfile$parameters$ISnorm_medblank_neg=="TRUE" || logfile$parameters$ISnorm_medsam_neg=="TRUE" ){
 			cat("- on blank / non-blank profiles");
 			peaks<-peaks[stillin,];
 			peaks<-peaks[sample(1:length(peaks[,1]),length(peaks[,1]), replace = FALSE),];
-			if(logfile$parameters$ISnorm_medblank=="TRUE"){ # use blank
+			if(logfile$parameters$ISnorm_medblank_neg=="TRUE"){ # use blank
 				count_b<-0
-				if( logfile$parameters$ISnorm_usesubblank=="TRUE" ){ # use subsampling
-					max_count_b<-as.numeric(logfile$parameters$ISnorm_numblank)
+				if( logfile$parameters$ISnorm_usesubblank_neg=="TRUE" ){ # use subsampling
+					max_count_b<-as.numeric(logfile$parameters$ISnorm_numblank_neg)
 				}else{
 					max_count_b<-length(peaks[,1])
 				}
@@ -429,10 +431,10 @@
 				count_b<-0
 				max_count_b<-0
 			}
-			if(logfile$parameters$ISnorm_medsam=="TRUE"){ # use nonblank
+			if(logfile$parameters$ISnorm_medsam_neg=="TRUE"){ # use nonblank
 				count_nb<-0
-				if( logfile$parameters$ISnorm_usesubsam=="TRUE" ){ # use subsampling
-					max_count_nb<-as.numeric(logfile$parameters$ISnorm_numsam)
+				if( logfile$parameters$ISnorm_usesubsam_neg=="TRUE" ){ # use subsampling
+					max_count_nb<-as.numeric(logfile$parameters$ISnorm_numsam_neg)
 				}else{
 					max_count_nb<-length(peaks[,1])
 				}
@@ -462,7 +464,7 @@
 					PACKAGE="enviMass"
 				)
 				if(	 # for blind #############################################3
-					(logfile$parameters$ISnorm_medblank=="TRUE") &&
+					(logfile$parameters$ISnorm_medblank_neg=="TRUE") &&
 					(any(timeset[,5]>0)) &&
 					(count_b<max_count_b)
 				){ 
@@ -485,7 +487,7 @@
 					next;
 				}
 				if(	 # for non-blind ##########################################
-					(logfile$parameters$ISnorm_medsam=="TRUE") &&
+					(logfile$parameters$ISnorm_medsam_neg=="TRUE") &&
 					(any(timeset[,4]>0)) &&
 					(count_nb<max_count_nb)
 				){ 
@@ -511,7 +513,7 @@
 		cat("- correcting intensities");
 		corfac<-c()
 		for(k in 1:length(lis_delint_IS)){
-			if( length(lis_delint_IS[[k]])>as.numeric(logfile$parameters$ISnorm_numbIS) ){
+			if( length(lis_delint_IS[[k]])>as.numeric(logfile$parameters$ISnorm_numbIS_neg) ){
 				corfac<-c( corfac,10^median(lis_delint_IS[[k]]) )
 			}else{			
 				corfac<-c(corfac,1)

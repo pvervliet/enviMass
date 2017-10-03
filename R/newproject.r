@@ -221,15 +221,26 @@ newproject <- function(pro_name, pro_dir, IS, targets){
 		logfile$parameters$screen_target_restrict <- "FALSE";		# Restrict screening to the latest ...
 		logfile$parameters$screen_target_restrict_many <- "10";	# ... number of files only?			
 		# IS-based normalization ###############################################
-		logfile$parameters$ISnorm_percfiles <- "90";		# Minimum percentage of files covered by each IS profile %
-		logfile$parameters$ISnorm_numbIS <- "15";			# Minimum number of IS profiles
-		logfile$parameters$ISnorm_medblank <- "FALSE";	# Show median deviation of blank/blind profiles?
-		logfile$parameters$ISnorm_usesubblank <- "TRUE";	# Use subsampling
-		logfile$parameters$ISnorm_numblank <- "100";		# Number of blank/blind profiles in subsample
-		logfile$parameters$ISnorm_medsam <- "FALSE";		# Show median deviation of sample (i.e., non-blank) profiles?
-		logfile$parameters$ISnorm_usesubsam <- "TRUE";	# Use subsampling
-		logfile$parameters$ISnorm_numsam <- "100";		# Number of sample profiles in subsample
-		logfile$parameters$ISnorm_score <- "0.8";			# Screening threshold
+		logfile$parameters$ISnorm_include_pos <-"TRUE"
+		logfile$parameters$ISnorm_percfiles_pos <- "90";		# Minimum percentage of files covered by each IS profile %
+		logfile$parameters$ISnorm_numbIS_pos <- "15";			# Minimum number of IS profiles
+		logfile$parameters$ISnorm_medblank_pos <- "FALSE";	# Show median deviation of blank/blind profiles?
+		logfile$parameters$ISnorm_usesubblank_pos <- "TRUE";	# Use subsampling
+		logfile$parameters$ISnorm_numblank_pos <- "100";		# Number of blank/blind profiles in subsample
+		logfile$parameters$ISnorm_medsam_pos <- "FALSE";		# Show median deviation of sample (i.e., non-blank) profiles?
+		logfile$parameters$ISnorm_usesubsam_pos <- "TRUE";	# Use subsampling
+		logfile$parameters$ISnorm_numsam_pos <- "100";		# Number of sample profiles in subsample
+		logfile$parameters$ISnorm_score_pos <- "0.8";			# Screening threshold
+		logfile$parameters$ISnorm_include_neg <-"TRUE"
+		logfile$parameters$ISnorm_percfiles_neg <- "90";		# Minimum percentage of files covered by each IS profile %
+		logfile$parameters$ISnorm_numbIS_neg <- "15";			# Minimum number of IS profiles
+		logfile$parameters$ISnorm_medblank_neg <- "FALSE";	# Show median deviation of blank/blind profiles?
+		logfile$parameters$ISnorm_usesubblank_neg <- "TRUE";	# Use subsampling
+		logfile$parameters$ISnorm_numblank_neg <- "100";		# Number of blank/blind profiles in subsample
+		logfile$parameters$ISnorm_medsam_neg <- "FALSE";		# Show median deviation of sample (i.e., non-blank) profiles?
+		logfile$parameters$ISnorm_usesubsam_neg <- "TRUE";	# Use subsampling
+		logfile$parameters$ISnorm_numsam_neg <- "100";		# Number of sample profiles in subsample
+		logfile$parameters$ISnorm_score_neg <- "0.8";			# Screening threshold
 		# subtraction ##########################################################
 		logfile$parameters$subtr_IS <- "yes"; 		
 		logfile$parameters$subtr_target <- "yes"; 		

@@ -2127,7 +2127,29 @@ if(logfile$version < 3.41){
 		logfile$parameters$test <<- "FALSE"
 	}
 	################################################################################################
-	
+	if(!any(names(logfile$parameters) == "ISnorm_include_pos")){	
+		logfile$parameters$ISnorm_include_pos <<-"TRUE"
+		logfile$parameters$ISnorm_include_neg <<-"TRUE"
+		logfile$parameters$ISnorm_percfiles_pos <<- logfile$parameters$ISnorm_percfiles
+		logfile$parameters$ISnorm_numbIS_pos <<- logfile$parameters$ISnorm_numbIS
+		logfile$parameters$ISnorm_medblank_pos <<- logfile$parameters$ISnorm_medblank
+		logfile$parameters$ISnorm_usesubblank_pos <<- logfile$parameters$ISnorm_usesubblank
+		logfile$parameters$ISnorm_numblank_pos <<- logfile$parameters$ISnorm_numblank
+		logfile$parameters$ISnorm_medsam_pos <<- logfile$parameters$ISnorm_medsam
+		logfile$parameters$ISnorm_usesubsam_pos <<- logfile$parameters$ISnorm_usesubsam
+		logfile$parameters$ISnorm_numsam_pos <<- logfile$parameters$ISnorm_numsam
+		logfile$parameters$ISnorm_score_pos <<- logfile$parameters$ISnorm_score
+		logfile$parameters$ISnorm_percfiles_neg <<- logfile$parameters$ISnorm_percfiles
+		logfile$parameters$ISnorm_numbIS_neg <<- logfile$parameters$ISnorm_numbIS
+		logfile$parameters$ISnorm_medblank_neg <<- logfile$parameters$ISnorm_medblank
+		logfile$parameters$ISnorm_usesubblank_neg <<- logfile$parameters$ISnorm_usesubblank
+		logfile$parameters$ISnorm_numblank_neg <<- logfile$parameters$ISnorm_numblank
+		logfile$parameters$ISnorm_medsam_neg <<- logfile$parameters$ISnorm_medsam
+		logfile$parameters$ISnorm_usesubsam_neg <<- logfile$parameters$ISnorm_usesubsam
+		logfile$parameters$ISnorm_numsam_neg <<- logfile$parameters$ISnorm_numsam
+		logfile$parameters$ISnorm_score_neg <<- logfile$parameters$ISnorm_score	
+	}
+	################################################################################################	
 	
 	
 	

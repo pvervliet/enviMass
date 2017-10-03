@@ -131,13 +131,6 @@
 				##################################################################
 				
 				
-
-				
-				
-				
-				
-				
-# > BAUSTELLE				
 				
 				minpeak <- as.numeric(logfile$parameters$peak_minpeak)
                 drtsmall <- as.numeric(logfile$parameters$peak_drtsmall2)
@@ -167,9 +160,60 @@
 				if(!is.integer(ended)){ended <- ceiling(ended); ended <- as.integer(ended)}
 				if(!is.integer(minpeak)){minpeak <- ceiling(minpeak); minpeak <- as.integer(minpeak)}
 				#####################################################################
+
+				num_EICs <- dim(MSlist[["EIC_index"]])[1]
+				clus_centroids <- vector("list", num_EICs)
+				for(m in 1:num_EICs){
+					clus_centroids[[m]] <- 
+					MSlist[["Scans"]][[2]][
+						(MSlist[["EIC_index"]][m, "start_ID"]):(MSlist[["EIC_index"]][m, "end_ID"]),
+						c("m/z", "intensity", "RT", "measureID", "clustID"), drop = FALSE]
+				}
+
+				
+				clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose = FALSE); NULL})
+				clusterExport(cl = clus, 
+					varlist = c("minpeak", "drtsmall", "drtfill", "drttotal", "recurs", "weight", "SB", "SN", "minint", "maxint", "ended" ,"Retens"), 
+					envir = environment())	
+				cluster_results <- clusterMap(
+					cl = clus,
+					fun = enviMass:::mzpick_pl_new,
+					clus_centroids = clus_centroids,
+					RECYCLE = TRUE,
+					SIMPLIFY = FALSE, # no!
+					USE.NAMES = FALSE,
+					.scheduling = c("dynamic")
+				)
+				clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose = FALSE); NULL})
 				
 				
 				
+				startat <- 0
+				for(m in 1:num_EICs){
+					if(all(cluster_results[[m]]==0)) next
+					those <- (cluster_results[[m]]!=0)
+					cluster_results[[m]][those] <- (cluster_results[[m]][those] + startat)
+					MSlist[["Scans"]][[2]][(MSlist[["EIC_index"]][m, "start_ID"]):(MSlist[["EIC_index"]][m, "end_ID"]), "peakID"] <- cluster_results[[m]]
+					startat <- max(cluster_results[[m]][those])
+				}
+				
+				
+				ord <- order(MSlist[["Scans"]][[2]][,"partID"], MSlist[["Scans"]][[2]][,"clustID"], MSlist[["Scans"]][[2]][,"peakID"], decreasing = FALSE)
+				MSlist[["Scans"]][[2]] <- MSlist[["Scans"]][[2]][ord,]
+				
+				
+				
+
+
+clus_centroids<-clus_centroids[[2]]
+				
+
+
+
+
+				
+				
+# > BAUSTELLE					
 				
 dim(MSlist0[["Scans"]][[2]])==dim(MSlist[["Scans"]][[2]])		
 				

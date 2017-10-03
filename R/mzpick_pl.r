@@ -15,7 +15,7 @@ mzpick_pl <- function(
 			out1 <- .Call("gapfill",
 				as.numeric(clus_centroids[clus_EICs[i,"start_ID"]:clus_EICs[i,"end_ID"],"RT"]),
 				as.numeric(clus_centroids[clus_EICs[i,"start_ID"]:clus_EICs[i,"end_ID"],"intensity"]),
-				as.integer(order(clus_centroids[clus_EICs[i,"start_ID"]:clus_EICs[i,"end_ID"],"RT"],decreasing=FALSE)),
+				as.integer(order(clus_centroids[clus_EICs[i,"start_ID"]:clus_EICs[i,"end_ID"],"RT"], decreasing = FALSE)),
 				as.numeric(clus_centroids[clus_EICs[i,"start_ID"]:clus_EICs[i,"end_ID"],"m/z"]),
 				as.numeric(clus_centroids[clus_EICs[i,"start_ID"]:clus_EICs[i,"end_ID"],"measureID"]),
 				as.numeric(Retens),
