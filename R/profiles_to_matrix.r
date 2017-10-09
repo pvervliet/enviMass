@@ -31,16 +31,16 @@
 #'
 #'
 
-profiles_to_matrix<-function(
+profiles_to_matrix <- function(
 	profileList,
-	links_profiles=NULL,
-	sort_by=c("number_peaks_sample","mean_int"),
-	reduce_comp=FALSE,
-	n_profiles=NULL,
-    only_sample_peaks=FALSE,
-    n_latest_peaks=NULL,
-	median_above_blind=NULL,
-    normalize=FALSE
+	links_profiles = NULL,
+	sort_by = c("number_peaks_sample", "mean_int"),
+	reduce_comp = FALSE,
+	n_profiles = NULL,
+    only_sample_peaks = FALSE,
+    n_latest_peaks = NULL,
+	mean_above_blind = NULL,
+    normalize = FALSE
 ){
 
 	############################################################################
@@ -70,8 +70,8 @@ profiles_to_matrix<-function(
 		keep[profileList[["index_prof"]][,"number_peaks_sample"]==0]<-FALSE
 	}
 	# filter out profiles which range not above blind intensities ##############
-	if(!is.null(median_above_blind)[1]){
-		keep[profileList[["index_prof"]][,"above_blind?"]<median_above_blind]<-FALSE
+	if(!is.null(mean_above_blind)[1]){
+		keep[profileList[["index_prof"]][,"above_blind?"] < mean_above_blind]<-FALSE
 	}
     ############################################################################ 
 

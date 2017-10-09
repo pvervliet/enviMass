@@ -477,7 +477,8 @@
 								IS_neg_screen_listed[[i]][[at_ID]]<-rbind(
 									IS_neg_screen_listed[[i]][[at_ID]],c(j,m)
 								)					
-								colnames(IS_neg_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_neg[[4]][at_ID]),"")							
+								colnames(IS_neg_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_neg[[4]][at_ID]),"")		
+							
 							}							
 						}
 					}

@@ -1048,7 +1048,7 @@
 				#tags$h5("Profile extraction"),
 				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profiling.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
 				HTML('<hr noshade="noshade" />'),
-				sliderInput("prof_maxfiles", "Maximum number of newest files to be processed (by date/time) ", min = 50, max = 3000, value = 100, step= 1),
+				sliderInput("prof_maxfiles", "Maximum number of newest (by date/time) files to be processed per ion mode:", min = 50, max = 3000, value = 100, step= 1),
 				numericInput("prof_dmz", "Peak mass deviation within profiles: +/- m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),
                 numericInput("prof_drt", "Peak deviation within profiles: RT tolerance [s]", 60),     

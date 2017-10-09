@@ -6,7 +6,8 @@
 ##################################################################################
 # POSITIVE #######################################################################
 if(
-	file.exists(file.path(logfile[[1]],"results","profileList_pos"))  
+	file.exists(file.path(logfile[[1]],"results","profileList_pos"))  &
+	file.exists(file.path(logfile[[1]],"results","links_peaks_pos"))  # <- should exist!	
 ){
 
 	##############################################################################	
@@ -86,8 +87,8 @@ if(
 				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
 				for(j in 1:length(found1)){ # insert links
 					# insert PROFILE LINKS ########################################
-					if(found1[j]==0){not_found1<-(not_found1+1);next} # e.g., peak blind-removed 
-					if(found2[j]==0){not_found1<-(not_found1+1);next}		
+					if(found1[j]==0){not_found1<-(not_found1+1); next} # e.g., peak blind-removed 
+					if(found2[j]==0){not_found1<-(not_found1+1); next}		
 					inserted1<-(inserted1+1);				
 					# (1) insert link to second profile for the first profile
 					prof1<-peaks[found1[j],"profileIDs"][[1]]
@@ -747,7 +748,8 @@ if(
 ##################################################################################
 # NEGATIVE #######################################################################
 if( 
-	file.exists(file.path(logfile[[1]],"results","profileList_neg")) 
+	file.exists(file.path(logfile[[1]],"results","profileList_neg")) &
+	file.exists(file.path(logfile[[1]],"results","links_peaks_neg"))  # <- should exist!	
 ){
 
 	##############################################################################	

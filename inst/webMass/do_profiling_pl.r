@@ -134,7 +134,7 @@
 		for_files <- enviMass:::get_measurement_IDs(
 				logfile,
 				sets = as.numeric(logfile$parameters$prof_maxfiles),
-				ion_mode = "positive",
+				ion_mode = "negative",
 				until = logfile$parameters$upto_file,
 				selective = logfile$parameters$prof_select,
 				types = c("sample","blank","spiked"),
