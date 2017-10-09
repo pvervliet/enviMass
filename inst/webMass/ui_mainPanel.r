@@ -813,7 +813,7 @@
 					fluidRow(
 						column(width = 2, radioButtons("components_profiles", "Include?", c("yes"="yes","no"="no"))),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Aggregate and filter filewise componentization results across profiles; Group profiles with similar intensity patterns."),
+							tags$p(align="justify","Aggregate and filter filewise componentization results across profiles; group profiles with similar intensity patterns."),
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profile_components.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),

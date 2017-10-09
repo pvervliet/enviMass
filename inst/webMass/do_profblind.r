@@ -27,17 +27,9 @@ if(
 		}
 	}
 	##############################################################################
-	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
-	rm(profileList_pos,envir=as.environment(".GlobalEnv"))
-	##############################################################################
-
-
-# BAUSTELLE >
-with_check<-TRUE
-	###################################################################################
-	if(with_check){
-		###############################################################################
-		# profile IDs correct? ########################################################
+	if(as.logical(logfile$parameters$test)){
+		##########################################################################
+		# profile IDs correct? ###################################################
 		for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
 			if(
 				!all(profileList_pos[["peaks"]][	
@@ -47,10 +39,12 @@ with_check<-TRUE
 				stop("\n Debug do_IS_normaliz.r at #2")
 			}
 		}
-		################################################################################	
+		##########################################################################
 	}
-# < BAUSTELLE
-
+	##############################################################################
+	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
+	rm(profileList_pos,envir=as.environment(".GlobalEnv"))
+	##############################################################################
 	
 }
 ##################################################################################
@@ -79,6 +73,21 @@ if(
 		}else{
 			profileList_neg[["index_prof"]][n,"above_blind?"]<-Inf
 		}
+	}
+	##############################################################################
+	if(as.logical(logfile$parameters$test)){
+		##########################################################################
+		# profile IDs correct? ###################################################
+		for(i in 1:dim(profileList_neg[["index_prof"]])[1]){
+			if(
+				!all(profileList_neg[["peaks"]][	
+					profileList_neg[["index_prof"]][i, "start_ID"]:profileList_neg[["index_prof"]][i, "end_ID"]
+				,"profileIDs"] == i)
+			){
+				stop("\n Debug do_IS_normaliz.r at #2")
+			}
+		}
+		##########################################################################
 	}
 	##############################################################################
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
