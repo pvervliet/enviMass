@@ -22,6 +22,395 @@ using namespace Rcpp;
 
 
 
+/************************************************************************/
+/* EIC clustering *******************************************************/
+/************************************************************************/
+// [[Rcpp::export]]
+SEXP getEIC_new(      
+	SEXP mz,
+	SEXP RT,
+	SEXP intens,
+	SEXP orderedint,
+	SEXP orderedret,
+	SEXP dmzdens,
+	SEXP ppm2,
+	SEXP drtdens,
+	SEXP merged2
+){
+
+           PROTECT(mz = AS_NUMERIC(mz));
+           PROTECT(RT = AS_NUMERIC(RT));
+           PROTECT(intens = AS_NUMERIC(intens));
+           PROTECT(orderedint = AS_INTEGER(orderedint));
+           PROTECT(orderedret = AS_INTEGER(orderedret));
+           PROTECT(dmzdens = AS_NUMERIC(dmzdens));
+           PROTECT(ppm2 = AS_INTEGER(ppm2));
+           PROTECT(drtdens = AS_NUMERIC(drtdens));
+           PROTECT(merged2 = AS_INTEGER(merged2));
+           double *ret, *mass, *intensity;
+           mass = NUMERIC_POINTER(mz);
+           ret = NUMERIC_POINTER(RT);
+           intensity = NUMERIC_POINTER(intens);
+           int *ordint, *ordret;
+           ordint = INTEGER_POINTER(orderedint);
+           ordret = INTEGER_POINTER(orderedret);
+           double dmzdens2 = NUMERIC_VALUE(dmzdens);
+           int ppm3 = INTEGER_VALUE(ppm2);
+           double drtdens2 = NUMERIC_VALUE(drtdens);
+           int merged3 = INTEGER_VALUE(merged2);
+           int leng = LENGTH(RT);
+           int m,n,i,k=0,clustnumb,maxat=0,maxit=0;
+           double delmz;
+           SEXP clusters;
+           PROTECT(clusters = Rf_allocMatrix(REALSXP, leng, 13));
+           double *clus;
+           clus = REAL(clusters);
+           for(m=0;m<13;m++){
+               for(n=0;n<leng;n++){
+                   clus[(m*leng)+n]=0;
+               }
+           }
+           int *at;
+           at = new int[leng];
+
+           /* initialize with most intense measurement ************************/
+           clustnumb=1;
+           if(ppm3==1){delmz=((dmzdens2**(mass+(*(ordint)-1)))/1e6);}else{delmz=dmzdens2;}
+           clus[0]=(*(mass+(*(ordint)-1))-(2*delmz));       /* low mass boundary **************/
+           clus[(1*leng)]=(*(mass+(*(ordint)-1))+(2*delmz));/* high mass boundary *************/
+           clus[(2*leng)]=(*(ret+(*(ordint)-1))-drtdens2);  /* low RT boundary ****************/
+           clus[(3*leng)]=(*(ret+(*(ordint)-1))+drtdens2);  /* high RT boundary ***************/
+           clus[(4*leng)]=1;                                /* number of measurements *********/
+           clus[(5*leng)]=*(mass+(*(ordint)-1));            /* mass sum ***********************/
+           clus[(6*leng)]=clustnumb;                        /* cluster ID *********************/
+           clus[(7*leng)]=0;                                /* merged (1) or not (0)? *********/
+           clus[(8*leng)]=*(intensity+(*(ordint)-1));       /* maximum intensity in a cluster */
+           clus[(9*leng)+(*(ordint)-1)]=clustnumb;          /* cluster ID for measurement *****/
+           clus[(10*leng)]=0;                               /* variance, set later if merged **/
+           clus[(11*leng)]=*(mass+(*(ordint)-1));           /* lowest mass in cluster *********/
+           clus[(12*leng)]=*(mass+(*(ordint)-1));           /* highest mass in cluster ********/
+
+           /* assign all other peaks ******************************************/
+           for(n=1;n<leng;n++){
+               /* check for possible fit to existing clusters *****************/
+               maxat=0;
+               for(m=0;m<clustnumb;m++){
+                if(*(mass+(*(ordint+n)-1))<=clus[(1*leng)+m]){
+                   if(*(mass+(*(ordint+n)-1))>=clus[(0*leng)+m]){
+                           if(*(ret+(*(ordint+n)-1))>=clus[(2*leng)+m]){
+                               if(*(ret+(*(ordint+n)-1))<=clus[(3*leng)+m]){
+                                       at[maxat]=m;
+                                       maxat++;
+                               }
+                           }
+                       }
+                   }
+               }
+               /* (a) not assignable - create new cluster *********************/
+               if(maxat==0){
+                   clustnumb++;
+                   clus[(9*leng)+(*(ordint+n)-1)]=clustnumb;
+                   if(ppm3==1){delmz=((dmzdens2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmzdens2;}
+                   clus[0+(clustnumb-1)]=(*(mass+(*(ordint+n)-1))-(2*delmz));
+                   clus[(1*leng)+(clustnumb-1)]=(*(mass+(*(ordint+n)-1))+(2*delmz));
+                   clus[(2*leng)+(clustnumb-1)]=(*(ret+(*(ordint+n)-1))-drtdens2);
+                   clus[(3*leng)+(clustnumb-1)]=(*(ret+(*(ordint+n)-1))+drtdens2);
+                   clus[(4*leng)+(clustnumb-1)]=1;
+                   clus[(5*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
+                   clus[(6*leng)+(clustnumb-1)]=clustnumb;
+                   clus[(7*leng)+(clustnumb-1)]=0;
+                   clus[(8*leng)+(clustnumb-1)]=*(intensity+(*(ordint+n)-1));
+                   clus[(11*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
+                   clus[(12*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
+                   continue;
+               }
+               /* check for other peaks at same RT ****************************/
+               maxit=maxat;
+               for(i=0;i<leng;i++){ /* find RT-order index */
+                   if(*(ordint+n)==*(ordret+i)){
+                       k=i;
+                       break;
+                   }
+               }
+
+               if(k>0){ /* backward over RT-order */
+                   for(i=(k-1);i>=0;i--){
+                       if(  *(ret+(*(ordret+k)-1))==*(ret+(*(ordret+i)-1))  ){
+                           if((clus[(9*leng)+(*(ordret+i)-1)])==0){
+                               continue;
+                           }else{
+                               for(m=0;m<maxat;m++){
+                                   if(clus[(9*leng)+(*(ordret+i)-1)]==(at[m]+1)){
+                                       at[m]=-9999;
+                                       maxit--;
+                                       break;
+                                   }
+                               }
+                           }
+                       }else{
+                          break;
+                       }
+                   }
+               }
+
+               if(k<(leng-1)){ /* forward over RT-order */
+                   for(i=(k+1);i<leng;i++){
+                       if(*(ret+(*(ordret+k)-1))==*(ret+(*(ordret+i)-1))){
+                           if((clus[(9*leng)+(*(ordret+i)-1)])==0){
+                               continue;
+                           }else{
+                               for(m=0;m<maxat;m++){
+                                   if(clus[(9*leng)+(*(ordret+i)-1)]==(at[m]+1)){
+                                       at[m]=-9999;
+                                       maxit--;
+                                       break;
+                                   }
+                               }
+                           }
+                       }else{
+                           break;
+                       }
+                   }
+               }
+
+               if(maxit<maxat){
+                   i=maxat;
+                   k=0;
+                   for(m=0;m<i;m++){
+                       if(at[m]==-9999){
+                           k++;
+                           maxat--;
+                       }else{
+                           at[m-k]=at[m];
+                       }
+                   }
+               }
+               maxat=maxit;
+               /* (a) not assignable - create new cluster *********************/
+               if(maxat==0){
+                   clustnumb++;
+                   clus[(9*leng)+(*(ordint+n)-1)]=clustnumb;
+                   if(ppm3==1){delmz=((dmzdens2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmzdens2;}
+                   clus[0+(clustnumb-1)]=(*(mass+(*(ordint+n)-1))-(2*delmz));
+                   clus[(1*leng)+(clustnumb-1)]=(*(mass+(*(ordint+n)-1))+(2*delmz));
+                   clus[(2*leng)+(clustnumb-1)]=(*(ret+(*(ordint+n)-1))-drtdens2);
+                   clus[(3*leng)+(clustnumb-1)]=(*(ret+(*(ordint+n)-1))+drtdens2);
+                   clus[(4*leng)+(clustnumb-1)]=1;
+                   clus[(5*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
+                   clus[(6*leng)+(clustnumb-1)]=clustnumb;
+                   clus[(7*leng)+(clustnumb-1)]=0;
+                   clus[(8*leng)+(clustnumb-1)]=*(intensity+(*(ordint+n)-1));
+                   clus[(11*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
+                   clus[(12*leng)+(clustnumb-1)]=*(mass+(*(ordint+n)-1));
+                   continue;
+               }
+               /* (b) fits exactly to one cluster *****************************/
+               if(maxat==1){
+                   clus[(9*leng)+(*(ordint+n)-1)]=(at[0]+1);
+                   if(ppm3==1){delmz=((dmzdens2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmzdens2;}
+                   /* shrink lower & upper mass bounds */
+                   if(clus[(0*leng)+(at[0])]<(*(mass+(*(ordint+n)-1))-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+(*(ordint+n)-1))-(2*delmz));}
+                   if(clus[(1*leng)+(at[0])]>(*(mass+(*(ordint+n)-1))+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+(*(ordint+n)-1))+(2*delmz));}
+                   /* adapt lower & upper RT bounds */
+                   if(clus[(2*leng)+(at[0])]>(*(ret+(*(ordint+n)-1))-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+(*(ordint+n)-1))-drtdens2);}
+                   if(clus[(3*leng)+(at[0])]<(*(ret+(*(ordint+n)-1))+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+(*(ordint+n)-1))+drtdens2);}
+                   clus[(4*leng)+(at[0])]=clus[(4*leng)+(at[0])]+1;
+                   clus[(5*leng)+(at[0])]=clus[(5*leng)+(at[0])]+*(mass+(*(ordint+n)-1));
+                   if(*(mass+(*(ordint+n)-1))<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+(*(ordint+n)-1));};
+                   if(*(mass+(*(ordint+n)-1))>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+(*(ordint+n)-1));};
+                   continue;
+               }
+               /* (c) fits to several clusters - m/z density clustering *******/
+               if(maxat>1){
+                   delmz=fabs(*(mass+(*(ordint+n)-1))- ( clus[(5*leng)+(at[0])]/clus[(4*leng)+(at[0])] ));
+                   for(m=0;m<maxat;m++){
+                       if(
+                           fabs(*(mass+(*(ordint+n)-1))- ( clus[(5*leng)+(at[m])]/clus[(4*leng)+(at[m])] ))<
+                           delmz
+                       ){
+                           at[0]=at[m];
+                           delmz=fabs(*(mass+(*(ordint+n)-1))- ( clus[(5*leng)+(at[0])]/clus[(4*leng)+(at[0])] ));
+                       }
+                   }
+                   clus[(9*leng)+(*(ordint+n)-1)]=(at[0]+1);
+                   if(ppm3==1){delmz=((dmzdens2**(mass+(*(ordint+n)-1)))/1e6);}else{delmz=dmzdens2;}
+                   /* shrink lower & upper mass bounds */
+                   if(clus[(0*leng)+(at[0])]<(*(mass+(*(ordint+n)-1))-(2*delmz))){clus[(0*leng)+(at[0])]=(*(mass+(*(ordint+n)-1))-(2*delmz));}
+                   if(clus[(1*leng)+(at[0])]>(*(mass+(*(ordint+n)-1))+(2*delmz))){clus[(1*leng)+(at[0])]=(*(mass+(*(ordint+n)-1))+(2*delmz));}
+                   /* adapt lower & upper RT bounds */
+                   if(clus[(2*leng)+(at[0])]>(*(ret+(*(ordint+n)-1))-drtdens2)){clus[(2*leng)+(at[0])]=(*(ret+(*(ordint+n)-1))-drtdens2);}
+                   if(clus[(3*leng)+(at[0])]<(*(ret+(*(ordint+n)-1))+drtdens2)){clus[(3*leng)+(at[0])]=(*(ret+(*(ordint+n)-1))+drtdens2);}
+                   clus[(4*leng)+(at[0])]=clus[(4*leng)+(at[0])]+1;
+                   clus[(5*leng)+(at[0])]=clus[(5*leng)+(at[0])]+*(mass+(*(ordint+n)-1));
+                   if(*(mass+(*(ordint+n)-1))<clus[(11*leng)+(at[0])]){clus[(11*leng)+(at[0])]=*(mass+(*(ordint+n)-1));};
+                   if(*(mass+(*(ordint+n)-1))>clus[(12*leng)+(at[0])]){clus[(12*leng)+(at[0])]=*(mass+(*(ordint+n)-1));};
+                   continue;
+              }
+           }
+
+           /* *************************************************************** */
+           /* merge isobaric mass cluster *************************************/
+
+		   if((merged3==1)&(clustnumb>1)){
+
+               /* set mean ****************************************************/
+               for(n=0;n<clustnumb;n++){
+                   clus[(5*leng)+(n)]=(clus[(5*leng)+(n)]/clus[(4*leng)+(n)]);
+               }
+               /* define exclusion-list of cluster with same RT ***************/
+               std::vector<int> blackone;
+               std::vector<int> blacktwo;
+               int blacksize;
+               for(n=1;n<leng;n++){
+                   for(k=(n-1);k>=0;k--){
+                       if(*(ret+(*(ordret+k)-1))==*(ret+(*(ordret+n)-1))){
+                           if( /* confine to overlapping masses */
+                                (clus[(0*leng)+(int(clus[(9*leng)+(*(ordret+n)-1)])-1)] < clus[(1*leng)+(int(clus[(9*leng)+(*(ordret+k)-1)])-1)]) &
+                                (clus[(1*leng)+(int(clus[(9*leng)+(*(ordret+n)-1)])-1)] > clus[(0*leng)+(int(clus[(9*leng)+(*(ordret+k)-1)])-1)])
+                           ){          /* smallest index always first */
+                               if((clus[(9*leng)+(*(ordret+k)-1)])<(clus[(9*leng)+(*(ordret+n)-1)])){
+                                       blackone.push_back(int(clus[(9*leng)+(*(ordret+k)-1)]));
+                                       blacktwo.push_back(int(clus[(9*leng)+(*(ordret+n)-1)]));
+                               }else{
+                                       blackone.push_back(int(clus[(9*leng)+(*(ordret+n)-1)]));
+                                       blacktwo.push_back(int(clus[(9*leng)+(*(ordret+k)-1)]));
+                               }
+                           }
+                       }else{
+                           break;
+                       }
+                   }
+               }
+               blacksize=blackone.size();
+               /* find mergeable clusters: indices & mass differences *********/
+               /* cross-check for overlaps in RT between cluster **************/
+               std::vector<int> clusterone;
+               std::vector<int> clustertwo;
+               std::vector<double> clusterdiff;
+               int doit;
+               for(n=0;n<(clustnumb-1);n++){
+                   for(m=(n+1);m<clustnumb;m++){
+                       if(
+                           (clus[(0*leng)+(n)]<clus[(1*leng)+(m)]) &
+                           (clus[(1*leng)+(n)]>clus[(0*leng)+(m)])
+                       ){ /* check for overlapping masses, ppm window */
+                           if(
+                               (
+                                   (clus[(0*leng)+(n)]<=clus[(11*leng)+(m)]) &
+                                   (clus[(1*leng)+(n)]>=clus[(12*leng)+(m)])
+                                )||(
+                                   (clus[(0*leng)+(m)]<=clus[(11*leng)+(n)]) &
+                                   (clus[(1*leng)+(m)]>=clus[(12*leng)+(n)])
+                                )
+                           ){ /* check for overlapping masses, lowest/highest centroid masses vs. ppm window */
+                               if(blacksize==0){
+                                   clusterone.push_back(n+1);
+                                   clustertwo.push_back(m+1);
+                                   clusterdiff.push_back(fabs(clus[(5*leng)+(n)]-clus[(5*leng)+(m)])); // difference of mean mass
+                               }else{
+                                   doit=0;
+                                   for(k=0;k<blacksize;k++){ // check exclusion list
+                                       if(blackone[k]==(n+1)){
+                                            if(blacktwo[k]==(m+1)){
+                                                doit=1;
+                                                break;
+                                            }
+                                       }
+                                   }
+                                   if(doit==0){
+                                       clusterone.push_back(n+1);
+                                       clustertwo.push_back(m+1);
+                                       clusterdiff.push_back(fabs(clus[(5*leng)+(n)]-clus[(5*leng)+(m)]));
+                                    }
+                               }
+                           }
+                       }
+                   }
+                }
+                /* merge cluster ***********************************************/
+                int mergesize=clusterone.size(), stay, gone;
+                std::vector<int> clusterase;
+				if(mergesize>0){				
+					while(mergesize>0){
+                        /* find cluster pair closest in mean mass difference */
+                        delmz=clusterdiff[0];
+                        m=0;
+						if(mergesize>1){
+                            for(k=1;k<mergesize;k++){
+                               if(clusterdiff[k]<delmz){
+                                   m=k;
+                                   delmz=clusterdiff[k];
+                               }
+                            }
+                    	}
+                        /* reassign measurements */
+						for(n=0;n<leng;n++){
+                            if(clus[(9*leng)+n]==clustertwo[m]){
+                                clus[(9*leng)+n]=clusterone[m];
+                            }
+                        }
+						/* update cluster entries */
+                        clus[(4*leng)+(clusterone[m]-1)]=(clus[(4*leng)+(clusterone[m]-1)]+clus[(4*leng)+(clustertwo[m]-1)]); /* number of measurements */
+                        clus[(6*leng)+(clustertwo[m]-1)]=clusterone[m]; /* cluster ID */
+                        clus[(7*leng)+(clustertwo[m]-1)]=1;            /* merged? */
+                        /* delete that pair & all links to second (=merged) cluster & check blacklist  */
+                        gone=clustertwo[m];
+                        stay=clusterone[m];
+                        mergesize=clusterone.size();
+                        n=0;
+                        while(n<mergesize){ /* remove merges */
+                            if( (clusterone[n]==gone) || (clustertwo[n]==gone) ){
+                                clusterone.erase(clusterone.begin()+n);
+                                clustertwo.erase(clustertwo.begin()+n);
+                                clusterdiff.erase(clusterdiff.begin()+n);
+                                mergesize=clusterone.size();
+                            }else{
+                                n++;
+                            }
+                        }
+                        if((blacksize>0) & (mergesize>0)){
+                            clusterase.clear(); /* check blacklist-entries */
+                            for(k=0;k<blacksize;k++){
+                                if(blackone[k]==gone){
+                                    clusterase.push_back(blacktwo[k]);
+                                }
+                                 if(blacktwo[k]==gone){
+                                    clusterase.push_back(blackone[k]);
+                                }
+                            }
+                            if(clusterase.size()>0){ /* remove indirect blacklisted links */
+                                for(m=0;(unsigned)m<clusterase.size();m++){
+                                    mergesize=clusterone.size();
+                                    n=0;
+                                    while(n<mergesize){
+                                        if( (clustertwo[n]==stay) || (clusterone[n]==clusterase[m])){
+                                            clusterone.erase(clusterone.begin()+n);
+                                            clustertwo.erase(clustertwo.begin()+n);
+                                            clusterdiff.erase(clusterdiff.begin()+n);
+                                            mergesize=clusterone.size();
+                                        }else{
+                                            n++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                   }
+               }
+               /* output ******************************************************/
+               delete[] at;
+               UNPROTECT(10);
+               return(clusters);
+            }else{
+               /* output ******************************************************/
+               delete[] at;
+               UNPROTECT(10);
+               return(clusters);
+           }
+       }
+
+
+
 /******************************************************************************/
 /* calculate theta ************************************************************/
 /******************************************************************************/

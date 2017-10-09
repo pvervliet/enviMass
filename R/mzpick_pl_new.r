@@ -38,10 +38,12 @@ mzpick_pl_new <- function(
 			PACKAGE = "enviPick"
 		)     
 		out2 <- matrix(out2, ncol = 10);
-		out2 <- out2[out2[,4] != 0,] # remove gapp-filling
 		#colnames(out2) <- c("m/z", "intens", "RT", "index", "intens_filt", "1pick", "pickcrit", "baseline", "intens_corr", "2pick");
+		out2 <- out2[out2[,4] != 0,] # remove gap-filling
+		out3 <- rep(0, length(clus_centroids[, "RT"]))
+		out3[out2[,4]] <- out2[,10]
 		########################################################################
-		return(out2[, 10])
+		return(out3)
 	}else{
 		return(rep(0, dim(clus_centroids)[1]))
 	}

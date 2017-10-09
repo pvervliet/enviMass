@@ -5,6 +5,25 @@
 
 using namespace Rcpp;
 
+// getEIC_new
+SEXP getEIC_new(SEXP mz, SEXP RT, SEXP intens, SEXP orderedint, SEXP orderedret, SEXP dmzdens, SEXP ppm2, SEXP drtdens, SEXP merged2);
+RcppExport SEXP _enviMass_getEIC_new(SEXP mzSEXP, SEXP RTSEXP, SEXP intensSEXP, SEXP orderedintSEXP, SEXP orderedretSEXP, SEXP dmzdensSEXP, SEXP ppm2SEXP, SEXP drtdensSEXP, SEXP merged2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type mz(mzSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type RT(RTSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type intens(intensSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type orderedint(orderedintSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type orderedret(orderedretSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type dmzdens(dmzdensSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ppm2(ppm2SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type drtdens(drtdensSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type merged2(merged2SEXP);
+    rcpp_result_gen = Rcpp::wrap(getEIC_new(mz, RT, intens, orderedint, orderedret, dmzdens, ppm2, drtdens, merged2));
+    return rcpp_result_gen;
+END_RCPP
+}
 // series_relat
 SEXP series_relat(SEXP homol_peaks_relat, SEXP range_mz, SEXP range_RT);
 RcppExport SEXP _enviMass_series_relat(SEXP homol_peaks_relatSEXP, SEXP range_mzSEXP, SEXP range_RTSEXP) {
@@ -308,6 +327,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_enviMass_getEIC_new", (DL_FUNC) &_enviMass_getEIC_new, 9},
     {"_enviMass_series_relat", (DL_FUNC) &_enviMass_series_relat, 3},
     {"_enviMass_moving_count", (DL_FUNC) &_enviMass_moving_count, 2},
     {"_enviMass_compare", (DL_FUNC) &_enviMass_compare, 3},

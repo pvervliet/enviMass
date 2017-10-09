@@ -40,7 +40,7 @@ function(
     for(k in m:n){ 
       if(progbar==TRUE){setWinProgressBar(prog, k, title = paste("EIC  clustering: ID",k," @",(MSlist[[5]][k,2]-MSlist[[5]][k,1]+1)," measurements",sep=""), label = NULL)}
       if((MSlist[[5]][k,2]-MSlist[[5]][k,1]+1)>1){      
-        clusters <- .Call("getEIC",
+        clusters <- .Call("_enviMass_getEIC_new",
                           as.numeric(MSlist[[4]][[2]][MSlist[[5]][k,1]:MSlist[[5]][k,2],1]),       # mz
                           as.numeric(MSlist[[4]][[2]][MSlist[[5]][k,1]:MSlist[[5]][k,2],3]),       # RT
                           as.numeric(MSlist[[4]][[2]][MSlist[[5]][k,1]:MSlist[[5]][k,2],2]),       # intens
@@ -50,11 +50,26 @@ function(
                           as.integer(ppm2),
                           as.numeric(drtdens),                                                   
                           as.integer(merged2),
-                          PACKAGE="enviPick"
+                          PACKAGE="enviMass"
                         )
         clusters[,10]<-clusters[,10]+startat;             
         MSlist[[4]][[2]][(MSlist[[5]][k,1]):(MSlist[[5]][k,2]),6]<-clusters[,10]                       
         MSlist[[4]][[2]][(MSlist[[5]][k,1]):(MSlist[[5]][k,2]),]<-(MSlist[[4]][[2]][(MSlist[[5]][k,1]):(MSlist[[5]][k,2]),][order(clusters[,10],decreasing=FALSE),])
+
+with_test <- FALSE
+#> BAUSTELLE		
+if(with_test){
+	# total number of cluster equal to nonmerged - merged number of clusters?
+	if( length(unique(clusters[,10])) != (sum(clusters[,1]!=0) - sum(clusters[,8])) ) stop("Negative test in mzclust_pl #1")
+	
+	# unique RTs of centroids in each EIC cluster?
+	clst <- (unique(MSlist[[4]][[2]][(MSlist[[5]][k,1]):(MSlist[[5]][k,2]),6]))
+	for(i in clst){
+		if( anyDuplicated(MSlist[[4]][[2]][(MSlist[[5]][k,1]):(MSlist[[5]][k,2]),"RT"][MSlist[[4]][[2]][(MSlist[[5]][k,1]):(MSlist[[5]][k,2]),6] == i]) != 0 ) stop("Negative test in mzclust_pl #2")
+	}
+}
+#< BAUSTELLE	
+		
         startat<-c(max(clusters[,10]))
       }else{
         MSlist[[4]][[2]][(MSlist[[5]][k,1]):(MSlist[[5]][k,2]),6]<-startat;   
@@ -62,6 +77,11 @@ function(
       }
     }    
     if(progbar==TRUE){close(prog)};
+	
+	
+	
+	
+	
     maxit<-max(MSlist[[4]][[2]][,6]);
     if(maxit>0){
 		index <- .Call("indexed",

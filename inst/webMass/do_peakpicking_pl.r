@@ -6,7 +6,7 @@
     leng <- dim(measurements)[1];         
 	
 #measurements[,"peakpicking"]<-"FALSE"
- i<-1
+i<-1
 
     for(i in 1:leng){ 
             if( (measurements[i,"include"]=="TRUE") & (measurements[i,"peakpicking"]=="FALSE") ){
@@ -126,12 +126,19 @@
 					merged = TRUE, 
 					from = FALSE, 
 					to = FALSE
-				); 
+				);
+				if(as.logical(logfile$parameters$test)){#if(TRUE){					
+					num_EICs <- dim(MSlist[["EIC_index"]])[1]
+					for(m in 1:num_EICs){
+						if(
+							anyDuplicated(MSlist[["Scans"]][[2]][
+								(MSlist[["EIC_index"]][m, "start_ID"]):(MSlist[["EIC_index"]][m, "end_ID"]),
+							"RT", drop = FALSE]) != 0
+						) stop("Test result in do_peakpicking_pl: EIC centroids with non-unique RT found. Debug?")
+					}
+				}
 				cat(" clustered -");				
 				##################################################################
-				
-				
-				
 				minpeak <- as.numeric(logfile$parameters$peak_minpeak)
                 drtsmall <- as.numeric(logfile$parameters$peak_drtsmall2)
                 drtfill <- as.numeric(logfile$parameters$peak_drtdens2)
@@ -160,7 +167,6 @@
 				if(!is.integer(ended)){ended <- ceiling(ended); ended <- as.integer(ended)}
 				if(!is.integer(minpeak)){minpeak <- ceiling(minpeak); minpeak <- as.integer(minpeak)}
 				#####################################################################
-
 				num_EICs <- dim(MSlist[["EIC_index"]])[1]
 				clus_centroids <- vector("list", num_EICs)
 				for(m in 1:num_EICs){
@@ -169,8 +175,6 @@
 						(MSlist[["EIC_index"]][m, "start_ID"]):(MSlist[["EIC_index"]][m, "end_ID"]),
 						c("m/z", "intensity", "RT", "measureID", "clustID"), drop = FALSE]
 				}
-
-				
 				clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose = FALSE); NULL})
 				clusterExport(cl = clus, 
 					varlist = c("minpeak", "drtsmall", "drtfill", "drttotal", "recurs", "weight", "SB", "SN", "minint", "maxint", "ended" ,"Retens"), 
@@ -185,166 +189,28 @@
 					.scheduling = c("dynamic")
 				)
 				clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose = FALSE); NULL})
-				
-				
-				
 				startat <- 0
 				for(m in 1:num_EICs){
 					if(all(cluster_results[[m]]==0)) next
 					those <- (cluster_results[[m]]!=0)
 					cluster_results[[m]][those] <- (cluster_results[[m]][those] + startat)
-					MSlist[["Scans"]][[2]][(MSlist[["EIC_index"]][m, "start_ID"]):(MSlist[["EIC_index"]][m, "end_ID"]), "peakID"] <- cluster_results[[m]]
+					at_pos <- (MSlist[["EIC_index"]][m, "start_ID"] : MSlist[["EIC_index"]][m, "end_ID"])
+					MSlist[["Scans"]][[2]][at_pos, "peakID"] <- cluster_results[[m]]
+					MSlist[["Scans"]][[2]][at_pos,] <- 
+						MSlist[["Scans"]][[2]][at_pos,][
+							order(MSlist[["Scans"]][[2]][at_pos, "peakID"],decreasing = FALSE),, drop = FALSE
+						]
 					startat <- max(cluster_results[[m]][those])
 				}
-				
-				
-				ord <- order(MSlist[["Scans"]][[2]][,"partID"], MSlist[["Scans"]][[2]][,"clustID"], MSlist[["Scans"]][[2]][,"peakID"], decreasing = FALSE)
-				MSlist[["Scans"]][[2]] <- MSlist[["Scans"]][[2]][ord,]
-				
-				
-				
-
-
-clus_centroids<-clus_centroids[[2]]
-				
-
-
-
-
-				
-				
-# > BAUSTELLE					
-				
-dim(MSlist0[["Scans"]][[2]])==dim(MSlist[["Scans"]][[2]])		
-				
-				
-				
-				
-if(FALSE){				
-
-				clus_EICs <- list()
-				clus_EICs_orig <- list() # for converting back				
-				clus_centroids <- list()
-				
-				clus_EICs[[1]] <- MSlist[["EIC_index"]]
-				clus_EICs_orig[[1]] <- MSlist[["EIC_index"]] # for converting back				
-				clus_centroids[[1]] <- MSlist[["Scans"]][[2]]		
-				
-				
-}			
-				
-				
-				
-				
-				along <- seq(1,dim(MSlist[["EIC_index"]])[1],1)
-				size_MB <- (as.numeric(object.size(MSlist[["Scans"]][[2]])) / 1048576)
-				for_split <- (size_MB / 5)
-				for_split <- round( dim(MSlist[["EIC_index"]])[1] / for_split )
-				#for_split<-round( dim(profileList[["index_prof"]])[1] / (dim(summary(clus))[1]) )
-				along <- split(along, ceiling(seq_along(along)/for_split))
-				clus_EICs <- list()			
-				clus_centroids <- list()
-				for(m in 1:length(along)){
-					
-					clus_centroids[[m]] <- MSlist[["Scans"]][[2]][
-						(MSlist[["EIC_index"]][along[[m]][1], "start_ID"]):(MSlist[["EIC_index"]][along[[m]][length(along[[m]])], "end_ID"])
-					,,drop=FALSE]
-					clus_EICs[[m]] <- MSlist[["EIC_index"]][along[[m]], , drop = FALSE]
-					start_at <- (clus_EICs[[m]][1, "start_ID"][[1]] - 1)
-					clus_EICs[[m]][,"start_ID"] <- (clus_EICs[[m]][,"start_ID"] - start_at)
-					clus_EICs[[m]][,"end_ID"] <- (clus_EICs[[m]][,"end_ID"] - start_at)
-					
+				if(as.logical(logfile$parameters$test)){
+					IDpeak <- MSlist[["Scans"]][[2]][,"peakID"]
+					IDpeak <- IDpeak[IDpeak!=0]
+					IDpeak <- unique(IDpeak)	
+					if(any(diff(IDpeak)>1)) stop("Test result in do_peakpicking_pl: non-continuous peak IDs. Debug?")	
 				}
-
-# > KEEP
-with_test<-TRUE
-if(with_test){
-for(m in 1:length(clus_EICs)){
-	for(n in 1:dim(clus_EICs[[m]])[1]){
-	
-		if(any(clus_centroids[[m]][clus_EICs[[m]][n,"start_ID"]:clus_EICs[[m]][n,"end_ID"],"clustID"]==0)) stop("FUCKED_1")
-		if(length(unique(clus_centroids[[m]][clus_EICs[[m]][n,"start_ID"]:clus_EICs[[m]][n,"end_ID"],"clustID"]))>1) stop("FUCKED_2")		
-		
-		
-	}
-}
-}
-# < KEEP		
-
-
-		
-m<-2
-min(clus_EICs[[m]][,"start_ID"])
-max(clus_EICs[[m]][,"end_ID"])
-
-
-				clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose = FALSE); NULL})
-				clusterExport(cl = clus, 
-					varlist = c("minpeak", "drtsmall", "drtfill", "drttotal", "recurs", "weight", "SB", "SN", "minint", "maxint", "ended" ,"Retens"), 
-					envir = environment())	
-				cluster_results <- clusterMap(
-					cl = clus,
-					fun = enviMass:::mzpick_pl,
-					clus_EICs = clus_EICs,
-					clus_centroids = clus_centroids,
-					RECYCLE = TRUE,
-					SIMPLIFY = FALSE, # no!
-					USE.NAMES = FALSE,
-					.scheduling = c("dynamic")
-				)
-				clusterEvalQ(cl = clus,{rm(list = ls()); gc(verbose = FALSE); NULL})
-
-dim(MSlist0[["Scans"]][[2]]) == dim(MSlist[["Scans"]][[2]])
-cluster_results0 <- cluster_results
-
-				# assort results into original profileList ###############################
-				if(length(cluster_results) > 1){
-					for(m in 2:length(cluster_results)){ # insert profileIDs
-						those <- (cluster_results[[m]][,"peakID"] != 0)
-						cluster_results[[m]][those, "peakID"] <- (
-							cluster_results[[m]][those, "peakID"] + max(cluster_results[[m-1]][, "peakID"])
-						)
-					}
-				}
-
-				
-m<-1
-those <- (cluster_results[[m]][,"peakID"] != 0)
-min(cluster_results[[m]][those,7])
-max(cluster_results[[m]][those,7])
-
-			
-				
-				for(m in 1:length(cluster_results)){ # insert results -> non-EIC centroids not included!
-				
-					MSlist[["Scans"]][[2]][cluster_results[[m]][, "measureID"],] <- cluster_results[[m]]
-					
-				}
-				
-				
-				#rm(cluster_results, clus_EICs, clus_centroids)
 				# build index #############################################################	
 				maxit <- max(MSlist[[4]][[2]][,7]);
 				# generate peak ID table ##################################################
-
-dim(MSlist0[["Scans"]][[2]])==dim(MSlist[["Scans"]][[2]])	
-				
-all(MSlist[["Scans"]][[2]][,7]==MSlist0[["Scans"]][[2]][,7])		
-all(MSlist[["Scans"]][[2]][3,]==MSlist0[["Scans"]][[2]][3,]) 
-
-
-# > KEEP
-with_test<-TRUE
-if(with_test){
-	IDpeak <- MSlist0[["Scans"]][[2]][,7]
-	IDpeak <- IDpeak[IDpeak!=0]
-	IDpeak <- unique(IDpeak)	
-	if(any(diff(IDpeak)>1)) stop("ARRRGGG")
-}
-# < KEEP
-
-#next;
-
 				if(maxit > 0){
 					index <- .Call("indexed",
 						as.integer(MSlist[[4]][[2]][,7]),
@@ -366,8 +232,6 @@ if(with_test){
 						MSlist[[7]] <- index
 					}
 				}
-	
-# < BAUSTELLE
 				############################################################################
 				maxit <- max(MSlist[["Scans"]][[2]][,7]);
 				# generate peaklist ########################################################
