@@ -36,7 +36,9 @@ function(
 		if(length(int_norm_ISTD$lis_delint_IS[[k]]) > count_IS[2]){
 			count_IS[2] <- length(int_norm_ISTD$lis_delint_IS[[k]])
 		}
-		if( logfile$parameters$ISnorm_medblank == "TRUE" ){ # on blank
+	}		
+	if( logfile$parameters$ISnorm_medblank == "TRUE" ){ # on blank
+		for( k in 1:length(int_norm_ISTD$lis_delint_b) ){
 			if(length(int_norm_ISTD$lis_delint_b[[k]]) > 0){ 
 				if( median(int_norm_ISTD$lis_delint_b[[k]]) < ylimit_del[1] ){
 					ylimit_del[1] <- median(int_norm_ISTD$lis_delint_b[[k]])
@@ -52,7 +54,9 @@ function(
 				count_b[2] <- length(int_norm_ISTD$lis_delint_b[[k]])
 			}
 		}
-		if( logfile$parameters$ISnorm_medsam == "TRUE" ){ # on non-blank
+	}	
+	if( logfile$parameters$ISnorm_medsam == "TRUE" ){ # on non-blank
+		for( k in 1:length(int_norm_ISTD$lis_delint_nb) ){
 			if(length(int_norm_ISTD$lis_delint_nb[[k]]) > 0){ 
 				if( median(int_norm_ISTD$lis_delint_nb[[k]]) < ylimit_del[1] ){
 					ylimit_del[1] <- median(int_norm_ISTD$lis_delint_nb[[k]])
@@ -71,16 +75,19 @@ function(
 	}				
     ############################################################################
 	atPOSIX <- int_norm_ISTD$atPOSIX
-	keep <- ((int_norm_ISTD$sampletype=="sample") | (int_norm_ISTD$sampletype=="blank"))
+	keep <- ((int_norm_ISTD$sampletype=="sample") | (int_norm_ISTD$sampletype=="blank") | (int_norm_ISTD$sampletype=="spiked"))
 	atPOSIX <- atPOSIX[keep]
 	sampleID <- int_norm_ISTD$sampleID[keep]
-	timeset <- matrix(nrow=length(atPOSIX),ncol=5,0);
+	timeset <- matrix(nrow=length(atPOSIX),ncol=4,0);
 	for(i in 1:length(sampleID)){
 		if(int_norm_ISTD$sampletype[i] == "sample"){
 			timeset[i,2] <- as.numeric(int_norm_ISTD$sampleID[i]);
 		}
 		if(int_norm_ISTD$sampletype[i] == "blank"){
 			timeset[i,3] <- as.numeric(int_norm_ISTD$sampleID[i]);
+		}
+		if(int_norm_ISTD$sampletype[i] == "spiked"){
+			timeset[i,4] <- as.numeric(int_norm_ISTD$sampleID[i]);
 		}
 	}	
 	if(xlim[1] == FALSE){
@@ -100,11 +107,9 @@ function(
 		title(ylab = "Deviation from median log10 intensity", cex.lab = .9, cex = 1.2)
 		abline(h = 0, col = "red")	
 		for(k in 1:length(int_norm_ISTD$lis_delint_IS)){
-			if(timeset[k,3] != 0){
-				abline(v = k, col = "orange", lwd= 1)
-			}else{
-				abline(v = k, col = "lightgrey", lwd= .5)				
-			}
+			if(timeset[k,2] != 0) abline(v = k, col = "lightgrey", lwd= .5)	
+			if(timeset[k,3] != 0) abline(v = k, col = "orange", lwd= 1)
+			if(timeset[k,4] != 0) abline(v = k, col = "darkblue", lwd= .5)	
 		}
 		plot.window(xlim = c(0, 10), ylim = c(0, 10))
 		rect( # for legend; box can still be overplotted by points; but not the above gray lines
@@ -163,11 +168,9 @@ function(
 		plot.new()
 		plot.window(xlim = use_xlim, ylim = c(count_IS[1]-1, max(c(count_IS[2]+1, as.numeric(logfile$parameters$ISnorm_numbIS)))))
 		for(k in 1:length(int_norm_ISTD$lis_delint_IS)){
-			if(timeset[k,3] != 0){
-				abline(v = k, col = "orange", lwd = 1)
-			}else{
-				abline(v = k, col = "lightgrey", lwd = .5)				
-			}
+			if(timeset[k,2] != 0) abline(v = k, col = "lightgrey", lwd= .5)	
+			if(timeset[k,3] != 0) abline(v = k, col = "orange", lwd= 1)
+			if(timeset[k,4] != 0) abline(v = k, col = "darkblue", lwd= .5)	
 		}
 		use_seq <- seq(1, length(int_norm_ISTD$lis_delint_IS), 1)
 		use_seq <- use_seq[ (use_seq >= use_xlim[1]) & (use_seq <= use_xlim[2]) ]
@@ -183,26 +186,30 @@ function(
 		lines(countit, col = "red", lwd = 1.5)
 		abline(h = as.numeric(logfile$parameters$ISnorm_numbIS), col = "red", lwd = 1, lty = 2)
 		mtext("Number of IS peaks", side = 2, line = 2.5, col = "red", cex = 1)			
-		if( logfile$parameters$ISnorm_medblank=="TRUE" ){	
-		plot.window( xlim = use_xlim, ylim = c(count_b[1] - 1, count_b[2] + 1) )	
-		countit <- c()	
-		for( k in 1:length(int_norm_ISTD$lis_delint_IS) ){
+		if( logfile$parameters$ISnorm_medblank=="TRUE" & length(int_norm_ISTD$lis_delint_b)>0 ){	
+			plot.window( xlim = use_xlim, ylim = c(count_b[1] - 1, count_b[2] + 1) )	
+			countit <- c()	
+			
+			
+			for( k in 1:length(int_norm_ISTD$lis_delint_b) ){
 				countit <- c(countit, length(int_norm_ISTD$lis_delint_b[[k]]))	
 			}
 			lines(countit, col = "blue", lwd = 1.5)
 			axis(4, col="blue", col.ticks = "blue", col.axis = "blue", cex.axis = .9)
 			mtext("Number of blank peaks", side = 4, line = 2.3, col = "blue", cex = 1)
 		}
-		if( logfile$parameters$ISnorm_medsam == "TRUE" ){	
+		if( logfile$parameters$ISnorm_medsam == "TRUE" & length(int_norm_ISTD$lis_delint_nb)>0 ){	
 			plot.window( xlim = use_xlim, ylim = c(count_nb[1] - 1, count_nb[2] + 1) )	
 			countit <- c()	
-			for( k in 1:length(int_norm_ISTD$lis_delint_IS) ){
+			for( k in 1:length(int_norm_ISTD$lis_delint_nb) ){
 				countit <- c(countit, length(int_norm_ISTD$lis_delint_nb[[k]]))	
 			}
 			lines(countit, col = "green3", lwd = 1.5)
 			axis(4, col = "green3", col.ticks = "green3", col.axis = "green3", line = 4.5 , cex.axis = .9)
 			mtext("Number of non-blank peaks", side = 4, line = 6.8, col = "green3", cex = 1)	
 		}
+		
+		
 		########################################################################
 		box();
 

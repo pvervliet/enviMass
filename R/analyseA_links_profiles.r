@@ -14,38 +14,51 @@
 #' @details enviMass workflow function. 
 #' 
 
-analyseA_links_profiles<-function(links_profiles, profileList, min_rat=.7, min_count=.4, perc =.9, for_which="ISTD"){
+analyseA_links_profiles<-function(
+	links_profiles, 
+	profileList, 
+	logfile,
+	min_rat=.7, 
+	min_count=.4, 
+	perc =.9, 
+	for_which="ISTD"
+){
 
 	################################################################
-	num_sam<-(length(profileList[["sampleID"]])*min_count)
-	if(for_which=="ISTD"){
-		for_profs<-which(unlist(lapply(lapply(links_profiles, `[[`, 2),length))!=0)
+	if(logfile$parameters$dofile_latest_profcomp == "TRUE"){
+		num_sam <- as.numeric(logfile$parameters$numfile_latest_profcomp) * min_count # 100% save? check for_ID extractions in do_components_profiles_pl.r
+	}else{
+		num_sam <- floor(length(profileList[["sampleID"]]) * min_count)
 	}
-	if(for_which=="target"){
-		for_profs<-which(unlist(lapply(lapply(links_profiles, `[[`, 1),length))!=0)
+	if(for_which == "ISTD"){
+		for_profs <- which(unlist(lapply(lapply(links_profiles, `[[`, 2),length))!=0)
+	}
+	if(for_which == "target"){
+		for_profs <- which(unlist(lapply(lapply(links_profiles, `[[`, 1),length))!=0)
 	}	
-	if(for_which=="both"){
-		for_profs1<-which(unlist(lapply(lapply(links_profiles, `[[`, 1),length))!=0)
-		for_profs2<-which(unlist(lapply(lapply(links_profiles, `[[`, 2),length))!=0)
-		for_profs<-unique(c(for_profs1,for_profs2))
+	if(for_which == "both"){
+		for_profs1 <- which(unlist(lapply(lapply(links_profiles, `[[`, 1),length))!=0)
+		for_profs2 <- which(unlist(lapply(lapply(links_profiles, `[[`, 2),length))!=0)
+		for_profs <- unique(c(for_profs1,for_profs2))
 	}
-	if(for_which=="all"){
-		for_profs<-(1:length(links_profiles))
+	if(for_which == "all"){
+		for_profs <- (1:length(links_profiles))
 	}	
 	################################################################
-	delRT_isot<-c()
-	delRT_adduc<-c()
-	int_cor_isot<-c()
-	int_cor_adduc<-c()
+	delRT_isot <- c()
+	delRT_adduc <- c()
+	int_cor_isot <- c()
+	int_cor_adduc <- c()
 	for(n in 1:length(for_profs)){
-		if(links_profiles[[for_profs[n]]]$total<num_sam) next
-		prof1<-as.numeric(names(links_profiles)[for_profs[n]])
+		if(links_profiles[[for_profs[n]]]$total < num_sam) next
+		prof1 <- as.numeric(names(links_profiles)[for_profs[n]])
 		# extract delRT_isot & int_cor
-		if(dim(links_profiles[[for_profs[n]]]$isot)[1]>0){
+		if(dim(links_profiles[[for_profs[n]]]$isot)[1] > 0){	
 			for(m in 1:dim(links_profiles[[for_profs[n]]]$isot)[1]){
-				if((links_profiles[[for_profs[n]]]$isot[m,"link counts"]/links_profiles[[for_profs[n]]]$isot[m,"ref_1"])<min_rat) next;
-				if(links_profiles[[for_profs[n]]]$isot[m,"ref_1"]<num_sam) next;
-				if(links_profiles[[for_profs[n]]]$isot[m,"use"]==0) next;				
+				if((links_profiles[[for_profs[n]]]$isot[m,"link counts"]/links_profiles[[for_profs[n]]]$isot[m,"ref_1"]) < min_rat) next;
+				if(links_profiles[[for_profs[n]]]$isot[m,"ref_1"] < num_sam) next;
+				if(links_profiles[[for_profs[n]]]$isot[m,"use"] == 0) next;	
+#stop()				
 				prof2<-links_profiles[[for_profs[n]]]$isot[m,"linked profile"]
 				these<-profileList[["peaks"]][
 					profileList[["index_prof"]][prof1,"start_ID"]:profileList[["index_prof"]][prof1,"end_ID"]

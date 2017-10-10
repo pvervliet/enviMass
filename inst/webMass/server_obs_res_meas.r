@@ -27,7 +27,7 @@ observe({
 				(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"include"]=="TRUE")
 			){
 				load(file=file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-				#load(file=file.path(logfile$project_folder,"peaklist",as.character(1)),envir=as.environment(".GlobalEnv"),verbose=FALSE);			
+				#load(file=file.path(logfile$project_folder,"peaklist",as.character(2165)),envir=as.environment(".GlobalEnv"),verbose=FALSE);			
 				output$file_peak_number<-renderText(as.character(length(peaklist[,1])));	
 				blind_aff<-round(
 					(sum(peaklist[,colnames(peaklist)=="keep_2"]<Inf))/length(peaklist[,1])*100
@@ -1006,96 +1006,96 @@ maincalc6<-reactive({
 		}
 		###################################################################################################	
 		if(isolate(input$filterProf_sort)=="ID (increasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"profile_ID"],decreasing=FALSE),,drop = FALSE]
-			sort_by<<-"profile_ID";sort_by_decreasing<<-"FALSE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"profile_ID"], decreasing = FALSE),,drop = FALSE]
+			sort_by<<-"profile_ID";sort_by_decreasing <<- "FALSE"
 		}
 		if(isolate(input$filterProf_sort)=="mean m/z (increasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_mz"],decreasing=FALSE),,drop = FALSE]
-			sort_by<<-"mean_mz";sort_by_decreasing<<-"FALSE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_mz"], decreasing = FALSE),,drop = FALSE]
+			sort_by<<-"mean_mz";sort_by_decreasing <<- "FALSE"
 		}
 		if(isolate(input$filterProf_sort)=="mean m/z (decreasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_mz"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"mean_mz";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_mz"], decreasing = TRUE),,drop = FALSE]
+			sort_by<<-"mean_mz";sort_by_decreasing <<- "TRUE"
 		}		
 		if(isolate(input$filterProf_sort)=="mean RT (increasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"],decreasing=FALSE),,drop = FALSE]
-			sort_by<<-"mean_RT";sort_by_decreasing<<-"FALSE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"], decreasing = FALSE),,drop = FALSE]
+			sort_by<<-"mean_RT";sort_by_decreasing <<- "FALSE"
 		}	
 		if(isolate(input$filterProf_sort)=="mean RT (decreasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"mean_RT";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"], decreasing = TRUE),,drop = FALSE]
+			sort_by<<-"mean_RT";sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="minimum RT (decreasing)"){		
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"min_RT"],decreasing=TRUE),,drop = FALSE]	
-			sort_by<<-"min_RT";sort_by_decreasing<<-"TRUE"			
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"min_RT"], decreasing = TRUE),,drop = FALSE]	
+			sort_by<<-"min_RT";sort_by_decreasing <<- "TRUE"			
 		}	
 		if(isolate(input$filterProf_sort)=="maximum RT (decreasing)"){		
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_RT" ],decreasing=TRUE),,drop = FALSE]	
-			sort_by<<-"max_RT";sort_by_decreasing<<-"TRUE"			
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_RT" ], decreasing = TRUE),,drop = FALSE]	
+			sort_by<<-"max_RT";sort_by_decreasing <<- "TRUE"			
 		}
 		if(isolate(input$filterProf_sort)=="maximum overall intensity (decreasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"max_int";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int"], decreasing = TRUE),,drop = FALSE]
+			sort_by<<-"max_int";sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="maximum intensity in samples (decreasing, zeros removed)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int_sample"],decreasing=TRUE),,drop = FALSE]	
-			profpeaks2<<-profpeaks2[profpeaks2[,"max_int_sample"]!=0,,drop = FALSE]			
-			sort_by<<-"max_int_sample";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[profpeaks2[,"max_int_sample"] != 0,,drop = FALSE]			
+			sort_by<<-"max_int_sample";sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="maximum intensity in blanks/blinds (decreasing, zeros removed)"){		
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int_blind"],decreasing=TRUE),,drop = FALSE]	
-			profpeaks2<<-profpeaks2[profpeaks2[,"max_int_blind"]!=0,,drop = FALSE]			
-			sort_by<<-"max_int_blind";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"max_int_blind"], decreasing = TRUE),, drop = FALSE]	
+			profpeaks2<<-profpeaks2[profpeaks2[,"max_int_blind"] != 0,, drop = FALSE]			
+			sort_by<<-"max_int_blind";sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="mean intensity (decreasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"mean_int";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int"], decreasing = TRUE),, drop = FALSE]
+			sort_by<<-"mean_int";sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="mean intensity in samples (decreasing, zeros removed)"){		
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int_sample"],decreasing=TRUE),,drop = FALSE]	
-			profpeaks2<<-profpeaks2[profpeaks2[,"mean_int_sample"]!=0,,drop = FALSE]
-			sort_by<<-"mean_int_sample";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[profpeaks2[,"mean_int_sample"] != 0,,drop = FALSE]
+			sort_by<<-"mean_int_sample";sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="mean intensity in blanks/blinds (decreasing, zeros removed)"){		
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int_blind"],decreasing=TRUE),,drop = FALSE]	
-			profpeaks2<<-profpeaks2[profpeaks2[,"mean_int_blind"]!=0,,drop = FALSE]
-			sort_by<<-"mean_int_blind";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_int_blind"],decreasing=TRUE),, drop = FALSE]	
+			profpeaks2<<-profpeaks2[profpeaks2[,"mean_int_blind"] != 0,,drop = FALSE]
+			sort_by<<-"mean_int_blind";sort_by_decreasing <<- "TRUE"
+		}
+		if(isolate(input$filterProf_sort) == "past & current trend intensity (decreasing)"){		
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"deltaint_global"],decreasing=TRUE),, drop = FALSE]
+			profpeaks2<<-profpeaks2[profpeaks2[,"deltaint_global"] != 0,, drop = FALSE]
+			sort_by<<-"deltaint_global"; sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="current trend intensity (decreasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"deltaint_global"],decreasing=TRUE),,drop = FALSE]
-			profpeaks2<<-profpeaks2[profpeaks2[,"deltaint_global"]!=0,,drop = FALSE]
-			sort_by<<-"deltaint_global";sort_by_decreasing<<-"TRUE"
-		}
-		if(isolate(input$filterProf_sort)=="past & current trend intensity (decreasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"deltaint_newest"],decreasing=TRUE),,drop = FALSE]
-			profpeaks2<<-profpeaks2[profpeaks2[,"deltaint_newest"]!=0,,drop = FALSE]
-			sort_by<<-"deltaint_newest";sort_by_decreasing<<-"TRUE"
+			profpeaks2 <<- profpeaks2[order(profpeaks2[,"deltaint_newest"], decreasing = TRUE),, drop = FALSE]
+			profpeaks2 <<- profpeaks2[profpeaks2[,"deltaint_newest"] != 0,,drop = FALSE]
+			sort_by <<- "deltaint_newest"; sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="total peak number (decreasing)"){
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_total"],profpeaks2[,"max_int"],decreasing=TRUE),,drop = FALSE]
-			sort_by<<-"number_peaks_total";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_total"],profpeaks2[,"max_int"], decreasing = TRUE),, drop = FALSE]
+			sort_by<<-"number_peaks_total";sort_by_decreasing <<- "TRUE"
 		}			
 		if(isolate(input$filterProf_sort)=="peak number in samples (decreasing, zeros removed)"){		
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_sample"],decreasing=TRUE),,drop = FALSE]	
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_sample"], decreasing = TRUE),, drop = FALSE]	
 			profpeaks2<<-profpeaks2[profpeaks2[,"number_peaks_sample"]!=0,,drop = FALSE]		
-			sort_by<<-"number_peaks_sample";sort_by_decreasing<<-"TRUE"
+			sort_by<<-"number_peaks_sample";sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="peak number in blanks/blinds (decreasing, zeros removed)"){		
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_blind"],decreasing=TRUE),,drop = FALSE]	
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"number_peaks_blind"],decreasing = TRUE),,drop = FALSE]	
 			profpeaks2<<-profpeaks2[profpeaks2[,"number_peaks_blind"]!=0,,drop = FALSE]	
-			sort_by<<-"number_peaks_blind";sort_by_decreasing<<-"TRUE"
+			sort_by<<-"number_peaks_blind";sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort)=="mass defect (increasing)"){		
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"Mass defect"],decreasing=FALSE),,drop = FALSE]	
-			sort_by<<-"Mass defect";sort_by_decreasing<<-"FALSE"				
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"Mass defect"], decreasing = FALSE),,drop = FALSE]	
+			sort_by<<-"Mass defect";sort_by_decreasing <<- "FALSE"				
 		}
 		if(isolate(input$filterProf_sort)=="mass defect (decreasing)"){		
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"Mass defect"],decreasing=TRUE),,drop = FALSE]		
-			sort_by<<-"Mass defect";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"Mass defect"], decreasing = TRUE),,drop = FALSE]		
+			sort_by<<-"Mass defect";sort_by_decreasing <<- "TRUE"
 		}		
 		if(isolate(input$filterProf_sort)=="median sample above blind intensity (decreasing)"){		
-			profpeaks2<<-profpeaks2[order(profpeaks2[,"in_blind?"],decreasing=TRUE),,drop = FALSE]		
-			sort_by<<-"in_blind?";sort_by_decreasing<<-"TRUE"
+			profpeaks2<<-profpeaks2[order(profpeaks2[,"in_blind?"], decreasing = TRUE),,drop = FALSE]		
+			sort_by<<-"in_blind?";sort_by_decreasing <<- "TRUE"
 		}
 		###################################################################################################		
 		if(

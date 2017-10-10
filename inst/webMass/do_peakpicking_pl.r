@@ -127,7 +127,7 @@ i<-1
 					from = FALSE, 
 					to = FALSE
 				);
-				if(as.logical(logfile$parameters$test)){#if(TRUE){					
+				if(mute(as.logical(logfile$parameters$test))){#if(TRUE){					
 					num_EICs <- dim(MSlist[["EIC_index"]])[1]
 					for(m in 1:num_EICs){
 						if(

@@ -28,10 +28,12 @@ observe({
 			if( 
 				(
 					(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))) &
-					(isolate(input$Pos_type_select)=="Sample/blind files")
+					(isolate(input$Pos_type_select)=="Sample/blind files") &
+					(file.exists(file=file.path(logfile$project_folder,"results","pattern_pos_target")))
 				)||(
 					(file.exists(file=file.path(logfile$project_folder,"quantification","results_screen_target_pos_cal"))) &
-					(isolate(input$Pos_type_select)=="Calibration files")				
+					(isolate(input$Pos_type_select)=="Calibration files") &
+					(file.exists(file=file.path(logfile$project_folder,"results","pattern_pos_target")))					
 				)
 			){			
 
@@ -110,10 +112,12 @@ observe({
 			if( 
 				(
 					(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_pos"))) &
-					(isolate(input$Pos_type_select)=="Sample/blind files")
+					(isolate(input$Pos_type_select)=="Sample/blind files") &
+					(file.exists(file=file.path(logfile$project_folder,"results","pattern_pos_IS")))
 				)||(
 					(file.exists(file=file.path(logfile$project_folder,"quantification","results_screen_IS_pos_cal"))) &
-					(isolate(input$Pos_type_select)=="Calibration files")				
+					(isolate(input$Pos_type_select)=="Calibration files") &
+					(file.exists(file=file.path(logfile$project_folder,"results","pattern_pos_IS")))					
 				)
 			){			
 			
@@ -972,10 +976,12 @@ observe({
 			if( 
 				(
 					(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))) &
-					(isolate(input$Neg_type_select)=="Sample/blind files")
+					(isolate(input$Neg_type_select)=="Sample/blind files") &
+					(file.exists(file=file.path(logfile$project_folder,"results","pattern_neg_target")))					
 				)||(
 					(file.exists(file=file.path(logfile$project_folder,"quantification","results_screen_target_neg_cal"))) &
-					(isolate(input$Neg_type_select)=="Calibration files")				
+					(isolate(input$Neg_type_select)=="Calibration files") &	
+					(file.exists(file=file.path(logfile$project_folder,"results","pattern_neg_target")))					
 				)
 			){			
 
@@ -1054,10 +1060,12 @@ observe({
 			if( 
 				(
 					(file.exists(file=file.path(logfile$project_folder,"results","screening","results_screen_IS_neg"))) &
-					(isolate(input$Neg_type_select)=="Sample/blind files")
+					(isolate(input$Neg_type_select)=="Sample/blind files") &
+					(file.exists(file=file.path(logfile$project_folder,"results","pattern_neg_IS")))					
 				)||(
 					(file.exists(file=file.path(logfile$project_folder,"quantification","results_screen_IS_neg_cal"))) &
-					(isolate(input$Neg_type_select)=="Calibration files")				
+					(isolate(input$Neg_type_select)=="Calibration files") &
+					(file.exists(file=file.path(logfile$project_folder,"results","pattern_neg_IS")))					
 				)
 			){			
 			

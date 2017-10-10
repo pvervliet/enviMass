@@ -2150,9 +2150,17 @@ if(logfile$version < 3.41){
 		logfile$parameters$ISnorm_score_neg <<- logfile$parameters$ISnorm_score	
 	}
 	################################################################################################	
-	
-	
-	
+	# insert type 3 direct dependencies for screening -> components files ##########################
+	if(
+		logfile$workflow_depend[rownames(logfile$workflow_depend) == "components_files", colnames(logfile$workflow_depend) == "IS_screen"] == 1 
+	){
+		workflow_depend <- read.table(
+			file="workflow_depend"		
+		)
+		workflow_depend <- as.matrix(workflow_depend)
+		logfile[[11]] <<- workflow_depend
+		names(logfile)[11] <<- "workflow_depend"	
+	}
 	################################################################################################	
 	#logfile$version<<-3.41
 	################################################################################################		

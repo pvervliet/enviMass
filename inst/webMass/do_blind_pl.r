@@ -3,8 +3,9 @@
 measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 #measurements$blind <- "FALSE"
 for_IDs <- measurements$ID[
-	(measurements$include == "TRUE") & (measurements$blind == "FALSE") & (measurements$Type != "sample")
+	(measurements$include == "TRUE") & (measurements$blind == "FALSE") & (measurements$Type != "blank")
 ]
+# for_IDs<-c("2165", "2166", "2168", "2167")
 ###############################################################################
 
 ###############################################################################

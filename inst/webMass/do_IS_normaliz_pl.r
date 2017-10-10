@@ -227,7 +227,7 @@ if(
 			############################################################################
 			if(logfile$parameters$ISnorm_medsam_pos == "TRUE"){
 				sam_IDs <- profileList_pos[["sampleID"]][profileList_pos[["type"]] != "blank"]
-				for(p in 1:length(sam_IDs)){
+				for(p in 1:length(profileList_pos[["sampleID"]])){
 					lis_delint_nb[[p]] <- numeric(0)
 					lis_median_nb[[p]] <- numeric(0)
 				}
@@ -313,19 +313,19 @@ if(
 			profileList_pos[["index_prof"]][k,"mean_int"] <- mean(profileList_pos[["peaks"]][(profileList_pos[["index_prof"]][k,"start_ID"]:profileList_pos[["index_prof"]][k,"end_ID"]),"intensity"])
 		}
 		# -> data structure to store results for later / intermediate plotting #########
-		int_norm_ISTD_pos <<- list()
-		int_norm_ISTD_pos[[1]] <<- lis_delint_IS
-		int_norm_ISTD_pos[[2]] <<- lis_median_IS
+		int_norm_ISTD_pos <- list()
+		int_norm_ISTD_pos[[1]] <- lis_delint_IS
+		int_norm_ISTD_pos[[2]] <- lis_median_IS
 		#int_norm_ISTD_pos[[3]] <- lis_RT_IS
-		int_norm_ISTD_pos[[4]] <<- use_corfac
-		int_norm_ISTD_pos[[5]] <<- lis_delint_nb
-		int_norm_ISTD_pos[[6]] <<- lis_median_nb
-		int_norm_ISTD_pos[[7]] <<- lis_delint_b
-		int_norm_ISTD_pos[[8]] <<- lis_median_b
-		int_norm_ISTD_pos[[9]] <<- profileList_pos[["datetime"]]
-		int_norm_ISTD_pos[[10]] <<- profileList_pos[["type"]]
-		int_norm_ISTD_pos[[11]] <<- profileList_pos[["sampleID"]]	
-		names(int_norm_ISTD_pos) <<- c("lis_delint_IS", " lis_median_IS", "lis_RT_IS", "use_corfac", "lis_delint_nb", 
+		int_norm_ISTD_pos[[4]] <- use_corfac
+		int_norm_ISTD_pos[[5]] <- lis_delint_nb
+		int_norm_ISTD_pos[[6]] <- lis_median_nb
+		int_norm_ISTD_pos[[7]] <- lis_delint_b
+		int_norm_ISTD_pos[[8]] <- lis_median_b
+		int_norm_ISTD_pos[[9]] <- profileList_pos[["datetime"]]
+		int_norm_ISTD_pos[[10]] <- profileList_pos[["type"]]
+		int_norm_ISTD_pos[[11]] <- profileList_pos[["sampleID"]]	
+		names(int_norm_ISTD_pos) <- c("lis_delint_IS", " lis_median_IS", "lis_RT_IS", "use_corfac", "lis_delint_nb", 
 			"lis_median_nb", "lis_delint_b", "lis_median_b", "atPOSIX", "sampletype", "sampleID")
 		# -> save data & derive plots ##################################################
 		output$int_norm_ISTD_pos_median <- renderPlot({   
@@ -583,7 +583,7 @@ if(
 			############################################################################
 			if(logfile$parameters$ISnorm_medsam_neg == "TRUE"){
 				sam_IDs <- profileList_neg[["sampleID"]][profileList_neg[["type"]] != "blank"]
-				for(p in 1:length(sam_IDs)){
+				for(p in 1:length(profileList_neg[["sampleID"]])){
 					lis_delint_nb[[p]] <- numeric(0)
 					lis_median_nb[[p]] <- numeric(0)
 				}

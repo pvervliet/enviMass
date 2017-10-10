@@ -22,18 +22,18 @@ get_all<-function(
 		profileList,
 		prof_ID,
 		links_profiles,
-		min_peaks=3,
-		skip_peaks=FALSE,
-		min_cor=.9,
-		with_test=FALSE,
-		only_direct=FALSE,
-		del_RT=30,
-		omit_profiles=FALSE
+		min_peaks = 3,
+		skip_peaks = FALSE,
+		min_cor = .9,
+		with_test = FALSE,
+		only_direct = FALSE,
+		del_RT = 30,
+		omit_profiles = FALSE
 	){
 
-	prof_linked_IDs<-c()
+	prof_linked_IDs <- c()
 	################################################################
-	if(omit_profiles[1]!="FALSE"){
+	if(omit_profiles[1] != "FALSE"){
 		if(length(omit_profiles)!=length(profileList[["index_prof"]][,"links"])){stop("omit_profiles not equal to number of profiles")}
 	}
 	if(with_test){if(prof_ID>length(profileList[["index_prof"]][,"profile_ID"])){stop("\n Debug get_isotopol _1!")}}
@@ -41,7 +41,7 @@ get_all<-function(
 	if(profileList[["index_prof"]][prof_ID,"links"]==0){ # no links?
 		return(prof_ID) # only main profile
 	}
-	if(skip_peaks & (profileList[["index_prof"]][prof_ID,"number_peaks_total"][[1]]<min_peaks)){
+	if(skip_peaks & (profileList[["index_prof"]][prof_ID,"number_peaks_total"][[1]] < min_peaks)){
 		return(prof_ID) # only main profile
 	} # all below can be skipped if main profile has not enough peaks.
 	################################################################

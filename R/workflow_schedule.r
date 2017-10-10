@@ -4,10 +4,10 @@
 #'
 #' @description Schedules workflow nodes in newproject.r
 #'
-#' @param depend logfile matrix downstream dependencies (1) & upstream recalculations (2)
+#' @param depend logfile matrix downstream dependencies (any = 1, only direct dependencies = 3) & upstream recalculations (2)
 #' @param must logfile matrix upstream musts (1), downstream musts (2) & yet unimplemented donts (-1)
 #' 
-#' @details enviMass workflow function, returns ordered string with workflow steps. Note that musts entries should be reflected in depend.
+#' @details enviMass workflow function, returns ordered string3 with workflow steps. Note that musts entries should be reflected in depend.
 #' 
 #' 
 #' 

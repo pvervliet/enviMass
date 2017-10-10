@@ -10,7 +10,7 @@
 #' @details enviMass workflow function. 
 #' 
 
-analyseB_links_profiles<-function(links_profiles, min_count=.4, for_which="ISTD"){
+analyseB_links_profiles<-function(links_profiles, min_count=.4, for_which = "ISTD"){
 
 	################################################################
 	num_sam<-(length(profileList[["sampleID"]])*min_count)

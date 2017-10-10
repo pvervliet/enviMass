@@ -46,7 +46,7 @@
 							dret = (as.numeric(logfile$parameters$prof_drt)+10)
 						)
 		########################################################################################
-		if( (logfile$workflow[names(logfile$workflow)=="replicates"] == "no") || (logfile$parameters$replicates_prof == "no") ){ 				
+		if( (logfile$workflow[names(logfile$workflow)=="replicates"] == "no") & (logfile$parameters$replicates_prof == "no") ){ 				
 			profileList_pos<-partcluster(
 								profileList = profileList_pos,
 								dmass = as.numeric(logfile$parameters$prof_dmz),

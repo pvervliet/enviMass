@@ -52,7 +52,7 @@ cleanB_links_profiles<-function(links_profiles, profileList, cut_delRT_adduc = 5
 					next;
 				}
 				# insert correlation ##############################
-				if(num_peaks>1){
+				if(num_peaks>2){
 					int_1<-(profileList[["peaks"]][
 							(profileList[["index_prof"]][prof1,"start_ID"]:profileList[["index_prof"]][prof1,"end_ID"])
 							[!is.na(matched)]

@@ -76,15 +76,29 @@
 			dret = (as.numeric(logfile$parameters$prof_drt) + 10)
 		)
 		#########################################################################################
-		profileList_pos <- partcluster_pl(
-			profileList = profileList_pos,
-			dmass = as.numeric(logfile$parameters$prof_dmz),
-			ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
-			dret = as.numeric(logfile$parameters$prof_drt),
-			replicates = FALSE,
-			IDs = FALSE,
-			clus = clus
-		)
+		if( (logfile$workflow[names(logfile$workflow)=="replicates"] == "no") & (logfile$parameters$replicates_prof == "no") ){ 				
+			profileList_pos <- partcluster_pl(
+				profileList = profileList_pos,
+				dmass = as.numeric(logfile$parameters$prof_dmz),
+				ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+				dret = as.numeric(logfile$parameters$prof_drt),
+				replicates = FALSE,
+				IDs = FALSE,
+				clus = clus
+			)
+		}else{ # run a profiling in the replicate groups first
+			replicates <- measurements[measurements[,"Mode"] == "positive", "tag3"]
+			IDs <- measurements[measurements[,"Mode"]=="positive", "ID"]
+			profileList_pos <- partcluster_pl(
+				profileList = profileList_pos,
+				dmass = as.numeric(logfile$parameters$prof_dmz),
+				ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+				dret = as.numeric(logfile$parameters$prof_drt),
+				replicates = replicates,
+				IDs = IDs,
+				clus = clus
+			)
+		}
 		########################################################################################
 		if(mute(as.logical(logfile$parameters$test))){
 			####################################################################################
@@ -160,22 +174,36 @@
 		profileList_neg[["peaks"]] <- profileList_neg[["peaks"]][order(profileList_neg[["peaks"]][,"m/z"],decreasing=FALSE),]
 		#########################################################################################
 		if(any(profileList_neg[[2]][,2]==0)){stop("\n issue in do_profiling: zero intensities detected. Try to rerun the workflow including the peakpicking, using -> Settings -> General -> Reset project including peak picking.")}
-		profileList_neg<-agglomer(
+		profileList_neg <- agglomer(
 			profileList_neg,
 			dmass = (as.numeric(logfile$parameters$prof_dmz)+1),
 			ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
 			dret = (as.numeric(logfile$parameters$prof_drt)+10)
 		)
 		#########################################################################################
-		profileList_neg <- partcluster_pl(
-			profileList = profileList_neg,
-			dmass = as.numeric(logfile$parameters$prof_dmz),
-			ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
-			dret = as.numeric(logfile$parameters$prof_drt),
-			replicates = FALSE,
-			IDs = FALSE,
-			clus = clus
-		)			
+		if( (logfile$workflow[names(logfile$workflow)=="replicates"] == "no") & (logfile$parameters$replicates_prof == "no") ){ 				
+			profileList_neg <- partcluster_pl(
+				profileList = profileList_neg,
+				dmass = as.numeric(logfile$parameters$prof_dmz),
+				ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+				dret = as.numeric(logfile$parameters$prof_drt),
+				replicates = FALSE,
+				IDs = FALSE,
+				clus = clus
+			)
+		}else{ # run a profiling in the replicate groups first
+			replicates <- measurements[measurements[,"Mode"] == "negative", "tag3"]
+			IDs <- measurements[measurements[,"Mode"] == "negative", "ID"]
+			profileList_neg <- partcluster_pl(
+				profileList = profileList_neg,
+				dmass = as.numeric(logfile$parameters$prof_dmz),
+				ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
+				dret = as.numeric(logfile$parameters$prof_drt),
+				replicates = replicates,
+				IDs = IDs,
+				clus = clus
+			)
+		}
 		########################################################################################
 		if(mute(as.logical(logfile$parameters$test))){
 			####################################################################################
