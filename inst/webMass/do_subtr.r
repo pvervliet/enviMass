@@ -146,7 +146,7 @@ if(
 # > BAUSTELLE: clean links_peaks_pos for removed links!
 
 # <
-	profileList_pos<<-enviMass::in_blind(profileList_pos)
+	profileList_pos<<-enviMass:::in_blind(profileList_pos)
 	save(profileList_pos,file=file.path(as.character(logfile[["project_folder"]]),"results","profileList_pos"),compress=FALSE);
 	###################################################################################################
 
@@ -299,7 +299,7 @@ if(
 # > BAUSTELLE: clean links_peaks_neg for removed peak links!
 
 # <
-	profileList_neg<<-enviMass::in_blind(profileList_neg)
+	profileList_neg<<-enviMass:::in_blind(profileList_neg)
 	save(profileList_neg,file=file.path(as.character(logfile[["project_folder"]]),"results","profileList_neg"),compress=FALSE);
 	###################################################################################################
 
