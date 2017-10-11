@@ -2316,14 +2316,14 @@
 									div(style = widget_style3,
 										fluidRow(									
 											column(4,
-												radioButtons("filterProf_medianblind", "Filter profiles by mean sample vs. blind intensity ratio ...", c("no"="no","yes"="yes"), inline = TRUE),
+												radioButtons("filterProf_medianblind", "Filter profiles by mean sample vs. blind intensity ratio ...", c("no"="no","yes"="yes"), selected="yes", inline = TRUE),
 												bsPopover("filterProf_medianblind", 
 													title = "Filter profiles by the specified value for their mean sample vs. blind/blank intensity ratio across all peaks?",
 													content = "This filter is only available if blind/blank peaks have not been removed from the profiles yet. Indivual intensity ratios for peaks calculated according to Settings -> Blind.", 
 													placement = "top", trigger = "hover")
 											),
 											column(4,
-												numericInput("filterProf_medianblind_value", "Median sample vs. blind intensity ratio:", 0, min=NA, max=NA)	
+												numericInput("filterProf_medianblind_value", "Median sample vs. blind intensity ratio:", 10, min=NA, max=NA)
 											)
 										),
 										div(style = widget_style3,radioButtons("filterProf_notblind", "... or remove all profiles which contain any blind peaks at all?", c("no"="no","yes"="yes"), inline = TRUE))
@@ -2353,7 +2353,7 @@
 											"mean sample above blind intensity (decreasing)" 
 											), 
 										selected="current trend intensity (decreasing)",width='80%'),
-									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no"="FALSE","yes"="TRUE"), selected="FALSE", inline = TRUE),
+									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no"="FALSE","yes"="TRUE"), selected="TRUE", inline = TRUE),
 									HTML('<hr noshade="noshade" />'),
 									div(style = widget_style3,numericInput("filterProf_count", "Restrict size of below Profile list table:", 500, min=1)),
 									#conditionalPanel( # IS filter				

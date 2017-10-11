@@ -62,11 +62,7 @@ cleanB_links_profiles<-function(links_profiles, profileList, cut_delRT_adduc = 5
 							[matched[!is.na(matched)]]
 						,"intensity"])
 					int_cor<-cor(int_1,int_2)
-					if(!is.na(int_cor)){
-						if(int_cor < cut_cor_isot){
-							keep[m] <- FALSE
-						}
-					}else{ # insert correlation
+					if(!is.na(int_cor)){# insert correlation
 						int_cor<-as.integer(round(int_cor*1000))
 						links_profiles[[for_profs[n]]]$adduc[m,"correl"]<-int_cor
 						at_entry_2<-profileList[["index_prof"]][prof2,"links"]

@@ -652,7 +652,7 @@ if(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_delRT_isot = Inf, 
-				cut_cor_isot = 0, 
+				cut_cor_isot = -Inf, 
 				cut_frac_iso = 0
 			)
 			# insert adducts ####################################################
@@ -1426,7 +1426,7 @@ if(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_delRT_isot = Inf, 
-				cut_cor_isot = 0, 
+				cut_cor_isot = -Inf,
 				cut_frac_iso = 0
 			)
 			# insert adducts ####################################################

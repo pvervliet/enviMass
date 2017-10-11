@@ -38,7 +38,7 @@ function(
       datetime <- c(datetime, paste(dated[i], timed[i], "CET", sep = " "))
     }
 	atPOSIX <- as.POSIXct(datetime)
-	ord <- order(atPOSIX, type,decreasing=TRUE)
+	ord <- order(atPOSIX, type, decreasing = FALSE)
 	those_files <- those_files[ord]
 	type <- type[ord]
 	atPOSIX <- atPOSIX[ord]

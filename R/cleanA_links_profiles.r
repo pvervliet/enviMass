@@ -69,17 +69,17 @@ cleanA_links_profiles<-function(
 							[matched[!is.na(matched)]]
 						,"intensity"])
 					int_cor <- cor(int_1, int_2)
-					if(!is.na(int_cor)){
+					if(!is.na(int_cor)){ # e.g. equal values
 						if(int_cor < cut_cor_isot){
 							keep[m] <- FALSE
+						}else{ # insert correlation
+							int_cor <- as.integer(round(int_cor * 1000))
+							links_profiles[[for_profs[n]]]$isot[m,"correl"] <- int_cor
+							at_entry_2 <- profileList[["index_prof"]][prof2,"links"]
+							at <- which(links_profiles[[at_entry_2]]$isot[,"linked profile"] == prof1)
+							links_profiles[[at_entry_2]]$isot[at,"correl"] <- int_cor
 						}
-					}else{ # insert correlation
-						int_cor <- as.integer(round(int_cor * 1000))
-						links_profiles[[for_profs[n]]]$isot[m,"correl"] <- int_cor
-						at_entry_2 <- profileList[["index_prof"]][prof2,"links"]
-						at <- which(links_profiles[[at_entry_2]]$isot[,"linked profile"] == prof1)
-						links_profiles[[at_entry_2]]$isot[at,"correl"] <- int_cor
-					}
+					}# else?
 				}
 			}
 			
