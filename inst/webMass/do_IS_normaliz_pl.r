@@ -199,6 +199,8 @@ if(
 		type <- profileList_pos[["type"]]	
 		ord <- order(atPOSIX, type, decreasing = FALSE)
 		samIDs <- samIDs[ord]
+		type <- type[ord]
+		atPOSIX <- atPOSIX[ord]
 		for(p in 1:length(profileList_pos[["sampleID"]])){
 			lis_delint_IS[[p]] <- numeric(0)
 			lis_median_IS[[p]] <- numeric(0)
@@ -325,9 +327,9 @@ if(
 		int_norm_ISTD_pos[[6]] <- lis_median_nb
 		int_norm_ISTD_pos[[7]] <- lis_delint_b
 		int_norm_ISTD_pos[[8]] <- lis_median_b
-		int_norm_ISTD_pos[[9]] <- profileList_pos[["datetime"]]
-		int_norm_ISTD_pos[[10]] <- profileList_pos[["type"]]
-		int_norm_ISTD_pos[[11]] <- profileList_pos[["sampleID"]]	
+		int_norm_ISTD_pos[[9]] <- atPOSIX
+		int_norm_ISTD_pos[[10]] <- type
+		int_norm_ISTD_pos[[11]] <- samIDs	
 		names(int_norm_ISTD_pos) <- c("lis_delint_IS", " lis_median_IS", "lis_RT_IS", "use_corfac", "lis_delint_nb", 
 			"lis_median_nb", "lis_delint_b", "lis_median_b", "atPOSIX", "sampletype", "sampleID")
 		# -> save data & derive plots ##################################################

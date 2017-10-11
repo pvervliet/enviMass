@@ -2162,7 +2162,7 @@ if(logfile$version < 3.41){
 		names(logfile)[11] <<- "workflow_depend"	
 	}
 	################################################################################################	
-	#logfile$version<<-3.41
+	logfile$version<<-3.41
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 

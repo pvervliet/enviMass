@@ -33,6 +33,10 @@ if(length(for_IDs)){
 
 }
 ##########################################################################
+# -> TODO: remove pics 
+
+
+##########################################################################
 recal_gams<-list.files(file.path(logfile[[1]],"results","recalibration"))
 if(length(recal_gams)>0){
 	for(i in 1:length(recal_gams)){
