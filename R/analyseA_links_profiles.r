@@ -57,8 +57,7 @@ analyseA_links_profiles<-function(
 			for(m in 1:dim(links_profiles[[for_profs[n]]]$isot)[1]){
 				if((links_profiles[[for_profs[n]]]$isot[m,"link counts"]/links_profiles[[for_profs[n]]]$isot[m,"ref_1"]) < min_rat) next;
 				if(links_profiles[[for_profs[n]]]$isot[m,"ref_1"] < num_sam) next;
-				if(links_profiles[[for_profs[n]]]$isot[m,"use"] == 0) next;	
-#stop()				
+				if(links_profiles[[for_profs[n]]]$isot[m,"use"] == 0) next;			
 				prof2<-links_profiles[[for_profs[n]]]$isot[m,"linked profile"]
 				these<-profileList[["peaks"]][
 					profileList[["index_prof"]][prof1,"start_ID"]:profileList[["index_prof"]][prof1,"end_ID"]

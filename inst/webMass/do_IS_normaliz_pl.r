@@ -226,13 +226,12 @@ if(
 		if( logfile$parameters$ISnorm_medblank_pos == "TRUE" || logfile$parameters$ISnorm_medsam_pos == "TRUE" ){		
 			############################################################################
 			if(logfile$parameters$ISnorm_medsam_pos == "TRUE"){
-				sam_IDs <- profileList_pos[["sampleID"]][profileList_pos[["type"]] != "blank"]
 				for(p in 1:length(profileList_pos[["sampleID"]])){
 					lis_delint_nb[[p]] <- numeric(0)
 					lis_median_nb[[p]] <- numeric(0)
 				}
-				names(lis_delint_nb) <- sam_IDs
-				names(lis_median_nb) <- sam_IDs
+				names(lis_delint_nb) <- profileList_pos[["sampleID"]]
+				names(lis_median_nb) <- profileList_pos[["sampleID"]]
 				ids_nb <- order(profileList_pos[["index_prof"]][,"number_peaks_sample"], decreasing = TRUE) 
 				ids_nb <- ids_nb[
 					( profileList_pos[["index_prof"]][ids_nb, "number_peaks_sample"] > 0 ) & 
@@ -250,7 +249,7 @@ if(
 						for_peaks <- profileList_pos[["index_prof"]][i,"start_ID"]:profileList_pos[["index_prof"]][i,"end_ID"]
 						median_intensity <- median( log10(profileList_pos[["peaks"]][for_peaks, "intensity"]) )
 						for(j in for_peaks){
-							at_file <- match(profileList_pos[["peaks"]][j, "sampleIDs"], sam_IDs)
+							at_file <- match(profileList_pos[["peaks"]][j, "sampleIDs"], profileList_pos[["sampleID"]])
 							at_int <- log10(profileList_pos[["peaks"]][j, "intensity"][[1]])
 							lis_delint_nb[[at_file]] <- c(lis_delint_nb[[at_file]], (at_int - median_intensity))
 							lis_median_nb[[at_file]] <- c(lis_median_nb[[at_file]], median_intensity)
@@ -260,13 +259,12 @@ if(
 			}
 			############################################################################
 			if((logfile$parameters$ISnorm_medblank_pos == "TRUE") & (any(profileList_pos[["type"]] == "blank"))){
-				all_IDs <- profileList_pos[["sampleID"]]
 				for(p in 1:length(profileList_pos[["sampleID"]])){
 					lis_delint_b[[p]] <- numeric(0)
 					lis_median_b[[p]] <- numeric(0)
 				}		
-				names(lis_delint_b) <- all_IDs 
-				names(lis_median_b) <- all_IDs 
+				names(lis_delint_b) <- profileList_pos[["sampleID"]]
+				names(lis_median_b) <- profileList_pos[["sampleID"]] 
 				ids_b <- order(profileList_pos[["index_prof"]][, "number_peaks_blind"], decreasing =TRUE) 
 				ids_b <- ids_b[( profileList_pos[["index_prof"]][ids_b, "number_peaks_blind"] > 0 )]
 				if( length(ids_b) ){
@@ -281,7 +279,7 @@ if(
 						for_peaks <- profileList_pos[["index_prof"]][i,"start_ID"]:profileList_pos[["index_prof"]][i,"end_ID"]
 						median_intensity <- median( log10(profileList_pos[["peaks"]][for_peaks, "intensity"]) )
 						for(j in for_peaks){
-							at_file <- match(profileList_pos[["peaks"]][j, "sampleIDs"], all_IDs)
+							at_file <- match(profileList_pos[["peaks"]][j, "sampleIDs"], profileList_pos[["sampleID"]])
 							at_int <- log10(profileList_pos[["peaks"]][j, "intensity"][[1]])
 							lis_delint_b[[at_file]] <- c(lis_delint_b[[at_file]], (at_int - median_intensity))
 							lis_median_b[[at_file]] <- c(lis_median_b[[at_file]], median_intensity)
@@ -582,13 +580,12 @@ if(
 		if( logfile$parameters$ISnorm_medblank_neg == "TRUE" || logfile$parameters$ISnorm_medsam_neg == "TRUE" ){		
 			############################################################################
 			if(logfile$parameters$ISnorm_medsam_neg == "TRUE"){
-				sam_IDs <- profileList_neg[["sampleID"]][profileList_neg[["type"]] != "blank"]
 				for(p in 1:length(profileList_neg[["sampleID"]])){
 					lis_delint_nb[[p]] <- numeric(0)
 					lis_median_nb[[p]] <- numeric(0)
 				}
-				names(lis_delint_nb) <- sam_IDs
-				names(lis_median_nb) <- sam_IDs
+				names(lis_delint_nb) <- profileList_neg[["sampleID"]]
+				names(lis_median_nb) <- profileList_neg[["sampleID"]]
 				ids_nb <- order(profileList_neg[["index_prof"]][,"number_peaks_sample"], decreasing = TRUE) 
 				ids_nb <- ids_nb[
 					( profileList_neg[["index_prof"]][ids_nb, "number_peaks_sample"] > 0 ) & 
@@ -606,7 +603,7 @@ if(
 						for_peaks <- profileList_neg[["index_prof"]][i,"start_ID"]:profileList_neg[["index_prof"]][i,"end_ID"]
 						median_intensity <- median( log10(profileList_neg[["peaks"]][for_peaks, "intensity"]) )
 						for(j in for_peaks){
-							at_file <- match(profileList_neg[["peaks"]][j, "sampleIDs"], sam_IDs)
+							at_file <- match(profileList_neg[["peaks"]][j, "sampleIDs"], profileList_neg[["sampleID"]])
 							at_int <- log10(profileList_neg[["peaks"]][j, "intensity"][[1]])
 							lis_delint_nb[[at_file]] <- c(lis_delint_nb[[at_file]], (at_int - median_intensity))
 							lis_median_nb[[at_file]] <- c(lis_median_nb[[at_file]], median_intensity)
@@ -616,13 +613,12 @@ if(
 			}
 			############################################################################
 			if((logfile$parameters$ISnorm_medblank_neg == "TRUE") & (any(profileList_pos[["type"]] == "blank"))){
-				all_IDs <- profileList_neg[["sampleID"]][profileList_neg[["type"]] == "blank"]
 				for(p in 1:length(profileList_neg[["sampleID"]])){
 					lis_delint_b[[p]] <- numeric(0)
 					lis_median_b[[p]] <- numeric(0)
 				}		
-				names(lis_delint_b) <- blank_IDs 
-				names(lis_median_b) <- blank_IDs 
+				names(lis_delint_b) <- profileList_neg[["sampleID"]]
+				names(lis_median_b) <- profileList_neg[["sampleID"]] 
 				ids_b <- order(profileList_neg[["index_prof"]][, "number_peaks_blind"], decreasing =TRUE) 
 				ids_b <- ids_b[( profileList_neg[["index_prof"]][ids_b, "number_peaks_blind"] > 0 )]
 				if( length(ids_b) ){
@@ -637,7 +633,7 @@ if(
 						for_peaks <- profileList_neg[["index_prof"]][i,"start_ID"]:profileList_neg[["index_prof"]][i,"end_ID"]
 						median_intensity <- median( log10(profileList_neg[["peaks"]][for_peaks, "intensity"]) )
 						for(j in for_peaks){
-							at_file <- match(profileList_neg[["peaks"]][j, "sampleIDs"], all_IDs)
+							at_file <- match(profileList_neg[["peaks"]][j, "sampleIDs"], profileList_neg[["sampleID"]])
 							at_int <- log10(profileList_neg[["peaks"]][j, "intensity"][[1]])
 							lis_delint_b[[at_file]] <- c(lis_delint_b[[at_file]], (at_int - median_intensity))
 							lis_median_b[[at_file]] <- c(lis_median_b[[at_file]], median_intensity)

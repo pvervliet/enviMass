@@ -69,8 +69,10 @@ cleanA_links_profiles<-function(
 							[matched[!is.na(matched)]]
 						,"intensity"])
 					int_cor <- cor(int_1, int_2)
-					if(int_cor < cut_cor_isot){
-						keep[m] <- FALSE
+					if(!is.na(int_cor)){
+						if(int_cor < cut_cor_isot){
+							keep[m] <- FALSE
+						}
 					}else{ # insert correlation
 						int_cor <- as.integer(round(int_cor * 1000))
 						links_profiles[[for_profs[n]]]$isot[m,"correl"] <- int_cor
