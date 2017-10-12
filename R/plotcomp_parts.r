@@ -7,39 +7,39 @@ function(
 	what="circ"
 ){
 
-			if(!any(c("circ","spec","table","check")==what)){stop("Wrong what in plotcomp_parts - debug me!")}
+			if(!any(c("circ", "spec", "table", "check") == what)){stop("Wrong what in plotcomp_parts - debug me!")}
             ####################################################################
 			# get: all peaks concerned and subdataset ##########################
-            get1a<-strsplit(as.character(comp[[1]][compoID,"ID pattern peaks |"]),",")[[1]];
-			get1a_blind<-sapply(get1a,grepl,pattern="*",fixed = TRUE, USE.NAMES = FALSE)
-			get1a<-as.numeric(sapply(get1a,gsub,pattern="*",replacement="",fixed = TRUE, USE.NAMES = FALSE))
-            if(as.character(comp[[1]][compoID,"ID adduct peaks |"])!="-"){
-	  			get1b<-strsplit(as.character(comp[[1]][compoID,"ID adduct peaks |"]),",")[[1]];
-				get1b_blind<-sapply(get1b,grepl,pattern="*",fixed = TRUE, USE.NAMES = FALSE)
-				get1b<-as.numeric(sapply(get1b,gsub,pattern="*",replacement="",fixed = TRUE, USE.NAMES = FALSE))
+            get1a <- strsplit(as.character(comp[[1]][compoID,"ID pattern peaks |"]),",")[[1]];
+			get1a_blind <- sapply(get1a, grepl, pattern = "*", fixed = TRUE, USE.NAMES = FALSE)
+			get1a <- as.numeric(sapply(get1a, gsub, pattern = "*", replacement = "",fixed = TRUE, USE.NAMES = FALSE))
+            if(as.character(comp[[1]][compoID, "ID adduct peaks |"])!="-"){
+	  			get1b <- strsplit(as.character(comp[[1]][compoID, "ID adduct peaks |"]),",")[[1]];
+				get1b_blind <- sapply(get1b, grepl, pattern = "*",fixed = TRUE, USE.NAMES = FALSE)
+				get1b <- as.numeric(sapply(get1b, gsub, pattern = "*", replacement = "", fixed = TRUE, USE.NAMES = FALSE))
             }else{
-				get1b<-c()
-				get1b_blind<-c()
+				get1b <- c()
+				get1b_blind <- c()
             }
-            if(as.character(comp[[1]][compoID,"ID interfering peaks |"])!="-"){
-	  			get1c<-strsplit(as.character(comp[[1]][compoID,"ID interfering peaks |"]),",")[[1]];
-				get1c_blind<-sapply(get1c,grepl,pattern="*",fixed = TRUE, USE.NAMES = FALSE)
-				get1c<-as.numeric(sapply(get1c,gsub,pattern="*",replacement="",fixed = TRUE, USE.NAMES = FALSE))
+            if(as.character(comp[[1]][compoID, "ID interfering peaks |"]) != "-"){
+	  			get1c <- strsplit(as.character(comp[[1]][compoID,"ID interfering peaks |"]),",")[[1]];
+				get1c_blind <- sapply(get1c, grepl, pattern = "*", fixed = TRUE, USE.NAMES = FALSE)
+				get1c <- as.numeric(sapply(get1c, gsub, pattern = "*", replacement = "",fixed = TRUE, USE.NAMES = FALSE))
             }else{
-				get1c<-c()
-				get1c_blind<-c()
+				get1c <- c()
+				get1c_blind <- c()
             }
-            get1<-c(get1a,get1b);
-            get1<-as.numeric(unique(get1));
-            get3<-c(get1a,get1b,get1c);
-            get3_blind<-c(get1a_blind,get1b_blind,get1c_blind);  
-			dub<-duplicated(get3)
-			get3<-get3[!dub]
-			get3_blind<-get3_blind[!dub]
+            get1 <- c(get1a, get1b);
+            get1 <- as.numeric(unique(get1));
+            get3 <- c(get1a,get1b,get1c);
+            get3_blind <- c(get1a_blind, get1b_blind, get1c_blind);  
+			dub <- duplicated(get3)
+			get3 <- get3[!dub]
+			get3_blind <- get3_blind[!dub]
             ####################################################################
-			if(what=="check"){
-				if(length(get3)<2){
-					if(length(get3)<1){					
+			if(what == "check"){
+				if(length(get3) < 2){
+					if(length(get3) < 1){					
 						return("no_peak")
 					}else{
 						return("single_peak")
@@ -49,35 +49,37 @@ function(
 				}
 			}
             if(length(comp[["pattern peak list"]])>1){
-				matched<-match(get3,comp[["pattern peak list"]][,"peak ID"])
-				dat1<-comp[["pattern peak list"]][matched,];
-				ord<-rank(1/dat1[,2]);
-				get3<-get3[order(dat1[,1],decreasing=FALSE)];
-				ord<-ord[order(dat1[,1],decreasing=FALSE)];
+				matched <- match(get3,comp[["pattern peak list"]][,"peak ID"])
+				dat1 <- comp[["pattern peak list"]][matched,];
+				ord <- rank(1/dat1[,2]);
+				get3 <- get3[order(dat1[,1],decreasing=FALSE)];
+				get3_blind <- get3_blind[order(dat1[,1], decreasing=FALSE)]
+				ord <- ord[order(dat1[,1],decreasing=FALSE)];
             }else{
-				dat1<-FALSE;
+				dat1 <- FALSE;
             }
             if(length(comp[["adduct peak list"]])>1){
-            	matched<-match(get3,comp[["adduct peak list"]][,"peak ID"])
-				dat2<-comp[["adduct peak list"]][matched,];
-				ord<-rank(1/dat2[,2]);
-				get3<-get3[order(dat2[,1],decreasing=FALSE)];
-				ord<-ord[order(dat2[,1],decreasing=FALSE)];              
+            	matched <- match(get3, comp[["adduct peak list"]][,"peak ID"])
+				dat2 <- comp[["adduct peak list"]][matched,];
+				ord <- rank(1 / dat2[,2]);
+				get3 <- get3[order(dat2[,1], decreasing=FALSE)];
+				get3_blind <- get3_blind[order(dat2[,1], decreasing=FALSE)]
+				ord <- ord[order(dat2[,1], decreasing=FALSE)];              
             }else{
-				dat2<-FALSE;
+				dat2 <- FALSE;
             }
             ####################################################################
             # extract isotope pattern relations for all peaks ##################
-            if(length(comp[["pattern peak list"]])>1){
-                relat1<-matrix(ncol=length(get3),nrow=length(get3),"");
-                rownames(relat1)<-get3;
-				colnames(relat1)<-get3;
+            if(length(comp[["pattern peak list"]]) > 1){
+                relat1 <- matrix(ncol=length(get3), nrow = length(get3),"");
+                rownames(relat1) <- get3;
+				colnames(relat1) <- get3;
                 for(i in 1:length(get3)){
-                    that1<-as.numeric(strsplit(as.character(dat1[dat1[,4]==get3[i],7]),"/")[[1]]);
-                    that2<-strsplit(as.character(dat1[dat1[,4]==get3[i],8]),"/")[[1]];
-                    that3<-strsplit(as.character(dat1[dat1[,4]==get3[i],10]),"/")[[1]];
-                    that4<-strsplit(as.character(dat1[dat1[,4]==get3[i],9]),"/")[[1]];
-                    if(that1[1]!=0){ # enter into matrix
+                    that1 <- as.numeric(strsplit(as.character(dat1[dat1[,4]==get3[i],7]),"/")[[1]]);
+                    that2 <- strsplit(as.character(dat1[dat1[,4]==get3[i],8]),"/")[[1]];
+                    that3 <- strsplit(as.character(dat1[dat1[,4]==get3[i],10]),"/")[[1]];
+                    that4 <- strsplit(as.character(dat1[dat1[,4]==get3[i],9]),"/")[[1]];
+                    if(that1[1] != 0){ # enter into matrix
                         for(j in 1:length(that1)){
                             relat1[get3==get3[i],get3==that1[j]]<-paste(relat1[get3==get3[i],get3==that1[j]],"/",that2[j],"(",that4[j],")",",z=",that3[j],sep="");
                         }

@@ -1,5 +1,9 @@
 	###############################################################################	
 	those_objects <- c(
+		"links_profiles",
+		"sort_by",
+		"sort_by_decreasing",
+		"keep_IDs",
 		"int_distrib",
 		"affected_table",
 		"int_norm_ISTD_pos",
@@ -44,6 +48,7 @@
 		"logfile",
 		"atit",
 		"peakit",
+		"profpeaks",
 		"profpeaks2",
 		"EICit",
 		"summa",

@@ -64,6 +64,7 @@ if(
 			if(length(forIDs) > as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs <- forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found1 <- 0; inserted1 <- 0
@@ -205,6 +206,7 @@ if(
 			if(length(forIDs) > as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs <- forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found3 <- 0; inserted3 <- 0
@@ -346,6 +348,7 @@ if(
 			if(length(forIDs)>as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs<-forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found4 <- 0; inserted4 <- 0
@@ -462,9 +465,9 @@ if(
 	# (5) INSERT HOMOLOGUE SERIES LINKS ##########################################
 	if(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes"){
 		cat("\n Retrieving homologue links ")
-		forIDs<-profileList_pos[["sampleID"]]
-		for_files<-list.files(file.path(logfile[[1]],"results","componentization","homologues"))
-		keep<-match(forIDs,for_files) # which files are available?
+		forIDs <- profileList_pos[["sampleID"]]
+		for_files <- list.files(file.path(logfile[[1]],"results","componentization","homologues"))
+		keep <- match(forIDs,for_files) # which files are available?
 		if(any(is.na(keep))){cat("\n Just note: not all files found in profiles have homologue links available. \n")}
 		TRUE_IDs <- (measurements$ID[measurements$homologues=="TRUE"]) # for files which have run through that step
 		keep2 <- match(forIDs, TRUE_IDs)
@@ -485,6 +488,7 @@ if(
 			if(length(forIDs)>as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs<-forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found5<-0;inserted5<-0
@@ -607,7 +611,16 @@ if(
 				cut_cor_isot = cut_cor_isot, 
 				cut_frac_iso = .85
 			)
-		}else{cat("\n No isotopologue linkage filtering feasible")}
+		}else{
+			cat("\n No isotopologue linkage filtering feasible")
+			links_profiles_pos <- enviMass::cleanA_links_profiles(
+				links_profiles = links_profiles_pos, 
+				profileList = profileList_pos,
+				cut_delRT_isot = Inf, 
+				cut_cor_isot = -Inf, 
+				cut_frac_iso = 0
+			)		
+		}
 		# clean adducts ##########################################################
 		#cut_delRT_adduc<-median(anaA$delRT_adduc)
 		cut_delRT_adduc <<- boxplot.stats(c(anaA$delRT_adduc))$stats[5]
@@ -618,7 +631,15 @@ if(
 				cut_delRT_adduc = cut_delRT_adduc, 
 				cut_frac_adduc = .85
 			)
-		}else{cat("\n No adduct linkage filtering feasible")}
+		}else{
+			cat("\n No adduct linkage filtering feasible")
+			links_profiles_pos <- enviMass::cleanB_links_profiles( 
+				links_profiles = links_profiles_pos, 
+				profileList = profileList_pos,
+				cut_delRT_adduc = Inf, 
+				cut_frac_adduc = 0
+			)		
+		}
 		# (6.2) check EIC correlation ############################################
 		anaB <- enviMass::analyseB_links_profiles(
 				links_profiles = links_profiles_pos,  
@@ -637,7 +658,16 @@ if(
 				cut_frac_EIC = .9, 
 				cut_delRT_EIC = cut_delRT_EIC
 			)
-		}else{cat("\n No EIC linkage filtering feasible")}
+		}else{
+			cat("\n No EIC linkage filtering feasible")
+			links_profiles_pos <- enviMass::cleanC_links_profiles(
+				links_profiles = links_profiles_pos, 
+				profileList = profileList_pos,
+				cut_EIC = 0, 
+				cut_frac_EIC = 0, 
+				cut_delRT_EIC = Inf
+			)		
+		}
 		# (6.3) Clean lists ######################################################
 		for(n in 1:length(links_profiles_pos)){
 			is_empty <- enviMass::analyseC_links_profiles(links_profiles_pos, at_entry = n)
@@ -762,7 +792,7 @@ if(
 			found <- (found + 1)
 			if(with_test){if(prof_all_IDs[1] != along[i]){stop("\n\nDebug_not_first!")}}	
 			at_entry <- profileList_pos[["index_prof"]][prof_all_IDs[1], "links"]
-			links_profiles_pos[[at_entry]][["group"]] <- prof_all_IDs[-1]
+			links_profiles_pos[[at_entry]][["group"]] <- prof_all_IDs[prof_all_IDs != along[i]] # except for that profile itself
 		}
 		##############################################################################		
 	}
@@ -774,8 +804,14 @@ if(
 	save(profileList_pos, file = file.path(as.character(logfile[[1]]), "results", "profileList_pos"));
 	save(links_profiles_pos, file = file.path(as.character(logfile[[1]]), "results", "links_profiles_pos"));	
 	##############################################################################	
-	rm(links_profiles_pos, profileList_pos)
-
+	if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList_pos")){rm(profileList_pos,envir = as.environment(".GlobalEnv"))}
+	if(any(objects() == "profileList_pos")){rm(profileList_pos)}	
+	if(any(objects(envir = as.environment(".GlobalEnv")) == "links_peaks_pos")){rm(links_peaks_pos,envir = as.environment(".GlobalEnv"))}
+	if(any(objects() == "links_peaks_pos")){rm(links_peaks_pos)}				
+	if(any(objects(envir = as.environment(".GlobalEnv")) == "links_profiles_pos")){rm(links_profiles_pos,envir = as.environment(".GlobalEnv"))}
+	if(any(objects() == "links_profiles_pos")){rm(links_profiles_pos)}					
+	##############################################################################	
+	
 }
 
 
@@ -840,6 +876,7 @@ if(
 			if(length(forIDs) > as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs <- forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found1 <- 0; inserted1 <- 0
@@ -981,6 +1018,7 @@ if(
 			if(length(forIDs) > as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs <- forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found3 <- 0; inserted3 <- 0
@@ -1122,6 +1160,7 @@ if(
 			if(length(forIDs)>as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs<-forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found4 <- 0; inserted4 <- 0
@@ -1260,6 +1299,7 @@ if(
 			if(length(forIDs)>as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs<-forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		not_found5<-0;inserted5<-0
 		if(length(forIDs)>0){
@@ -1374,7 +1414,7 @@ if(
 		#cut_delRT_isot<-median(fil1$delRT_isot)
 		cut_delRT_isot<<-boxplot.stats(c(fil1$delRT_isot))$stats[5]
 		cut_cor_isot<<-(boxplot.stats(c(fil1$int_cor_isot))$stats[1])
-		if(!is.na(cut_delRT_isot)&!is.na(cut_cor_isot)){
+		if(!is.na(cut_delRT_isot) & !is.na(cut_cor_isot)){
 			links_profiles_neg <- enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_neg,
 				profileList = profileList_neg,
@@ -1382,7 +1422,16 @@ if(
 				cut_cor_isot = cut_cor_isot, 
 				cut_frac_iso = .85
 			)
-		}else{cat("\n No isotopologue linkage filtering feasible")}
+		}else{
+			cat("\n No isotopologue linkage filtering feasible")
+			links_profiles_neg <- enviMass::cleanA_links_profiles(
+				links_profiles = links_profiles_neg, 
+				profileList = profileList_neg,
+				cut_delRT_isot = Inf, 
+				cut_cor_isot = -Inf,
+				cut_frac_iso = 0
+			)		
+		}
 		# clean adducts ##########################################################
 		#cut_delRT_adduc<-median(fil1$delRT_adduc)
 		cut_delRT_adduc<<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
@@ -1393,7 +1442,15 @@ if(
 				cut_delRT_adduc = cut_delRT_adduc, 
 				cut_frac_adduc = .85
 			)
-		}else{cat("\n No adduct linkage filtering feasible")}
+		}else{
+			cat("\n No adduct linkage filtering feasible")
+			links_profiles_neg <- enviMass::cleanB_links_profiles( 
+				links_profiles = links_profiles_neg, 
+				profileList = profileList_neg,
+				cut_delRT_adduc = Inf, 
+				cut_frac_adduc = 0
+			)
+		}
 		# (6.2) by ISTD - check their EIC correlation ###########################
 		fil2<-enviMass::analyseB_links_profiles(
 				links_profiles = links_profiles_neg,  
@@ -1411,7 +1468,16 @@ if(
 				cut_frac_EIC = .9, 
 				cut_delRT_EIC = cut_delRT_EIC
 			)
-		}else{cat("\n No EIC linkage filtering feasible")}
+		}else{
+			cat("\n No EIC linkage filtering feasible")
+			links_profiles_neg <- enviMass::cleanC_links_profiles(
+				links_profiles = links_profiles_neg, 
+				profileList = profileList_neg,
+				cut_EIC = 0, 
+				cut_frac_EIC = 0, 
+				cut_delRT_EIC = Inf
+			)		
+		}
 		# (6.3) Clean lists ######################################################
 		for(n in 1:length(links_profiles_neg)){
 			is_empty<-enviMass::analyseC_links_profiles(links_profiles_neg, at_entry = n)
@@ -1534,7 +1600,7 @@ if(
 		if(length(prof_all_IDs)>1){
 			if(with_test){if(prof_all_IDs[1]!=along[i]){stop("\n\nDebug_not_first!")}}	
 			at_entry<-profileList_neg[["index_prof"]][prof_all_IDs[1],"links"]
-			links_profiles_neg[[at_entry]][["group"]]<-prof_all_IDs[-1]
+			links_profiles_neg[[at_entry]][["group"]] <- prof_all_IDs[prof_all_IDs != along[i]] # except for that profile itself
 		}
 		##########################################################################	
 	}
@@ -1546,6 +1612,12 @@ if(
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 	save(links_profiles_neg,file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"));	
 	##############################################################################	
-	rm(links_profiles_neg,profileList_neg)
-
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="profileList_neg")){rm(profileList_neg)}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_peaks_neg")){rm(links_peaks_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="links_peaks_neg")){rm(links_peaks_neg)}				
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_neg")){rm(links_profiles_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="links_profiles_neg")){rm(links_profiles_neg)}
+	##############################################################################	
+	
 }

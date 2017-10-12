@@ -174,7 +174,7 @@ if(
 		if(with_bar){close(pBar)}
 	}
 	if(!length(links_profiles_pos)){
-		stop("Not enough internal standard (ISTD) screening matches detected to run the ISTD normalization, positive ionization - remove this workflow step?")
+		stop("Certainly not enough internal standard (ISTD) screening matches detected to run the ISTD normalization, positive ionization - remove this workflow step?")
 	}
 	####################################################################################	
 
@@ -206,6 +206,8 @@ if(
 			lis_median_IS[[p]] <- numeric(0)
 			#lis_RT_IS[[p]] <- numeric(0)
 		}
+		names(lis_delint_IS) <- samIDs
+		names(lis_median_IS) <- samIDs 
 		unused_profile <- rep(TRUE, dim(profileList_pos[["index_prof"]])[1])
 		for(i in 1:length(links_profiles_pos)){
 			if(!length(links_profiles_pos[[i]]$IS)) next
@@ -237,8 +239,8 @@ if(
 					lis_delint_nb[[p]] <- numeric(0)
 					lis_median_nb[[p]] <- numeric(0)
 				}
-				names(lis_delint_nb) <- profileList_pos[["sampleID"]]
-				names(lis_median_nb) <- profileList_pos[["sampleID"]]
+				names(lis_delint_nb) <- samIDs
+				names(lis_median_nb) <- samIDs
 				ids_nb <- order(profileList_pos[["index_prof"]][,"number_peaks_sample"], decreasing = TRUE) 
 				ids_nb <- ids_nb[
 					( profileList_pos[["index_prof"]][ids_nb, "number_peaks_sample"] > 0 ) & 
@@ -270,8 +272,8 @@ if(
 					lis_delint_b[[p]] <- numeric(0)
 					lis_median_b[[p]] <- numeric(0)
 				}		
-				names(lis_delint_b) <- profileList_pos[["sampleID"]]
-				names(lis_median_b) <- profileList_pos[["sampleID"]] 
+				names(lis_delint_b) <- samIDs
+				names(lis_median_b) <- samIDs 
 				ids_b <- order(profileList_pos[["index_prof"]][, "number_peaks_blind"], decreasing =TRUE) 
 				ids_b <- ids_b[( profileList_pos[["index_prof"]][ids_b, "number_peaks_blind"] > 0 )]
 				if( length(ids_b) ){
@@ -534,7 +536,7 @@ if(
 		if(with_bar){close(pBar)}
 	}
 	if(!length(links_profiles_neg)){
-		stop("Not enough internal standard (ISTD) screening matches detected to run the ISTD normalization, negative ionization - remove this workflow step?")
+		stop("Certainly not enough internal standard (ISTD) screening matches detected to run the ISTD normalization, negative ionization - remove this workflow step?")
 	}
 	####################################################################################	
 
@@ -559,11 +561,15 @@ if(
 		type <- profileList_neg[["type"]]	
 		ord <- order(atPOSIX, type, decreasing = FALSE)
 		samIDs <- samIDs[ord]
+		type <- type[ord]
+		atPOSIX <- atPOSIX[ord]
 		for(p in 1:length(profileList_neg[["sampleID"]])){
 			lis_delint_IS[[p]] <- numeric(0)
 			lis_median_IS[[p]] <- numeric(0)
 			#lis_RT_IS[[p]] <- numeric(0)
 		}
+		names(lis_delint_IS) <- samIDs
+		names(lis_median_IS) <- samIDs 
 		unused_profile <- rep(TRUE, dim(profileList_neg[["index_prof"]])[1])
 		for(i in 1:length(links_profiles_neg)){
 			if(!length(links_profiles_neg[[i]]$IS)) next
@@ -595,8 +601,8 @@ if(
 					lis_delint_nb[[p]] <- numeric(0)
 					lis_median_nb[[p]] <- numeric(0)
 				}
-				names(lis_delint_nb) <- profileList_neg[["sampleID"]]
-				names(lis_median_nb) <- profileList_neg[["sampleID"]]
+				names(lis_delint_nb) <- samIDs
+				names(lis_median_nb) <- samIDs
 				ids_nb <- order(profileList_neg[["index_prof"]][,"number_peaks_sample"], decreasing = TRUE) 
 				ids_nb <- ids_nb[
 					( profileList_neg[["index_prof"]][ids_nb, "number_peaks_sample"] > 0 ) & 
@@ -628,8 +634,8 @@ if(
 					lis_delint_b[[p]] <- numeric(0)
 					lis_median_b[[p]] <- numeric(0)
 				}		
-				names(lis_delint_b) <- profileList_neg[["sampleID"]]
-				names(lis_median_b) <- profileList_neg[["sampleID"]] 
+				names(lis_delint_b) <- samIDs
+				names(lis_median_b) <- samIDs
 				ids_b <- order(profileList_neg[["index_prof"]][, "number_peaks_blind"], decreasing =TRUE) 
 				ids_b <- ids_b[( profileList_neg[["index_prof"]][ids_b, "number_peaks_blind"] > 0 )]
 				if( length(ids_b) ){
@@ -685,9 +691,9 @@ if(
 		int_norm_ISTD_neg[[6]] <<- lis_median_nb
 		int_norm_ISTD_neg[[7]] <<- lis_delint_b
 		int_norm_ISTD_neg[[8]] <<- lis_median_b
-		int_norm_ISTD_neg[[9]] <<- profileList_neg[["datetime"]]
-		int_norm_ISTD_neg[[10]] <<- profileList_neg[["type"]]
-		int_norm_ISTD_neg[[11]] <<- profileList_neg[["sampleID"]]	
+		int_norm_ISTD_neg[[9]] <<- atPOSIX
+		int_norm_ISTD_neg[[10]] <<- type
+		int_norm_ISTD_neg[[11]] <<- samIDs	
 		names(int_norm_ISTD_neg) <<- c("lis_delint_IS", " lis_median_IS", "lis_RT_IS", "use_corfac", "lis_delint_nb", 
 			"lis_median_nb", "lis_delint_b", "lis_median_b", "atPOSIX", "sampletype", "sampleID")
 		# -> save data & derive plots ##################################################

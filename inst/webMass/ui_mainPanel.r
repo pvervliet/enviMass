@@ -2323,7 +2323,7 @@
 													placement = "top", trigger = "hover")
 											),
 											column(4,
-												numericInput("filterProf_medianblind_value", "Median sample vs. blind intensity ratio:", 10, min=NA, max=NA)
+												numericInput("filterProf_medianblind_value", "Mean sample vs. blind intensity ratio:", 10, min=NA, max=NA)
 											)
 										),
 										div(style = widget_style3,radioButtons("filterProf_notblind", "... or remove all profiles which contain any blind peaks at all?", c("no"="no","yes"="yes"), inline = TRUE))

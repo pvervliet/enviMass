@@ -175,6 +175,7 @@ if(
 			if(length(forIDs) > as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs <- forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found1 <- 0; inserted1 <- 0
@@ -314,6 +315,7 @@ if(
 			if(length(forIDs) > as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs <- forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found3 <- 0; inserted3 <- 0
@@ -451,6 +453,7 @@ if(
 			if(length(forIDs)>as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs<-forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found4 <- 0; inserted4 <- 0
@@ -586,6 +589,7 @@ if(
 			if(length(forIDs)>as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs<-forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found5<-0;inserted5<-0
@@ -709,7 +713,16 @@ if(
 				cut_cor_isot = cut_cor_isot, 
 				cut_frac_iso = .85
 			)
-		}else{cat("\n No isotopologue linkage filtering feasible")}
+		}else{
+			cat("\n No isotopologue linkage filtering feasible")
+			links_profiles_pos <- enviMass::cleanA_links_profiles(
+				links_profiles = links_profiles_pos, 
+				profileList = profileList_pos,
+				cut_delRT_isot = Inf, 
+				cut_cor_isot = -Inf, 
+				cut_frac_iso = 0
+			)				
+		}
 		# clean adducts ##########################################################
 		#cut_delRT_adduc<-median(anaA$delRT_adduc)
 		cut_delRT_adduc <<- boxplot.stats(c(anaA$delRT_adduc))$stats[5]
@@ -720,7 +733,15 @@ if(
 				cut_delRT_adduc = cut_delRT_adduc, 
 				cut_frac_adduc = .85
 			)
-		}else{cat("\n No adduct linkage filtering feasible")}
+		}else{
+			cat("\n No adduct linkage filtering feasible")
+			links_profiles_pos <- enviMass::cleanB_links_profiles( 
+				links_profiles = links_profiles_pos, 
+				profileList = profileList_pos,
+				cut_delRT_adduc = Inf, 
+				cut_frac_adduc = 0
+			)		
+		}
 		# (6.2) check EIC correlation ############################################
 		anaB <- enviMass::analyseB_links_profiles(
 				links_profiles = links_profiles_pos,  
@@ -739,7 +760,16 @@ if(
 				cut_frac_EIC = .9, 
 				cut_delRT_EIC = cut_delRT_EIC
 			)
-		}else{cat("\n No EIC linkage filtering feasible")}
+		}else{
+			cat("\n No EIC linkage filtering feasible")
+			links_profiles_pos <- enviMass::cleanC_links_profiles(
+				links_profiles = links_profiles_pos, 
+				profileList = profileList_pos,
+				cut_EIC = 0, 
+				cut_frac_EIC = 0, 
+				cut_delRT_EIC = Inf
+			)		
+		}
 		# (6.3) Clean lists ######################################################
 		for(n in 1:length(links_profiles_pos)){
 			is_empty <- enviMass::analyseC_links_profiles(links_profiles_pos, at_entry = n)
@@ -1037,6 +1067,7 @@ if(
 			if(length(forIDs) > as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs <- forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found1 <- 0; inserted1 <- 0
@@ -1176,6 +1207,7 @@ if(
 			if(length(forIDs) > as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs <- forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found3 <- 0; inserted3 <- 0
@@ -1313,6 +1345,7 @@ if(
 			if(length(forIDs)>as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs<-forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		forIDs <- as.numeric(forIDs)
 		not_found4 <- 0; inserted4 <- 0
@@ -1448,6 +1481,7 @@ if(
 			if(length(forIDs)>as.numeric(logfile$parameters$numfile_latest_profcomp)){
 				forIDs<-forIDs[1:as.numeric(logfile$parameters$numfile_latest_profcomp)]
 			}
+			forIDs <- forIDs[!is.na(forIDs)]
 		}
 		not_found5<-0;inserted5<-0
 		if(length(forIDs)>0){
@@ -1570,7 +1604,16 @@ if(
 				cut_cor_isot = cut_cor_isot, 
 				cut_frac_iso = .85
 			)
-		}else{cat("\n No isotopologue linkage filtering feasible")}
+		}else{
+			cat("\n No isotopologue linkage filtering feasible")
+			links_profiles_neg <- enviMass::cleanA_links_profiles(
+				links_profiles = links_profiles_neg, 
+				profileList = profileList_neg,
+				cut_delRT_isot = Inf, 
+				cut_cor_isot = -Inf, 
+				cut_frac_iso = 0
+			)		
+		}
 		# clean adducts ##########################################################
 		#cut_delRT_adduc<-median(fil1$delRT_adduc)
 		cut_delRT_adduc<<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
@@ -1581,7 +1624,15 @@ if(
 				cut_delRT_adduc = cut_delRT_adduc, 
 				cut_frac_adduc = .85
 			)
-		}else{cat("\n No adduct linkage filtering feasible")}
+		}else{
+			cat("\n No adduct linkage filtering feasible")
+			links_profiles_neg <- enviMass::cleanB_links_profiles( 
+				links_profiles = links_profiles_neg, 
+				profileList = profileList_neg,
+				cut_delRT_adduc = Inf, 
+				cut_frac_adduc = 0
+			)
+		}
 		# (6.2) by ISTD - check their EIC correlation ###########################
 		fil2<-enviMass::analyseB_links_profiles(
 				links_profiles = links_profiles_neg,  
@@ -1599,7 +1650,16 @@ if(
 				cut_frac_EIC = .9, 
 				cut_delRT_EIC = cut_delRT_EIC
 			)
-		}else{cat("\n No EIC linkage filtering feasible")}
+		}else{
+			cat("\n No EIC linkage filtering feasible")
+			links_profiles_neg <- enviMass::cleanC_links_profiles(
+				links_profiles = links_profiles_neg, 
+				profileList = profileList_neg,
+				cut_EIC = 0, 
+				cut_frac_EIC = 0, 
+				cut_delRT_EIC = Inf
+			)
+		}
 		# (6.3) Clean lists ######################################################
 		for(n in 1:length(links_profiles_neg)){
 			is_empty<-enviMass::analyseC_links_profiles(links_profiles_neg, at_entry = n)

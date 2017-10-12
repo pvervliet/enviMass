@@ -6,8 +6,8 @@ function(
 	...
 ){
 	
-	for_file<-x
-	for_mode<-measurements[measurements$ID==for_file,"Mode"]
+	for_file <- x
+	for_mode <- measurements[measurements$ID == for_file, "Mode"]
 	##########################################################################
 	# get isotopologue grouping results ######################################
 	if(
@@ -455,7 +455,7 @@ function(
 	if(exists("peaklist", envir = as.environment(".GlobalEnv"))){rm("peaklist", envir = as.environment(".GlobalEnv"))}	
 	if(exists("peaklist")){rm("peaklist")}	
 	load(file = file.path(logfile[[1]], "peaklist", as.character(for_file)), envir = environment()); # Peaklist  
-	peaklist <- peaklist[order(peaklist[,10], decreasing = FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
+	peaklist <- peaklist[order(peaklist[,10], decreasing = FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately	
 	for(i in 1:dim(component[["Components"]])[1]){
 		those <- as.numeric(strsplit(component[["Components"]][i, "ID pattern peaks |"], ",")[[1]])
 		those <- match(those,peaklist[,"peak_ID"])
