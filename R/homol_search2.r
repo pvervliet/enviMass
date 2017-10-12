@@ -2,23 +2,23 @@ homol_search2 <-
 function(
 	peaklist,
 	isotopes,	
-	elements=c("C","H","O"),
-	use_C=FALSE,
-	minmz=5,
-	maxmz=120,
-	minrt=-2,
-	maxrt=2,
-	ppm=TRUE,
-	mztol=3.5,
-    rttol=0.5,
-	minlength=5,
-	mzfilter=FALSE,
-	vec_size=3E6,
-	mat_size=3,
-	R2=.98,
-	spar=.45,
-	plotit=FALSE,
-	deb=0
+	elements = c("C", "H", "O"),
+	use_C = FALSE,
+	minmz = 5,
+	maxmz = 120,
+	minrt = -2,
+	maxrt = 2,
+	ppm = TRUE,
+	mztol = 3.5,
+    rttol = 0.5,
+	minlength = 5,
+	mzfilter = FALSE,
+	vec_size = 3E6,
+	mat_size = 3,
+	R2 = .98,
+	spar = .45,
+	plotit = FALSE,
+	deb = 0
 ){
 
     ##########################################################################
@@ -36,7 +36,7 @@ function(
 	if(R2!=FALSE){if((R2<=0)||(R2>1)){stop("R2 must be either FALSE or 0<R2<=1")}}
 	if(R2!=FALSE){if((spar<=0)||(spar>1)){stop("R2 must be either FALSE or 0<R2<=1")}}	
 	if(mztol<=0){ # Set precision to digits of inputs
-		min_char<-Inf
+		min_char <- Inf
 		for(i in 1:length(peaklist[,1])){
 			n_char<-nchar(strsplit(as.character(peaklist[i,1]),".",fixed=TRUE)[[1]][2])
 			if(n_char<min_char){

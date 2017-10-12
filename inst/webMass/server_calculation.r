@@ -30,8 +30,6 @@ observe({ # Set calculation counter "do_flow"
 maincalc <- reactive({
     input$Calc
     if(input$Calc){
-
-
 		if(do_flow == 0){	# check only once, initially at do_flow==0! really?
 			enviMass::reset_selections(session)
     		if( (isolate(input$ignore_large_files) == "TRUE") || (logfile$parameters$is_example == "TRUE")){ ignorefiles <- TRUE }else{ ignorefiles <- FALSE }

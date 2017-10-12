@@ -19,6 +19,9 @@
 		}	
 		#######################################################################################
 		if(length(for_IDs)){	
+			if(FALSE){ # for debugging - outside clusters
+				for(i in for_IDs) combine2_wrap(x = i, logfile, measurements) 
+			}
 			clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 			clusterExport(cl = clus, varlist = c("do_isot", "do_addu", "do_homol"), envir = environment())
 			cluster_results <- clusterApplyLB(cl = clus, 

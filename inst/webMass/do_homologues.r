@@ -2,6 +2,7 @@
 	
 	####################################################################################	
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	#measurements[,names(measurements)=="homologues"]<-"FALSE"
 	cat("Homologue series detection: ")
 	if(logfile$parameters$homol_units[1]!="FALSE"){
 		these<-enviPat::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])[,3]
@@ -61,7 +62,7 @@
 			}else{ # mmu
 				use_mztol<-(as.numeric(logfile$parameters$homol_mztol)/1000)
 			}			
-			homol<-try(
+			homol <- try(
 				enviMass::homol_search2(
 					peaklist=peaklist4[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
 					isotopes,

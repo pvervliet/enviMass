@@ -25,7 +25,7 @@ homol_search2_wrap <-function(
 	}else{ # mmu
 		use_mztol<-(as.numeric(logfile$parameters$homol_mztol)/1000)
 	}			
-	homol<-try(
+	homol <- try(
 		enviMass::homol_search2(
 			peaklist=peaklist4[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
 			isotopes,
@@ -71,9 +71,9 @@ homol_search2_wrap <-function(
 				)
 				at<-dim(Homol_groups)[1]
 			}
-			Homol_groups[from,1]<-those[j-1]
-			Homol_groups[from,2]<-those[j]					
-			Homol_groups[from,3]<-i	
+			Homol_groups[from,1] <- those[j-1]
+			Homol_groups[from,2] <- those[j]					
+			Homol_groups[from,3] <- i	
 		}
 	}
 	Homol_groups<-Homol_groups[1:from,]
@@ -83,29 +83,32 @@ homol_search2_wrap <-function(
 	}
 	Homol_groups <- Homol_groups[order(Homol_groups[,1],Homol_groups[,2],decreasing=FALSE),]
 	save(Homol_groups, file = (file.path(logfile[[1]], "results", "componentization", "homologues", paste(for_file,sep="_"))))
-	##########################################################################				
-	if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks - impute removed peaks
-		those<-is.na(match(peaklist[,"peak_ID"],peaklist4[,"peak_ID"]))		
+	##########################################################################			
+	# remove blind peaks - impute removed peaks	##############################
+	if(logfile$parameters$homol_blind == "TRUE"){
+		those <- is.na(match(peaklist[,"peak_ID"], peaklist4[,"peak_ID"]))		
 		if(any(those)){
 			# impute (1) - "Peaks in homologue series"
-			homol_left<-cbind(
-				as.data.frame(peaklist[those,c("m/z_corr","int_corr","RT_corr","peak_ID")]),
-				rep(0,sum(those)), 		# HS IDs
-				rep(0,sum(those)), 		# series level
-				rep(0,sum(those)), 		# to ID
-				rep("none",sum(those)),	# m/z increment				
-				rep("none",sum(those)),	# RT increment					
-				rep(0,sum(those))		# HS cluster	
+			homol_left <- cbind(
+				as.data.frame(peaklist[those,c("m/z_corr", "int_corr", "RT_corr", "peak_ID")]),
+				rep(0, sum(those)), 		# HS IDs
+				rep(0, sum(those)), 		# series level
+				rep(0, sum(those)), 		# to ID
+				rep("none", sum(those)),	# m/z increment				
+				rep("none", sum(those)),	# RT increment					
+				rep(0, sum(those)),			# HS cluster	
+				rep("", sum(those)),		# Targets
+				rep("", sum(those))			# ISTDs
 			)
-			names(homol_left)<-names(homol[["Peaks in homologue series"]])
-			homol[["Peaks in homologue series"]]<-rbind(homol[["Peaks in homologue series"]],homol_left)
-			ord_homol<-order(homol[["Peaks in homologue series"]][,"peak ID"])
+			names(homol_left) <- names(homol[["Peaks in homologue series"]])
+			homol[["Peaks in homologue series"]]<-rbind(homol[["Peaks in homologue series"]], homol_left)
+			ord_homol <- order(homol[["Peaks in homologue series"]][,"peak ID"])
 			homol[["Peaks in homologue series"]]<-homol[["Peaks in homologue series"]][ord_homol,]
 			# impute (2) - "Peaks per level"
-			find_peak<-match(seq(1,dim(homol[["Peaks in homologue series"]])[1],1),ord_homol)
+			find_peak <- match(seq(1,dim(homol[["Peaks in homologue series"]])[1],1),ord_homol)
 			for(n in 1:length(homol[["Peaks per level"]])){
 				for(m in 1:length(homol[["Peaks per level"]][[n]])){	
-					homol[["Peaks per level"]][[n]][[m]]<-
+					homol[["Peaks per level"]][[n]][[m]] <-
 						find_peak[homol[["Peaks per level"]][[n]][[m]]]
 				}
 			}
@@ -132,14 +135,14 @@ homol_search2_wrap <-function(
 			max_at<-dim(homol_peaks_relat)[1]
 		}
 		#################################################################
-		homol_peaks_relat[(at:(at+len-1)),1]<-rep(i,len)
-		homol_peaks_relat[(at:(at+len-1)),2]<-those
-		homol_peaks_relat[(at:(at+len-1)),3]<-(homol[["Peaks in homologue series"]][those,"mz"]-homol[["Peaks in homologue series"]][i,"mz"]) # must be >0
-		homol_peaks_relat[(at:(at+len-1)),4]<-(homol[["Peaks in homologue series"]][those,"RT"]-homol[["Peaks in homologue series"]][i,"RT"]) 
-		homol_peaks_relat[(at:(at+len-1)),6]<-homol[["Peaks in homologue series"]][i,"mz"]
-		homol_peaks_relat[(at:(at+len-1)),7]<-homol[["Peaks in homologue series"]][i,"RT"]
-		homol_peaks_relat[(at:(at+len-1)),8]<-homol[["Peaks in homologue series"]][those,"mz"]
-		homol_peaks_relat[(at:(at+len-1)),9]<-homol[["Peaks in homologue series"]][those,"RT"]				
+		homol_peaks_relat[(at:(at+len-1)),1] <- rep(i,len)
+		homol_peaks_relat[(at:(at+len-1)),2] <- those
+		homol_peaks_relat[(at:(at+len-1)),3] <- (homol[["Peaks in homologue series"]][those,"mz"]-homol[["Peaks in homologue series"]][i,"mz"]) # must be >0
+		homol_peaks_relat[(at:(at+len-1)),4] <- (homol[["Peaks in homologue series"]][those,"RT"]-homol[["Peaks in homologue series"]][i,"RT"]) 
+		homol_peaks_relat[(at:(at+len-1)),6] <- homol[["Peaks in homologue series"]][i,"mz"]
+		homol_peaks_relat[(at:(at+len-1)),7] <- homol[["Peaks in homologue series"]][i,"RT"]
+		homol_peaks_relat[(at:(at+len-1)),8] <- homol[["Peaks in homologue series"]][those,"mz"]
+		homol_peaks_relat[(at:(at+len-1)),9] <- homol[["Peaks in homologue series"]][those,"RT"]				
 		at<-(at+len)	
 	}
 	homol_peaks_relat<-homol_peaks_relat[1:(at-1),]

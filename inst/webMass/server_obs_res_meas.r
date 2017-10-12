@@ -1007,19 +1007,19 @@ maincalc6<-reactive({
 		###################################################################################################	
 		if(isolate(input$filterProf_sort) == "ID (increasing)"){
 			profpeaks2 <<- profpeaks2[order(profpeaks2[,"profile_ID"], decreasing = FALSE),,drop = FALSE]
-			sort_by <<- "profile_ID";sort_by_decreasing <<- "FALSE"
+			sort_by <<- "profile_ID"; sort_by_decreasing <<- "FALSE"
 		}
 		if(isolate(input$filterProf_sort) == "mean m/z (increasing)"){
 			profpeaks2 <<- profpeaks2[order(profpeaks2[,"mean_mz"], decreasing = FALSE),,drop = FALSE]
-			sort_by <<- "mean_mz";sort_by_decreasing <<- "FALSE"
+			sort_by <<- "mean_mz"; sort_by_decreasing <<- "FALSE"
 		}
 		if(isolate(input$filterProf_sort) == "mean m/z (decreasing)"){
 			profpeaks2 <<- profpeaks2[order(profpeaks2[,"mean_mz"], decreasing = TRUE),,drop = FALSE]
-			sort_by <<- "mean_mz";sort_by_decreasing <<- "TRUE"
+			sort_by <<- "mean_mz"; sort_by_decreasing <<- "TRUE"
 		}		
 		if(isolate(input$filterProf_sort) == "mean RT (increasing)"){
 			profpeaks2<<-profpeaks2[order(profpeaks2[,"mean_RT"], decreasing = FALSE),,drop = FALSE]
-			sort_by<<-"mean_RT";sort_by_decreasing <<- "FALSE"
+			sort_by<<-"mean_RT"; sort_by_decreasing <<- "FALSE"
 		}	
 		if(isolate(input$filterProf_sort) == "mean RT (decreasing)"){
 			profpeaks2 <<- profpeaks2[order(profpeaks2[,"mean_RT"], decreasing = TRUE),,drop = FALSE]
@@ -1057,12 +1057,12 @@ maincalc6<-reactive({
 			sort_by <<- "mean_int_sample"; sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort) == "mean intensity in blanks/blinds (decreasing, zeros removed)"){		
-			profpeaks2 <<- profpeaks2[order(profpeaks2[,"mean_int_blind"],decreasin g= TRUE),, drop = FALSE]	
+			profpeaks2 <<- profpeaks2[order(profpeaks2[,"mean_int_blind"],decreasing = TRUE),, drop = FALSE]	
 			profpeaks2 <<- profpeaks2[profpeaks2[,"mean_int_blind"] != 0,,drop = FALSE]
 			sort_by <<- "mean_int_blind"; sort_by_decreasing <<- "TRUE"
 		}
 		if(isolate(input$filterProf_sort) == "past & current trend intensity (decreasing)"){		
-			profpeaks2 <<- profpeaks2[order(profpeaks2[,"deltaint_global"],decreasing=TRUE),, drop = FALSE]
+			profpeaks2 <<- profpeaks2[order(profpeaks2[,"deltaint_global"],decreasing = TRUE),, drop = FALSE]
 			profpeaks2 <<- profpeaks2[profpeaks2[,"deltaint_global"] != 0,, drop = FALSE]
 			sort_by <<- "deltaint_global"; sort_by_decreasing <<- "TRUE"
 		}

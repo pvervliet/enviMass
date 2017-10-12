@@ -11,6 +11,7 @@
 	intstand <- read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 	targets <- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
 	####################################################################################	
+	####################################################################################
 	if(length(for_IDs)){
 		if(logfile$parameters$homol_units[1]!="FALSE"){
 			these<-enviPat::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])[,3]
@@ -24,6 +25,9 @@
 			elements<-unique(as.character(isotopes[,1])[1:295]) #then use all available elements
 			use_minmz<-as.numeric(logfile$parameters$homol_minmz)
 			use_maxmz<-as.numeric(logfile$parameters$homol_maxmz)		
+		}
+		if(FALSE){ # for debugging - outside clusters
+			for(i in for_IDs) homol_search2_wrap(x = i, logfile) 
 		}
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 		clusterExport(cl = clus, varlist = c("mzfilter", "elements", "use_minmz", "use_maxmz", "isotopes", "measurements", "intstand", "targets"), envir = environment())
