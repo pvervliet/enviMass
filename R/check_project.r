@@ -104,7 +104,7 @@ check_project<-function(
 				}
 			}
 			if(logfile$parameters$recal_use_pos == "Target compounds"){
-				targets <- read.table(file = file.path(logfile[[1]], "dataframes"," targets.txt"), header = TRUE, sep = "\t", colClasses = "character");
+				targets <- read.table(file = file.path(logfile[[1]], "dataframes","targets.txt"), header = TRUE, sep = "\t", colClasses = "character");
 				targets <- targets[targets[,"ion_mode"] == "positive",, drop = FALSE]
 				if(length(targets[targets[,"use_for_recalibration"] == "TRUE", 1]) < 10){
 					say <- "Not enough target compounds available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"    
@@ -117,7 +117,7 @@ check_project<-function(
 				targets <- read.table(file = file.path(logfile[[1]], "dataframes", "targets.txt"), header = TRUE, sep = "\t", colClasses = "character");  
 				targets <- targets[targets[,"ion_mode"] == "positive",, drop = FALSE]
 				b <- length(targets[targets[,9] == "TRUE", 1])
-				if((a < 10)||(b < 10)){
+				if((a + b) < 10){
 					say <- "Not enough target compounds + internal standards available for mass recalibration in positive mode ... revise, maybe exlude mass recalibration for the positive mode only (Settings -> Recalibration)?"    
 				}
 			}
@@ -145,7 +145,7 @@ check_project<-function(
 				targets <- read.table(file = file.path(logfile[[1]], "dataframes", "targets.txt"), header = TRUE, sep = "\t", colClasses = "character");  
 				targets <- targets[targets[,"ion_mode"] == "negative",, drop = FALSE]
 				b <- length(targets[targets[,9] == "TRUE", 1])
-				if((a < 10)||(b < 10)){
+				if((a + b) < 10){
 					say <- "Not enough target compounds + internal standards available for mass recalibration in negative mode ... revise, maybe exlude mass recalibration for the negative mode only (Settings -> Recalibration)?"    
 				}
 			}	
