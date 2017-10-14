@@ -90,11 +90,11 @@ homol_search2_wrap <-function(
 	##########################################################################			
 	# remove blind peaks - impute removed peaks	##############################
 	if(logfile$parameters$homol_blind == "TRUE"){
-		those <- is.na(match(peaklist2[,"peak_ID"], peaklist4[,"peak_ID"]))		
+		those <- is.na(match(peaklist4[,"peak_ID"], peaklist2[,"peak_ID"]))		
 		if(any(those)){ # i.e., if blind peaks were omitted
 			# impute (1) - "Peaks in homologue series"
 			homol_left <- cbind(
-				as.data.frame(peaklist[those,c("m/z_corr", "int_corr", "RT_corr", "peak_ID")]),
+				as.data.frame(peaklist4[those,c("m/z_corr", "int_corr", "RT_corr", "peak_ID")]),
 				rep(0, sum(those)), 		# HS IDs
 				rep(0, sum(those)), 		# series level
 				rep(0, sum(those)), 		# to ID
