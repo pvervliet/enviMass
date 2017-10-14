@@ -14,6 +14,12 @@
 		for_IDs<-measurements[(measurements$include=="TRUE") & (measurements$isotopologues=="FALSE") ,]$ID		
 	}
 	if(length(for_IDs)){
+		for(i in for_IDs){
+			if(file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_")))) 
+				file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_")))
+			if(file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste(for_file,sep="")))) 
+				file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",paste(for_file,sep="")))
+		}
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 		clusterExport(cl = clus, varlist = c("quantiz"), envir = environment())
 		cluster_results <- clusterApplyLB(cl = clus, 

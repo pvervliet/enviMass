@@ -49,12 +49,16 @@
 			}			
 			# Peaklist 
 			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); 
-			peaklist4<-peaklist[order(peaklist[,"peak_ID"],decreasing=FALSE),] # match with IDs 
-			if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks
-				peaklist4<-peaklist4[peaklist4[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
-				cat("blind peaks removed - ")
+			peaklist4 <- peaklist[order(peaklist[,"peak_ID"], decreasing = FALSE),] # match with IDs 
+			peaklist4 <- peaklist4[(peaklist4[,"keep"] == 1),,drop = FALSE]
+			if(logfile$parameters$homol_blind == "TRUE"){ # remove blind peaks -> seperate peaklist2 to match peak counts of adduct & isotopologue searches
+				peaklist2 <- as.data.frame(peaklist4[
+					(peaklist4[,"keep_2"] >= as.numeric(logfile$parameters$homol_blind_value)), 
+					c("m/z_corr", "int_corr", "RT_corr", "peak_ID"), drop = FALSE])
+				cat("- blind peaks removed -")
+			}else{
+				peaklist2 <- as.data.frame(peaklist4[c("m/z_corr", "int_corr", "RT_corr", "peak_ID"),, drop= FALSE])
 			}
-			peaklist4<-as.data.frame(peaklist4[(peaklist4[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
 			##########################################################################
 			cat("series extraction - ")		
 			if(logfile$parameters$homol_ppm=="TRUE"){
@@ -127,11 +131,11 @@
 			if(
 				(logfile$parameters$homol_blind=="TRUE") 
 			){ 
-				those<-is.na(match(peaklist[,"peak_ID"],peaklist4[,"peak_ID"]))		
+				those <- is.na(match(peaklist4[,"peak_ID"], peaklist2[,"peak_ID"]))	
 				if(any(those)){
 					# impute (1) - "Peaks in homologue series"
 					homol_left<-cbind(
-						as.data.frame(peaklist[those,c("m/z_corr","int_corr","RT_corr","peak_ID")]),
+						as.data.frame(peaklist4[those,c("m/z_corr","int_corr","RT_corr","peak_ID")]),
 						rep(0,sum(those)), 		# HS IDs
 						rep(0,sum(those)), 		# series level
 						rep(0,sum(those)), 		# to ID

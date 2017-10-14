@@ -14,7 +14,7 @@ homol_search2_wrap <-function(
 	# Peaklist 
 	load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); 
 	peaklist4 <- peaklist[order(peaklist[,"peak_ID"], decreasing = FALSE),] # match with IDs 
-	peaklist4 <- peaklist4[(peaklist4[,"keep"] == 1),,drop = FALSE]
+	peaklist4 <- peaklist4[(peaklist4[,"keep"] == 1),,drop = FALSE] # remove non-replicate peaks
 	if(logfile$parameters$homol_blind == "TRUE"){ # remove blind peaks -> seperate peaklist2 to match peak counts of adduct & isotopologue searches
 		peaklist2 <- as.data.frame(peaklist4[
 			(peaklist4[,"keep_2"] >= as.numeric(logfile$parameters$homol_blind_value)), 
@@ -25,9 +25,9 @@ homol_search2_wrap <-function(
 	}
 	##########################################################################
 	if(logfile$parameters$homol_ppm=="TRUE"){
-		use_mztol<-as.numeric(logfile$parameters$homol_mztol)
+		use_mztol <- as.numeric(logfile$parameters$homol_mztol)
 	}else{ # mmu
-		use_mztol<-(as.numeric(logfile$parameters$homol_mztol)/1000)
+		use_mztol <- (as.numeric(logfile$parameters$homol_mztol)/1000)
 	}			
 	homol <- try(
 		enviMass::homol_search2(

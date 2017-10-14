@@ -17,7 +17,7 @@
 			these<-enviPat::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])[,3]
 			mzfilter<-c(enviPat::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]])[,3] %*% t(1/as.numeric(strsplit(logfile$parameters$homol_charges,",")[[1]])))
 			mzfilter<-unique(mzfilter);
-			elements<-unique(unlist(sapply(enviMass::check_chemform(isotopes,strsplit(logfile$parameters$homol_units,",")[[1]],get_list=TRUE),names)))
+			elements<-unique(unlist(sapply(enviMass::check_chemform(isotopes, strsplit(logfile$parameters$homol_units,",")[[1]], get_list = TRUE),names)))
 			use_minmz<-(min(mzfilter)-.1)
 			use_maxmz<-(max(mzfilter)+.1)
 		}else{
@@ -25,6 +25,10 @@
 			elements<-unique(as.character(isotopes[,1])[1:295]) #then use all available elements
 			use_minmz<-as.numeric(logfile$parameters$homol_minmz)
 			use_maxmz<-as.numeric(logfile$parameters$homol_maxmz)		
+		}
+		for(i in for_IDs){
+			if(file.exists(file.path(logfile[[1]], "results", "componentization", "homologues", paste(i, sep = "_")))) file.remove(file.path(logfile[[1]], "results", "componentization", "homologues", paste(i, sep = "_")))
+			if(file.exists(file.path(logfile[[1]], "results", "componentization", "homologues", paste("full" ,i, sep = "_")))) file.remove(file.path(logfile[[1]], "results", "componentization", "homologues", paste("full", i, sep = "_")))
 		}
 		if(FALSE){ # for debugging - outside clusters
 			for(i in for_IDs) homol_search2_wrap(x = i, logfile) 
