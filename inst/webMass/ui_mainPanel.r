@@ -623,8 +623,8 @@
 				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),  
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind peak detection </font></p> '),				
 					fluidRow(
-						column(width = 2, radioButtons("blind", "Detect?", c("yes"="yes","no"="no")) ),
-						column(width = 2, radioButtons("blind_omit", "Remove?", c("yes"="TRUE","no"="FALSE")) ),
+						column(width = 2, radioButtons("blind", "Detect?", c("yes" = "yes","no" = "no")) ),
+						column(width = 2, radioButtons("blind_omit", "Remove?", c("yes" = "TRUE","no" = "FALSE")) ),
 						column(width = 8, offset = 0.3,
 							tags$p(align="justify","Tags sample peaks which are also present in blind/blank files. Check Settings -> Blind tab for selecting the latter. 
 							By also enabling 'Remove?', affected peaks are fully excluded (not just tagged) from being assorted into profiles (but not from, e.g., nontargeted componentization), 

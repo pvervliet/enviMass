@@ -525,13 +525,13 @@ observe({
               # output homol. series plot ######################################
               if(length(s1)){
                 cat(" A ")
-				use_homol_peaks<-unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2]))
-                these_series_1<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]][s2])
-                use_emph_point<-homol[["Peaks in homologue series"]][use_homol_peaks[s1],"peak ID"]
+				use_homol_peaks <- unique(c(homol[["homol_peaks_relat"]][plot_those,1],homol[["homol_peaks_relat"]][plot_those,2]))
+                these_series_1 <- as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]][s2])
+                use_emph_point <- homol[["Peaks in homologue series"]][use_homol_peaks[s1],"peak ID"]
               }else{
                 cat(" B ")
-                these_series_1<-homol[["Homologue Series"]][s2,"HS IDs"]
-                use_emph_point<-FALSE
+                these_series_1 <- homol[["Homologue Series"]][s2,"HS IDs"]
+                use_emph_point <- FALSE
               }
               print(these_series_1)
               output$homol_plot <- renderPlot({
@@ -539,31 +539,33 @@ observe({
                 enviMass:::plothomol(homol,
                   xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
                   dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
-                  plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those,
-                  emph_point=use_emph_point,
-                  emph_series=these_series_1
+                  plot_what = "mz_RT", omit_theta = omit_theta, plot_those = plot_those,
+                  emph_point = use_emph_point,
+                  emph_series = these_series_1
                 );
-              },res=100)   
+              }, res = 100)   
               # output chromatograms #########################################
-              these_peaks<-as.numeric(strsplit(homol[["Homologue Series"]][these_series_1,"peak IDs"],",")[[1]])
-              isolate(refresh_homol$c<-these_peaks)
-              isolate(refresh_homol$d<-(refresh_homol$d+1))
+              these_peaks <- as.numeric(strsplit(homol[["Homologue Series"]][these_series_1,"peak IDs"],",")[[1]])
+              isolate(refresh_homol$c <- these_peaks)
+              isolate(refresh_homol$d <- (refresh_homol$d+1))
             }
           }else{
             cat("\n IN DESELECT_2:");print(s2);
             # output homol. series plot ######################################
             if(length(s1)){
-              these_series<-as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
-              output$homol_plot <- renderPlot({   
-                par(mar=c(4.5,4.5,.9,.8))
-                enviMass:::plothomol(homol,
-                  xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
-                  dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
-                  plot_what="mz_RT", omit_theta=omit_theta, plot_those = plot_those,
-                  emph_point=homol[["Peaks in homologue series"]][use_homol_peaks[s1],"peak ID"],
-                  emph_series=these_series
-                );
-              },res=100)
+              these_series <- as.numeric(strsplit(homol[["Peaks in homologue series"]][use_homol_peaks[s1],c("HS IDs")],"/")[[1]])
+				if(length(these_series)){ # strange bug ...
+				  output$homol_plot <- renderPlot({   
+					par(mar=c(4.5,4.5,.9,.8))
+					enviMass:::plothomol(homol,
+					  xlim = isolate(ranges_homol$mass), ylim = isolate(ranges_homol$RT), 
+					  dmasslim = isolate(ranges_homol$dmass), dRTlim = isolate(ranges_homol$dRT),
+					  plot_what = "mz_RT", omit_theta=omit_theta, plot_those = plot_those,
+					  emph_point = homol[["Peaks in homologue series"]][use_homol_peaks[s1],"peak ID"],
+					  emph_series = these_series
+					);
+				  },res=100)
+			  }
             }else{  
               output$homol_plot <- renderPlot({
                 par(mar=c(4.5,4.5,.9,.8))

@@ -16,27 +16,27 @@ function(
     # warning(3): any interferring peaks? ######################################
     ############################################################################
     # (0.1) checks #############################################################
-    if(length(pattern)>1 & length(adduct)>1){
-		if(length(pattern[[1]][,1])!=length(adduct[[1]][,1])){stop(("Different data sets pattern<->adduct used for combining!"))}
-		if(any(all(pattern[[1]][,1]==adduct[[1]][,1])!=TRUE)){stop("Different data sets pattern<->adduct used for combining!")};
+    if(length(pattern) > 1 & length(adduct) > 1){
+		if(length(pattern[[1]][,1]) != length(adduct[[1]][,1])){stop(("Different data sets pattern <-> adduct used for combining!"))}
+		if(any(all(pattern[[1]][,1] == adduct[[1]][,1])!=TRUE)){stop("Different data sets pattern <-> adduct used for combining!")};
     }
-    if(length(homol)>1 & length(adduct)>1){
-		if(length(homol[[1]][,1])!=length(adduct[[1]][,1])){stop(("Different data sets homol<->adduct used for combining!"))}
-		if(any(all(homol[[1]][,1]==adduct[[1]][,1])!=TRUE)){stop("Different data sets homol<->adduct used for combining!")}
+    if(length(homol) > 1 & length(adduct) > 1){
+		if(length(homol[[1]][,1]) != length(adduct[[1]][,1])){stop(("Different data sets homol <-> adduct used for combining!"))}
+		if(any(all(homol[[1]][,1] == adduct[[1]][,1])!=TRUE)){stop("Different data sets homol <-> adduct used for combining!")}
     };
-    if(length(homol)>1 & length(pattern)>1){
-		if(length(homol[[1]][,1])!=length(pattern[[1]][,1])){stop(("Different data sets homol<->pattern used for combining!"))}    
-		if(any(all(homol[[1]][,1]==pattern[[1]][,1])!=TRUE)){stop("Different data sets homol<->pattern used for combining!")}
+    if(length(homol) > 1 & length(pattern) > 1){
+		if(length(homol[[1]][,1]) != length(pattern[[1]][,1])){stop(("Different data sets homol <-> pattern used for combining!"))}    
+		if(any(all(homol[[1]][,1] == pattern[[1]][,1])!=TRUE)){stop("Different data sets homol <-> pattern used for combining!")}
     };
-    if(rules[3]==TRUE & length(homol)<1){stop("rule3 = TRUE not applicable if no correct homologue series are provided!")};
-    if(dont[1]!=FALSE){
-		if(length(dont)>4){stop("Invalid dont argument")};
-		if(any(dont>4)){stop("Invalid dont argument")};
-		if(any(dont<1)){stop("Invalid dont argument")};
+    if(rules[3] == TRUE & length(homol) < 1){stop("rule3 = TRUE not applicable if no correct homologue series are provided!")};
+    if(dont[1] != FALSE){
+		if(length(dont) > 4){stop("Invalid dont argument")};
+		if(any(dont > 4)){stop("Invalid dont argument")};
+		if(any(dont < 1)){stop("Invalid dont argument")};
     }
-    if(length(pattern)>1 & length(adduct)>1){
-		if(pattern[[11]][1]!="FALSE"){
-			if((adduct[[2]][4]=="negative" & any(as.numeric(pattern[[11]])>0)) || (adduct[[2]][4]=="positive" & any(as.numeric(pattern[[11]])<0))){
+    if(length(pattern) > 1 & length(adduct) > 1){
+		if(pattern[[11]][1] != "FALSE"){
+			if((adduct[[2]][4] == "negative" & any(as.numeric(pattern[[11]]) > 0)) || (adduct[[2]][4] == "positive" & any(as.numeric(pattern[[11]]) < 0))){
 				warning("Are charges of adduct vs. pattern groups consistent?")
 			}
 		}

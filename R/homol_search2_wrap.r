@@ -7,18 +7,25 @@ homol_search2_wrap <-function(
 	##########################################################################
 	# LOAD FILES & REMOVE OLD RESULTS ########################################
 	for_file <- x
-	for_mode<-measurements[measurements$ID == for_file,"Mode"]	
+	for_mode <- measurements[measurements$ID == for_file,"Mode"]	
 	if( file.exists(file.path(logfile[[1]],"results","componentization","homologues",for_file) ) ){
 		file.remove(file.path(logfile[[1]],"results","componentization","homologues",for_file) )
 	}			
 	# Peaklist 
 	load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); 
-	peaklist4<-peaklist[order(peaklist[,"peak_ID"],decreasing=FALSE),] # match with IDs 
-	if(logfile$parameters$homol_blind=="TRUE"){ # remove blind peaks
-		peaklist4<-peaklist4[peaklist4[,"keep_2"]>=as.numeric(logfile$parameters$homol_blind_value),,drop=FALSE]
+	peaklist4 <- peaklist[order(peaklist[,"peak_ID"], decreasing = FALSE),] # match with IDs 
+	if(logfile$parameters$homol_blind == "TRUE"){ # remove blind peaks -> seperate peaklist2 to match peak counts of adduct & isotopologue searches
+		peaklist2 <- peaklist4[
+			((peaklist4[,"keep_2"] >= as.numeric(logfile$parameters$homol_blind_value)) & (peaklist4[,"keep"] == 1)),
+			c("m/z_corr", "int_corr", "RT_corr", "peak_ID"),
+		drop = FALSE]
 		cat("- blind peaks removed -")
+	}else{
+		peaklist2 <- as.data.frame(peaklist4[
+			(peaklist4[,"keep"] == 1), 
+			c("m/z_corr", "int_corr", "RT_corr", "peak_ID"), 
+		drop= FALSE])
 	}
-	peaklist4<-as.data.frame(peaklist4[(peaklist4[,"keep"]==1),c("m/z_corr","int_corr","RT_corr","peak_ID"),drop=FALSE])
 	##########################################################################
 	if(logfile$parameters$homol_ppm=="TRUE"){
 		use_mztol<-as.numeric(logfile$parameters$homol_mztol)
@@ -27,7 +34,7 @@ homol_search2_wrap <-function(
 	}			
 	homol <- try(
 		enviMass::homol_search2(
-			peaklist=peaklist4[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
+			peaklist = peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
 			isotopes,
 			elements=elements,
 			use_C=FALSE,
@@ -61,7 +68,7 @@ homol_search2_wrap <-function(
 	for(i in 1:length(homol[["Homologue Series"]][,1])){
 		those<-as.numeric(strsplit(homol[["Homologue Series"]][i,2],",")[[1]])
 		#these<-match(those,peaklist2[,"peak_ID"]) # nonsense? remove?
-		those<-those[order(peaklist4[those,1],decreasing=FALSE)] # by increasing mass!
+		those<-those[order(peaklist2[those,1],decreasing=FALSE)] # by increasing mass!
 		for(j in 2:length(those)){
 			from<-(from+1)
 			if(from>at){
@@ -86,7 +93,7 @@ homol_search2_wrap <-function(
 	##########################################################################			
 	# remove blind peaks - impute removed peaks	##############################
 	if(logfile$parameters$homol_blind == "TRUE"){
-		those <- is.na(match(peaklist[,"peak_ID"], peaklist4[,"peak_ID"]))		
+		those <- is.na(match(peaklist2[,"peak_ID"], peaklist4[,"peak_ID"]))		
 		if(any(those)){
 			# impute (1) - "Peaks in homologue series"
 			homol_left <- cbind(
@@ -101,7 +108,7 @@ homol_search2_wrap <-function(
 				rep("", sum(those))			# ISTDs
 			)
 			names(homol_left) <- names(homol[["Peaks in homologue series"]])
-			homol[["Peaks in homologue series"]]<-rbind(homol[["Peaks in homologue series"]], homol_left)
+			homol[["Peaks in homologue series"]] <- rbind(homol[["Peaks in homologue series"]], homol_left)
 			ord_homol <- order(homol[["Peaks in homologue series"]][,"peak ID"])
 			homol[["Peaks in homologue series"]]<-homol[["Peaks in homologue series"]][ord_homol,]
 			# impute (2) - "Peaks per level"
@@ -149,8 +156,8 @@ homol_search2_wrap <-function(
 	if(any(homol_peaks_relat[,3]<0)){stop("\n Debug do_homologues at homol_peaks_relat processing.")}
 	homol_peaks_relat<-homol_peaks_relat[order(homol_peaks_relat[,1],(1/homol_peaks_relat[,3])),]
 	# insert theta
-	range_mz<-(max(homol[["Peaks in homologue series"]][,"mz"])-min(homol[["Peaks in homologue series"]][,"mz"])) 
-	range_RT<-(max(homol[["Peaks in homologue series"]][,"RT"])-min(homol[["Peaks in homologue series"]][,"RT"])) 
+	range_mz <- (max(homol[["Peaks in homologue series"]][,"mz"])-min(homol[["Peaks in homologue series"]][,"mz"])) 
+	range_RT <- (max(homol[["Peaks in homologue series"]][,"RT"])-min(homol[["Peaks in homologue series"]][,"RT"])) 
 	homol_peaks_relat[,5] <- .Call("_enviMass_series_relat", 
 		homol_peaks_relat, 
 		range_mz,
@@ -158,9 +165,9 @@ homol_search2_wrap <-function(
 		PACKAGE = "enviMass"
 	)
 	# resort to plot longest series segments on top of shorter ones
-	homol_peaks_relat<-homol_peaks_relat[order(homol_peaks_relat[,3],decreasing = FALSE),]
-	homol[[7]]<-homol_peaks_relat
-	names(homol)[7]<-"homol_peaks_relat"		
+	homol_peaks_relat <- homol_peaks_relat[order(homol_peaks_relat[,3],decreasing = FALSE),]
+	homol[[7]] <- homol_peaks_relat
+	names(homol)[7] <- "homol_peaks_relat"		
 	##########################################################################	
 	# intersect with target & ISTD screening results #########################
 	if(
@@ -354,7 +361,7 @@ homol_search2_wrap <-function(
 
 	##########################################################################			
 	save(homol,file=(file.path(logfile[["project_folder"]],"results","componentization","homologues",paste("full",for_file,sep="_"))))			
-	rm(peaklist,peaklist4,homol,Homol_groups)
+	rm(peaklist,peaklist2,peaklist4,homol,Homol_groups)
 	##########################################################################	
 	return(NULL)
 }

@@ -25,7 +25,7 @@ if(length(for_IDs)){
 	)
 	clusterEvalQ(cl = clus,{rm(list = ls()); NULL})	  
 	###########################################################################	
-	cluster_results <-unlist(cluster_results)
+	cluster_results <- unlist (cluster_results)
 	if(any(cluster_results == "done")){
 		measurements$blind[match(for_IDs[cluster_results == "done"], measurements$ID)] <- "TRUE"
 	}
