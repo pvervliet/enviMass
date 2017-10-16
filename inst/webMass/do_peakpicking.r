@@ -138,6 +138,7 @@
 					minint = (10^use_peak_minint_log10),
 					maxint = (10^use_peak_maxint_log10),
 					ended = as.numeric(logfile$parameters$peak_ended),
+					get_mass = logfile$parameters$peak_get_mass,
 					progbar = logfile$parameters$progressBar,
 					from = FALSE,
 					to = FALSE

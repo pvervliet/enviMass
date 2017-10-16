@@ -15,10 +15,10 @@
 	}
 	if(length(for_IDs)){
 		for(i in for_IDs){
-			if(file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_")))) 
-				file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_")))
-			if(file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste(for_file,sep="")))) 
-				file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",paste(for_file,sep="")))
+			if(file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full", i,sep="_")))) 
+				file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full", i,sep="_")))
+			if(file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste(i, sep="")))) 
+				file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",paste(i, sep="")))
 		}
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 		clusterExport(cl = clus, varlist = c("quantiz"), envir = environment())

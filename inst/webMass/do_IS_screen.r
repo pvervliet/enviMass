@@ -92,7 +92,6 @@
 		}
 		rm(measurements)
 
-		
 		peaks<-profileList_pos[["index_prof"]];
 		peaklist<-peaks[,c("mean_mz","mean_int","mean_RT")];
 		# screen centroids

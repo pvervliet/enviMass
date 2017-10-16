@@ -201,7 +201,10 @@ maincalc2<-reactive({
 			# (2) QC ###############################################################		
 			
 # > BAUSTELLE			
-			if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_distrib"))){
+			if(
+				(file.exists(file.path(as.character(logfile[[1]]), "results", "int_distrib"))) &
+				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
+			){
 				load(file.path(as.character(logfile[[1]]), "results", "int_distrib"), envir = as.environment(".GlobalEnv"))
 				####################################################
 				output$int_box_pos <- renderPlot({   
@@ -311,7 +314,10 @@ maincalc2<-reactive({
 			# (6) IS-Normalization #################################################
 
 # > BAUSTELLE
-			if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"))){
+			if(file.exists(
+				file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos")) &
+				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
+			){
 				load(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"), envir = as.environment(".GlobalEnv"))
 				output$int_norm_ISTD_pos_median <- renderPlot({   
 					par(mar = c(.2, 4.5, .9, 8))
@@ -337,7 +343,10 @@ maincalc2<-reactive({
 					plot.new()
 				})					
 			}
-			if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg"))){
+			if(
+				file.exists(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg")) &
+				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
+			){
 				load(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg"), envir = as.environment(".GlobalEnv"))
 				output$int_norm_ISTD_neg_median <- renderPlot({   
 					par(mar = c(.2, 4.5, .9, 8))
@@ -378,22 +387,34 @@ maincalc2<-reactive({
 					output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)
 				}
 			}
-			if(file.exists(file.path(logfile$project_folder,"results","profileList_pos"))){
+			if(
+				file.exists(file.path(logfile$project_folder,"results","profileList_pos")) &
+				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
+			){
 				load(file=file.path(as.character(logfile$project_folder),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 				if(isolate(input$Ion_mode)=="positive"){
 					assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));				
 				}
 			}	
-			if(file.exists(file.path(logfile$project_folder,"quantification","profileList_pos_cal"))){
+			if(
+				file.exists(file.path(logfile$project_folder,"quantification","profileList_pos_cal")) &
+				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
+			){
 				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_pos_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			}	
-			if(file.exists(file.path(logfile$project_folder,"results","profileList_neg"))){
+			if(
+				file.exists(file.path(logfile$project_folder,"results","profileList_neg")) &
+				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
+			){
 				load(file=file.path(as.character(logfile$project_folder),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 				if(isolate(input$Ion_mode)=="negative"){
 					assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));				
 				}
 			}	
-			if(file.exists(file.path(logfile$project_folder,"quantification","profileList_neg_cal"))){
+			if(
+				file.exists(file.path(logfile$project_folder,"quantification","profileList_neg_cal")) &
+				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
+			){
 				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_neg_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
 			}	
 			if(file.exists(file.path(logfile$project_folder,"pics","profilehisto.png"))){ 

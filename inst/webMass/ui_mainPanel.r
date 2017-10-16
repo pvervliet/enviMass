@@ -873,7 +873,8 @@
 					numericInput("peak_SB", "Minimum Signal/Base", 2),
 					numericInput("peak_recurs", "Maximum possible number of peaks within a single EIC", 3),
 					HTML('<hr noshade="noshade" />') ,
-					selectInput("peak_which_intensity", "Peak intensity: use peak area or peak intensoid?", choices = c("intensoid"="maximum","area"="area"), selected="intensoid")
+					selectInput("peak_which_intensity", "Peak intensity: use peak area or peak intensoid?", choices = c("intensoid"="maximum","area"="area"), selected="intensoid"),
+					selectInput("peak_get_mass", "Peak mass definition:", choices = c("Mean"="mean", "Weighted mean"="wmean"), selected="mean")					
 				),
 				div(style = widget_style11,
 					tags$h4("Advanced settings"),

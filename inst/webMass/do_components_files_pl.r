@@ -20,7 +20,7 @@
 		#######################################################################################
 		if(length(for_IDs)){	
 			for(i in for_IDs){
-				if(file.exists(file.path(logfile[[1]],"results","componentization","components",paste(for_file)))) file.remove(file.path(logfile[[1]],"results","componentization","components",paste(for_file)))
+				if(file.exists(file.path(logfile[[1]],"results","componentization","components",paste(i)))) file.remove(file.path(logfile[[1]],"results","componentization","components",paste(i)))
 			}
 			if(FALSE){ # for debugging - outside clusters
 				for(i in for_IDs) combine2_wrap(x = i, logfile, measurements) 

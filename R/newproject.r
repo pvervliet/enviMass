@@ -149,6 +149,7 @@ newproject <- function(pro_name, pro_dir, IS, targets){
 		logfile$parameters$cut_mass_min <- "0"
 		logfile$parameters$cut_mass_max <- "2000"		
 		logfile$parameters$peak_estimate <- "TRUE"		
+		logfile$parameters$peak_get_mass <- "mean"			
 		# show progbar? ########################################################
 		logfile$parameters$progressBar <- "FALSE";	 
 		# isotope patterns #####################################################

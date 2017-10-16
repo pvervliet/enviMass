@@ -26,8 +26,14 @@
 	########################################################################################################
 	# IS screening on POSITIVE ionization ##################################################################
 	those_objects<-c(
-		"peaklist", "profileList_pos", "links_peaks_pos", "pattern_pos_IS", "patternRT_pos_IS",
-		"patternDelRT_pos_IS", "pattern", "pattern_delRT"
+		"peaklist", 
+		"profileList_pos", 
+		"links_peaks_pos", 
+		"pattern_pos_IS", 
+		"patternRT_pos_IS",
+		"patternDelRT_pos_IS", 
+		"pattern", 
+		"pattern_delRT"
 	)
 	for(i in 1:length(those_objects)){
 		if(exists(those_objects[i],envir=as.environment(".GlobalEnv"))){rm(list=(those_objects[i]),envir=as.environment(".GlobalEnv"))}	

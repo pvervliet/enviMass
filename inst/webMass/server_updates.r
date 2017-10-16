@@ -2171,6 +2171,29 @@ if(logfile$version < 3.41){
 }
 
 
+
+
+
+if(logfile$version < 3.411){
+
+	cat("\n Updating to version 3.411 ...")
+	################################################################################################
+	if(!any(names(logfile$parameters) == "peak_get_mass")){	
+		logfile$parameters$peak_get_mass <<- "mean"
+	}
+	################################################################################################	
+	logfile$version<<-3.411
+	################################################################################################		
+	save(logfile,file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+
+
+
+
 ########################################################################
 
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
