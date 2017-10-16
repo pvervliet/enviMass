@@ -9,7 +9,7 @@
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_incl[i,"ID"])),envir=as.environment(".GlobalEnv"));
-			peaklist[,"m/z_corr"]<-peaklist[,"m/z"];
+			peaklist[,"m/z_corr"] <- peaklist[,"m/z"];
 			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_incl[i,"ID"])))
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}

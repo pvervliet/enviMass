@@ -35,6 +35,8 @@ recalib_wrap<-function(
 			peaklist[,c(12,13,14)]<-peak_recal
 			save(peaklist,file=file.path(logfile[[1]], "peaklist", for_file));         
 		}else{
+			peaklist[,"m/z_corr"] <- peaklist[,"m/z"]; # use dummy value!
+			save(peaklist,file=file.path(logfile[[1]], "peaklist", for_file));         
 			png(filename = file.path(logfile[[1]],"pics",paste("recal_", for_file, sep="")), bg = "white", width = 1100, height= 300)
 			plot.new()
 			plot.window(xlim=c(0,1),ylim=c(0,1))

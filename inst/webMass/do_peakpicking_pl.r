@@ -6,7 +6,7 @@
     leng <- dim(measurements)[1];         
 	
 #measurements[,"peakpicking"]<-"FALSE"
-i<-1
+#i<-1
 
     for(i in 1:leng){ 
             if( (measurements[i,"include"]=="TRUE") & (measurements[i,"peakpicking"]=="FALSE") ){
