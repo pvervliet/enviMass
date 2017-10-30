@@ -3,34 +3,41 @@
 ###############################################################################################
 
 	###########################################################################################
-	do_isot<-(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes")
-	do_addu<-(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes")
-	do_homol<-(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes")
+	do_isot <- (logfile$workflow[names(logfile$workflow) == "isotopologues"] == "yes")
+	do_addu <- (logfile$workflow[names(logfile$workflow) == "adducts"] == "yes")
+	do_homol <- (logfile$workflow[names(logfile$workflow) == "homologues"] == "yes")
 	if( do_isot | do_addu ){ # homol alone not sufficient to run nontarget::combine
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character");
+		#measurements[,"components_files"] <- "FALSE"
 		for(b in 1:length(measurements[,"ID"])){
 			if( 
-				(measurements[b,"include"]=="TRUE") & 			# included?
-				(measurements[b,"components_files"]=="FALSE")  	# not yet done
+				(measurements[b,"include"] == "TRUE") & 			# included?
+				(measurements[b,"components_files"] == "FALSE")  	# not yet done
 			){ 
 			
 				##########################################################################
 				# exclude files that do not end up in profiles ###########################
-				if( (mute(logfile$parameters$prof_select=="TRUE")) & (measurements$profiled[b]=="FALSE") ){
+				if( (mute(logfile$parameters$prof_select == "TRUE")) & (measurements$profiled[b] == "FALSE") ){
 					cat("\n Skip file - not included in profile building.");next;
 				}
 				##########################################################################
 				cat(paste("\n Doing ",as.character(b)," of ",as.character(length(measurements[,"ID"]))," files: ",sep=""))	
-				for_file<-measurements[b,"ID"]
+				for_file <- measurements[b, "ID"]
+				##########################################################################
+				if( file.exists(file.path(logfile[[1]],"results","componentization","components",paste(for_file)) ) ){
+					file.remove(file.path(logfile[[1]],"results","componentization","components",paste(for_file)) )
+				}		
 				##########################################################################
 				# get isotopologue grouping results ######################################
 				if(
 					do_isot & file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_")))
 				){
 					load(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_")))
+					do_pattern <- TRUE
 					cat("load isot. pattern - ")
 				}else{
-					pattern<-FALSE
+					pattern <- FALSE
+					do_pattern <- FALSE
 				}
 				##########################################################################
 				# get adduct grouping results ############################################
@@ -38,9 +45,11 @@
 					do_addu & file.exists(file.path(logfile[[1]],"results","componentization","adducts",paste("full",for_file,sep="_")))
 				){
 					load(file.path(logfile[[1]],"results","componentization","adducts",paste("full",for_file,sep="_")))
+					do_adduct <- TRUE
 					cat("load adduct groups - ")
 				}else{
-					adduct<-FALSE
+					adduct <- FALSE
+					do_adduct <- FALSE
 				}
 				##########################################################################
 				# get homologues series results ###########################################
@@ -50,22 +59,23 @@
 					load(file.path(logfile[[1]],"results","componentization","homologues",paste("full",for_file,sep="_")))
 					cat("load homologues - ")
 				}else{
-					homol<-FALSE
+					homol <- FALSE
 				}
 				##########################################################################
 				# build components #######################################################
+				if(!do_adduct & !do_pattern) next
 				cat("combine: ")
-				component<-enviMass::combine2(
+				component <- enviMass::combine2(
 					pattern, 
 					adduct, 
 					homol, 
 					rules = c(FALSE, FALSE, FALSE), 
 					dont = FALSE
 				)	
-				component[[1]][,17]<-as.character(component[[1]][,17]) # please debug in nontarget!
-				component[[1]][,18]<-as.character(component[[1]][,18]) # please debug in nontarget!
-				named<-colnames(component[[1]]) # add 2 columns for target / ISTD screening intersection
-				component[[1]]<-cbind(
+				component[[1]][,17] <- as.character(component[[1]][,17]) # please debug in nontarget!
+				component[[1]][,18] <- as.character(component[[1]][,18]) # please debug in nontarget!
+				named <- colnames(component[[1]]) # add 2 columns for target / ISTD screening intersection
+				component[[1]] <- cbind(
 					component[[1]],
 					rep("-",dim(component[[1]])[1]),
 					rep("-",dim(component[[1]])[1]),
@@ -77,11 +87,11 @@
 					rep(0,dim(component[[1]])[1]),
 					rep(0,dim(component[[1]])[1])
 				)
-				component[[1]][,19]<-as.character(component[[1]][,19]) # please debug in nontarget!
-				component[[1]][,20]<-as.character(component[[1]][,20]) # please debug in nontarget!
+				component[[1]][,19] <- as.character(component[[1]][,19]) # please debug in nontarget!
+				component[[1]][,20] <- as.character(component[[1]][,20]) # please debug in nontarget!
 				#component[[1]][,21]<-as.character(component[[1]][,21]) # please debug in nontarget!
 				#component[[1]][,22]<-as.character(component[[1]][,22]) # please debug in nontarget!
-				colnames(component[[1]])<-c(named,
+				colnames(component[[1]]) <- c(named,
 					"Target peaks","ISTD peaks","Total peak number","Blind peak number",
 					"Monois. peak ID |","Monois. m/z |","Monois. RT |","Monois. int. |","Monois. sample/blind int. ratio"
 				)
@@ -116,14 +126,11 @@
 								if(component[["Components"]][i,"ID pattern peaks |"]!="-"){
 									those<-as.numeric(strsplit(component[["Components"]][i,"ID pattern peaks |"],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){		
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
 												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -135,14 +142,11 @@
 								if(component[["Components"]][i,"ID adduct peaks |"]!="-"){
 									those<-as.numeric(strsplit(component[["Components"]][i,"ID adduct peaks |"],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -154,14 +158,11 @@
 								if(component[["Components"]][i,"ID interfering peaks |"]!="-"){
 									those<-as.numeric(strsplit(component[["Components"]][i,"ID interfering peaks |"],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these)){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 4")} # TEST
 												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[1]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -221,14 +222,11 @@
 								if(component[[1]][i,3]!="-"){
 									those<-as.numeric(strsplit(component[[1]][i,3],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
 												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -240,14 +238,11 @@
 								if(component[[1]][i,5]!="-"){
 									those<-as.numeric(strsplit(component[[1]][i,5],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -259,14 +254,11 @@
 								if(component[[1]][i,7]!="-"){
 									those<-as.numeric(strsplit(component[[1]][i,7],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[1]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -332,14 +324,11 @@
 								if(component[[1]][i,3]!="-"){
 									those<-as.numeric(strsplit(component[[1]][i,3],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
 												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -351,14 +340,11 @@
 								if(component[[1]][i,5]!="-"){
 									those<-as.numeric(strsplit(component[[1]][i,5],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -370,14 +356,11 @@
 								if(component[[1]][i,7]!="-"){
 									those<-as.numeric(strsplit(component[[1]][i,7],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 												got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]][[2]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -437,14 +420,11 @@
 								if(component[[1]][i,3]!="-"){
 									those<-as.numeric(strsplit(component[[1]][i,3],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
 												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -456,14 +436,11 @@
 								if(component[[1]][i,5]!="-"){
 									those<-as.numeric(strsplit(component[[1]][i,5],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -475,14 +452,11 @@
 								if(component[[1]][i,7]!="-"){
 									those<-as.numeric(strsplit(component[[1]][i,7],",")[[1]])
 									these<-as.numeric(those)
-									these2<-these
 									these<-match(these,peaks[,"peakIDs"])
-									these2<-these2[!is.na(these)]
 									these<-these[!is.na(these)]
 									if(length(these)){	
 										for(n in 1:length(these) ){
 											if(peaks[these[n],"links"]!=0){
-												if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 												got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]][[2]])
 												collect_comp<-c(collect_comp,got)
 												collect_peak<-c(collect_peak,rep(these[n],length(got)))	
@@ -520,25 +494,25 @@
 				}
 				##########################################################################
 				# extend component table (3) - add monoisotopic peak characteristics #####
-				for_file<-measurements[b,"ID"]
-				if(exists("peaklist",envir=as.environment(".GlobalEnv"))){rm("peaklist",envir=as.environment(".GlobalEnv"))}	
+				for_file <- measurements[b,"ID"]
+				if(exists("peaklist", envir = as.environment(".GlobalEnv"))){rm("peaklist", envir = as.environment(".GlobalEnv"))}	
 				if(exists("peaklist")){rm("peaklist")}	
-				load(file=file.path(logfile[[1]],"peaklist",as.character(for_file)),envir=as.environment(".GlobalEnv")); # Peaklist  
-				peaklist<<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
+				load(file = file.path(logfile[[1]],"peaklist",as.character(for_file)), envir = as.environment(".GlobalEnv")); # Peaklist  
+				peaklist <<- peaklist[order(peaklist[,10], decreasing = FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
 				for(i in 1:dim(component[["Components"]])[1]){
-					those<-as.numeric(strsplit(component[["Components"]][i,"ID pattern peaks |"],",")[[1]])
-					those<-match(those,peaklist[,"peak_ID"])
-					those<-those[order(peaklist[those,"m/z"])]
-					those<-those[1]
-					component[["Components"]][i,"Monois. peak ID |"]<-(peaklist[those,"peak_ID"])
-					component[["Components"]][i,"Monois. m/z |"]<-(peaklist[those,"m/z_corr"])
-					component[["Components"]][i,"Monois. RT |"]<-(peaklist[those,"RT_corr"])				
-					component[["Components"]][i,"Monois. int. |"]<-(peaklist[those,"int_corr"])
-					component[["Components"]][i,"Monois. sample/blind int. ratio"]<-(peaklist[those,"keep_2"])
+					those <- as.numeric(strsplit(component[["Components"]][i,"ID pattern peaks |"],",")[[1]])
+					those <- match(those,peaklist[,"peak_ID"])
+					those <- those[order(peaklist[those,"m/z"])]
+					those <- those[1]
+					component[["Components"]][i,"Monois. peak ID |"] <- (peaklist[those,"peak_ID"])
+					component[["Components"]][i,"Monois. m/z |"] <- (peaklist[those,"m/z_corr"])
+					component[["Components"]][i,"Monois. RT |"] <- (peaklist[those,"RT_corr"])				
+					component[["Components"]][i,"Monois. int. |"] <- (peaklist[those,"int_corr"])
+					component[["Components"]][i,"Monois. sample/blind int. ratio"] <- (peaklist[those,"keep_2"])
 				}
 				##########################################################################
 				# extend component table (4) - mark blind peaks by asterisk ##############				
-				if(logfile$workflow[names(logfile$workflow)=="blind"]=="yes"){
+				if(logfile$workflow[names(logfile$workflow)=="blind"] == "yes"){
 					for_file<-measurements[b,"ID"]
 					if(exists("peaklist",envir=as.environment(".GlobalEnv"))){rm("peaklist",envir=as.environment(".GlobalEnv"))}	
 					if(exists("peaklist")){rm("peaklist")}	
@@ -550,12 +524,9 @@
 						if(component[["Components"]][i,"ID pattern peaks |"]!="-"){
 							those<-as.numeric(strsplit(component[[1]][i,"ID pattern peaks |"],",")[[1]])
 							these<-as.numeric(those)
-							these2<-these
 							these<-match(these,peaklist[,"peak_ID"])
-							these2<-these2[!is.na(these)]
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
-								if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 5")} # TEST
 								if(peaklist[these[j],"keep_2"]<as.numeric(logfile$parameters$blind_threshold)){
 									those[j]<-paste0(those[j],"*")
 									len_blind<-(len_blind+1)
@@ -566,12 +537,9 @@
 						if(component[["Components"]][i,"ID adduct peaks |"]!="-"){
 							those<-as.numeric(strsplit(component[[1]][i,"ID adduct peaks |"],",")[[1]])
 							these<-as.numeric(those)
-							these2<-these
 							these<-match(these,peaklist[,"peak_ID"])
-							these2<-these2[!is.na(these)]
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
-								if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 6")} # TEST
 								if(peaklist[these[j],"keep_2"]<as.numeric(logfile$parameters$blind_threshold)){
 									those[j]<-paste0(those[j],"*")
 									len_blind<-(len_blind+1)
@@ -582,12 +550,9 @@
 						if(component[["Components"]][i,"ID interfering peaks |"]!="-"){
 							those<-as.numeric(strsplit(component[[1]][i,"ID interfering peaks |"],",")[[1]])
 							these<-as.numeric(those)
-							these2<-these
 							these<-match(these,peaklist[,"peak_ID"])
-							these2<-these2[!is.na(these)]
 							len_tot<-(len_tot+length(these))
 							for(j in 1:length(these)){
-								if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 7")} # TEST
 								if(peaklist[these[j],"keep_2"]<as.numeric(logfile$parameters$blind_threshold)){
 									those[j]<-paste0(those[j],"*")
 									len_blind<-(len_blind+1)
@@ -601,11 +566,11 @@
 					rm(peaklist,envir=as.environment(".GlobalEnv"))
 				}
 				##########################################################################
-				save(component,file=(file.path(logfile[[1]],"results","componentization","components",paste(for_file))))
+				save(component, file = file.path(logfile[[1]],"results","componentization","components",paste(for_file)))
 				##########################################################################	
 				rm(pattern,adduct,homol,component)
-				measurements[b,"components_files"]<-"TRUE"
-				write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+				measurements[b, "components_files"] <- "TRUE"
+				write.csv(measurements, file = file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 				##########################################################################	
 				#cat("done.")
 			}else{

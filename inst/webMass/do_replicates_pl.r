@@ -1,8 +1,8 @@
 
     ############################################################################
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	#measurements$tag3<-sample(letters, length(measurements$tag3), replace=TRUE)
-	replic<-(measurements$tag3 [measurements$tag3 != "FALSE" & measurements$include =="TRUE"])
+	replic <- (measurements$tag3 [measurements$tag3 != "FALSE" & measurements$include =="TRUE"])
     ############################################################################
 
     ############################################################################   
@@ -13,11 +13,11 @@
     	########################################################################
     	if(file.exists(file.path(logfile[[1]], "peaklist", x))){
 			load( file = file.path(logfile[[1]], "peaklist", x), envir=environment()); 
-    	}
-		peaklist[,colnames(peaklist)=="keep"] <- 1  
-		save(peaklist,file = file.path(logfile[[1]], "peaklist", x))
+			peaklist[,colnames(peaklist)=="keep"] <- 1  
+			save(peaklist, file = file.path(logfile[[1]], "peaklist", x))
+			rm(peaklist)
+		}
     	########################################################################
-    	rm(peaklist)
 
     }
 	clusterEvalQ(cl = clus,{rm(list = ls()); NULL})

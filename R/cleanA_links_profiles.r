@@ -37,29 +37,29 @@ cleanA_links_profiles<-function(
 				prof2 <- links_profiles[[for_profs[n]]]$isot[m,"linked profile"]
 				num_peaks <- links_profiles[[for_profs[n]]]$isot[m,"ref_1"]
 				these <- profileList[["peaks"]][
-					profileList[["index_prof"]][prof1,"start_ID"]:profileList[["index_prof"]][prof1,"end_ID"]
+					profileList[["index_prof"]][prof1, "start_ID"]:profileList[["index_prof"]][prof1, "end_ID"]
 				,"sampleIDs"]
 				those <- profileList[["peaks"]][
-					profileList[["index_prof"]][prof2,"start_ID"]:profileList[["index_prof"]][prof2,"end_ID"]
+					profileList[["index_prof"]][prof2, "start_ID"]:profileList[["index_prof"]][prof2, "end_ID"]
 				,"sampleIDs"]
 				matched <- match(these,those)
 				# first, check delRT ##############################
 				RT_1 <- (profileList[["peaks"]][
-						(profileList[["index_prof"]][prof1,"start_ID"]:profileList[["index_prof"]][prof1,"end_ID"])
+						(profileList[["index_prof"]][prof1, "start_ID"]:profileList[["index_prof"]][prof1, "end_ID"])
 						[!is.na(matched)]
 					,"RT"])
 				RT_2 <- (profileList[["peaks"]][
-						(profileList[["index_prof"]][prof2,"start_ID"]:profileList[["index_prof"]][prof2,"end_ID"])
+						(profileList[["index_prof"]][prof2, "start_ID"]:profileList[["index_prof"]][prof2, "end_ID"])
 						[matched[!is.na(matched)]]
 					,"RT"])
-				dRT <- abs(RT_1-RT_2)
+				dRT <- abs(RT_1 - RT_2)
 				got_frac <- (sum(dRT < cut_delRT_isot) / length(dRT))
 				if(got_frac < cut_frac_iso){
 					keep[m] <- FALSE
-					next;
+					next
 				}
 				# second, check and insert correlation ############
-				if(num_peaks > 2){
+				if(sum(!is.na(matched)) > 2){
 					int_1 <- (profileList[["peaks"]][
 							(profileList[["index_prof"]][prof1,"start_ID"]:profileList[["index_prof"]][prof1,"end_ID"])
 							[!is.na(matched)]
@@ -67,8 +67,9 @@ cleanA_links_profiles<-function(
 					int_2 <- (profileList[["peaks"]][
 							(profileList[["index_prof"]][prof2,"start_ID"]:profileList[["index_prof"]][prof2,"end_ID"])
 							[matched[!is.na(matched)]]
-						,"intensity"])
+						,"intensity"])						
 					int_cor <- cor(int_1, int_2)
+#if(is.na(int_cor)) stop()
 					if(!is.na(int_cor)){ # e.g. equal values
 						if(int_cor < cut_cor_isot){
 							keep[m] <- FALSE
@@ -102,7 +103,7 @@ cleanA_links_profiles<-function(
 			}
 		}
 	}
-	perce <- as.character(round(removed/found,digits=3)*100)
+	perce <- as.character(round(removed / found, digits = 3)*100)
 	cat("\n");
 	cat(paste0(perce, "% of ", found," isotopologue links filtered."));cat("\n");
 	################################################################

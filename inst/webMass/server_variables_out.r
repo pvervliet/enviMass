@@ -102,6 +102,7 @@ observe({
 				affected_table <<- enviMass::workflow_where(found) # which scripts directly affected?
 				if(dim(affected_table)[1]> 0){
 					for(i in 1:dim(affected_table)[1]){
+						if(!any(names(logfile$workflow) == affected_table[i,1])) next
 						if( # just a message: 
 							((logfile$workflow[names(logfile$workflow) == affected_table[i,1]] == "yes") & (affected_table[i,2] == "TRUE")) ||
 							((logfile$workflow[names(logfile$workflow) == affected_table[i,1]] == "no") & (affected_table[i,2]== "FALSE"))

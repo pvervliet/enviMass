@@ -146,7 +146,7 @@ startprofiles<-function(
 				setWinProgressBar(prog, progi, title = "Retrieve matrix length", label = NULL)
 			}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements[i,1])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-			if(blind_omit==TRUE){
+			if(blind_omit == TRUE){
 				peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep_2"]>=as.numeric(logfile$parameters$blind_threshold)),,drop=FALSE]
 			}
 			peaklist<<-peaklist[(peaklist[,colnames(peaklist)=="keep"]==1),,drop=FALSE] # replicates

@@ -14,8 +14,10 @@ function(
 		do_isot & file.exists(file.path(logfile[[1]], "results", "componentization", "isotopologues", paste("full", for_file, sep="_")))
 	){
 		load(file.path(logfile[[1]],"results","componentization","isotopologues", paste("full", for_file, sep="_")))
+		do_pattern <- TRUE
 	}else{
 		pattern<-FALSE
+		do_pattern <- FALSE
 	}
 	##########################################################################
 	# get adduct grouping results ############################################
@@ -23,8 +25,10 @@ function(
 		do_addu & file.exists(file.path(logfile[[1]], "results", "componentization","adducts",paste("full", for_file,sep="_")))
 	){
 		load(file.path(logfile[[1]], "results", "componentization", "adducts", paste("full", for_file, sep="_")))
+		do_adduct <- TRUE
 	}else{
 		adduct<-FALSE
+		do_adduct <- FALSE
 	}
 	##########################################################################
 	# get adduct grouping results ############################################
@@ -36,9 +40,7 @@ function(
 		homol<-FALSE
 	}
 	##########################################################################
-	if(
-		pattern[1]=="FALSE" & adduct[1]=="FALSE" & homol[1]=="FALSE" 
-	){
+	if(!do_adduct & !do_pattern){
 		return(paste0("No adduct, isotopologue or HS results available for file with ID ", for_file))
 	}
 	##########################################################################
@@ -50,10 +52,10 @@ function(
 		rules = c(FALSE, FALSE, FALSE), 
 		dont = FALSE
 	)		
-	component[[1]][,17]<-as.character(component[[1]][,17]) # please debug in nontarget!
-	component[[1]][,18]<-as.character(component[[1]][,18]) # please debug in nontarget!
-	named<-colnames(component[[1]]) # add 2 columns for target / ISTD screening intersection
-	component[[1]]<-cbind(
+	component[[1]][,17] <- as.character(component[[1]][,17]) # please debug in nontarget!
+	component[[1]][,18] <- as.character(component[[1]][,18]) # please debug in nontarget!
+	named <- colnames(component[[1]]) # add 2 columns for target / ISTD screening intersection
+	component[[1]] <- cbind(
 		component[[1]],
 		rep("-",dim(component[[1]])[1]),
 		rep("-",dim(component[[1]])[1]),
@@ -65,18 +67,18 @@ function(
 		rep(0,dim(component[[1]])[1]),
 		rep(0,dim(component[[1]])[1])
 	)
-	component[[1]][,19]<-as.character(component[[1]][,19]) # please debug in nontarget!
-	component[[1]][,20]<-as.character(component[[1]][,20]) # please debug in nontarget!
+	component[[1]][,19] <- as.character(component[[1]][,19]) # please debug in nontarget!
+	component[[1]][,20] <- as.character(component[[1]][,20]) # please debug in nontarget!
 	#component[[1]][,21]<-as.character(component[[1]][,21]) # please debug in nontarget!
 	#component[[1]][,22]<-as.character(component[[1]][,22]) # please debug in nontarget!
-	colnames(component[[1]])<-c(named,
+	colnames(component[[1]]) <- c(named,
 		"Target peaks","ISTD peaks","Total peak number","Blind peak number",
 		"Monois. peak ID |","Monois. m/z |","Monois. RT |","Monois. int. |","Monois. sample/blind int. ratio"
 	)
 	##########################################################################
 	# extend component table (1) - mark TARGET peaks #########################
 	# feasible via profileList_XXX_copy and links_peaks_pos
-	if(logfile$workflow[names(logfile$workflow)=="target_screen"]=="yes"){
+	if( logfile$workflow[names(logfile$workflow)=="target_screen"] == "yes" ){
 		######################################################################
 		if(for_mode == "positive"){
 			if(exists("profileList_pos_copy")){rm("profileList_pos_copy")}	
@@ -97,13 +99,11 @@ function(
 					if(component[["Components"]][i,"ID pattern peaks |"] != "-"){
 						those <- as.numeric(strsplit(component[["Components"]][i, "ID pattern peaks |"], ",")[[1]])
 						these <- as.numeric(those)
-						these2 <- these
 						these <- match(these, peaks[,"peakIDs"])
 						these <- these[!is.na(these)] # e.g. removed blind peaks
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n], "links"] != 0){
-									if(these2[n] != peaks[these[n], "peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
 									got <- unlist(links_peaks_pos[[peaks[these[n], "links"]]]$target)
 									if(!length(got)) next
 									got <- got[seq(1, length(got), 2)]
@@ -117,13 +117,11 @@ function(
 					if(component[["Components"]][i,"ID adduct peaks |"] != "-"){
 						those <- as.numeric(strsplit(component[["Components"]][i,"ID adduct peaks |"],",")[[1]])
 						these <- as.numeric(those)
-						these2 <- these
 						these <- match(these, peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n], "links"] != 0){
-									if(these2[n] != peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 									got <- unlist(links_peaks_pos[[peaks[these[n], "links"]]]$target)
 									if(!length(got)) next
 									got <- got[seq(1, length(got), 2)]
@@ -137,13 +135,11 @@ function(
 					if(component[["Components"]][i,"ID interfering peaks |"] != "-"){
 						those <- as.numeric(strsplit(component[["Components"]][i, "ID interfering peaks |"], ",")[[1]])
 						these <- as.numeric(those)
-						these2 <- these
 						these <- match(these,peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"] != 0){
-									if(these2[n] != peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 4")} # TEST
 									got <- unlist(links_peaks_pos[[peaks[these[n], "links"]]]$target)
 									if(!length(got)) next
 									got <- got[seq(1, length(got), 2)]
@@ -199,13 +195,11 @@ function(
 					if(component[[1]][i,3] != "-"){
 						those <- as.numeric(strsplit(component[[1]][i,3],",")[[1]])
 						these <- as.numeric(those)
-						these2 <- these
 						these <- match(these, peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"] != 0){
-									if(these2[n] != peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
 									got <- unlist(links_peaks_neg[[peaks[these[n],"links"]]]$target)
 									if(!length(got)) next
 									got <- got[seq(1,length(got),2)]
@@ -219,13 +213,11 @@ function(
 					if(component[[1]][i,5] != "-"){
 						those<-as.numeric(strsplit(component[[1]][i,5],",")[[1]])
 						these<-as.numeric(those)
-						these2<-these
 						these<-match(these,peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"]!=0){
-									if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 									got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$target)
 									if(!length(got)) next
 									got <- got[seq(1,length(got),2)]
@@ -239,13 +231,11 @@ function(
 					if(component[[1]][i,7]!="-"){
 						those<-as.numeric(strsplit(component[[1]][i,7],",")[[1]])
 						these<-as.numeric(those)
-						these2<-these
 						these<-match(these,peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"]!=0){
-									if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 									got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$target)
 									if(!length(got)) next
 									got <- got[seq(1,length(got),2)]
@@ -304,13 +294,11 @@ function(
 					if(component[[1]][i,3]!="-"){
 						those<-as.numeric(strsplit(component[[1]][i,3],",")[[1]])
 						these<-as.numeric(those)
-						these2<-these
 						these<-match(these,peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"]!=0){
-									if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
 									got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]]$IS)
 									if(!length(got)) next
 									got <- got[seq(1,length(got),2)]
@@ -324,13 +312,11 @@ function(
 					if(component[[1]][i,5]!="-"){
 						those<-as.numeric(strsplit(component[[1]][i,5],",")[[1]])
 						these<-as.numeric(those)
-						these2<-these
 						these<-match(these,peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"]!=0){
-									if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 									got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]]$IS)
 									if(!length(got)) next
 									got <- got[seq(1,length(got),2)]
@@ -344,13 +330,11 @@ function(
 					if(component[[1]][i,7]!="-"){
 						those<-as.numeric(strsplit(component[[1]][i,7],",")[[1]])
 						these<-as.numeric(those)
-						these2<-these
 						these<-match(these,peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"]!=0){
-									if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 									got<-unlist(links_peaks_pos[[peaks[these[n],"links"]]]$IS)
 									if(!length(got)) next
 									got <- got[seq(1,length(got),2)]
@@ -404,13 +388,11 @@ function(
 					if(component[[1]][i,3]!="-"){
 						those<-as.numeric(strsplit(component[[1]][i,3],",")[[1]])
 						these<-as.numeric(those)
-						these2<-these
 						these<-match(these,peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"]!=0){
-								if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 2")} # TEST
 								got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$IS)
 								if(!length(got)) next
 								got <- got[seq(1,length(got),2)]
@@ -424,13 +406,11 @@ function(
 					if(component[[1]][i,5]!="-"){
 						those<-as.numeric(strsplit(component[[1]][i,5],",")[[1]])
 						these<-as.numeric(those)
-						these2<-these
 						these<-match(these,peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"]!=0){
-									if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 									got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$IS)
 									if(!length(got)) next
 									got <- got[seq(1,length(got),2)]
@@ -444,13 +424,11 @@ function(
 					if(component[[1]][i,7]!="-"){
 						those<-as.numeric(strsplit(component[[1]][i,7],",")[[1]])
 						these<-as.numeric(those)
-						these2<-these
 						these<-match(these,peaks[,"peakIDs"])
 						these <- these[!is.na(these)]
 						if(length(these)){
 							for(n in 1:length(these) ){
 								if(peaks[these[n],"links"]!=0){
-									if(these2[n]!=peaks[these[n],"peakIDs"]){stop("Debug do_components.files.r - issue 3")} # TEST
 									got<-unlist(links_peaks_neg[[peaks[these[n],"links"]]]$IS)
 									if(!length(got)) next
 									got <- got[seq(1,length(got),2)]
@@ -512,11 +490,9 @@ function(
 			if(component[["Components"]][i, "ID pattern peaks |"] != "-"){
 				those <- as.numeric(strsplit(component[[1]][i, "ID pattern peaks |"], ",")[[1]])
 				these <- as.numeric(those)
-				these2 <- these
 				these <- match(these, peaklist[,"peak_ID"])
 				len_tot <- (len_tot + length(these))
 				for(j in 1:length(these)){
-					if(these2[j] != peaklist[these[j], "peak_ID"]){stop("Debug do_components.files.r - issue 5")} # TEST
 					if(peaklist[these[j],"keep_2"] < as.numeric(logfile$parameters$blind_threshold)){
 						those[j] <- paste0(those[j],"*")
 						len_blind <- (len_blind+1)
@@ -527,11 +503,9 @@ function(
 			if(component[["Components"]][i,"ID adduct peaks |"] != "-"){
 				those <- as.numeric(strsplit(component[[1]][i,"ID adduct peaks |"], ",")[[1]])
 				these <- as.numeric(those)
-				these2 <- these
 				these <- match(these, peaklist[,"peak_ID"])
 				len_tot <- (len_tot + length(these))
 				for(j in 1:length(these)){
-					if(these2[j] != peaklist[these[j], "peak_ID"]){stop("Debug do_components.files.r - issue 6")} # TEST
 					if(peaklist[these[j],"keep_2"] < as.numeric(logfile$parameters$blind_threshold)){
 						those[j] <- paste0(those[j],"*")
 						len_blind <- (len_blind+1)
@@ -542,11 +516,9 @@ function(
 			if(component[["Components"]][i,"ID interfering peaks |"]!="-"){
 				those<-as.numeric(strsplit(component[[1]][i,"ID interfering peaks |"],",")[[1]])
 				these<-as.numeric(those)
-				these2<-these
 				these<-match(these,peaklist[,"peak_ID"])
 				len_tot<-(len_tot+length(these))
 				for(j in 1:length(these)){
-					if(these2[j]!=peaklist[these[j],"peak_ID"]){stop("Debug do_components.files.r - issue 7")} # TEST
 					if(peaklist[these[j],"keep_2"]<as.numeric(logfile$parameters$blind_threshold)){
 						those[j]<-paste0(those[j],"*")
 						len_blind<-(len_blind+1)

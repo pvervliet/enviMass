@@ -102,14 +102,21 @@
 		########################################################################################
 		if(mute(as.logical(logfile$parameters$test))){
 			####################################################################################
-			# profile IDs correct? #############################################################
 			for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
+				# profile IDs correct? #########################################################
 				if(
 					!all(profileList_pos[["peaks"]][	
 						profileList_pos[["index_prof"]][i, "start_ID"]:profileList_pos[["index_prof"]][i, "end_ID"]
 					,"profileIDs"] == i)
 				){
-					stop("\n Debug partcluster_pl.r at #1")
+					stop("\n Debug partcluster_pl.r at #1, positive")
+				}
+				# duplicated sampleIDs? ########################################################
+				if(				
+					any(duplicated(profileList_pos[["peaks"]][	
+						profileList_pos[["index_prof"]][i, "start_ID"]:profileList_pos[["index_prof"]][i, "end_ID"]
+					,"sampleIDs"]))){
+					stop("\n Debug partcluster_pl.r at #2, positive")				
 				}
 			}
 			####################################################################################	
@@ -209,12 +216,20 @@
 			####################################################################################
 			# profile IDs correct? #############################################################
 			for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
+				# profile IDs correct? #########################################################
 				if(
-					!all(profileList_pos[["peaks"]][	
-						profileList_pos[["index_prof"]][i, "start_ID"]:profileList_pos[["index_prof"]][i, "end_ID"]
+					!all(profileList_neg[["peaks"]][	
+						profileList_neg[["index_prof"]][i, "start_ID"]:profileList_neg[["index_prof"]][i, "end_ID"]
 					,"profileIDs"] == i)
 				){
-					stop("\n Debug partcluster_pl.r at #1")
+					stop("\n Debug partcluster_pl.r at #1, negative")
+				}
+				# duplicated sampleIDs? ########################################################
+				if(				
+					any(duplicated(profileList_neg[["peaks"]][	
+						profileList_neg[["index_prof"]][i, "start_ID"]:profileList_neg[["index_prof"]][i, "end_ID"]
+					,"sampleIDs"]))){
+					stop("\n Debug partcluster_pl.r at #2, negative")				
 				}
 			}
 			####################################################################################	

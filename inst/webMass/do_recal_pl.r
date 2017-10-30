@@ -66,7 +66,7 @@
 				load(file = file.path(logfile[[1]], "results", "intmass_pos_IS"), envir = as.environment(".GlobalEnv"))                    
 				mz_pos <- c(mz_pos,intmass_pos_IS[,1]);
 				RT_pos <- c(RT_pos,intmass_pos_IS[,2]);
-			}else{cat("\n IS recalibration masses not found ... recalibration skipped!")}
+			}else{stop("\n IS recalibration masses not found, positive mode ... check project / settings?")}
 		}
 		if(logfile$parameters$recal_use_pos == "Target compounds"){
 			if(file.exists(file.path(logfile[[1]], "results", "intmass_pos_target"))){	  
@@ -75,7 +75,7 @@
 				load(file = file.path(logfile[[1]], "results", "intmass_pos_target"), envir = as.environment(".GlobalEnv"))                    
 				mz_pos <- c(mz_pos,intmass_pos_target[,1]);
 				RT_pos <- c(RT_pos,intmass_pos_target[,2]);
-			}else{cat("\n Target recalibration masses not found ... recalibration skipped!")}      
+			}else{stop("\n Target recalibration masses not found, positive mode ... check project / settings?")}      
 		}
 		if(logfile$parameters$recal_use_pos == "both"){
 			if(file.exists(file.path(logfile[[1]], "results", "intmass_pos_IS"))){	  
@@ -84,14 +84,14 @@
 				load(file = file.path(logfile[[1]], "results", "intmass_pos_IS"), envir = as.environment(".GlobalEnv"))                    
 				mz_pos <- c(mz_pos,intmass_pos_IS[,1]);
 				RT_pos <- c(RT_pos,intmass_pos_IS[,2]);
-			}else{cat("\n IS recalibration masses not found ... recalibration skipped?")}		
+			}else{stop("\n IS recalibration masses not found, positive mode ... check project / settings?")}		
 			if(file.exists(file.path(logfile[[1]], "results", "intmass_pos_target"))){	
 				if(any(objects(envir=as.environment(".GlobalEnv")) == "intmass_pos_target")){rm(intmass_pos_target, envir = as.environment(".GlobalEnv"))}
 				if(any(objects() == "intmass_pos_target")){rm(intmass_pos_target)}		
 				load(file = file.path(logfile[[1]], "results", "intmass_pos_target"), envir = as.environment(".GlobalEnv"))                    
 				mz_pos <- c(mz_pos,intmass_pos_target[,1]);
 				RT_pos <- c(RT_pos,intmass_pos_target[,2]);
-			}else{cat("\n Target recalibration masses not found ... recalibration skipped?")}			
+			}else{stop("\n Target recalibration masses not found, positive mode ... check project / settings?")}			
 		}
 		mz_pos <- c(as.numeric(as.character(mz_pos)));
 		RT_pos <- c(as.numeric(as.character(RT_pos)));
@@ -134,7 +134,7 @@
 				load(file = file.path(logfile[[1]],"results","intmass_neg_IS"), envir = as.environment(".GlobalEnv"))                    
 				mz_neg <- c(mz_neg,intmass_neg_IS[,1]);
 				RT_neg <- c(RT_neg,intmass_neg_IS[,2]);
-			}else{cat("\n IS recalibration masses not found ... recalibration skipped!")}
+			}else{stop("\n IS recalibration masses not found, negative mode ... check project / settings?")}
 		}
 		if(logfile$parameters$recal_use_neg == "Target compounds"){
 			if(file.exists(file.path(logfile[[1]], "results", "intmass_neg_target"))){	  
@@ -143,7 +143,7 @@
 				load(file = file.path(logfile[[1]],"results","intmass_neg_target"), envir = as.environment(".GlobalEnv"))                    
 				mz_neg <- c(mz_neg,intmass_neg_target[,1]);
 				RT_neg <- c(RT_neg,intmass_neg_target[,2]);
-			}else{cat("\n Target recalibration masses not found ... recalibration skipped!")}      
+			}else{stop("\n Target recalibration masses not found, negative mode ... check project / settings?")}      
 		}
 		if(logfile$parameters$recal_use_neg == "both"){
 			if(file.exists(file.path(logfile[[1]], "results", "intmass_neg_IS"))){	  
@@ -152,14 +152,14 @@
 				load(file = file.path(logfile[[1]], "results", "intmass_neg_IS"), envir = as.environment(".GlobalEnv"))                    
 				mz_neg <- c(mz_neg,intmass_neg_IS[,1]);
 				RT_neg <- c(RT_neg,intmass_neg_IS[,2]);
-			}else{cat("\n IS recalibration masses not found ... recalibration skipped?")}		
+			}else{stop("\n IS recalibration masses not found, negative mode ... check project / settings?")}		
 			if(file.exists(file.path(logfile[[1]], "results", "intmass_neg_target"))){	
 				if(any(objects(envir = as.environment(".GlobalEnv")) == "intmass_neg_target")){rm(intmass_neg_target, envir = as.environment(".GlobalEnv"))}
 				if(any(objects() == "intmass_neg_target")){rm(intmass_neg_target)}		
 				load(file = file.path(logfile[[1]], "results", "intmass_neg_target"), envir = as.environment(".GlobalEnv"))                    
 				mz_neg <- c(mz_neg,intmass_neg_target[,1]);
 				RT_neg <- c(RT_neg,intmass_neg_target[,2]);
-			}else{cat("\n Target recalibration masses not found ... recalibration skipped?")}			
+			}else{stop("\n Target recalibration masses not found, negative mode ... check project / settings?")}			
 		}
 		mz_neg <- c(as.numeric(as.character(mz_neg)));
 		RT_neg <- c(as.numeric(as.character(RT_neg)));

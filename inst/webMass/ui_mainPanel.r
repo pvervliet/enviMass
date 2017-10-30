@@ -623,8 +623,8 @@
 				#radioButtons("RTalign", "Include?", c("yes"="yes","no"="no")),  
 				HTML('<p style="background-color:darkblue"; align="center"> <font color="#FFFFFF"> Blank / blind peak detection </font></p> '),				
 					fluidRow(
-						column(width = 2, radioButtons("blind", "Detect?", c("yes"="yes","no"="no")) ),
-						column(width = 2, radioButtons("blind_omit", "Remove?", c("yes"="TRUE","no"="FALSE")) ),
+						column(width = 2, radioButtons("blind", "Detect?", c("yes" = "yes","no" = "no")) ),
+						column(width = 2, radioButtons("blind_omit", "Remove?", c("yes" = "TRUE","no" = "FALSE")) ),
 						column(width = 8, offset = 0.3,
 							tags$p(align="justify","Tags sample peaks which are also present in blind/blank files. Check Settings -> Blind tab for selecting the latter. 
 							By also enabling 'Remove?', affected peaks are fully excluded (not just tagged) from being assorted into profiles (but not from, e.g., nontargeted componentization), 
@@ -873,7 +873,8 @@
 					numericInput("peak_SB", "Minimum Signal/Base", 2),
 					numericInput("peak_recurs", "Maximum possible number of peaks within a single EIC", 3),
 					HTML('<hr noshade="noshade" />') ,
-					selectInput("peak_which_intensity", "Peak intensity: use peak area or peak intensoid?", choices = c("intensoid"="maximum","area"="area"), selected="intensoid")
+					selectInput("peak_which_intensity", "Peak intensity: use peak area or peak intensoid?", choices = c("intensoid"="maximum","area"="area"), selected="intensoid"),
+					selectInput("peak_get_mass", "Peak mass definition:", choices = c("Mean"="mean", "Weighted mean"="wmean"), selected="mean")					
 				),
 				div(style = widget_style11,
 					tags$h4("Advanced settings"),

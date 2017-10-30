@@ -22,6 +22,9 @@
 			if( file.exists(file.path(logfile[[1]],"results","componentization","adducts",for_file) ) ){
 				file.remove(file.path(logfile[[1]],"results","componentization","adducts",for_file) )
 			}			
+			if( file.exists(file.path(logfile[[1]],"results","componentization","adducts",paste("full",for_file,sep="_")) ) ){
+				file.remove(file.path(logfile[[1]],"results","componentization","adducts",paste("full",for_file,sep="_")) )
+			}			
 			# Peaklist
 			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file)));   
 			peaklist<-peaklist[order(peaklist[,"peak_ID"],decreasing=FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately

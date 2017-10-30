@@ -149,6 +149,7 @@ newproject <- function(pro_name, pro_dir, IS, targets){
 		logfile$parameters$cut_mass_min <- "0"
 		logfile$parameters$cut_mass_max <- "2000"		
 		logfile$parameters$peak_estimate <- "TRUE"		
+		logfile$parameters$peak_get_mass <- "mean"			
 		# show progbar? ########################################################
 		logfile$parameters$progressBar <- "FALSE";	 
 		# isotope patterns #####################################################
@@ -348,7 +349,7 @@ newproject <- function(pro_name, pro_dir, IS, targets){
     logfile[[9]] <- "";
     names(logfile)[9] <- c("isotopes")
 	# enviMass VERSION NUMBER ##################################################
-    logfile[[10]] <- 3.4
+    logfile[[10]] <- 3.412
     names(logfile)[10] <- c("version")   
 	# subtraction files ########################################################
 	logfile[[13]] <- "FALSE"

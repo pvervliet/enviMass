@@ -71,11 +71,11 @@ partcluster<-function(
 		}
 	}
 	########################################################################################
-	if(progbar==TRUE){prog<-winProgressBar("Extract time profiles...",min=m,max=n);setWinProgressBar(prog, 0, title = "Extract time profiles...", label = NULL);}
-	often<-c(0);
+	if(progbar == TRUE){prog <- winProgressBar("Extract time profiles...", min = m, max = n); setWinProgressBar(prog, 0, title = "Extract time profiles...", label = NULL);}
+	often <- c(0);
 	for(k in m:n){
 	
-		if(progbar==TRUE){setWinProgressBar(prog, k, title = paste("Extract time profiles for partition ",k,sep=""), label = NULL)}
+		if(progbar == TRUE){setWinProgressBar(prog, k, title = paste("Extract time profiles for partition ",k,sep=""), label = NULL)}
 		profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"profileIDs"] <- 0
 		if(profileList[["index_agglom"]][k,3] > 1){
 			delmz <- (max(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),1])-min(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),1]))
@@ -117,7 +117,7 @@ partcluster<-function(
 							}else{
 								delmass <- (diff(range(mass)) * 1000)
 							}
-							if(delmass > dmass) stop("ppm fucked")
+							if(delmass > dmass) stop("ppm problem")
 						}
 						these<-match( # all clusters matched in peaks?
 							clusters,
@@ -210,17 +210,24 @@ partcluster<-function(
 						for(i in 1:length(for_replic)){
 							these <- those[with_replic == for_replic[i]]
 							if(length(these) == 1) next
-							clusters <- extractProfiles_replicates(
+							clusters <- extractProfiles(
 								peaks = profileList[["peaks"]][these, c("m/z", "intensity", "RT", "sampleIDs")],                   
 								in_order = order(profileList[["peaks"]][these, "intensity"], decreasing = TRUE), # intensity order 
 								dmass = dmass,
 								ppm = ppm,
-								dret = dret,
-								pregroup = pregroup				
-							)			
-							clusters <- (clusters + startit)							
+								dret = dret
+							)
+							clusters <- (clusters + startit)
 							pregroup[which(with_replic == for_replic[i])] <- clusters
 							startit <- max(clusters)
+						}
+						if(with_test & any(pregroup != 0)){
+							pg <- unique(pregroup[pregroup != 0])
+							for(j in 1:length(pg)){
+								if(any(duplicated(profileList[["peaks"]][those, "sampleIDs"][pregroup == pg[j]]))){
+									stop("\n partcluster issue in duplication_1")
+								}
+							}
 						}
 					}
 					# profiling with replicates (2) - profiling with resulting pregroups ##
@@ -237,17 +244,14 @@ partcluster<-function(
 					profileList[["peaks"]][those,] <- (profileList[["peaks"]][those,][order(clusters, decreasing = FALSE),]);					
 					#######################################################################
 					if(with_test){
-						these<-match(
+						these <- match(
 							clusters,
 							profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"profileIDs"]
 						)
 						if(any(is.na(these))){ stop("\n partcluster issue_A")}
-						these<-match(
-							clusters,
-							seq(max(clusters))
-						)
+						these <- match(clusters, seq(max(clusters)))
 						if(any(is.na(these))){ stop("\n partcluster issue_B")}
-						these<-match( # sequential profileIDs?
+						these <- match( # sequential profileIDs?
 							seq(
 								min(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"profileIDs"]),
 								max(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"profileIDs"])
@@ -256,22 +260,22 @@ partcluster<-function(
 						)
 						if(any(is.na(these))){ stop("\n partcluster issue_C")}		
 						# unique sample IDs in a cluster?
-						clstr<-profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"profileIDs"]
+						clstr <- profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"profileIDs"]
 						for(w in 1:length(clstr)){
-							these<-which(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"profileIDs"]==clstr[w])
-							if(any(duplicated(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"sampleIDs"][these]))){stop("\n partcluster issue in duplication")}
-							min_RT<-min(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"RT"][these])
-							max_RT<-max(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"RT"][these])
-							if((max_RT-min_RT)>dret){stop("\n partcluster issue: too large RT windows detected!")}
-							min_mass<-min(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"m/z"][these])
-							max_mass<-max(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"m/z"][these])	
-							mean_mass<-mean(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"m/z"][these])								
+							these <- which(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"profileIDs"]==clstr[w])
+							if(any(duplicated(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"sampleIDs"][these]))){stop("\n partcluster issue in duplication_2")}
+							min_RT <- min(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"RT"][these])
+							max_RT <- max(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"RT"][these])
+							if((max_RT - min_RT) > dret){stop("\n partcluster issue: too large RT windows detected!")}
+							min_mass <- min(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"m/z"][these])
+							max_mass <- max(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"m/z"][these])	
+							mean_mass <- mean(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),"m/z"][these])								
 							if(ppm){
-								test_delmz<-((max_mass-min_mass)/mean_mass*1E6)
+								test_delmz <- ((max_mass - min_mass) / mean_mass * 1E6)
 							}else{
-								test_delmz<-(max_mass-min_mass)
+								test_delmz <- (max_mass - min_mass)
 							}
-							if(test_delmz>(dmass*2)){stop("\n partcluster issue: too large mass windows detected!")}
+							if(test_delmz > (dmass * 2)){stop("\n partcluster issue: too large mass windows detected!")}
 						}	
 					}
 					#######################################################################

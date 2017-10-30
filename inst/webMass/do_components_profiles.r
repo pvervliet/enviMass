@@ -429,7 +429,7 @@ if(
 		}
 	}
 	# (4) INSERT ADDUCT LINKS ####################################################
-	if(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes"){
+	if(logfile$workflow[names(logfile$workflow)=="adducts"] == "yes"){
 		forIDs<-profileList_pos[["sampleID"]]
 		for_files<-list.files(file.path(logfile[[1]],"results","componentization","adducts"))
 		keep<-match(forIDs,for_files) # which files are available?
@@ -565,7 +565,7 @@ if(
 		}	
 	}
 	# (5) INSERT HOMOLOGUE SERIES LINKS ##########################################
-	if(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes"){
+	if(logfile$workflow[names(logfile$workflow)=="homologues"] == "yes"){
 		forIDs<-profileList_pos[["sampleID"]]
 		for_files<-list.files(file.path(logfile[[1]],"results","componentization","homologues"))
 		keep<-match(forIDs,for_files) # which files are available?
@@ -688,8 +688,9 @@ if(
 	# (6) Filter & insert profile correlations ###################################
 	cut_delRT_EIC <<- NA
 	if( # run filering & insert values or ...
-		(logfile$parameters$filter_profcomp_pos=="TRUE") &
-		( (logfile$workflow[names(logfile$workflow)=="isotopologues"] == "yes") || (logfile$workflow[names(logfile$workflow)=="adducts"]=="yes") )
+		(logfile$parameters$filter_profcomp_pos == "TRUE") &
+		( 	(logfile$workflow[names(logfile$workflow) == "isotopologues"] == "yes") || 
+			(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes") )
 	){
 		# (6.1) get characteristics on delRT and correl. #########################
 		anaA <- enviMass:::analyseA_links_profiles(
@@ -706,6 +707,7 @@ if(
 		cut_delRT_isot <<- boxplot.stats(c(anaA$delRT_isot))$stats[5]
 		cut_cor_isot <<- (boxplot.stats(c(anaA$int_cor_isot))$stats[1])
 		if(!is.na(cut_delRT_isot) & !is.na(cut_cor_isot)){
+			#	links_profiles = links_profiles_pos; profileList = profileList_pos
 			links_profiles_pos <- enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
@@ -713,6 +715,7 @@ if(
 				cut_cor_isot = cut_cor_isot, 
 				cut_frac_iso = .85
 			)
+			
 		}else{
 			cat("\n No isotopologue linkage filtering feasible")
 			links_profiles_pos <- enviMass::cleanA_links_profiles(

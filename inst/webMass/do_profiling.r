@@ -8,8 +8,8 @@
 	
 	############################################################################################
 	# FILTER FILES #############################################################################
-    measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements<-measurements[measurements[,"include"]=="TRUE",,drop=FALSE]
+    measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	measurements <- measurements[measurements[,"include"] == "TRUE",, drop = FALSE]
 	if(logfile$parameters$prof_select=="TRUE"){
 		measurements<-measurements[measurements[,names(measurements)=="profiled"]=="TRUE",]	
 	}
@@ -26,7 +26,7 @@
 		if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))){file.remove(file.path(as.character(logfile[[1]]),"results","profileList_pos"))}
 		if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))){file.remove(file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))}
 		########################################################################################
-		profileList_pos<-startprofiles(
+		profileList_pos <- startprofiles(
 							logfile,
 							frac = FALSE,
 							sets = as.numeric(logfile$parameters$prof_maxfiles),
@@ -39,7 +39,7 @@
 						)
 		if(any(profileList_pos[[2]][,2]==0)){stop("\n issue in do_profiling: zero intensities detected. Try to rerun the workflow including the peakpicking, using -> Settings -> General -> Reset project including peak picking.")}
 		########################################################################################
-		profileList_pos<-agglomer(
+		profileList_pos <- agglomer(
 							profileList_pos,
 							dmass = (as.numeric(logfile$parameters$prof_dmz)+1),
 							ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
@@ -47,7 +47,7 @@
 						)
 		########################################################################################
 		if( (logfile$workflow[names(logfile$workflow)=="replicates"] == "no") & (logfile$parameters$replicates_prof == "no") ){ 				
-			profileList_pos<-partcluster(
+			profileList_pos <- partcluster(
 								profileList = profileList_pos,
 								dmass = as.numeric(logfile$parameters$prof_dmz),
 								ppm = as.logical(as.character(logfile$parameters$prof_ppm)),
@@ -76,6 +76,28 @@
 								IDs = IDs,
 								with_test = mute(as.logical(logfile$parameters$test))
 							)
+		}
+		########################################################################################
+		if(mute(as.logical(logfile$parameters$test))){
+			####################################################################################
+			for(i in 1:dim(profileList_pos[["index_prof"]])[1]){
+				# profile IDs correct? #########################################################
+				if(
+					!all(profileList_pos[["peaks"]][
+						profileList_pos[["index_prof"]][i, "start_ID"]:profileList_pos[["index_prof"]][i, "end_ID"]
+					,"profileIDs"] == i)
+				){
+					stop("\n Debug partcluster_pl.r at #1, positive")
+				}
+				# duplicated sampleIDs? ########################################################
+				if(				
+					any(duplicated(profileList_pos[["peaks"]][	
+						profileList_pos[["index_prof"]][i, "start_ID"]:profileList_pos[["index_prof"]][i, "end_ID"]
+					,"sampleIDs"]))){
+					stop("\n Debug partcluster_pl.r at #2, positive")				
+				}
+			}
+			####################################################################################	
 		}
 		########################################################################################
 		profileList_pos<-enviMass:::in_blind(profileList_pos)
@@ -149,6 +171,28 @@
 								IDs = IDs,
 								with_test = mute(as.logical(logfile$parameters$test))
 							)
+		}
+		########################################################################################
+		if(mute(as.logical(logfile$parameters$test))){
+			####################################################################################
+			for(i in 1:dim(profileList_neg[["index_prof"]])[1]){
+				# profile IDs correct? #########################################################
+				if(
+					!all(profileList_neg[["peaks"]][	
+						profileList_neg[["index_prof"]][i, "start_ID"]:profileList_neg[["index_prof"]][i, "end_ID"]
+					,"profileIDs"] == i)
+				){
+					stop("\n Debug partcluster_pl.r at #1, negative")
+				}
+				# duplicated sampleIDs? ########################################################
+				if(				
+					any(duplicated(profileList_neg[["peaks"]][	
+						profileList_neg[["index_prof"]][i, "start_ID"]:profileList_neg[["index_prof"]][i, "end_ID"]
+					,"sampleIDs"]))){
+					stop("\n Debug partcluster_pl.r at #2, negative")				
+				}
+			}
+			####################################################################################	
 		}
 		########################################################################################
 		profileList_neg<-enviMass:::in_blind(profileList_neg)

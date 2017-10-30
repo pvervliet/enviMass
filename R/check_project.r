@@ -397,8 +397,11 @@ check_project<-function(
 		say<-"You want to run a recovery but you have not even calibration files in your project for a quantification? Either add such files or remove the Recovery step from your project!"
 	}	   
 	# check spiked files
-	measurements_spiked<-measurements[measurements[,"Type"]=="spiked",,drop=FALSE]   
-	if(length(measurements_spiked[,"ID"])>0){  
+	measurements_spiked<-measurements[ (measurements[,"Type"]=="spiked" & measurements[,"include"]=="TRUE"),,drop=FALSE]   
+	if(
+		(length(measurements_spiked[,"ID"]) > 0) & 
+		(logfile$workflow[names(logfile$workflow) == "recovery"] == "yes")
+	){  
 		these_pos<-which(is.na(match(
 			measurements_spiked[measurements_spiked$Mode=="positive",]$tag2,
 			measurements[measurements$Mode=="positive","ID"]))

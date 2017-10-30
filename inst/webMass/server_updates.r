@@ -21,7 +21,6 @@ if(as.numeric(installed.packages()[installed.packages()[,1]=="enviPat","Version"
 # enviMass project changes
 
 if(logfile$version<3.100){
-#if(TRUE){
 	
 	cat("\n Updating to version 3.100 ...")
 	################################################################################################
@@ -1757,11 +1756,11 @@ if(logfile$version<3.28){
 
 	cat("\n Updating to version 3.28 ...")
 	################################################################################################	
-	IDs<-list.files(file.path(logfile[["project_folder"]],"peaklist"))
-	if(length(IDs)>0){
+	IDs <- list.files(file.path(logfile[["project_folder"]],"peaklist"))
+	if(length(IDs) > 0){
 		for(i in 1:length(IDs)){
 			load(file=file.path(logfile[["project_folder"]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-			peaklist[,"keep_2"]<-Inf;
+			peaklist[,"keep_2"] <- Inf;
 			save(peaklist,file=file.path(logfile[["project_folder"]],"peaklist",as.character(IDs[i])))
 			rm(peaklist)
 		}
@@ -2166,6 +2165,46 @@ if(logfile$version < 3.41){
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+
+if(logfile$version < 3.411){
+
+	cat("\n Updating to version 3.411 ...")
+	################################################################################################
+	if(!any(names(logfile$parameters) == "peak_get_mass")){	
+		logfile$parameters$peak_get_mass <<- "mean"
+	}
+	################################################################################################	
+	logfile$version<<-3.411
+	################################################################################################		
+	save(logfile,file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+
+
+if(logfile$version < 3.412){
+
+	cat("\n Updating to version 3.412 ...")
+	################################################################################################
+	enviMass::workflow_set(
+		down="pattern",
+		except=FALSE,
+		down_TF=c("TRUE","FALSE"),
+		check_node=TRUE, 	
+		single_file=FALSE
+	)		
+	shinyjs::info(paste0("Please recalculate your project by pressing the Calculate button."));
+	################################################################################################	
+	logfile$version <<- 3.412
+	################################################################################################		
+	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
 	################################################################################################
 	
 }

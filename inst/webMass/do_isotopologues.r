@@ -24,12 +24,15 @@
 			##########################################################################
 			# LOAD FILES & REMOVE OLD RESULTS ########################################
 			cat("loading - ")
-			for_file<-measurements[b,"ID"]
+			for_file <- measurements[b,"ID"]
 			if( file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",for_file) ) ){
 				file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",for_file) )
-			}			
+			}		
+			if( file.exists(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_")) ) ){
+				file.remove(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_")) )
+			}		
 			load(file=file.path(logfile[[1]],"peaklist",as.character(for_file))); # Peaklist  
-			peaklist<-peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
+			peaklist <- peaklist[order(peaklist[,10],decreasing=FALSE),] # match with IDs - for saving pattern; IDs are retrieved for pairs seperately
 			##########################################################################
 			if((logfile$workflow[names(logfile$workflow)=="EIC_correlation"]=="yes") & TRUE){ # load EIC correlation results - removed, also in EIC -> isot. depends matrix!
 				if(file.exists(file.path(logfile[[1]],"results","componentization","EIC_corr",for_file))){
@@ -51,13 +54,13 @@
 			}
 			##########################################################################	
 			cat("grouping - ")
-			peaklist2<-as.data.frame(peaklist[peaklist[,"keep"]==1,c("m/z_corr","int_corr","RT_corr","peak_ID")])	
+			peaklist2 <- as.data.frame(peaklist[peaklist[,"keep"] == 1, c("m/z_corr","int_corr","RT_corr","peak_ID")])	
 			if(logfile$parameters$isotop_ppm=="TRUE"){
-				use_mztol<-as.numeric(logfile$parameters$isotop_mztol)
+				use_mztol <- as.numeric(logfile$parameters$isotop_mztol)
 			}else{ # mmu
-				use_mztol<-(as.numeric(logfile$parameters$isotop_mztol)/1000)
+				use_mztol <- (as.numeric(logfile$parameters$isotop_mztol)/1000)
 			}
-			pattern<-try(
+			pattern <- try(
 				enviMass::pattern_search3(
 					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")],
 					quantiz,
@@ -73,27 +76,27 @@
 					exclude
 				)
 			)
-			if(class(pattern)=="try-error"){
+			if(class(pattern) == "try-error"){
 				cat("\n Isotopologue detection failed - adapt parameters?");
 				next;
 			}				
-			if(length(pattern[["Pairs"]][,1])==0){
+			if(length(pattern[["Pairs"]][,1]) == 0){
 				cat("\n No adduct relations detected");
 				next;
 			}
-			Isot_pairs<-pattern[["Pairs"]]
-			pattern[["Pairs"]]<-0
-			those<-(Isot_pairs[,1]>Isot_pairs[,2])
+			Isot_pairs <- pattern[["Pairs"]]
+			pattern[["Pairs"]] <- 0
+			those <- (Isot_pairs[,1] > Isot_pairs[,2])
 			if(any(those)){
-				Isot_pairs[those,]<-Isot_pairs[those,c(2,1)]
+				Isot_pairs[those,] <- Isot_pairs[those,c(2,1)]
 			}
-			Isot_pairs<-Isot_pairs[order(Isot_pairs[,1],Isot_pairs[,2],decreasing=FALSE),]				
-			save(Isot_pairs,file=(file.path(logfile[[1]],"results","componentization","isotopologues",paste(for_file,sep="_"))))
-			save(pattern,file=(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_"))))
+			Isot_pairs <- Isot_pairs[order(Isot_pairs[,1],Isot_pairs[,2],decreasing=FALSE),]				
+			save(Isot_pairs, file = (file.path(logfile[[1]],"results","componentization","isotopologues",paste(for_file,sep="_"))))
+			save(pattern, file = (file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_"))))
 			##########################################################################	
-			measurements[b,"isotopologues"]<-"TRUE"
-			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			rm(peaklist,peaklist2,pattern,Isot_pairs)			
+			measurements[b,"isotopologues"] <- "TRUE"
+			write.csv(measurements, file = file.path(logfile[[1]],"dataframes","measurements"), row.names = FALSE);
+			rm(peaklist, peaklist2, pattern, Isot_pairs)			
 			cat("done.")
 			##########################################################################		
 		}else{

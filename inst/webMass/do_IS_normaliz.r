@@ -253,7 +253,7 @@
 		int_norm_ISTD_pos[[1]] <<- lis_delint_IS
 		int_norm_ISTD_pos[[2]] <<- lis_median_IS
 		#int_norm_ISTD_pos[[3]] <- lis_RT_IS
-		int_norm_ISTD_pos[[4]] <<- use_corfac
+		int_norm_ISTD_pos[[4]] <<- corfac
 		int_norm_ISTD_pos[[5]] <<- list()#lis_delint_nb
 		int_norm_ISTD_pos[[6]] <<- list()#lis_median_nb
 		int_norm_ISTD_pos[[7]] <<- list()#lis_delint_b
@@ -540,7 +540,7 @@
 		int_norm_ISTD_neg[[1]] <<- lis_delint_IS
 		int_norm_ISTD_neg[[2]] <<- lis_median_IS
 		#int_norm_ISTD_neg[[3]] <- lis_RT_IS
-		int_norm_ISTD_neg[[4]] <<- use_corfac
+		int_norm_ISTD_neg[[4]] <<- corfac
 		int_norm_ISTD_neg[[5]] <<- list()#lis_delint_nb
 		int_norm_ISTD_neg[[6]] <<- list()#lis_median_nb
 		int_norm_ISTD_neg[[7]] <<- list()#lis_delint_b

@@ -6,7 +6,7 @@
     leng <- dim(measurements)[1];         
 	
 #measurements[,"peakpicking"]<-"FALSE"
-i<-1
+#i<-1
 
     for(i in 1:leng){ 
             if( (measurements[i,"include"]=="TRUE") & (measurements[i,"peakpicking"]=="FALSE") ){
@@ -239,7 +239,15 @@ i<-1
 					peaklist<-matrix(0, ncol = 11, nrow = maxit)
 					colnames(peaklist) <- c("m/z", "var_m/z", "max_int", "sum_int", "RT", "minRT", "maxRT", "part_ID", "EIC_ID", "peak_ID", "Score")
 					for(k in 1:length(MSlist[["Peak_index"]][,1])){
-						peaklist[k,1] <- mean(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],1])
+						if(logfile$parameters$peak_get_mass == "mean"){
+							peaklist[k,1] <- mean(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],1])
+						}
+						if(logfile$parameters$peak_get_mass == "wmean"){
+							peaklist[k,1] <- weighted.mean(
+								x = (MSlist[[4]][[2]][MSlist[[7]][k,1]:MSlist[[7]][k,2],1]),
+								w = (MSlist[[4]][[2]][MSlist[[7]][k,1]:MSlist[[7]][k,2],2])
+							)						
+						}
 						peaklist[k,2] <- var(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],1])
 						peaklist[k,3] <- max(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2])
 						peaklist[k,4] <- sum(MSlist[["Scans"]][[2]][MSlist[["Peak_index"]][k,1]:MSlist[["Peak_index"]][k,2],2])

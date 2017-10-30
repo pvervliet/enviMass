@@ -31,18 +31,18 @@ if(
 		profileList_pos[["peaks"]]<<-profileList_pos[["peaks"]][keep_peaks,]
 		cat(paste("\nBlind in profile subtraction, positive: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 	}else{
-		cat("\nblind peak subtraction nothing to subtract, positive ioniz.")
+		cat("\nblind peak subtraction: not included or nothing to subtract, positive ioniz.")
 	}
 	###################################################################################################
 	# spike file peak subtraction #####################################################################
 	if( logfile$parameters$subtr_spiked=="yes" ){
-		these<-as.numeric(profileList_pos[["sampleID"]][profileList_pos[["type"]]=="spiked"])
-		if(length(these)>0){
-			keep_peaks<-rep(TRUE,dim(profileList_pos[["peaks"]])[1])
+		these <- as.numeric(profileList_pos[["sampleID"]][profileList_pos[["type"]] == "spiked"])
+		if(length(these) > 0){
+			keep_peaks <- rep(TRUE,dim(profileList_pos[["peaks"]])[1])
 			for(i in 1:length(these)){
-				keep_peaks[profileList_pos[["peaks"]][,"sampleIDs"]==these[i]]<-FALSE
+				keep_peaks[profileList_pos[["peaks"]][,"sampleIDs"] == these[i]] <- FALSE
 			}
-			profileList_pos[["peaks"]]<<-profileList_pos[["peaks"]][keep_peaks,]
+			profileList_pos[["peaks"]] <<- profileList_pos[["peaks"]][keep_peaks,]
 		}else{
 			cat("\nNo peaks from files to remove peaks for, positive.")
 		}	
@@ -57,15 +57,15 @@ if(
 		if(length(links_peaks_pos)>0){
 			keep_peaks<-rep(TRUE,dim(profileList_pos[["peaks"]])[1])
 			for(i in 1:length(profileList_pos[["peaks"]][,1])){
-				if(profileList_pos[["peaks"]][i,"links"]!=0){
-					if(length(links_peaks_pos[[profileList_pos[["peaks"]][i,"links"]]][[2]])>0){
+				if(profileList_pos[["peaks"]][i,"links"] != 0){
+					if(length(links_peaks_pos[[profileList_pos[["peaks"]][i,"links"]]][[2]]) > 0){
 						keep_peaks[i]<-FALSE
-						links_peaks_pos[[profileList_pos[["peaks"]][i,"links"]]][[2]]<-list() # = IS entry[[2]] in links_peaks_pos
+						links_peaks_pos[[profileList_pos[["peaks"]][i,"links"]]][[2]] <- list() # = IS entry[[2]] in links_peaks_pos
 					}
 				}
 			}
-			profileList_pos[["peaks"]]<<-profileList_pos[["peaks"]][keep_peaks,]
-			save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));
+			profileList_pos[["peaks"]] <<- profileList_pos[["peaks"]][keep_peaks,]
+			save(links_peaks_pos, file = file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));
 			rm(links_peaks_pos)		
 			cat(paste("\nIS subtraction: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 		}else{
@@ -141,6 +141,7 @@ if(
 							replicates=replicates,
 							IDs
 						)
+		rm(measurements)
 	}
 	###################################################################################################
 # > BAUSTELLE: clean links_peaks_pos for removed links!
@@ -184,7 +185,7 @@ if(
 		profileList_neg[["peaks"]]<<-profileList_neg[["peaks"]][keep_peaks,]
 		cat(paste("\nBlind in profile subtraction, negative: ",round((sum(!keep_peaks)/length(keep_peaks)*100),digits=3),"% of peaks removed\n",sep=""))
 	}else{
-		cat("\nblind peak subtraction: nothing to subtract, negative ioniz.")
+		cat("\nblind peak subtraction: not included or nothing to subtract, negative ioniz.")
 	}
 	###################################################################################################
 	# spike file peak subtraction #####################################################################
@@ -258,14 +259,14 @@ if(
 	profileList_neg[[1]]<<-data.frame(TRUE,FALSE,FALSE,FALSE)    # state
 	colnames(profileList_neg[[1]])<<-c("peaks?","agglom?","profiling","trends?")
 	###################################################################################################
-	profileList_neg<<-agglomer(
+	profileList_neg <<- agglomer(
 						profileList_neg,
 						dmass=(as.numeric(logfile$parameters$prof_dmz)+1),
 						ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
 						dret=(as.numeric(logfile$parameters$prof_drt)+10)
 					)
 	if(logfile$parameters$replicates_prof=="no"){ 				
-		profileList_neg<<-partcluster(
+		profileList_neg <<- partcluster(
 							profileList=profileList_neg,
 							dmass=as.numeric(logfile$parameters$prof_dmz),
 							ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
@@ -277,12 +278,12 @@ if(
 							replicates=FALSE
 						)
 	}else{ # run a profiling in the replicate groups first
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		measurements<-measurements[measurements[,"include"]=="TRUE",]
-		measurements<-measurements[measurements[,"Mode"]=="negative",]
-		replicates<-measurements$tag3
-		IDs<-measurements$ID
-		profileList_neg<<-partcluster(
+		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		measurements <- measurements[measurements[,"include"]=="TRUE",]
+		measurements <- measurements[measurements[,"Mode"]=="negative",]
+		replicates <- measurements$tag3
+		IDs <- measurements$ID
+		profileList_neg <<- partcluster(
 							profileList=profileList_neg,
 							dmass=as.numeric(logfile$parameters$prof_dmz),
 							ppm=as.logical(as.character(logfile$parameters$prof_ppm)),
@@ -294,6 +295,7 @@ if(
 							replicates=replicates,
 							IDs
 						)
+		rm(measurements)
 	}
 	###################################################################################################
 # > BAUSTELLE: clean links_peaks_neg for removed peak links!

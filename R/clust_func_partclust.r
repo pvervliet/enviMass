@@ -55,13 +55,12 @@ clust_func_partclust<-function(
 							for(i in 1:length(for_replic)){
 								these <- those[with_replic == for_replic[i]]
 								if(length(these) == 1) next
-								clusters <- extractProfiles_replicates(
+								clusters <- extractProfiles(
 									peaks = peaks[these, c("m/z", "intensity", "RT", "sampleIDs")],                   
 									in_order = order(peaks[these, "intensity"], decreasing = TRUE), # intensity order 
 									dmass = dmass,
 									ppm = ppm,
-									dret = dret,
-									pregroup = pregroup				
+									dret = dret			
 								)			
 								clusters <- (clusters + startit)							
 								pregroup[which(with_replic == for_replic[i])] <- clusters

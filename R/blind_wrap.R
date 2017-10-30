@@ -13,7 +13,7 @@ function(
 	############################################################################
 	for_file <- x
 	for_mode <- measurements[measurements$ID == for_file, "Mode"]	
-	load(file = file.path(logfile[[1]], "peaklist", for_file), envir = environment(), verbose=FALSE);
+	load(file = file.path(logfile[[1]], "peaklist", for_file), envir = environment(), verbose=FALSE); # NOT into global env.!
 	peaklist[,"keep_2"] <- Inf
 	sample_peaklist <- peaklist; 
 	rm(peaklist)
@@ -27,17 +27,17 @@ function(
 		(logfile$parameters$subtract_neg_bydate == "TRUE" & for_mode == "negative")
 	){	
 	
-		atdate<-(measurements[,"Date"])
-		atdate<-as.Date(atdate, tz="GMT");
-		attime<-(measurements[,"Time"])
-		attime2<-as.difftime(attime);
-		filetypus<-(measurements[,"Type"])
-		sampleID<-(measurements[,"ID"])
+		atdate <- (measurements[,"Date"])
+		atdate <- as.Date(atdate, tz="GMT");
+		attime <- (measurements[,"Time"])
+		attime2 <- as.difftime(attime);
+		filetypus <- (measurements[,"Type"])
+		sampleID <- (measurements[,"ID"])
 		ord <- order(as.numeric(atdate), as.numeric(attime2), filetypus, sampleID);
 		i <- which(measurements$ID[ord] == for_file)
 		ionmode<-(measurements[,"Mode"])
 		########################################################################
-		found_blank<-FALSE
+		found_blank <- FALSE
 		if(i > 1){
 			for(j in (i-1):1){ # backward
 				if( 
@@ -88,12 +88,12 @@ function(
 		selec_pos <- selec_pos[selec_pos != "FALSE"]
 		for(j in 1:length(selec_pos)){
 			subID <- strsplit(selec_pos[j]," - ")[[1]][1]
-			load(file = file.path(logfile[[1]],"peaklist",as.character(subID)),verbose=FALSE)
-			peaks_blank <- peaklist[,c("m/z_corr","int_corr","RT_corr")];rm(peaklist);
+			load(file = file.path(logfile[[1]], "peaklist", as.character(subID)), verbose = FALSE)
+			peaks_blank <- peaklist[,c("m/z_corr", "int_corr", "RT_corr")]; rm(peaklist);
 			getit <- search_peak(
 				peaklist = peaks_blank, 
 				mz = sample_peaklist[,"m/z_corr"], 
-				dmz = (dmz*2), # precheck for profiles
+				dmz = (dmz * 2), # precheck for profiles
 				ppm = ppm, 
 				RT = sample_peaklist[,"RT_corr"], 
 				dRT = dRT,
