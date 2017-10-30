@@ -10,7 +10,7 @@ if(
 	file.exists(file.path(logfile[[1]],"results","links_peaks_pos"))  # <- should exist!	
 ){
 
-	##############################################################################	
+	##############################################################################
 	if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList_pos")){rm(profileList_pos,envir = as.environment(".GlobalEnv"))}
 	if(any(objects() == "profileList_pos")){rm(profileList_pos)}	
 	if(any(objects(envir = as.environment(".GlobalEnv")) == "links_peaks_pos")){rm(links_peaks_pos,envir = as.environment(".GlobalEnv"))}

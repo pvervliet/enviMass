@@ -60,7 +60,7 @@
 				cat("\n Not enough adducts for this ionization mode specified - skipped ...")
 				next;
 			}			
-			peaklist2<-as.data.frame(peaklist[peaklist[,"keep"]==1,c("m/z_corr","int_corr","RT_corr","peak_ID")])	
+			peaklist2 <- as.data.frame(peaklist[peaklist[,"keep"]==1, c("m/z_corr","int_corr","RT_corr","peak_ID")])	
 			if(logfile$parameters$adducts_ppm=="TRUE"){
 				use_mztol<-as.numeric(logfile$parameters$adducts_mztol)
 			}else{ # mmu
@@ -86,7 +86,7 @@
 				cat("\n No adduct relations detected");
 				next;
 			}
-			Adduct_pairs<-adduct[["Pairs"]][,c(1,2)]
+			Adduct_pairs <- adduct[["Pairs"]][,c(1,2)]
 			those<-(Adduct_pairs[,1]>Adduct_pairs[,2])
 			if(any(those)){
 				Adduct_pairs[those,]<-Adduct_pairs[those,c(2,1)]

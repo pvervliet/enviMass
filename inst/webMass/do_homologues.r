@@ -53,10 +53,10 @@
 			# Peaklist 
 			load(file = file.path(logfile[[1]], "peaklist", as.character(for_file))); 
 			peaklist4 <- peaklist[order(peaklist[,"peak_ID"], decreasing = FALSE),] # match with IDs 
-			peaklist4 <- peaklist4[(peaklist4[,"keep"] == 1),, drop = FALSE]
+			peaklist4 <- peaklist4[(peaklist4[,"keep"] == 1),, drop = FALSE] # remove non-replicates 
 			if(logfile$parameters$homol_blind == "TRUE"){ # remove blind peaks -> seperate peaklist2 to match peak counts of adduct & isotopologue searches
 				peaklist2 <- as.data.frame(peaklist4[
-					(peaklist4[,"keep_2"] >= as.numeric(logfile$parameters$homol_blind_value)), 
+					(peaklist4[,"keep_2"] >= as.numeric(logfile$parameters$homol_blind_value)), # above blind intensity threshold
 					c("m/z_corr", "int_corr", "RT_corr", "peak_ID"), drop = FALSE])
 				cat("- blind peaks removed -")
 			}else{
@@ -105,9 +105,9 @@
 			at <- atby
 			from <- 0
 			for(i in 1:length(homol[["Homologue Series"]][,1])){
-				those<-as.numeric(strsplit(homol[["Homologue Series"]][i,2],",")[[1]])
-				#these<-match(those,peaklist2[,"peak_ID"]) # nonsense? remove?
-				those <- those[order(peaklist4[those,1],decreasing=FALSE)] # by increasing mass!
+				those <- as.numeric(strsplit(homol[["Homologue Series"]][i,2],",")[[1]])
+				these <- match(those, peaklist2[, "peak_ID"])
+				those <- those[order(peaklist4[these, 1],decreasing=FALSE)] # by increasing mass!
 				for(j in 2:length(those)){
 					from<-(from+1)
 					if(from > at){
@@ -134,12 +134,11 @@
 			if(
 				(logfile$parameters$homol_blind == "TRUE") 
 			){ 
-				those <- is.na(match(peaklist4[,"peak_ID"], peaklist2[,"peak_ID"]))	
+				those <- is.na(match(peaklist4[, "peak_ID"], peaklist2[, "peak_ID"]))	
 				if(any(those)){
 					# impute (1) - "Peaks in homologue series"
-<<<<<<< HEAD
 					homol_left <- cbind(
-						as.data.frame(peaklist4[those, c("m/z_corr","int_corr","RT_corr","peak_ID")]),
+						as.data.frame(peaklist4[those, c("m/z_corr", "int_corr", "RT_corr", "peak_ID")]),
 						rep(0, sum(those)), 		# HS IDs
 						rep(0, sum(those)), 		# series level
 						rep(0, sum(those)), 		# to ID
@@ -148,22 +147,10 @@
 						rep(0, sum(those)),		# HS cluster	
 						rep("", sum(those)),		# Targets
 						rep("", sum(those))		# ISTDs						
-=======
-					homol_left<-cbind(
-						as.data.frame(peaklist4[those,c("m/z_corr","int_corr","RT_corr","peak_ID")]),
-						rep(0,sum(those)), 		# HS IDs
-						rep(0,sum(those)), 		# series level
-						rep(0,sum(those)), 		# to ID
-						rep("none",sum(those)),	# m/z increment				
-						rep("none",sum(those)),	# RT increment					
-						rep(0,sum(those)),		# HS cluster	
-						rep("",sum(those)),		# Targets
-						rep("",sum(those))		# ISTDs						
->>>>>>> origin/master
 					)
 					names(homol_left) <- names(homol[["Peaks in homologue series"]])
-					homol[["Peaks in homologue series"]] <- rbind(homol[["Peaks in homologue series"]],homol_left)
-					ord_homol <- order(homol[["Peaks in homologue series"]][,"peak ID"])
+					homol[["Peaks in homologue series"]] <- rbind(homol[["Peaks in homologue series"]], homol_left)
+					ord_homol <- order(homol[["Peaks in homologue series"]][, "peak ID"])
 					homol[["Peaks in homologue series"]] <- homol[["Peaks in homologue series"]][ord_homol,]
 					# impute (2) - "Peaks per level"
 					find_peak <- match(seq(1,dim(homol[["Peaks in homologue series"]])[1],1), ord_homol)

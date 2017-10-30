@@ -223,33 +223,39 @@ get_all<-function(
 				for(k in 1:length(those)){
 					if(skip_peaks){ # del1 checked above				 	
 						del2<-profileList[["index_prof"]][those[k],"number_peaks_total"][[1]]
-						if(del2<min_peaks){next}						
+						if(del2 < min_peaks){next}						
 						that<-profileList[["peaks"]][profileList[["index_prof"]][those[k],"start_ID"]:profileList[["index_prof"]][those[k],"end_ID"],"sampleIDs"]
 						matched<-match(this,that)							
-						if(sum(!is.na(matched))<min_peaks){next}
-						int1<-((profileList[["peaks"]][profileList[["index_prof"]][prof_ID,"start_ID"]:profileList[["index_prof"]][prof_ID,"end_ID"],"intensity"])[!is.na(matched)])
-						int2<-((profileList[["peaks"]][profileList[["index_prof"]][those[k],"start_ID"]:profileList[["index_prof"]][those[k],"end_ID"],"intensity"])[matched[!is.na(matched)]])					
-						correl<-cor(int1,int2)
-						if(correl>=min_cor){
-							keep[k]<-TRUE
+						if(sum(!is.na(matched)) < min_peaks){next}
+						if(sum(!is.na(matched)) < 2){next} # no correlation possible	
+						int1 <- ((profileList[["peaks"]][profileList[["index_prof"]][prof_ID,"start_ID"]:profileList[["index_prof"]][prof_ID,"end_ID"],"intensity"])[!is.na(matched)])
+						int2 <- ((profileList[["peaks"]][profileList[["index_prof"]][those[k],"start_ID"]:profileList[["index_prof"]][those[k],"end_ID"],"intensity"])[matched[!is.na(matched)]])					
+						correl <- cor(int1, int2)
+						if(!is.na(correl)){
+							if(correl >= min_cor){
+								keep[k] <- TRUE
+							}
 						}
 					}else{
-						del2<-profileList[["index_prof"]][those[k],"number_peaks_total"][[1]]
-						if(del2<min_peaks){
-							keep[k]<-TRUE
+						del2 <- profileList[["index_prof"]][those[k],"number_peaks_total"][[1]]
+						if(del2 < min_peaks){
+							keep[k] <- TRUE
 							next
 						}								
-						that<-profileList[["peaks"]][profileList[["index_prof"]][those[k],"start_ID"]:profileList[["index_prof"]][those[k],"end_ID"],"sampleIDs"]
-						matched<-match(this,that)							
-						if(sum(!is.na(matched))<min_peaks){
-							keep[k]<-TRUE
+						that <- profileList[["peaks"]][profileList[["index_prof"]][those[k],"start_ID"]:profileList[["index_prof"]][those[k],"end_ID"],"sampleIDs"]
+						matched <- match(this,that)							
+						if(sum(!is.na(matched)) < min_peaks){
+							keep[k] <- TRUE
 							next
-						}								
+						}						
+						if(sum(!is.na(matched)) < 2) next #	no correlation possible				
 						int1<-((profileList[["peaks"]][profileList[["index_prof"]][prof_ID,"start_ID"]:profileList[["index_prof"]][prof_ID,"end_ID"],"intensity"])[!is.na(matched)])
 						int2<-((profileList[["peaks"]][profileList[["index_prof"]][those[k],"start_ID"]:profileList[["index_prof"]][those[k],"end_ID"],"intensity"])[matched[!is.na(matched)]])					
-						correl<-cor(int1,int2)
-						if(correl>=min_cor){
-							keep[k]<-TRUE
+						correl <- cor(int1, int2)
+						if(!is.na(correl)){						
+							if(correl >= min_cor){
+								keep[k]<-TRUE
+							}
 						}
 					}
 				}		

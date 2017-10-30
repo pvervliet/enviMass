@@ -2170,12 +2170,6 @@ if(logfile$version < 3.41){
 }
 
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> origin/master
 if(logfile$version < 3.411){
 
 	cat("\n Updating to version 3.411 ...")

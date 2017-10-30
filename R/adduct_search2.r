@@ -201,12 +201,12 @@ function(
 		}
 	}
 	for(i in 1:dim(adduct[["Peaks in adduct groups"]])[1]){
-		those<-as.numeric(strsplit(adduct[["Peaks in adduct groups"]][i,"peak IDs"],",")[[1]])	
-		adduct[["Peaks in adduct groups"]][i,"peak IDs"]<-paste0(as.character(peaklist[those,"peak_ID"]),collapse=",")
+		those <- as.numeric(strsplit(adduct[["Peaks in adduct groups"]][i, "peak IDs"],",")[[1]])	
+		adduct[["Peaks in adduct groups"]][i, "peak IDs"] <- paste0(as.character(peaklist[those, "peak_ID"]), collapse = ",")
 	}
 	for(i in 1:dim(adduct[["Pairs"]])[1]){
-		adduct[["Pairs"]][i,1]<-peaklist[adduct[["Pairs"]][i,1],"peak_ID"]
-		adduct[["Pairs"]][i,2]<-peaklist[adduct[["Pairs"]][i,2],"peak_ID"]
+		adduct[["Pairs"]][i,1] <- peaklist[adduct[["Pairs"]][i,1],"peak_ID"]
+		adduct[["Pairs"]][i,2] <- peaklist[adduct[["Pairs"]][i,2],"peak_ID"]
 	}
     ############################################################################
     cat("done.\n\n");

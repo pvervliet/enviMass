@@ -64,8 +64,8 @@ homol_search2_wrap <-function(
 	from<-0
 	for(i in 1:length(homol[["Homologue Series"]][,1])){
 		those <- as.numeric(strsplit(homol[["Homologue Series"]][i,2],",")[[1]])
-		those <- match(those,peaklist2[,"peak_ID"]) 
-		those <- those[order(peaklist2[those,1],decreasing=FALSE)] # by increasing mass!
+		these <- match(those, peaklist2[,"peak_ID"]) 
+		those <- those[order(peaklist2[these,1], decreasing = FALSE)] # by increasing mass!
 		for(j in 2:length(those)){
 			from <- (from+1)
 			if(from>at){
