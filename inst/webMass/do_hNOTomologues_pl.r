@@ -30,6 +30,10 @@
 			if(file.exists(file.path(logfile[[1]], "results", "componentization", "homologues", paste(i, sep = "_")))) file.remove(file.path(logfile[[1]], "results", "componentization", "homologues", paste(i, sep = "_")))
 			if(file.exists(file.path(logfile[[1]], "results", "componentization", "homologues", paste("full" , i, sep = "_")))) file.remove(file.path(logfile[[1]], "results", "componentization", "homologues", paste("full", i, sep = "_")))
 		}
+		for(i in for_IDs){
+			if(file.exists(file.path(logfile[[1]], "results", "componentization", "homologues", paste(i, sep = "_")))) file.remove(file.path(logfile[[1]], "results", "componentization", "homologues", paste(i, sep = "_")))
+			if(file.exists(file.path(logfile[[1]], "results", "componentization", "homologues", paste("full" ,i, sep = "_")))) file.remove(file.path(logfile[[1]], "results", "componentization", "homologues", paste("full", i, sep = "_")))
+		}
 		if(FALSE){ # for debugging - outside clusters
 			for(i in for_IDs) homol_search2_wrap(x = i, logfile) 
 		}

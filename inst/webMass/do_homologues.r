@@ -137,6 +137,7 @@
 				those <- is.na(match(peaklist4[,"peak_ID"], peaklist2[,"peak_ID"]))	
 				if(any(those)){
 					# impute (1) - "Peaks in homologue series"
+<<<<<<< HEAD
 					homol_left <- cbind(
 						as.data.frame(peaklist4[those, c("m/z_corr","int_corr","RT_corr","peak_ID")]),
 						rep(0, sum(those)), 		# HS IDs
@@ -147,6 +148,18 @@
 						rep(0, sum(those)),		# HS cluster	
 						rep("", sum(those)),		# Targets
 						rep("", sum(those))		# ISTDs						
+=======
+					homol_left<-cbind(
+						as.data.frame(peaklist4[those,c("m/z_corr","int_corr","RT_corr","peak_ID")]),
+						rep(0,sum(those)), 		# HS IDs
+						rep(0,sum(those)), 		# series level
+						rep(0,sum(those)), 		# to ID
+						rep("none",sum(those)),	# m/z increment				
+						rep("none",sum(those)),	# RT increment					
+						rep(0,sum(those)),		# HS cluster	
+						rep("",sum(those)),		# Targets
+						rep("",sum(those))		# ISTDs						
+>>>>>>> origin/master
 					)
 					names(homol_left) <- names(homol[["Peaks in homologue series"]])
 					homol[["Peaks in homologue series"]] <- rbind(homol[["Peaks in homologue series"]],homol_left)
