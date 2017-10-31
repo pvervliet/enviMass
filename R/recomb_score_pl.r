@@ -81,6 +81,10 @@ recomb_score_pl<-function(
 	at_results <- 1
 	for(k in 1:length(results)){
 
+		# order by increasing peak number #################################
+		results[[k]] <- results[[k]][
+			order(results[[k]][,1], decreasing = FALSE)
+		,,drop = FALSE]
 		# calculate score1 ################################################
 		rescale <- weighted.mean(
 			x = (pattern_compound[results[[k]][,1],2] / peaks[results[[k]][,2],2]),

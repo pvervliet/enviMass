@@ -552,7 +552,7 @@ observe({ ####################################################################
 		)
 		if(!length(use_comp)){stop("Report this issue for a debug on server_obs_screening.r #1b")}	
 		if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1b")}	
-		res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
+		res_pos_screen_sel <- res_pos_screen[use_comp][[1]]
 		which_where<-c();which_peaks<-c();sample_type<-c();score_1<-c();score_2<-c();delppm<-c();delRT<-c();delRT_min<-c();inte<-c();
 		with_peaks<-c();#with_file<-c();with_s<-c();
 		IDs<-as.numeric(measurements[,"ID"]) 
@@ -562,7 +562,7 @@ observe({ ####################################################################
 					for(j in 1:length(res_pos_screen_sel[[i]])){
 						which_where<-c(which_where,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),"ID"]);
 						sample_type<-c(sample_type,measurements[IDs==(res_pos_screen_sel[[i]][[j]][10]),"Type"]);
-						which_peaks<-c(which_peaks,paste(res_pos_screen_sel[[i]][[j]]$Peaks[,1],collapse=", "))
+						which_peaks<-c(which_peaks, paste(res_pos_screen_sel[[i]][[j]]$Peaks[,1],collapse=", "))
 						score_1<-c(score_1,round(res_pos_screen_sel[[i]][[j]]$score_1,digits=2));
 						score_2<-c(score_2,round(res_pos_screen_sel[[i]][[j]]$score_2,digits=2));
 						delppm<-c(delppm,paste(as.character(round(res_pos_screen_sel[[i]][[j]][[4]],digits=2)),collapse=", "));								
@@ -595,9 +595,9 @@ observe({ ####################################################################
 				}
 			}
 		}
-		tab_screening_selected_pos<<-as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,delRT_min,inte,with_peaks),
+		tab_screening_selected_pos <<- as.data.frame(cbind(which_where, sample_type, which_peaks, score_1, score_2, delppm, delRT, delRT_min, inte, with_peaks),
 				row.names = NULL,stringsAsFactors=FALSE)
-		output$Table_screening_selected_pos<-DT::renderDataTable({
+		output$Table_screening_selected_pos <- DT::renderDataTable({
 			DT::datatable(
 				tab_screening_selected_pos,
 				rownames = FALSE, 
@@ -618,33 +618,34 @@ observe({ ####################################################################
 				)
 			)				
 		}, server = TRUE)
-		isolate(ranges_screening$RTchrom_pos<-FALSE)
-		isolate(ranges_screening$intchrom_pos<-FALSE)	
-		isolate(refresh_screening$pos<-FALSE)
+		isolate(ranges_screening$RTchrom_pos <- FALSE)
+		isolate(ranges_screening$intchrom_pos <- FALSE)	
+		isolate(refresh_screening$pos <- FALSE)
 	}else{
-		output$Table_screening_selected_pos<-DT::renderDataTable({
-			DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No compound selected or adducts collapsed")
-		},server = FALSE)				
+		output$Table_screening_selected_pos <- DT::renderDataTable({
+			DT::datatable(as.data.frame(cbind("")), selection = 'single', rownames = FALSE, colnames = "No compound selected or adducts collapsed")
+		}, server = FALSE)				
 	}
 })
 observe({ #################################################################### 
 	cat("Line 312 ->")
-	row_sel<-input$Table_screening_selected_pos_rows_selected
+	row_sel <- input$Table_screening_selected_pos_rows_selected
 	refresh_screening$pos
-	if(isolate(init$a)=="TRUE"){
-        if((length(row_sel) | isolate(refresh_screening$pos)>0)){
-            if(row_sel>=1){
+	if(isolate(init$a) == "TRUE"){
+        if((length(row_sel) | isolate(refresh_screening$pos) > 0)){
+            if(row_sel >= 1){
             	cat("\n Table_screening_selected_pos_rows_selected")
-            	file_ID<-tab_screening_selected_pos[row_sel,1]
-				# load MSlist if missing
-	        	if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){
-	        		if(any(names(MSlist)=="File_ID")){
-	        			if(MSlist[["File_ID"]]!=as.character(file_ID)){ # File_ID does not match
-							load(file.path(logfile[[1]],"MSlist",as.character(file_ID)),envir=as.environment(".GlobalEnv")) 
+            	file_ID <- tab_screening_selected_pos[row_sel,1]
+		if(!is.na(file_ID)){
+			# load MSlist if missing
+	        	if(any(objects(envir=as.environment(".GlobalEnv")) == "MSlist")){
+	        		if(any(names(MSlist) == "File_ID")){
+	        			if(MSlist[["File_ID"]] != as.character(file_ID)){ # File_ID does not match
+							load(file.path(logfile[[1]], "MSlist", as.character(file_ID)), envir = as.environment(".GlobalEnv")) 
 	        			}
 	        		}else{ # available MSlist not with File_ID yet
 						load(file.path(logfile[[1]],"MSlist",as.character(file_ID)),envir=as.environment(".GlobalEnv"))  
-						MSlist[["File_ID"]]<-as.character(file_ID)
+						MSlist[["File_ID"]] <- as.character(file_ID)
 	        		}
 	        	}else{ # no MSlist in GlobalEnv
 					load(file.path(logfile[[1]],"MSlist",as.character(file_ID)),envir=as.environment(".GlobalEnv"))  
@@ -661,6 +662,7 @@ observe({ ####################################################################
 		              	chromat_full=(input$screening_chromat_pos_type)
 		            );
 		        },res=100)
+		}
             }
         }
     }
@@ -1582,19 +1584,20 @@ observe({ ####################################################################
         if((length(row_sel) | isolate(refresh_screening$neg)>0)){
             if(row_sel>=1){
             	cat("\n Table_screening_selected_neg_rows_selected")
-            	file_ID<-tab_screening_selected_neg[row_sel,1]
+            	file_ID <- tab_screening_selected_neg[row_sel,1]
+		if(!is.na(file_ID)){
 				# load MSlist if missing
-	        	if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){
-	        		if(any(names(MSlist)=="File_ID")){
-	        			if(MSlist[["File_ID"]]!=as.character(file_ID)){ # File_ID does not match
-							load(file.path(logfile[[1]],"MSlist",as.character(file_ID)),envir=as.environment(".GlobalEnv")) 
+	        	if(any(objects(envir = as.environment(".GlobalEnv")) == "MSlist")){
+	        		if(any(names(MSlist) == "File_ID")){
+	        			if(MSlist[["File_ID"]] != as.character(file_ID)){ # File_ID does not match
+							load(file.path(logfile[[1]], "MSlist", as.character(file_ID)), envir = as.environment(".GlobalEnv")) 
 	        			}
 	        		}else{ # available MSlist not with File_ID yet
-						load(file.path(logfile[[1]],"MSlist",as.character(file_ID)),envir=as.environment(".GlobalEnv"))  
-						MSlist[["File_ID"]]<-as.character(file_ID)
+						load(file.path(logfile[[1]], "MSlist", as.character(file_ID)), envir = as.environment(".GlobalEnv"))  
+						MSlist[["File_ID"]] <- as.character(file_ID)
 	        		}
 	        	}else{ # no MSlist in GlobalEnv
-					load(file.path(logfile[[1]],"MSlist",as.character(file_ID)),envir=as.environment(".GlobalEnv"))  
+					load(file.path(logfile[[1]], "MSlist", as.character(file_ID)), envir = as.environment(".GlobalEnv"))  
 	        	}
 		        output$screening_chromat_neg <- renderPlot({
 		            par(mar=c(4.5,4,.8,.8))
@@ -1608,6 +1611,7 @@ observe({ ####################################################################
 		              	chromat_full=(input$screening_chromat_neg_type)
 		            );
 		        },res=100)
+		}
             }
         }
     }

@@ -1536,12 +1536,12 @@
 					tags$p(align="justify","This tab plots the centroided data points and picked peaks for an individual file - please first specify the ID of this file. 
 					The ID associated with a file can be found in the second column of the files table in the Files tab."),											
 					div(style = widget_style3,numericInput("sel_meas_ID", "Type in file ID:", 0)),
+					textOutput('file_viewer_name'),
+					textOutput('file_viewer_type'),
+					textOutput('file_viewer_mode'),
+					HTML('<hr noshade="noshade" />'),	
 					conditionalPanel(			
-						condition = "input.sel_meas_ID != 0",	
-						textOutput('file_viewer_name'),
-						textOutput('file_viewer_type'),
-						textOutput('file_viewer_mode'),
-						HTML('<hr noshade="noshade" />'),				
+						condition = "(input.sel_meas_ID != 0) & (output.file_viewer_name != 'Invalid file ID')",							
 						bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_one",
 							bsCollapsePanel(title="All picked peaks & raw data", 
 								navbarPage("Settings:",

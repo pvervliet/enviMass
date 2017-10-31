@@ -165,7 +165,7 @@ if(length(targets$Formula[targets$Formula != "-"]) > 0){ # any IS formulas avail
 		if(targets[i,"RT_tolerance"] != "FALSE"){
 			delRT <- (as.numeric(targets[i,"RT_tolerance"]) * 60)
 		}else{
-			delRT <- as.numeric(logfile$parameters$IS_drt1)
+			delRT <- as.numeric(logfile$parameters$tar_drt1)
 		}		
 		with_mode <- targets[i,"ion_mode"]
 		use_for_recal <- as.logical(targets[i, "use_for_recalibration"])

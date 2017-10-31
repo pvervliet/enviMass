@@ -71,17 +71,17 @@
 		# restrict to latest files? ###################################################################		
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");		
 		maxID <- max(as.numeric(measurements[,"ID"]))
-		if(logfile$parameters$screen_IS_restrict == "TRUE"){
+		if(logfile$parameters$screen_target_restrict == "TRUE"){
 			measurements <- measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
 			measurements <- measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
 			starttime <- as.difftime(measurements[,"Time"]);
 			startdate <- as.Date(measurements[,"Date"], tz="GMT");
 			numstart <- (as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
-			if( length(numstart) > as.numeric(logfile$parameters$screen_IS_restrict_many) ){	
+			if( length(numstart) > as.numeric(logfile$parameters$screen_target_restrict_many) ){	
 				retain_sample <- rep(FALSE, maxID)			
 				retain_sample[
 					as.numeric(measurements[
-						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_IS_restrict_many)])
+						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_target_restrict_many)])
 					,"ID"])
 				] <- TRUE
 			}else{
@@ -371,17 +371,17 @@
 		# restrict to latest files? ###################################################################
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");		
 		maxID <- max(as.numeric(measurements[,"ID"]))
-		if(logfile$parameters$screen_IS_restrict == "TRUE"){
+		if(logfile$parameters$screen_target_restrict == "TRUE"){
 			measurements <- measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
 			measurements <- measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
 			starttime <- as.difftime(measurements[,"Time"]);
 			startdate <- as.Date(measurements[,"Date"], tz="GMT");
 			numstart <- (as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
-			if( length(numstart) > as.numeric(logfile$parameters$screen_IS_restrict_many) ){	
+			if( length(numstart) > as.numeric(logfile$parameters$screen_target_restrict_many) ){	
 				retain_sample <- rep(FALSE, maxID)			
 				retain_sample[
 					as.numeric(measurements[
-						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_IS_restrict_many)])
+						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_target_restrict_many)])
 					,"ID"])
 				] <- TRUE
 			}else{
