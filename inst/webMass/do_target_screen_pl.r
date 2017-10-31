@@ -1,11 +1,11 @@
 
 	########################################################################################################	
 	# clean ! ##############################################################################################
-	those<-list.files(file.path(logfile$project_folder,"results","screening"))
-	if(length(those)>0){
+	those <- list.files(file.path(logfile$project_folder,"results","screening"))
+	if(length(those) > 0){
 		for(i in 1:length(those)){
-			if(grepl("target",those[i])){ # distinguish from IS
-				file.remove(file.path(logfile$project_folder,"results","screening",those[i]))
+			if(grepl("target", those[i])){ # distinguish from IS
+				file.remove(file.path(logfile$project_folder, "results", "screening", those[i]))
 			}
 		}
 	}
@@ -59,6 +59,13 @@
 		pattern_RT<<-patternRT_pos_target;rm(patternRT_pos_target,envir=as.environment(".GlobalEnv"));
 		load(file=file.path(logfile[[1]],"results","patternDelRT_pos_target"),envir=as.environment(".GlobalEnv"));
 		pattern_delRT<<-patternDelRT_pos_target;rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"));
+
+		if(FALSE){ # check one compound/adduct only
+			use_only <- which(names(pattern) == "1162_M+H_none_none_none")
+			pattern <- pattern[use_only]
+			pattern_RT <- pattern_RT[use_only]
+			pattern_delRT <- pattern_delRT[use_only]
+		}
 		
 		mztol<-as.numeric(logfile$parameters$tar_dmz)				# m/z tolerance ...
 		ppm<-as.logical(as.character(logfile$parameters$tar_ppm))	# ... given in pppm?
@@ -72,17 +79,17 @@
 		# restrict to latest files? ###################################################################		
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");		
 		maxID <- max(as.numeric(measurements[,"ID"]))
-		if(logfile$parameters$screen_IS_restrict == "TRUE"){
+		if(logfile$parameters$screen_target_restrict == "TRUE"){
 			measurements <- measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
 			measurements <- measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
 			starttime <- as.difftime(measurements[,"Time"]);
 			startdate <- as.Date(measurements[,"Date"], tz="GMT");
 			numstart <- (as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
-			if( length(numstart) > as.numeric(logfile$parameters$screen_IS_restrict_many) ){	
+			if( length(numstart) > as.numeric(logfile$parameters$screen_target_restrict_many) ){	
 				retain_sample <- rep(FALSE, maxID)			
 				retain_sample[
 					as.numeric(measurements[
-						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_IS_restrict_many)])
+						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_target_restrict_many)])
 					,"ID"])
 				] <- TRUE
 			}else{
@@ -194,8 +201,9 @@
 				if(length(target_pos_screen_listed[[i]])>0){	
 					res_target_pos_screen[[i]]<-list()
 					for(m in 1:length(target_pos_screen_listed[[i]])){ # m - sample		
-						at_ID<-set_ID[profileList_pos[[4]]==colnames(target_pos_screen_listed[[i]][[m]])[1]]
 						if(length(target_pos_screen_listed[[i]][[m]])>0){
+							at_ID <- set_ID[profileList_pos[[4]]==colnames(target_pos_screen_listed[[i]][[m]])[1]]
+							#if(colnames(target_pos_screen_listed[[i]][[m]])[1] == "29")  stop()
 							if(do_LOD){							
 								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(target_pos_screen_listed[[i]][[m]])[1],sep=""))						
 								if(length(with_model)>0){						
@@ -207,19 +215,19 @@
 							}else{
 								use_cutint<-cutint
 							}							
-							combination_matches<-recomb_score_pl(
-								cent_peak_mat=target_pos_screen_listed[[i]][[m]],
-								pattern_compound=pattern[[i]],
+							combination_matches <- recomb_score_pl(
+								cent_peak_mat = target_pos_screen_listed[[i]][[m]],
+								pattern_compound = pattern[[i]],
 								#profileList = profileList_pos,
-								peaks=profileList_pos[["peaks"]],
-								LOD=use_cutint,
-								RT_tol_inside=RT_tol_inside,
-								int_tol=int_tol,
-								use_score_cut=use_score_cut,
-								score_cut=score_cut,
-								plot_it=FALSE,
-								verbose=FALSE,
-								RT_seperate=TRUE
+								peaks = profileList_pos[["peaks"]],
+								LOD = use_cutint,
+								RT_tol_inside = RT_tol_inside,
+								int_tol = int_tol,
+								use_score_cut = use_score_cut,
+								score_cut = score_cut,
+								plot_it = FALSE,
+								verbose = FALSE,
+								RT_seperate = TRUE
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(target_pos_screen_listed[[i]][[m]])[1]
@@ -380,17 +388,17 @@
 		# restrict to latest files? ###################################################################
 		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");		
 		maxID <- max(as.numeric(measurements[,"ID"]))
-		if(logfile$parameters$screen_IS_restrict == "TRUE"){
+		if(logfile$parameters$screen_target_restrict == "TRUE"){
 			measurements <- measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
 			measurements <- measurements[(measurements[,"Type"]=="sample" | measurements[,"Type"]=="blank" | measurements[,"Type"]=="spiked" ),,drop=FALSE]				
 			starttime <- as.difftime(measurements[,"Time"]);
 			startdate <- as.Date(measurements[,"Date"], tz="GMT");
 			numstart <- (as.numeric(startdate)+as.numeric(starttime/(24*60*60)))	
-			if( length(numstart) > as.numeric(logfile$parameters$screen_IS_restrict_many) ){	
+			if( length(numstart) > as.numeric(logfile$parameters$screen_target_restrict_many) ){	
 				retain_sample <- rep(FALSE, maxID)			
 				retain_sample[
 					as.numeric(measurements[
-						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_IS_restrict_many)])
+						(order(numstart,decreasing=TRUE)[1:as.numeric(logfile$parameters$screen_target_restrict_many)])
 					,"ID"])
 				] <- TRUE
 			}else{

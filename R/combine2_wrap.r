@@ -79,6 +79,7 @@ function(
 	# extend component table (1) - mark TARGET peaks #########################
 	# feasible via profileList_XXX_copy and links_peaks_pos
 	if( logfile$workflow[names(logfile$workflow)=="target_screen"] == "yes" ){
+		targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character")			
 		######################################################################
 		if(for_mode == "positive"){
 			if(exists("profileList_pos_copy")){rm("profileList_pos_copy")}	
@@ -154,7 +155,9 @@ function(
 						got_comp<-unique(collect_comp)
 						collect_all<-""
 						for(n in 1:length(got_comp)){
-							tar<-paste0(strsplit(got_comp[n],"_")[[1]][1:2],collapse="_")
+							tar <- strsplit(got_comp[n], "_")[[1]][1:2]
+							tar_name <- targets[targets[,"ID"] == tar[1], "Name"]
+							tar <- paste(tar_name, tar[2], sep = "_")
 							collect_all<-paste0(c(collect_all,
 								paste(tar,
 									paste0(unique(collect_peak[collect_comp==got_comp[n]]),collapse=","),
@@ -250,7 +253,9 @@ function(
 						got_comp<-unique(collect_comp)
 						collect_all<-""
 						for(n in 1:length(got_comp)){
-							tar<-paste0(strsplit(got_comp[n],"_")[[1]][1:2],collapse="_")
+							tar <- strsplit(got_comp[n], "_")[[1]][1:2]
+							tar_name <- targets[targets[,"ID"] == tar[1], "Name"]
+							tar <- paste(tar_name, tar[2], sep = "_")
 							collect_all<-paste0(c(collect_all,
 								paste(tar,
 									paste0(unique(collect_peak[collect_comp==got_comp[n]]),collapse=","),
@@ -274,6 +279,7 @@ function(
 	##########################################################################
 	# extend component table (2) - mark ISTD peaks ###########################
 	if(logfile$workflow[names(logfile$workflow)=="IS_screen"]=="yes"){
+		intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
 		######################################################################
 		if(for_mode=="positive"){
 			if(exists("profileList_pos_copy")){rm("profileList_pos_copy")}	
@@ -349,7 +355,9 @@ function(
 						got_comp<-unique(collect_comp)
 						collect_all<-""
 						for(n in 1:length(got_comp)){
-							tar<-paste0(strsplit(got_comp[n],"_")[[1]][1:2],collapse="_")
+							tar<-strsplit(got_comp[n],"_")[[1]][1:2]
+							tar_name<-intstand[intstand[,"ID"]==tar[1],"Name"]
+							tar<-paste(tar_name,tar[2],sep="_")
 							collect_all<-paste0(c(collect_all,
 								paste(tar,
 									paste0(unique(collect_peak[collect_comp==got_comp[n]]),collapse=","),
@@ -443,7 +451,9 @@ function(
 						got_comp<-unique(collect_comp)
 						collect_all<-""
 						for(n in 1:length(got_comp)){
-							tar<-paste0(strsplit(got_comp[n],"_")[[1]][1:2],collapse="_")
+							tar<-strsplit(got_comp[n],"_")[[1]][1:2]
+							tar_name<-intstand[intstand[,"ID"]==tar[1],"Name"]
+							tar<-paste(tar_name,tar[2],sep="_")
 							collect_all<-paste0(c(collect_all,
 								paste(tar,
 									paste0(unique(collect_peak[collect_comp==got_comp[n]]),collapse=","),

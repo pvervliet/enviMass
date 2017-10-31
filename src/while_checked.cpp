@@ -111,11 +111,11 @@ bool result_exists(
 
 	if(at_size == 0) return false;
 	int n;
-	NumericVector sub_vector;
+	NumericVector sub_vector, check_vector;
+	check_vector = check_nodes_sub(_,1);
 	for(n = 0; n < at_size; n++){ // requires above return false statement!
 		sub_vector = return_matrix_column(results_peaks[n], 1);
-		if(is_true(any(is_na(match(check_nodes_sub(_,1), sub_vector))))) return true;
-		//if(is_true(all(in(check_nodes_sub(_,1), sub_vector)))) return true;
+		if(is_false(any(is_na(match(check_vector, sub_vector))))) return true;
 	}
 	return false;
 }
@@ -189,6 +189,7 @@ List while_checked(
     if(verbose) Rprintf( " \n\n " );
 	results = resize(results, at_size);
     return results;
+
 }
 
 
