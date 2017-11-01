@@ -609,8 +609,26 @@ observe({
  
 ############################################################################## 
 # ADD MEASUREMENT ############################################################
-addmeasu<-reactive({
+file_to_load <- reactive({
 	input$Measadd_path
+	if(  (length(isolate(input$Measadd_path))) ){
+		if( file.exists(as.character(isolate(input$Measadd_path[[4]]))) ){
+			file_guessed <- enviMass:::file_guess(isolate(input$Measadd_path[[1]]))
+			updateTextInput(session, inputId = "Measadd_name", value = isolate(input$Measadd_path[[1]]) )
+			updateSelectInput(session, inputId = "Measadd_mode", selected = file_guessed$Mode)		
+			updateSelectInput(session, inputId = "Measadd_type", selected = file_guessed$Type)
+			return(paste("Selected file:", isolate(input$Measadd_path[[1]])))
+		}else{
+			return("File disapperead?")		
+		}
+	}else{
+		return("No file selected yet or invalid file path")
+	}
+})
+output$file_to_load <- renderText(paste(file_to_load()))  
+
+addmeasu <- reactive({
+	input$Load_file
 	if(  (length(isolate(input$Measadd_path))) ){
 		if( file.exists(as.character(isolate(input$Measadd_path[[4]]))) ){
 			if(
@@ -922,7 +940,7 @@ addmeasu<-reactive({
     } #ok
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_Add.r!")}
 }) #ok
-output$had_meas_added<-renderText(paste(addmeasu()))  
+output$had_meas_added <- renderText(paste(addmeasu()))  
 ##############################################################################
   
 ############################################################################## 
@@ -1683,29 +1701,31 @@ observe({
 impfolder<-reactive({
 	input$Import_file_folder
 	if(isolate(input$Import_file_folder)){
-		file_in<<-as.character(isolate(input$import_file_folder))
-		getfiles<<-list.files(path=file_in)
+		file_in <<- as.character(isolate(input$import_file_folder))
+		getfiles <<- list.files(path=file_in)
 		if(length(getfiles)>0){
 			cat("\nStarting upload ...");
 			many<-0;					
 			for(i in 1:length(getfiles)){
-				filepath<-file.path(file_in,getfiles[i])
-				file_ending<-enviMass::filetype(getfiles[i],check=TRUE)
+				filepath <- file.path(file_in, getfiles[i])
+				file_ending <- enviMass::filetype(getfiles[i], check=TRUE)
 				if(
 					file.exists(filepath) & file_ending # in case of modifications meanwhile
 				){
 					cat(paste("\n   processing file # ",i,sep=""));
-					file_ending<-enviMass::filetype(getfiles[i],check=FALSE)
+					file_ending <- enviMass::filetype(getfiles[i], check = FALSE)
 					measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 					nameit<-names(measurements1);
 					measurements1<-measurements1[measurements1[,1]!="-",,drop=FALSE]		
 					if(!isolate(input$Import_file_folder_overwrite)){ # skip if file of same name exists in project?
-						if(any(measurements1[,"Name"]==getfiles[i])){
+						if(any(measurements1[,"Name"] == getfiles[i])){
 							cat(" - skipped.");
 							output$dowhat<-renderText("File import - file skipped.");
 							next;
 						}
 					}
+					# guess file properties
+					file_guessed <- enviMass:::file_guess(getfiles[i])
 					# define minimum available date
 					if(length(measurements1[,"ID"])==0){
 						at_date<<-as.character(isolate(input$Measadd_date))
@@ -1725,17 +1745,17 @@ impfolder<-reactive({
 								mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
 								removeMetaData = FALSE,verbose = FALSE)
 							ioniz<-mz1[[1]]$metaData$polarity											
-							with_mode<-"unknown"
+							with_mode <- "unknown"
 							if(ioniz=="+"){
-								with_mode<-"positive"
+								with_mode <- "positive"
 							}
 							if(ioniz=="-"){
-								with_mode<-"negative"
+								with_mode <- "negative"
 							}							
-							measurements2<-c(
+							measurements2 <- c(
 								newID,
 								getfiles[i], # name
-								"sample",
+								file_guessed$Type,
 								with_mode,
 								"FALSE", # place
 								at_date, # incremented in order of upload
@@ -1757,14 +1777,14 @@ impfolder<-reactive({
 							rm(measurements1,measurements2,measurements3);
 							#############################################################################			
 							measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-							output$measurements<<-DT::renderDataTable(
+							output$measurements <<- DT::renderDataTable(
 								measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 							);
-							save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
-							output$dowhat<-renderText("Files copied");
+							save(logfile, file = file.path(as.character(logfile[[1]]),"logfile.emp"));      
+							output$dowhat <- renderText("Files copied");
 							cat(" - file copied")
 							#############################################################################
-							many<-(many+1)
+							many <- (many+1)
 						}else{
 							output$dowhat<-renderText("File corrupted? - copying from folder failed!");
 							cat("File corrupted? - copying from folder failed!")
@@ -1773,32 +1793,32 @@ impfolder<-reactive({
 					}else{ # ... then its a .raw file		
 						if( file.exists(file.path(logfile$PW)) ){
 							file.copy(
-								from=filepath,
-								to=file.path(logfile[[1]],"files",paste(newID,".raw",sep="")),
-								overwrite=TRUE)			
+								from = filepath,
+								to = file.path(logfile[[1]], "files", paste(newID, ".raw", sep = "")),
+								overwrite = TRUE)			
 							PWfile(
-								infile=file.path(logfile[[1]],"files",paste(newID,".raw",sep="")),
+								infile = file.path(logfile[[1]], "files", paste(newID, ".raw", sep = "")),
 								file.path(logfile[[1]],"files"),
 								as.character(isolate(input$PWpath)),
-								notintern=FALSE,
-								use_format="mzXML");     				  
-							file.remove(file.path(logfile[[1]],"files",paste(newID,".raw",sep="")))
-							if( file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) ){ # copy completed and conversion ok?			
-								mz1<-readMzXmlData::readMzXmlFile(
-									mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
+								notintern = FALSE,
+								use_format = "mzXML");     				  
+							file.remove(file.path(logfile[[1]], "files", paste(newID, ".raw", sep = "")))
+							if( file.exists(file.path(logfile[[1]], "files",paste(newID, ".mzXML", sep = ""))) ){ # copy completed and conversion ok?			
+								mz1 <- readMzXmlData::readMzXmlFile(
+									mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep = "")),
 									removeMetaData = FALSE,verbose = FALSE)
-								ioniz<-mz1[[1]]$metaData$polarity											
-								with_mode<-"unknown"
-								if(ioniz=="+"){
-									with_mode<-"positive"
+								ioniz <- mz1[[1]]$metaData$polarity											
+								with_mode <- "unknown"
+								if(ioniz == "+"){
+									with_mode <- "positive"
 								}
 								if(ioniz=="-"){
-									with_mode<-"negative"
+									with_mode <- "negative"
 								}							
-								measurements2<-c(
+								measurements2 <- c(
 									newID,
 									getfiles[i], # name
-									"sample",
+									file_guessed$Type,
 									with_mode,
 									"FALSE", # place
 									at_date, # incremented in order of upload
@@ -1812,44 +1832,44 @@ impfolder<-reactive({
 									as.character("12:00:00"),
 									"FALSE","FALSE","FALSE","FALSE","FALSE","FALSE","FALSE"								
 								)	
-								measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
-								names(measurements3)<-nameit;
-								measurements3[,"Date"]<-enviMass::convDate(measurements3[,"Date"]);
-								measurements3[,"date_end"]<-enviMass::convDate(measurements3[,"date_end"]);
-								write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-								rm(measurements1,measurements2,measurements3);
+								measurements3 <- rbind(measurements2,measurements1,stringsAsFactors=FALSE);
+								names(measurements3) <- nameit;
+								measurements3[,"Date"] <- enviMass::convDate(measurements3[,"Date"]);
+								measurements3[,"date_end"] <- enviMass::convDate(measurements3[,"date_end"]);
+								write.csv(measurements3, file = file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+								rm(measurements1, measurements2, measurements3);
 								#############################################################################			
-								measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-								output$measurements<<-DT::renderDataTable(
+								measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+								output$measurements <<- DT::renderDataTable(
 									measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 								);
-								save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
-								output$dowhat<-renderText("Files copied");
+								save(logfile,file = file.path(as.character(logfile[[1]]),"logfile.emp"));      
+								output$dowhat <- renderText("Files copied");
 								cat(" - file copied")
 								#############################################################################
-								many<-(many+1)
+								many <- (many + 1)
 							}else{
-								output$dowhat<-renderText("File corrupted? - copying from folder failed!");
+								output$dowhat <- renderText("File corrupted? - copying from folder failed!");
 								cat("File corrupted? - copying from folder failed!")
 								return("File corrupted? - copying from folder failed!")					
 							}
 						}else{
-							output$dowhat<-renderText(".RAW-file: path to PW MSConvert.exe invalid. Please correct in tabs Settings/General!");
+							output$dowhat <- renderText(".RAW-file: path to PW MSConvert.exe invalid. Please correct in tabs Settings/General!");
 							cat(".RAW-file: path to PW MSConvert.exe invalid. Please correct in tabs Settings/General!")
 							return(".RAW-file: path to PW MSConvert.exe invalid. Please correct in tabs Settings/General!")
 						}	
 					}
 				}
 			}
-			if(many>0){
-				enviMass::workflow_set(down="peakpicking",single_file=TRUE) 
-				logfile$summary[1,2]<<-"TRUE"
-				output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
-				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-				output$dowhat<-renderText(paste(many,"files imported"))
-				cat(paste("\n",many,"files imported"))
+			if(many > 0){
+				enviMass::workflow_set(down = "peakpicking", single_file = TRUE) 
+				logfile$summary[1,2] <<- "TRUE"
+				output$summa_html <<- renderText(enviMass::summary_html(logfile$summary));
+				save(logfile, file = file.path(as.character(logfile[[1]]), "logfile.emp"));
+				output$dowhat <- renderText(paste(many, "files imported"))
+				cat(paste("\n", many, "files imported"))
 				enviMass::reset_selections(session)
-				return(paste(many,"files imported"))
+				return(paste(many, "files imported"))
 			}else{
 				cat("\nNo files imported")
 				return(paste("No files imported"))			
