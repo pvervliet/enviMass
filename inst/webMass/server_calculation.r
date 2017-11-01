@@ -123,7 +123,7 @@ maincalc <- reactive({
 			write.table(calTim, file = file.path(as.character(logfile[[1]]), "exports", "calTim"))
 			if(class(try_flow) == "try-error"){
 				do_flow <<- 1000
-				try_flow_message <- paste0("Workflow problem encoutered at project node ", at_node, ". Revise settings or report the problem. Details: ", try_flow[1]);
+				try_flow_message <- paste0("Workflow problem encountered at project node ", at_node, ". Revise settings or report the problem. Details: ", try_flow[1]);
 				shinytoastr::toastr_warning(try_flow_message, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
 				if( (logfile$parameters$parallel == "TRUE") & (any(objects() == "clus")) ){
 					cat("\n Closing worker sessions ... ")

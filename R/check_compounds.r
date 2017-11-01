@@ -51,12 +51,12 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 		if(any(!charmatch(intstand_check[intstand_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
 			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="positive","main_adduct"][!charmatch(intstand_check[intstand_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("IS main_adduct (column 6, positive ion_mode): wrong main_adduct:",wrongadduct,". Pleas revise!")
+			say<-paste("IS main_adduct (column 6, positive ion_mode): wrong main_adduct:",wrongadduct,". Please revise!")
 		}
 		if(any(!charmatch(intstand_check[intstand_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
 			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="negative","main_adduct"][!charmatch(intstand_check[intstand_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("IS main_adduct (column 6, negative ion_mode): wrong main_adduct:",wrongadduct,". Pleas revise!")
+			say<-paste("IS main_adduct (column 6, negative ion_mode): wrong main_adduct:",wrongadduct,". Please revise!")
 		}
 		# ionization mode correct? ################################################
 		if(any(!charmatch(intstand_check[,"ion_mode"],c("positive","negative"),nomatch=FALSE))){
@@ -103,12 +103,12 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 		if(any(!charmatch(intstand_check[intstand_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
 			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="positive","Quant_adduct"][!charmatch(intstand_check[intstand_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("IS main_adduct (column 19, positive ion_mode): wrong Quant_adduct:",wrongadduct,". Pleas revise!")
+			say<-paste("IS main_adduct (column 19, positive ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
 		}
 		if(any(!charmatch(intstand_check[intstand_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
 			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="negative","Quant_adduct"][!charmatch(intstand_check[intstand_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("IS main_adduct (column 19, negative ion_mode): wrong Quant_adduct:",wrongadduct,". Pleas revise!")
+			say<-paste("IS main_adduct (column 19, negative ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
 		}
 		# check Quant_peak ########################################################
 		got<-which(is.na(as.numeric(intstand_check[intstand_check[,"Quant_peak"]!="FALSE","Quant_peak"])))
@@ -183,12 +183,12 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 		if(any(!charmatch(targets_check[targets_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
 			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="positive","main_adduct"][!charmatch(targets_check[targets_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("target main_adduct (column 7, positive ion_mode): wrong main_adduct:",wrongadduct,". Pleas revise!")
+			say<-paste("target main_adduct (column 7, positive ion_mode): wrong main_adduct:",wrongadduct,". Please revise!")
 		}
 		if(any(!charmatch(targets_check[targets_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
 			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="negative","main_adduct"][!charmatch(targets_check[targets_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("target main_adduct (column 7, negative ion_mode): wrong main_adduct:",wrongadduct,". Pleas revise!")
+			say<-paste("target main_adduct (column 7, negative ion_mode): wrong main_adduct:",wrongadduct,". Please revise!")
 		}
 		# ionization mode correct? ################################################
 		if(any(!charmatch(targets_check[,"ion_mode"],c("positive","negative"),nomatch=FALSE))){
@@ -225,12 +225,12 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 		if(any(!charmatch(targets_check[targets_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
 			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="positive","Quant_adduct"][!charmatch(targets_check[targets_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("target main_adduct (column 20, positive ion_mode): wrong Quant_adduct:",wrongadduct,". Pleas revise!")
+			say<-paste("target main_adduct (column 20, positive ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
 		}
 		if(any(!charmatch(targets_check[targets_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
 			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="negative","Quant_adduct"][!charmatch(targets_check[targets_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("target main_adduct (column 20, negative ion_mode): wrong Quant_adduct:",wrongadduct,". Pleas revise!")
+			say<-paste("target main_adduct (column 20, negative ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
 		}
 		# check Quant_peak ########################################################
 		got<-which(is.na(as.numeric(targets_check[targets_check[,"Quant_peak"]!="FALSE","Quant_peak"])))

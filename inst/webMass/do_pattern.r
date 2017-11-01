@@ -60,7 +60,7 @@ logfile$parameters$parallel # to be oserved ...
 									with_add<-c(logfile[["adducts_pos"]])
 									takeall<-TRUE
 								}else{ # with main adduct?
-									with_add<-c(intstand[i,"main_adduct"],logfile[["adducts_pos"]])
+									with_add<-c(intstand[i,"main_adduct"], logfile[["adducts_pos"]])
 									with_add<-unique(with_add)
 									takeall<-FALSE
 								}

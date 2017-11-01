@@ -13,8 +13,19 @@
 				bsCollapse(multiple = FALSE, open = "files_open", id = "files",
 					# ADD FILE #################################################
 					bsCollapsePanel("Add LC-MS file", 		
-						helpText("To add a new file.mzXML, first set its specifications below and upload it."),
+						helpText("To add a new file.mzXML to your project, first browse to its folder location. Based on the filename, a guess for the file type and its ionization mode is made. 
+							Then specify/check its properties and finally press the load button."),
+# > BAUSTELLE						
 						HTML('<hr noshade="noshade" />'),
+						fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
+						bsPopover("Measadd_path", 
+								title = "WARNING",
+								content = "Files must be centroided. If reload fails, press cancel in the file upload window first", 
+								placement = "right", trigger = "hover"),
+						textOutput("file_to_load"),
+						HTML('<hr noshade="noshade" />'),
+						HTML('<h1 align = "left"> &#x21e9; </h1> '),
+# > BAUSTELLE							
 						fluidRow(
 							column(width = 5, textInput("Measadd_name", "Name:", value = "File XY")),
 							column(width = 5, selectInput("Measadd_type", "Type:", choices = c("sample", "blank", "calibration", "spiked"))),
@@ -62,16 +73,12 @@
 							)
 						),						
 						HTML('<hr noshade="noshade" />'),
-						div(style = widget_style,
-							fileInput("Measadd_path", "Upload centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
-							bsPopover("Measadd_path", 
-								title = "WARNING",
-								content = "Files must be centroided. Check Package enviPick whether peaks can be picked properly from your files. Tested with Orbitrap files only.
-								If reload fails, press cancel in the file upload window first", 
-								placement = "right", trigger = "hover"),
-							textOutput("had_meas_added")		
-						)
-					,style="success"),
+# < BAUSTELLE	
+						HTML('<h1 align="left"> &#x21e9; </h1> '),
+						bsButton("Load_file", "Load file into project", style = "success"),
+						textOutput("had_meas_added")
+# > BAUSTELLE	
+					, style = "success"),
 					# DELETE FILE ##################################################
 					bsCollapsePanel("Delete LC-MS file", 		
 						tags$h5("Delete file by its unique ID from the below file table"),
@@ -160,7 +167,7 @@
 					,style="success"),		
 					# BATCH UPLOAD ##################################################
 					bsCollapsePanel("Batch upload from folder", 	
-						tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be modified above. 
+						tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be change in the above file modification section. 
 						File dates are set in the sequence of files provided in the folder."),	
 						textInput("import_file_folder", "Folder path:", value = "C:\\...\\folder"),
 						bsPopover("import_file_folder", 
@@ -176,6 +183,7 @@
 						HTML('<hr noshade="noshade" />'),
 						textOutput("had_import_folder")						
 					,style="success"),
+					# IMPORT from other project ######################################
 					bsCollapsePanel("Import files from another project", 		
 						tags$h5("Select project folder to import files from:"),
 						textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
@@ -192,6 +200,7 @@
 						HTML('<hr noshade="noshade" />'),
 						textOutput("had_import_project")	
 					,style="info"),
+					# File overview ##################################################
 					bsCollapsePanel("File overview", 
 						helpText("The below plot indicates available files as dots at their respective date and time, listed over the different file categories 
 						and seperately for each of the two ion modes."),
