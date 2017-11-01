@@ -92,6 +92,51 @@ check_project<-function(
 	say1 <- enviMass::check_compounds(intstand_check, targets_check, isotopes, adducts, logfile, write_tables = TRUE)
 	if(say1 != "Project consistent"){say <- say1}
 	if(any(ls() == "logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}		
+	# adducts available? #########################################################
+	check_adducts_pos <- logfile[["adducts_pos"]]
+	check_adducts_pos <- check_adducts_pos[check_adducts_pos != "FALSE"]
+	if(length(check_adducts_pos)){	
+		found_add <- match(check_adducts_pos, adducts[adducts[,"Ion_mode"] == "positive", "Name"])
+		if(any(is.na(found_add))){
+			say <- paste("Invalid screening adducts found for positive mode, i.e., this/these saved adducts are not present in the Settings -> Screening adduct table: \n",
+						paste(check_adducts_pos[is.na(found_add)], collapse = ", "),
+						" \nEither provide a valid adduct table containing this adduct or select new adducts in the Screening Settings and press Apply",
+						sep = "")
+		}
+	}
+	check_adducts_neg <- logfile[["adducts_neg"]]
+	check_adducts_neg <- check_adducts_neg[check_adducts_neg != "FALSE"]
+	if(length(check_adducts_neg)){	
+		found_add <- match(check_adducts_neg, adducts[adducts[,"Ion_mode"] == "negative", "Name"])
+		if(any(is.na(found_add))){
+			say <- paste("Invalid screening adducts found for negative mode, i.e., this/these saved adducts are not present in the Settings -> Screening adduct table: \n",
+						paste(check_adducts_pos[is.na(found_add)], collapse = ", "),
+						" \nEither provide a valid adduct table containing this adduct or select new adducts in the Screening Settings and press Apply",
+						sep = "")
+		}
+	}
+	check_adducts_pos <- logfile[["adducts_pos_group"]]
+	check_adducts_pos <- check_adducts_pos[check_adducts_pos != "FALSE"]
+	if(length(check_adducts_pos)){	
+		found_add <- match(check_adducts_pos, adducts[adducts[,"Ion_mode"] == "positive", "Name"])
+		if(any(is.na(found_add))){
+			say <- paste("Invalid screening adducts found for positive mode, i.e., this/these saved adducts are not present in the Settings -> Screening adduct table: \n",
+						paste(check_adducts_pos[is.na(found_add)], collapse = ", "),
+						" \nEither provide a valid adduct table containing this adduct or select new adducts in the Screening Settings and press Apply",
+						sep = "")
+		}
+	}
+	check_adducts_neg <- logfile[["adducts_neg_group"]]
+	check_adducts_neg <- check_adducts_neg[check_adducts_neg != "FALSE"]
+	if(length(check_adducts_neg)){	
+		found_add <- match(check_adducts_neg, adducts[adducts[,"Ion_mode"] == "negative", "Name"])
+		if(any(is.na(found_add))){
+			say <- paste("Invalid screening adducts found for negative mode, i.e., this/these saved adducts are not present in the Settings -> Screening adduct table: \n",
+						paste(check_adducts_pos[is.na(found_add)], collapse = ", "),
+						" \nEither provide a valid adduct table containing this adduct or select new adducts in the Screening Settings and press Apply",
+						sep = "")
+		}
+	}
 	# enough compounds for recalibration available? ##############################
 	if(logfile$workflow[names(logfile$workflow) == "recal"] == "yes"){
 		# check for positive mode

@@ -167,15 +167,14 @@ observe({
 			adducts,
 			logfile
 		)
-		if(say=="Project consistent"){
-			write.table(IS_mod,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
-			enviMass::workflow_set(logfile,down="pattern")
-			output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
-			output$dowhat<-renderText("Modified an IS entry");
-		}else{
+		write.table(IS_mod,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+		enviMass::workflow_set(logfile,down="pattern")
+		output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
+		output$dowhat<-renderText("Modified an IS entry");
+		if(say != "Project consistent"){
 			showModal(modalDialog(
-				title = "Modification could not be saved.",
-				paste("Reason: ",say,sep=""),
+				title = "Modification could be saved, but with the following issue: ",
+				paste(say,sep=""),
 				easyClose = TRUE,footer = NULL
 			 ))		
 		}
@@ -463,23 +462,22 @@ observe({
 			target_mod<-rbind(target_mod,new_target)
 		}
 		# check before saving ...
-		IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character")
-		say<-enviMass::check_compounds(
+		IS <- read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character")
+		say <- enviMass::check_compounds(
 			intstand_check=IS,
 			targets=target_mod,
 			isotopes,
 			adducts,
 			logfile
 		)
-		if(say=="Project consistent"){
-			write.table(target_mod,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
-			enviMass::workflow_set(logfile,down="pattern")
-			output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
-			output$dowhat<-renderText("Modified a target entry");
-		}else{
+		write.table(target_mod,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+		enviMass::workflow_set(logfile,down="pattern")
+		output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
+		output$dowhat<-renderText("Modified a target entry");
+		if(say!="Project consistent"){
 			showModal(modalDialog(
-				title = "Modification could not be saved.",
-				paste("Reason: ",say,sep=""),
+				title = "Modification for target compound saved, but with the following issue: ",
+				paste(say,sep=""),
 				easyClose = TRUE,footer = NULL
 			 ))		
 		}
