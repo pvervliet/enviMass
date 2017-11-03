@@ -148,7 +148,7 @@ List while_checked(
 			}
             // contained in previous combinations?
             if(m > 0){
-                if(result_exists(check_nodes[m], check_nodes, m - 1)) continue;
+                if(result_exists(check_nodes[m], check_nodes, m)) continue;
             }
 			// < complete contained section!
             if(verbose) Rprintf( " . " );
