@@ -102,7 +102,6 @@ NumericVector return_matrix_column(
 	return x(_,col_num);
 }
 
-// [[Rcpp::export]]
 bool result_exists(
 	NumericMatrix check_nodes_sub,
 	List results_peaks,
@@ -136,14 +135,21 @@ List while_checked(
 	List new_nodes(list_size_new_nodes); // variable size
 
 	while(checked){
+        Rcpp::checkUserInterrupt();
         if(verbose) Rprintf( "\n NEW - " );
 		at_new_nodes = 0;
 		checked = false;
 		check_nodes_size = check_nodes.size();
 		for(m = 0; m < check_nodes_size; m++){
             if(verbose) Rprintf( " * " );
-			// > complete contained section!
-			if(result_exists(check_nodes[m], results_peaks, at_size)) continue;
+			// contained in results?
+			if(at_size > 0){
+                if(result_exists(check_nodes[m], results_peaks, at_size)) continue;
+			}
+            // contained in previous combinations?
+            if(m > 0){
+                if(result_exists(check_nodes[m], check_nodes, m - 1)) continue;
+            }
 			// < complete contained section!
             if(verbose) Rprintf( " . " );
 			// check: peak combination is plausible?
