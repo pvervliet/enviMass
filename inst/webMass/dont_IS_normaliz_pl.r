@@ -24,6 +24,28 @@ if(any(objects()=="links_profiles_neg")){rm(links_profiles_neg)}
 ########################################################################################
 
 ########################################################################################
+output$int_norm_ISTD_pos_median <- renderPlot({ 
+	plot.new()
+})
+output$int_norm_ISTD_pos_counts <- renderPlot({ 
+	plot.new()
+})					
+output$int_norm_ISTD_neg_median <- renderPlot({ 
+	plot.new()
+})
+output$int_norm_ISTD_neg_counts <- renderPlot({ 
+	plot.new()
+})	
+if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"))){
+	file.remove(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos"))
+}
+if(file.exists(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg"))){
+	file.remove(file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_neg"))
+}
+########################################################################################
+
+
+########################################################################################
 # on POSITIVE profiles #################################################################
 if(
 	file.exists(file.path(logfile[[1]],"results","profileList_pos"))  &
@@ -359,43 +381,4 @@ if(
 ########################################################################################
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		path=file.path(logfile[[1]],"pics","profnorm_pos")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-			dev.off()
-		    expr30p<-list(src=path)
-			output$profnorm_pos<-renderImage(expr30p, deleteFile = FALSE)		
-		path=file.path(logfile[[1]],"pics","profcount_pos")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-			dev.off()
-		    expr31p<-list(src=path)
-			output$profcount_pos<-renderImage(expr31p, deleteFile = FALSE)
-		path=file.path(logfile[[1]],"pics","profnorm_neg")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(0.5,0.5,"nothing selected \n or not available",cex=1)
-			dev.off()
-		    expr30n<-list(src=path)
-			output$profnorm_neg<-renderImage(expr30n, deleteFile = FALSE)		
-		path=file.path(logfile[[1]],"pics","profcount_neg")
-			png(filename = path, bg = "white")
-			plot.new();plot.window(xlim=c(1,1),ylim=c(1,1));#box();text(1,1,label="not available",cex=1.5,col="darkred")
-			dev.off()
-		    expr31n<-list(src=path)
-			output$profcount_neg<-renderImage(expr31n, deleteFile = FALSE)		
 

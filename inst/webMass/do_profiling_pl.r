@@ -61,7 +61,7 @@
 			fun = startprofiles_pl, 
 			logfile = logfile,
 			frac = FALSE,
-			blind_omit=as.logical(logfile$parameters$blind_omit)
+			blind_omit = as.logical(logfile$parameters$blind_omit)
 		)
 		clusterEvalQ(cl = clus,{rm(list=ls()); NULL})
 		profileList_pos[["peaks"]] <- do.call(rbind, cluster_results)

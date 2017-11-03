@@ -1247,8 +1247,9 @@ observe({
     if( (isolate(init$a)=="TRUE") &  
 		(!is.na(isolate(input$profID))) & 
 		(isolate(input$profID)!=0) & 
-		any(objects(envir=as.environment(".GlobalEnv"))=="profileList") & 
-		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")
+		any(objects(envir=as.environment(".GlobalEnv")) == "profileList") & 
+		any(objects(envir=as.environment(".GlobalEnv")) == "profpeaks2") &
+		any(objects(envir=as.environment(".GlobalEnv")) == "links_profiles") 		
 	){
 		cat("\n plotting profile _2")
 		if(any(objects()=="profileList")){stop("illegal profileList found, #5");}
@@ -1291,7 +1292,7 @@ observe({
 			plot_similar_profiles<-FALSE
 			if(at_entry!=0){
 				if(length(links_profiles[[at_entry]]$group)>0){
-					prof_plot_IDs<<-c(prof_plot_IDs,links_profiles[[at_entry]]$group)
+					prof_plot_IDs <<- c(prof_plot_IDs,links_profiles[[at_entry]]$group)
 					prof_plot_IDs<<-unique(prof_plot_IDs)
 					plot_similar_profiles<-TRUE
 				}

@@ -77,10 +77,6 @@ extractProfiles_replicates <- function(peaks, in_order, dmass, ppm, dret, pregro
     .Call('_enviMass_extractProfiles_replicates', PACKAGE = 'enviMass', peaks, in_order, dmass, ppm, dret, pregroup)
 }
 
-result_exists <- function(check_nodes_sub, results_peaks, at_size) {
-    .Call('_enviMass_result_exists', PACKAGE = 'enviMass', check_nodes_sub, results_peaks, at_size)
-}
-
 while_checked <- function(check_nodes, pattern_compound, peaks, RT_tol_inside, int_tol) {
     .Call('_enviMass_while_checked', PACKAGE = 'enviMass', check_nodes, pattern_compound, peaks, RT_tol_inside, int_tol)
 }

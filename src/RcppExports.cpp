@@ -297,19 +297,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// result_exists
-bool result_exists(NumericMatrix check_nodes_sub, List results_peaks, int at_size);
-RcppExport SEXP _enviMass_result_exists(SEXP check_nodes_subSEXP, SEXP results_peaksSEXP, SEXP at_sizeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type check_nodes_sub(check_nodes_subSEXP);
-    Rcpp::traits::input_parameter< List >::type results_peaks(results_peaksSEXP);
-    Rcpp::traits::input_parameter< int >::type at_size(at_sizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(result_exists(check_nodes_sub, results_peaks, at_size));
-    return rcpp_result_gen;
-END_RCPP
-}
 // while_checked
 List while_checked(List check_nodes, NumericMatrix pattern_compound, NumericMatrix peaks, double RT_tol_inside, double int_tol);
 RcppExport SEXP _enviMass_while_checked(SEXP check_nodesSEXP, SEXP pattern_compoundSEXP, SEXP peaksSEXP, SEXP RT_tol_insideSEXP, SEXP int_tolSEXP) {
@@ -346,7 +333,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_enviMass_binmz_prof", (DL_FUNC) &_enviMass_binmz_prof, 4},
     {"_enviMass_extractProfiles", (DL_FUNC) &_enviMass_extractProfiles, 5},
     {"_enviMass_extractProfiles_replicates", (DL_FUNC) &_enviMass_extractProfiles_replicates, 6},
-    {"_enviMass_result_exists", (DL_FUNC) &_enviMass_result_exists, 3},
     {"_enviMass_while_checked", (DL_FUNC) &_enviMass_while_checked, 5},
     {NULL, NULL, 0}
 };
