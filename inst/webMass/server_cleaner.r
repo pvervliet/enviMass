@@ -1,5 +1,7 @@
 	###############################################################################	
 	those_objects <- c(
+		"target_table",
+		"ISTD_table",
 		"tab_screening_selected_pos",
 		"tab_screening_selected_neg",		
 		"all_peaks",

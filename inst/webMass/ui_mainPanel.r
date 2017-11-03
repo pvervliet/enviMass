@@ -14,8 +14,7 @@
 					# ADD FILE #################################################
 					bsCollapsePanel("Add LC-MS file", 		
 						helpText("To add a new file.mzXML to your project, first browse to its folder location. Based on the filename, a guess for the file type and its ionization mode is made. 
-							Then specify/check its properties and finally press the load button."),
-# > BAUSTELLE						
+							Then specify/check its properties and finally press the load button."),		
 						HTML('<hr noshade="noshade" />'),
 						fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
 						bsPopover("Measadd_path", 
@@ -24,8 +23,7 @@
 								placement = "right", trigger = "hover"),
 						textOutput("file_to_load"),
 						HTML('<hr noshade="noshade" />'),
-						HTML('<h1 align = "left"> &#x21e9; </h1> '),
-# > BAUSTELLE							
+						HTML('<h1 align = "left"> &#x21e9; </h1> '),	
 						fluidRow(
 							column(width = 5, textInput("Measadd_name", "Name:", value = "File XY")),
 							column(width = 5, selectInput("Measadd_type", "Type:", choices = c("sample", "blank", "calibration", "spiked"))),
@@ -73,11 +71,9 @@
 							)
 						),						
 						HTML('<hr noshade="noshade" />'),
-# < BAUSTELLE	
 						HTML('<h1 align="left"> &#x21e9; </h1> '),
 						bsButton("Load_file", "Load file into project", style = "success"),
 						textOutput("had_meas_added")
-# > BAUSTELLE	
 					, style = "success"),
 					# DELETE FILE ##################################################
 					bsCollapsePanel("Delete LC-MS file", 		
@@ -2424,14 +2420,20 @@
 										  id = "timeprofile_brush",
 										  resetOnNew = TRUE
 										)
-									),
+									),	
 									bsCollapse(multiple = FALSE, open = "col1", id = "collapse1",
 										##################################################################
+										bsCollapsePanel("Compound matches", 																			
+											textOutput("prof_targets"),
+											HTML('<hr noshade="noshade" />'),
+											textOutput("prof_ISTD")							
+										),
+										##################################################################
 										bsCollapsePanel("Profile EICs & Peak viewer", 
-											div(style = widget_style3,numericInput("profpeakID", "Peak entry #:", min=0, 0)),
+											div(style = widget_style3, numericInput("profpeakID", "Peak entry #:",  min = 0,  0)),
 											bsPopover("profpeakID", title = "View extracted chromatograms & peaks of the selected profile (sample files only).",
 												content = "Select peaks in the order listed in the profile peak table, i.e. from latest to oldest file.", placement = "right", trigger = "hover"),
-											div(style = widget_style3,textOutput("prof_peak_text")),		
+											div(style = widget_style3, textOutput("prof_peak_text")),
 											plotOutput("profile_position", height = "180px"),		
 											HTML('<hr noshade="noshade" />'),													
 											plotOutput("profile_EIC",
@@ -2443,12 +2445,12 @@
 													resetOnNew = TRUE,
 													delay = 0
 												)
-						                    ),
+											),
 											fluidRow(
-									           	#column(width = 3, radioButtons("profile_EIC_norm", "Normalize intensities?", c("No"="FALSE","Yes"="TRUE"), inline = TRUE)), 
-									            column(width = 3, radioButtons("profile_EIC_time", "Show RT in", c("Seconds"="seconds","Minutes"="minutes"), inline = FALSE)),
-									            column(width = 3, radioButtons("profile_EIC_type", "Show chromatograms for:", c("Full EICs with peaks"="TRUE","Peaks only"="FALSE"), inline = FALSE))
-									        ),
+													#column(width = 3, radioButtons("profile_EIC_norm", "Normalize intensities?", c("No"="FALSE","Yes"="TRUE"), inline = TRUE)), 
+													column(width = 3, radioButtons("profile_EIC_time",  "Show RT in",  c("Seconds" = "seconds", "Minutes" = "minutes"), inline = FALSE)),
+													column(width = 3, radioButtons("profile_EIC_type",  "Show chromatograms for:",  c("Full EICs with peaks" = "TRUE", "Peaks only" = "FALSE"), inline = FALSE))
+											),
 											value="test1"),
 										##################################################################
 										bsCollapsePanel("Similar lower-ranked profiles",

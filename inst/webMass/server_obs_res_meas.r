@@ -894,44 +894,44 @@ observe({
 ##############################################################################
 maincalc3<-reactive({
 	input$Ion_mode
-	if( (isolate(init$a)=="TRUE") & (isolate(input$Ion_mode)=="positive") ){
-		exprprofnorm_pos<-list(src=file.path(logfile[[1]],"pics","profnorm_pos"))
+	if( (isolate(init$a) == "TRUE") & (isolate(input$Ion_mode) == "positive") ){
+		exprprofnorm_pos <- list(src=file.path(logfile[[1]],"pics","profnorm_pos"))
 		#output$profnorm<-renderImage(exprprofnorm_pos, deleteFile = FALSE)
-		exprprofcount_pos<-list(src=file.path(logfile[[1]],"pics","profcount_pos"))
-		output$profcount<-renderImage(exprprofcount_pos, deleteFile = FALSE)
-		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")){ rm(profileList, inherits = TRUE) }
-		if(file.exists(file.path(logfile[[1]],"results","profileList_pos"))){
-			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
-			if(any(objects()=="profileList_pos")){rm(profileList_pos)}				
-			load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-			assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));
+		exprprofcount_pos <- list(src = file.path(logfile[[1]], "pics", "profcount_pos"))
+		output$profcount <- renderImage(exprprofcount_pos, deleteFile = FALSE)
+		if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList")){ rm(profileList, inherits = TRUE) }
+		if(file.exists(file.path(logfile[[1]], "results", "profileList_pos"))){
+			if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList_pos")){rm(profileList_pos, envir = as.environment(".GlobalEnv"))}
+			if(any(objects() == "profileList_pos")){rm(profileList_pos)}				
+			load(file = file.path(as.character(logfile[[1]]),"results","profileList_pos"), envir = as.environment(".GlobalEnv"), verbose=TRUE);
+			assign("profileList", profileList_pos, envir = as.environment(".GlobalEnv"));
 		}else{
 			return("No profiles available for this ionization mode")
 		}
-		if(file.exists(file.path(logfile[[1]],"results","links_profiles_pos"))){
-			if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_pos")){rm(links_profiles_pos,envir=as.environment(".GlobalEnv"))}
-			if(any(objects()=="links_profiles_pos")){rm(links_profiles_pos)}				
-			load(file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-			assign("links_profiles",links_profiles_pos,envir=as.environment(".GlobalEnv"));
+		if(file.exists(file.path(logfile[[1]], "results", "links_profiles_pos"))){
+			if(any(objects(envir = as.environment(".GlobalEnv")) == "links_profiles_pos")){rm(links_profiles_pos,envir=as.environment(".GlobalEnv"))}
+			if(any(objects() == "links_profiles_pos")){rm(links_profiles_pos)}				
+			load(file = file.path(as.character(logfile[[1]]),"results","links_profiles_pos"), envir = as.environment(".GlobalEnv"), verbose=TRUE);
+			assign("links_profiles", links_profiles_pos, envir = as.environment(".GlobalEnv"));
 		}				
-		expr4p<-list(src=file.path(logfile[[1]],"pics","boxprofile_pos"))
-		output$boxprofile<-renderImage(expr4p, deleteFile = FALSE)		
-		isolate(init$b<<-(init$b+1))
-		if(any(objects()=="profileList")){stop("illegal profpeaks2 found, #1");}
-		if(any(objects()=="profpeaks2")){stop("illegal profpeaks found, #1");}
+		expr4p <- list(src = file.path(logfile[[1]],"pics","boxprofile_pos"))
+		output$boxprofile <- renderImage(expr4p, deleteFile = FALSE)		
+		isolate(init$b <<- (init$b+1))
+		if(any(objects() == "profileList")){stop("illegal profpeaks2 found, #1");}
+		if(any(objects() == "profpeaks2")){stop("illegal profpeaks found, #1");}
 		return("Select ionization (switch to negative):\n")
 	}
-	if( (isolate(init$a)=="TRUE") &  (isolate(input$Ion_mode)=="negative") ){
-		exprprofnorm_neg<-list(src=file.path(logfile[[1]],"pics","profnorm_neg"))
-		output$profnorm<-renderImage(exprprofnorm_neg, deleteFile = FALSE)
-		exprprofcount_neg<-list(src=file.path(logfile[[1]],"pics","profcount_neg"))
-		output$profcount<-renderImage(exprprofcount_neg, deleteFile = FALSE)
-		if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")){ rm(profileList, inherits = TRUE) }
-		if(file.exists(file.path(logfile[[1]],"results","profileList_neg"))){
-			if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
-			if(any(objects()=="profileList_neg")){rm(profileList_neg)}				
-			load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-			assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));
+	if( (isolate(init$a) == "TRUE") &  (isolate(input$Ion_mode) == "negative") ){
+		exprprofnorm_neg <- list(src=file.path(logfile[[1]],"pics","profnorm_neg"))
+		output$profnorm <- renderImage(exprprofnorm_neg, deleteFile = FALSE)
+		exprprofcount_neg <- list(src=file.path(logfile[[1]],"pics","profcount_neg"))
+		output$profcount <- renderImage(exprprofcount_neg, deleteFile = FALSE)
+		if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList")){ rm(profileList, inherits = TRUE) }
+		if(file.exists(file.path(logfile[[1]], "results", "profileList_neg"))){
+			if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList_neg")){rm(profileList_neg, envir = as.environment(".GlobalEnv"))}
+			if(any(objects() == "profileList_neg")){rm(profileList_neg)}				
+			load(file = file.path(as.character(logfile[[1]]),"results","profileList_neg"), envir = as.environment(".GlobalEnv"), verbose=TRUE);
+			assign("profileList", profileList_neg, envir = as.environment(".GlobalEnv"));
 		}else{
 			return("No profiles available for this ionization mode")			
 		}
@@ -1241,10 +1241,11 @@ output$prof_number<-renderText(paste(maincalc6()))
 ranges_timeprofile <- reactiveValues(x = NULL, y = NULL)
 
 observe({
-    input$profID
+	input$profID
 	init$b
 	cat("\n plotting profile _1")
-    if( (isolate(init$a)=="TRUE") &  
+	if( 
+		(isolate(init$a)=="TRUE") &  
 		(!is.na(isolate(input$profID))) & 
 		(isolate(input$profID)!=0) & 
 		any(objects(envir=as.environment(".GlobalEnv")) == "profileList") & 
@@ -1253,66 +1254,119 @@ observe({
 	){
 		cat("\n plotting profile _2")
 		if(any(objects()=="profileList")){stop("illegal profileList found, #5");}
-		if(any(profileList[["index_prof"]][,"profile_ID"]==as.numeric(isolate(input$profID)))){
-			cat("\n plotting profile with ID ");cat(as.numeric(isolate(input$profID)));
+		if(any(profileList[["index_prof"]][,"profile_ID"] == as.numeric(isolate(input$profID)))){
+			
+			cat("\n plotting profile with ID ") ;cat(as.numeric(isolate(input$profID)))
+			prof_plot_IDs <<- as.numeric(isolate(input$profID))
+			at_entry <<- profileList[["index_prof"]][
+				match(prof_plot_IDs,  profileList[["index_prof"]][,"profile_ID"])
+			,"links"]
 			##################################################################
-			if(logfile$parameters$trend_blind=="yes"){
-				blindsubtract<-TRUE
+			if(logfile$parameters$trend_blind == "yes"){
+				blindsubtract <- TRUE
 			}else{
-				blindsubtract<-FALSE
+				blindsubtract <- FALSE
 			}
-			lagit<-as.numeric(strsplit(logfile$parameters$trend_lags,",")[[1]])		
-			if(isolate(input$prof_log)=="yes"){
-				logscaled<-TRUE
+			lagit <- as.numeric(strsplit(logfile$parameters$trend_lags, ",")[[1]])		
+			if(isolate(input$prof_log) == "yes"){
+				logscaled <- TRUE
 			}else{
-				logscaled<-FALSE
+				logscaled <- FALSE
 			}
 			output$timeprofile <- renderPlot({			
-				assign("peakTable",plotaprofile(
+				assign("peakTable", plotaprofile(
 					profileList,
-					profileID=as.numeric(isolate(input$profID)),
-					logint=logscaled,
-					blindsub=blindsubtract,
-					blindfold=as.numeric(logfile$parameters$blind_threshold),
-					lags=lagit,
-					threshold=as.numeric(logfile$parameters$trend_threshold),
-					ranges_x=ranges_timeprofile$x,
-					ranges_y=ranges_timeprofile$y,
-					),envir=as.environment(".GlobalEnv")
+					profileID = prof_plot_IDs,
+					logint = logscaled,
+					blindsub = blindsubtract,
+					blindfold = as.numeric(logfile$parameters$blind_threshold),
+					lags = lagit,
+					threshold = as.numeric(logfile$parameters$trend_threshold),
+					ranges_x = ranges_timeprofile$x,
+					ranges_y = ranges_timeprofile$y,
+					),envir = as.environment(".GlobalEnv")
 				)	
 				if((!is.null(ranges_timeprofile$x))||(!is.null(ranges_timeprofile$y))){
-					mtext("Now zoomed in",side=3,col="gray")
+					mtext("Now zoomed in", side = 3, col = "gray")
 				}
 			})			
 			##################################################################
-			prof_plot_IDs<<-as.numeric(isolate(input$profID))
-			at_entry<-profileList[["index_prof"]][
-				match(prof_plot_IDs,profileList[["index_prof"]][,"profile_ID"])
-			,"links"]
-			plot_similar_profiles<-FALSE
-			if(at_entry!=0){
-				if(length(links_profiles[[at_entry]]$group)>0){
+			# target / ISTD matches? #########################################
+			if(at_entry != 0){
+				# on targets #################################################
+				if(length(links_profiles[[at_entry]]$targ) !=  0){
+					if(!any(objects(envir=as.environment(".GlobalEnv")) == "target_table")){
+						target_table <<- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");	
+					} # is this safe?
+					targ_out <- c()
+					for(k in 1:dim(links_profiles[[at_entry]]$targ)[1]){
+						at_tar <- strsplit(links_profiles[[at_entry]]$targ[k, 1], "_")[[1]][1]
+						at_add <- strsplit(links_profiles[[at_entry]]$targ[k, 1], "_")[[1]][2]
+						at_tar <- target_table[match(at_tar, target_table$ID), "Name"]
+						targ_out <- c(targ_out, 
+							paste0(at_tar, " (", at_add , ", peak#: ",  links_profiles[[at_entry]]$targ[k, 2], ", max score: ", links_profiles[[at_entry]]$targ[k, 3],")")
+						)		
+					}
+					targ_out <- paste(targ_out, collapse = ",")
+					targ_out <- paste("Target matches: ", targ_out, sep = "")
+					output$prof_targets <- renderText(targ_out)
+				}else{
+					output$prof_targets <- renderText("Target matches: none") 
+				}
+				# on ISTDs ###################################################
+				if(length(links_profiles[[at_entry]]$IS) !=  0){
+					if(!any(objects(envir = as.environment(".GlobalEnv")) == "ISTD_table")){
+						ISTD_table <<- read.table(file = file.path(logfile[[1]], "dataframes", "IS.txt"), header = TRUE, sep = "\t",colClasses = "character");	
+					} # is this safe?
+					ISTD_out <- c()
+					for(k in 1:dim(links_profiles[[at_entry]]$IS)[1]){
+						at_ISTD <- strsplit(links_profiles[[at_entry]]$IS[k, 1], "_")[[1]][1]
+						at_add <- strsplit(links_profiles[[at_entry]]$IS[k, 1], "_")[[1]][2]
+						at_ISTD <- ISTD_table[match(at_ISTD, ISTD_table$ID), "Name"]
+						ISTD_out <- c(ISTD_out, 
+							paste0(at_ISTD, " (", at_add , ", peak#: ",  links_profiles[[at_entry]]$IS[k, 2], ", max score: ", links_profiles[[at_entry]]$IS[k, 3],")")
+						)		
+					}
+					ISTD_out <- paste(ISTD_out, collapse = ",")
+					ISTD_out <- paste("ISTD matches:", ISTD_out, sep = "")
+					output$prof_ISTD  <- renderText(ISTD_out)
+				}else{
+					output$prof_ISTD  <- renderText("ISTD matches: none") 
+				}
+				##############################################################
+			}else{
+				output$prof_targets <- renderText("Target matches: none") 			
+				output$prof_ISTD <- renderText("ISTD matches: none") 			
+			}
+			##################################################################
+			plot_similar_profiles <- FALSE
+			if(at_entry != 0){
+				if(length(links_profiles[[at_entry]]$group) > 0){
 					prof_plot_IDs <<- c(prof_plot_IDs,links_profiles[[at_entry]]$group)
-					prof_plot_IDs<<-unique(prof_plot_IDs)
-					plot_similar_profiles<-TRUE
+					prof_plot_IDs <<- unique(prof_plot_IDs)
+					plot_similar_profiles <- TRUE
 				}
 			}
 			output$similar_profiles_plot <- renderPlot({	
 				if(plot_similar_profiles){
 						enviMass::plot_components(
-							profileList=profileList,
-							prof_IDs=prof_plot_IDs,
-							links_profiles=links_profiles,
-							what="profiles",
-							xlim=FALSE,ylim=FALSE,await_input=FALSE,
-							skipit=TRUE,
-							min_peaks=NULL,
-							norma=TRUE
+							profileList = profileList,
+							prof_IDs = prof_plot_IDs,
+							links_profiles = links_profiles,
+							what = "profiles",
+							xlim = FALSE,  ylim = FALSE,  await_input = FALSE,
+							skipit = TRUE,
+							min_peaks = NULL,
+							norma = TRUE
 						)	
 				}else{
-					plot.new()
-					plot.window(xlim=c(0,1),ylim=c(0,1))
-					text(0.5,0.5,labels="Nothing to plot - no other similar profiles available",cex=1.8,col="red")
+					if(logfile$workflow[names(logfile$workflow) == "components_profiles"] == "yes"){
+						plot.new(); plot.window(xlim = c(0, 1), ylim = c(0, 1))
+						text(0.5, 0.5, labels = "Nothing to plot - no other similar profiles available", cex = 1.8, col = "red")
+					}else{	
+						plot.new(); plot.window(xlim = c(0, 1), ylim = c(0, 1))
+						text(0.5, 0.5, labels = "No profile (cross-file) componentization included in the workflow", cex = 1.8, col = "red")						
+					}
 				}
 			})
 			#output$similar_profiles_relations <- renderPlot({	
@@ -1353,7 +1407,7 @@ observe({
 						"Mass defect","Median int. ratio blind vs. samples","Peak number samples","Peak number blinds","Peak number total"),
 					rownames=FALSE,
 					filter = 'top',
-                    selection = list(mode = 'single', target = 'row'),
+					selection = list(mode = 'single', target = 'row'),
 					extensions = c('Buttons','FixedHeader','ColReorder'),
 					options = list(
 						lengthMenu = c(15, 30, 50, 100),
@@ -1438,36 +1492,38 @@ observe({
 # update results per profilepeak list entry index ############################
 ##############################################################################
 observe({
-    input$profentry
+	input$profentry
 	init$b
-    if(	(isolate(init$a)=="TRUE") &  
+	if(	
+		(isolate(init$a)=="TRUE") &  
 		!is.na(isolate(input$profentry)) & 
 		(isolate(input$profentry)!=0) & 
-		(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")) & 
-		any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")
+		(any(objects(envir=as.environment(".GlobalEnv")) == "profileList")) & 
+		(any(objects(envir=as.environment(".GlobalEnv")) == "profpeaks2")) &
+		(any(objects(envir=as.environment(".GlobalEnv")) == "links_profiles"))
 	){
-		if( (isolate(input$profentry)<=length(profpeaks2[,1])) & 
-			(isolate(input$profentry)>0) 
-		){ 
-				if( any( profileList[["index_prof"]][,"profile_ID"]==as.numeric(profpeaks2[isolate(input$profentry),"profile_ID"]) ) ){
-					updateNumericInput(session,"profID",value = as.numeric(as.character(profpeaks2[isolate(input$profentry),"profile_ID"])))				
-				}
+		if( 
+			(isolate(input$profentry) <= length(profpeaks2[,1])) & 
+			(isolate(input$profentry) > 0) &
+			(any( profileList[["index_prof"]][,"profile_ID"] == as.numeric(profpeaks2[isolate(input$profentry), "profile_ID"])))
+		){
+			updateNumericInput(session, "profID", value = as.numeric(as.character(profpeaks2[isolate(input$profentry),"profile_ID"])))
 		}else{
 			output$timeprofile <- renderPlot({	
 				plot.new()
-				plot.window(xlim=c(0,1),ylim=c(0,1))
-				text(0.5,0.5,labels="Invalid list entry",cex=1.8,col="red")
+				plot.window(xlim = c(0, 1), ylim = c(0, 1))
+				text(0.5, 0.5, labels="Invalid list entry", cex = 1.8, col = "red")
 			})			
-			output$oneproftable<-renderText("")
+			output$oneproftable <- renderText("")
 		}
 	}else{
-		if(isolate(init$a)=="TRUE"){
+		if(isolate(init$a) == "TRUE"){
 			output$timeprofile <- renderPlot({	
 				plot.new()
-				plot.window(xlim=c(0,1),ylim=c(0,1))
-				text(0.5,0.5,labels="Nothing to plot - invalid ID",cex=1.8,col="red")
+				plot.window(xlim = c(0, 1), ylim = c(0, 1))
+				text(0.5, 0.5, labels = "Nothing to plot - invalid ID", cex = 1.8, col = "red")
 			})			
-			output$oneproftable<-renderText("")
+			output$oneproftable <- renderText("")
 		}
 	}
 })	
@@ -1493,16 +1549,16 @@ observeEvent(input$timeprofile_dblclick, { # - N
 ##############################################################################
 # get EICs for individual profiles ###########################################
 ##############################################################################
-ranges_profiles <- reactiveValues(RTchrom=FALSE, intchrom=FALSE)
+ranges_profiles <- reactiveValues(RTchrom = FALSE,  intchrom = FALSE)
 
 observe({ # seconds <-> minutes switch when zoomed ###########################
 	input$profile_EIC_time
-	if(isolate(init$a)=="TRUE" & isolate(ranges_profiles$RTchrom[1]!=FALSE)){
-		if(isolate(input$profile_EIC_time)=="minutes"){
-			isolate(ranges_profiles$RTchrom<-(ranges_profiles$RTchrom/60))
+	if(isolate(init$a) == "TRUE" & isolate(ranges_profiles$RTchrom[1] != FALSE)){
+		if(isolate(input$profile_EIC_time) == "minutes"){
+			isolate(ranges_profiles$RTchrom <- (ranges_profiles$RTchrom / 60))
 		}
-		if(isolate(input$profile_EIC_time)=="seconds"){
-			isolate(ranges_profiles$RTchrom<-(ranges_profiles$RTchrom*60))
+		if(isolate(input$profile_EIC_time) == "seconds"){
+			isolate(ranges_profiles$RTchrom <- (ranges_profiles$RTchrom * 60))
 		}
 	}
 })
