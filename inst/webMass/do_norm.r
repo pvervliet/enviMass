@@ -1,7 +1,7 @@
 	
-	use_int<-logfile$parameters$peak_which_intensity
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements_incl<-measurements[measurements[,"include"]=="TRUE",,drop=FALSE]
+	use_int <- logfile$parameters$peak_which_intensity
+	measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	measurements_incl <- measurements[measurements[,"include"]=="TRUE",,drop=FALSE]
 	# positive #################################################################
 	if(any(measurements_incl[,"Mode"]=="positive")){
 		measurements_pos<-measurements_incl[measurements_incl[,"Mode"]=="positive",,drop=FALSE]
