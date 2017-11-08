@@ -3,6 +3,13 @@ measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"
 #measurements$LOD <- "FALSE"
 for_IDs <- measurements$ID[(measurements$include == "TRUE") & (measurements$LOD == "FALSE")]
 
+# completely remove existing LOD_splined after, e.g., reset 
+if(all(measurements[,"LOD"] == "FALSE")){
+	if(file.exists(file.path(logfile$project_folder, "results", "LOD", "LOD_splined"))){ 
+		file.remove(file.path(logfile$project_folder, "results", "LOD", "LOD_splined"))
+	}
+}
+
 
 if(length(for_IDs)){
 
@@ -20,16 +27,17 @@ if(length(for_IDs)){
 		# clean list
 		if(length(LOD_splined)){ # list entry indice == as.numeric(file ID)
 			for(i in 1:length(LOD_splined)){
+				# fits to non-existing (e.g., deleted) file?
 				if(is.na(match(as.character(i), measurements$ID))){
 					if(length(LOD_splined) >= i){
 						LOD_splined[[i]] <- NULL 
 						names(LOD_splined)[i] <- ""
 					}
-				}
+				}				
 			}
 		}
 	}else{
-		LOD_splined<-list()
+		LOD_splined <- list()
 	}
 	if(length(cluster_results)){
 		for(i in 1:length(cluster_results)){
@@ -49,6 +57,7 @@ if(length(for_IDs)){
 			}
 		}
 	}
+	if(any(duplicated(names(LOD_splined)[!is.na(names(LOD_splined))]))){stop("\n Issue found in LOD_pl estimation -> non-unique IDs -> please report this problem!")}
 	save(LOD_splined, file = file.path(logfile$project_folder, "results", "LOD", "LOD_splined"))
 	rm(LOD_splined)
 	#################################################################################
