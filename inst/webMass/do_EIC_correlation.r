@@ -4,11 +4,11 @@
 
 	##################################################################################
     cat("EIC correlations: ")
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	##################################################################################
 	# debug switches #################################################################
-	EICor_plot_it<-FALSE	# plot intermediate EIC pairs
-	do_cor<-TRUE			# omit correlation
+	EICor_plot_it <- FALSE	# plot intermediate EIC pairs
+	do_cor <- TRUE			# omit correlation
 	##################################################################################	
 	
 	for(b in 1:length(measurements[,"ID"])){

@@ -217,7 +217,7 @@ if(
 # on NEGATIVE profiles #################################################################
 if(
 	file.exists(file.path(logfile[[1]],"results","profileList_neg"))  &
-	logfile$workflow[names(logfile$workflow) == "components_profiles"] == "yes"
+	logfile$workflow[names(logfile$workflow) == "components_profiles"] == "yes" # only if needed downstream ...
 ){
 
 	####################################################################################	

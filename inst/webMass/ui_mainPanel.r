@@ -18,7 +18,7 @@
 							Then specify/check its properties and finally press the load button. "),		
 						helpText("Permissible date formats in file names: 
 							_YYYY_MM_DD_ / _YY_MM_DD_ / _YYYYMMDD_ / _YYMMDD_ / -YYYY-MM-DD- / -YY-MM-DD- / -YYYYMMDD- / -YYMMDD- 
-							 (where - and _ at start and end of the date field can be empty spaces as well)."),		
+							 (where - and _ at start and end of the date field can be empty spaces as well). First match in name used."),		
 						HTML('<hr noshade="noshade" />'),
 						fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
 						bsPopover("Measadd_path", 
