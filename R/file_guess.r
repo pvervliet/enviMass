@@ -48,6 +48,10 @@ function(
 	if( grepl("NEG", file_name, fixed = TRUE) ) guesses["Mode"] <- "negative" 		
 	############################################################################
 	# guess file type ##########################################################
+	if( grepl("sample", file_name, fixed = TRUE) ) guesses["Type"] <- "sample" 		
+	if( grepl("Sample", file_name, fixed = TRUE) ) guesses["Type"] <- "sample" 
+	if( grepl("SAMPLE", file_name, fixed = TRUE) ) guesses["Type"] <- "sample" 
+	if( grepl("SAM", file_name, fixed = TRUE) ) guesses["Type"] <- "sample" 
 	if( grepl("bl", file_name, fixed = TRUE) ) guesses["Type"] <- "blank" 
 	if( grepl("Bl", file_name, fixed = TRUE) ) guesses["Type"] <- "blank" 
 	if( grepl("BL", file_name, fixed = TRUE) ) guesses["Type"] <- "blank" 
