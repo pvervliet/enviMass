@@ -1,33 +1,40 @@
 #################################################################################
 # get LOD- & 90percentile-Intensity for picked peaks ############################
-those<-list.files(file.path(logfile$project_folder,"peaklist", fsep = "\\"))
-measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+those <- list.files(file.path(logfile$project_folder,"peaklist", fsep = "\\"))
+measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+
+# completely remove existing LOD_splined after, e.g., reset 
+if(all(measurements[,"LOD"] == "FALSE")){
+	if(file.exists(file.path(logfile$project_folder, "results", "LOD", "LOD_splined"))){ 
+		file.remove(file.path(logfile$project_folder, "results", "LOD", "LOD_splined"))
+	}
+}
 
 # MAKE this run file-wise
-if(length(those)>0){
-	LOD_splined_new<-list()
-	if(file.exists(file.path(logfile$project_folder,"results","LOD","LOD_splined"))){ # load existing model
-		load(file.path(logfile$project_folder,"results","LOD","LOD_splined"))
+if(length(those) > 0){
+	LOD_splined_new <- list()
+	if(file.exists(file.path(logfile$project_folder, "results", "LOD", "LOD_splined"))){ # load existing model
+		load(file.path(logfile$project_folder, "results", "LOD", "LOD_splined"))
+	}else{
+		LOD_splined <- list()
 	}
-	at<-1;
 	cat(" | ")
 	for(i in 1:length(those)){
-		if(!any(measurements[,"ID"]==those[i])){cat("\n orphaned peaklist found.");next;} # not in list of measurements?
-		if(measurements[measurements[,"ID"]==those[i],"include"]=="FALSE"){next}
-		if(measurements[measurements[,"ID"]==those[i],"LOD"]=="TRUE"){ # ONLY valid for old files! Not for newly loaded ones!
-			if(any(names(LOD_splined)==paste("LOD_",those[i],sep=""))){ # copy old model, already done
-				copy_this<-which(names(LOD_splined)==paste("LOD_",those[i],sep=""))
-				LOD_splined_new[[at]]<-LOD_splined[[copy_this]]
-				names(LOD_splined_new)[at]<-paste("LOD_",those[i],sep="")
-				at<-(at+1)
+		if(!any(measurements[,"ID"] == those[i])){cat("\n orphaned peaklist found."); next;} # not in list of measurements?
+		if(measurements[measurements[,"ID"] == those[i],"include"] == "FALSE"){next}
+		if(measurements[measurements[,"ID"] == those[i],"LOD"] == "TRUE"){ # ONLY valid for old files! Not for newly loaded ones!
+			if(any(names(LOD_splined) == paste("LOD_", those[i], sep = ""))){ # copy old model, already done
+				copy_this <- which(names(LOD_splined) == paste("LOD_", those[i], sep = ""))
+				LOD_splined_new[[as.numeric(those[i])]] <- LOD_splined[[copy_this]]
+				names(LOD_splined_new)[as.numeric(those[i])] <- paste("LOD_", those[i], sep = "")
 				cat("\nCopied LOD model.")
 				next;
 			}else{
 				cat("\nMake new LOD model.")
 			}
 		} 		
-		if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
-		if(any(objects()=="peaklist")){rm(peaklist)}
+		if(any(objects(envir = as.environment(".GlobalEnv")) == "peaklist")){rm(peaklist, envir = as.environment(".GlobalEnv"))}
+		if(any(objects() == "peaklist")){rm(peaklist)}
 		load(file.path(logfile$project_folder,"peaklist",those[i]),envir=as.environment(".GlobalEnv"))
 		#peaklist<-peaklist[peaklist[,colnames(peaklist)=="keep"]==1,,drop=FALSE]
 		if(length(peaklist[,1])==0){next}
@@ -48,9 +55,8 @@ if(length(those)>0){
 		}
 		model<-smooth.spline(x=get_ret,y=get_int)	
 		assign(paste("LOD_",those[i],sep=""),model);rm(model)
-		LOD_splined_new[[at]]<-get(paste("LOD_",those[i],sep=""))
-		names(LOD_splined_new)[at]<-paste("LOD_",those[i],sep="")
-		at<-(at+1)
+		LOD_splined_new[[as.numeric(those[i])]]<-get(paste("LOD_",those[i],sep=""))
+		names(LOD_splined_new)[as.numeric(those[i])]<-paste("LOD_",those[i],sep="")
 		if(TRUE){
 			png(file=file.path(logfile$project_folder,"results","LOD",paste("plot_LOD_",those[i],".png",sep="")),
 				width = 720, height = 250)
@@ -68,7 +74,8 @@ if(length(those)>0){
 		}
 		measurements[measurements[,"ID"]==those[i],"LOD"]<-"TRUE";
 	}
-	LOD_splined<-LOD_splined_new
+	LOD_splined <- LOD_splined_new
+	if(any(duplicated(names(LOD_splined)[!is.na(names(LOD_splined))]))){stop("\n Issue found in LOD_pl estimation -> non-unique IDs -> please report this problem!")}
 	save(LOD_splined,file=file.path(logfile$project_folder,"results","LOD","LOD_splined"))
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 }

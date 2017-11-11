@@ -632,11 +632,14 @@ observe({ ####################################################################
 	row_sel <- input$Table_screening_selected_pos_rows_selected
 	refresh_screening$pos
 	if(isolate(init$a) == "TRUE"){
-        if((length(row_sel) | isolate(refresh_screening$pos) > 0)){
+        if(
+			(length(row_sel) | isolate(refresh_screening$pos) > 0) &
+			(any(objects(envir=as.environment(".GlobalEnv")) == "tab_screening_selected_pos"))
+		){
             if(row_sel >= 1){
             	cat("\n Table_screening_selected_pos_rows_selected")
             	file_ID <- tab_screening_selected_pos[row_sel,1]
-		if(!is.na(file_ID)){
+			if(!is.na(file_ID)){
 			# load MSlist if missing
 	        	if(any(objects(envir=as.environment(".GlobalEnv")) == "MSlist")){
 	        		if(any(names(MSlist) == "File_ID")){
@@ -1581,7 +1584,10 @@ observe({ ####################################################################
 	row_sel<-input$Table_screening_selected_neg_rows_selected
 	refresh_screening$neg
 	if(isolate(init$a)=="TRUE"){
-        if((length(row_sel) | isolate(refresh_screening$neg)>0)){
+        if(
+			(length(row_sel) | isolate(refresh_screening$neg) > 0) &
+			(any(objects(envir=as.environment(".GlobalEnv")) == "tab_screening_selected_neg"))
+		){
             if(row_sel>=1){
             	cat("\n Table_screening_selected_neg_rows_selected")
             	file_ID <- tab_screening_selected_neg[row_sel,1]

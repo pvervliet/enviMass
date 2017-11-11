@@ -613,10 +613,11 @@ file_to_load <- reactive({
 	input$Measadd_path
 	if(  (length(isolate(input$Measadd_path))) ){
 		if( file.exists(as.character(isolate(input$Measadd_path[[4]]))) ){
-			file_guessed <- enviMass:::file_guess(isolate(input$Measadd_path[[1]]))
+			file_guessed <- enviMass:::file_guess(isolate(input$Measadd_path[[1]]), propose = FALSE)
 			updateTextInput(session, inputId = "Measadd_name", value = isolate(input$Measadd_path[[1]]) )
-			updateSelectInput(session, inputId = "Measadd_mode", selected = file_guessed$Mode)		
-			updateSelectInput(session, inputId = "Measadd_type", selected = file_guessed$Type)
+			if(file_guessed$Mode != "FALSE") updateSelectInput(session, inputId = "Measadd_mode", selected = file_guessed$Mode)		
+			if(file_guessed$Type != "FALSE") updateSelectInput(session, inputId = "Measadd_type", selected = file_guessed$Type)
+			if(file_guessed$Date != "FALSE") updateDateInput(session, inputId = "Measadd_date", value = file_guessed$Date)
 			return(paste("Selected file:", isolate(input$Measadd_path[[1]])))
 		}else{
 			return("File disapperead?")		

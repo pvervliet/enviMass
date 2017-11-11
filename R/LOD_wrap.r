@@ -16,7 +16,6 @@
 LOD_wrap<-function(
 	x,
 	logfile
-
 ){
 
 	for_ID <- x

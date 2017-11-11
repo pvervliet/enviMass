@@ -1,10 +1,10 @@
 	########################################################################################################	
 	# clean ! ##############################################################################################
-	those<-list.files(file.path(logfile$project_folder,"results","screening"))
-	if(length(those)>0){
+	those <- list.files(file.path(logfile$project_folder,"results","screening"))
+	if(length(those) > 0){
 		for(i in 1:length(those)){
-			if(grepl("IS",those[i])){ # distinguish from targets
-				file.remove(file.path(logfile$project_folder,"results","screening",those[i]))
+			if(grepl("IS", those[i])){ # distinguish from targets
+				file.remove(file.path(logfile$project_folder, "results", "screening", those[i]))
 			}
 		}
 	}
@@ -12,13 +12,13 @@
 
 	########################################################################################################
 	# load available LOD smoothing spline models ###########################################################
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="LOD_splined")){rm(LOD_splined,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="LOD_splined")){rm(LOD_splined)}	
-	if(file.exists(file=file.path(logfile$project_folder,"results","LOD","LOD_splined"))){
-		load(file=file.path(logfile$project_folder,"results","LOD","LOD_splined"));
-		do_LOD<-TRUE
+	if(any(objects(envir = as.environment(".GlobalEnv")) == "LOD_splined")){rm(LOD_splined,envir=as.environment(".GlobalEnv"))}
+	if(any(objects() == "LOD_splined")){rm(LOD_splined)}	
+	if(file.exists(file = file.path(logfile$project_folder, "results","LOD","LOD_splined"))){
+		load(file = file.path(logfile$project_folder, "results", "LOD", "LOD_splined"));
+		do_LOD <- TRUE
 	}else{
-		do_LOD<-FALSE	
+		do_LOD <- FALSE	
 	}		
 	########################################################################################################
 
@@ -195,12 +195,12 @@
 						at_ID<-set_ID[profileList_pos[[4]]==colnames(IS_pos_screen_listed[[i]][[m]])[1]]					
 						if(length(IS_pos_screen_listed[[i]][[m]])>0){
 							if(do_LOD){							
-								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(IS_pos_screen_listed[[i]][[m]])[1],sep=""))						
+								with_model <- which(names(LOD_splined)==paste("LOD_",colnames(IS_pos_screen_listed[[i]][[m]])[1],sep=""))						
 								if(length(with_model)>0){						
 									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
 								}else{
 									cat("\n Missing LOD model; using default intensity threshold. Debug?")
-									use_cutint<-cutint;
+									use_cutint <- cutint;
 								}
 							}else{
 								use_cutint<-cutint
