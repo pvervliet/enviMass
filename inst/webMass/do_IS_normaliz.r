@@ -38,10 +38,10 @@
 								dRTwithin = as.numeric(logfile$parameters$IS_drt2), 
 								dRTblank = FALSE, 
 								dInt = as.numeric(logfile$parameters$IS_inttol), 
-								Intcut = as.numeric(logfile$parameters$IS_intcut), 
-								w1=we1, 
-								w2=we2, 	
-								w3=0	
+								Intcut = -Inf,#as.numeric(logfile$parameters$IS_intcut), 
+								w1 = we1, 
+								w2 = we2, 	
+								w3 = 0	
 		)
 		# set matrix to sort & store data from a profile ###################################
 		atPOSIX<-profileList_pos[[3]];
@@ -79,7 +79,14 @@
 		}
 		# screen IS intensity profiles #####################################################
 		cat("- on IS profiles");
-		min_count<-floor(length(profileList_pos[[4]])*as.numeric(logfile$parameters$ISnorm_percfiles_pos)/100);
+		if(as.logical(logfile$parameters$screen_IS_restrict)){ # relative to number of screened files
+			min_count <- min(c(
+				floor(as.numeric(logfile$parameters$screen_IS_restrict_many) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100),
+				floor(length(profileList_pos[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100)
+			))
+		}else{
+			min_count <- floor(length(profileList_pos[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100);	
+		}	
 		lis_delint_IS<-list(0)
 		lis_median_IS<-list(0)
 		stillin<-rep(TRUE,length(peaks[,1]))
@@ -314,7 +321,7 @@
 		we1=(1-as.numeric(logfile$parameters$IS_w1))
 		we2=(1-we1)
 		cat("- screening:");
-		screened<-screening(	peaklist, 
+		screened <- screening(	peaklist, 
 								blanklist=FALSE, 
 								pattern_neg_IS, 
 								RT = patternRT_neg_IS,
@@ -324,10 +331,10 @@
 								dRTwithin = as.numeric(logfile$parameters$IS_drt2), 
 								dRTblank = FALSE, 
 								dInt = as.numeric(logfile$parameters$IS_inttol), 
-								Intcut = as.numeric(logfile$parameters$IS_intcut), 
-								w1=we1, 
-								w2=we2, 	
-								w3=0	
+								Intcut = -Inf,#as.numeric(logfile$parameters$IS_intcut), 
+								w1 = we1, 
+								w2 = we2, 	
+								w3 = 0	
 		)
 		# set matrix to sort & store data from a profile ###################################
 		cat("- on IS profiles")
@@ -365,7 +372,14 @@
 			  }
 		}
 		# screen IS intensity profiles #####################################################
-		min_count<-floor(length(profileList_neg[[4]])*as.numeric(logfile$parameters$ISnorm_percfiles_neg)/100);
+		if(as.logical(logfile$parameters$screen_IS_restrict)){ # relative to number of screened files
+			min_count <- min(c(
+				floor(as.numeric(logfile$parameters$screen_IS_restrict_many) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100),
+				floor(length(profileList_pos[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100)
+			))
+		}else{
+			min_count <- floor(length(profileList_pos[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100);	
+		}	
 		lis_delint_IS<-list(0)
 		lis_median_IS<-list(0)
 		stillin<-rep(TRUE,length(peaks[,1]))
@@ -377,7 +391,7 @@
 			if(length(screened[[i]])!=1){
 				for(j in 1:length(screened[[i]][,1])){
 					if(  !(as.character(screened[[i]][j,9]))=="NaN"  ){
-						if( as.numeric(as.character(screened[[i]][j,9]))>=treshscore ){
+						if( as.numeric(as.character(screened[[i]][j,9])) >= treshscore ){
 							hits<-strsplit(as.character(screened[[i]][j,2]),"/")[[1]]
 							hits<-hits[hits!="-"];
 							hits<-as.numeric(hits);
