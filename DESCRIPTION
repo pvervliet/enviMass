@@ -1,8 +1,8 @@
 Package: enviMass
 Type: Package
 Title: Utilities to Process Mass Spectrometry (LC-MS) Data for Environmental Trend Analysis
-Version: 3.412
-Date: 2017-10-30
+Version: 3.413
+Date: 2017-11-15
 Author: Martin Loos
 Maintainer: Martin Loos <mloos@looscomputing.ch>
 Description: Utilities and workflow to process high resolution mass

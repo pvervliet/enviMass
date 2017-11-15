@@ -2187,7 +2187,6 @@ if(logfile$version < 3.411){
 }
 
 
-
 if(logfile$version < 3.412){
 
 	cat("\n Updating to version 3.412 ...")
@@ -2202,6 +2201,19 @@ if(logfile$version < 3.412){
 	shinyjs::info(paste0("Please recalculate your project by pressing the Calculate button."));
 	################################################################################################	
 	logfile$version <<- 3.412
+	################################################################################################		
+	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+
+if(logfile$version < 3.413){
+
+	cat("\n Updating to version 3.413 ...")
+	################################################################################################	
+	logfile$version <<- 3.413
 	################################################################################################		
 	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
