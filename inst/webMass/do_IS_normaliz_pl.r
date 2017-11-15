@@ -89,29 +89,29 @@ if(
 				}				
 				###################################################################
 				# search peaks & their links to compounds #########################
-				for(j in (profileList_pos[["index_prof"]][i,"start_ID"]:profileList_pos[["index_prof"]][i,"end_ID"])){
-					if(profileList_pos[["peaks"]][j,"links"]!=0){
+				for(j in (profileList_pos[["index_prof"]][i,"start_ID"]:profileList_pos[["index_prof"]][i, "end_ID"])){
+					if(profileList_pos[["peaks"]][j,"links"] != 0){
 						# add IS link #############################################
 						if(	length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]]) > 0 ){
 							for(k in 1:length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]])){ # if several compound matches exist for this peak
-								if( length(links_profiles_pos[[at_entry]][[2]])==0 ){ # make a new entry for profile link to IS
-									links_profiles_pos[[at_entry]][[2]]<-
+								if( length(links_profiles_pos[[at_entry]][[2]]) == 0 ){ # make a new entry for profile link to IS
+									links_profiles_pos[[at_entry]][[2]] <-
 										data.frame(
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[1]],
 											1,
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_pos[[at_entry]][[2]])<-c("Compound","Counts","max_score")
+									names(links_profiles_pos[[at_entry]][[2]]) <- c("Compound","Counts","max_score")
 								}else{
 									at<-which(links_profiles_pos[[at_entry]][[2]][,1] == links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[1]])
-									if(length(at)>0){ 	# increment existing link ...
-										links_profiles_pos[[at_entry]][[2]][at,2]<-(links_profiles_pos[[at_entry]][[2]][at,2]+1)
+									if(length(at) > 0){ 	# increment existing link ...
+										links_profiles_pos[[at_entry]][[2]][at,2] <- (links_profiles_pos[[at_entry]][[2]][at,2]+1)
 										if(links_profiles_pos[[at_entry]][[2]][at,2] < links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]] ){
 											links_profiles_pos[[at_entry]][[2]][at,2] <- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_pos[[at_entry]][[2]]<-data.frame(
+										links_profiles_pos[[at_entry]][[2]] <- data.frame(
 											c(
 												links_profiles_pos[[at_entry]][[2]][,1], 
 												links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[1]]
@@ -123,32 +123,32 @@ if(
 											),
 											stringsAsFactors = FALSE
 										)									
-										names(links_profiles_pos[[at_entry]][[2]])<-c("Compound","Counts","max_score")
+										names(links_profiles_pos[[at_entry]][[2]]) <- c("Compound","Counts","max_score")
 									}
 								}
 							}	
 						}					
 						# add target link #########################################
-						if(	length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]])>0 ){
+						if(	length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]]) > 0 ){
 							for(k in 1:length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_pos[[at_entry]][[1]])==0 ){ # make a new entry for profile link to IS
-									links_profiles_pos[[at_entry]][[1]]<-
+									links_profiles_pos[[at_entry]][[1]] <-
 										data.frame(
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]],
 											1,
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_pos[[at_entry]][[1]])<-c("Compound","Counts","max_score")
+									names(links_profiles_pos[[at_entry]][[1]]) <- c("Compound","Counts","max_score")
 								}else{
-									at<-which(links_profiles_pos[[at_entry]][[1]][,1] == links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]])
-									if(length(at)>0){ 	# increment existing link ...
-										links_profiles_pos[[at_entry]][[1]][at,2]<-(links_profiles_pos[[at_entry]][[1]][at,2]+1)
+									at <- which(links_profiles_pos[[at_entry]][[1]][,1] == links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]])
+									if(length(at) > 0){ 	# increment existing link ...
+										links_profiles_pos[[at_entry]][[1]][at,2] <- (links_profiles_pos[[at_entry]][[1]][at,2]+1)
 										if(links_profiles_pos[[at_entry]][[1]][at,2] < links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]] ){
 											links_profiles_pos[[at_entry]][[1]][at,2] <- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_pos[[at_entry]][[1]]<-data.frame(
+										links_profiles_pos[[at_entry]][[1]] <- data.frame(
 											c(
 												links_profiles_pos[[at_entry]][[1]][,1], 
 												links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]]

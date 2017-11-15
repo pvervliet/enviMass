@@ -218,7 +218,6 @@
 							combination_matches <- recomb_score_pl(
 								cent_peak_mat = target_pos_screen_listed[[i]][[m]],
 								pattern_compound = pattern[[i]],
-								#profileList = profileList_pos,
 								peaks = profileList_pos[["peaks"]],
 								LOD = use_cutint,
 								RT_tol_inside = RT_tol_inside,
@@ -523,7 +522,6 @@
 							combination_matches<-recomb_score_pl(
 								cent_peak_mat=target_neg_screen_listed[[i]][[m]],
 								pattern_compound=pattern[[i]],
-								#profileList=profileList_neg,
 								peaks=profileList_neg[["peaks"]],
 								LOD=use_cutint,
 								RT_tol_inside=RT_tol_inside,

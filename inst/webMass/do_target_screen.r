@@ -206,18 +206,18 @@
 							}else{
 								use_cutint<-cutint
 							}							
-							combination_matches<-recomb_score(
-								cent_peak_mat=target_pos_screen_listed[[i]][[m]],
-								pattern_compound=pattern[[i]],
-								profileList=profileList_pos,
-								LOD=use_cutint,
-								RT_tol_inside=RT_tol_inside,
-								int_tol=int_tol,
-								use_score_cut=use_score_cut,
-								score_cut=score_cut,
-								plot_it=FALSE,
-								verbose=FALSE,
-								RT_seperate=TRUE
+							combination_matches <- recomb_score_pl(
+								cent_peak_mat = target_pos_screen_listed[[i]][[m]],
+								pattern_compound = pattern[[i]],
+								peaks = profileList_pos[["peaks"]],
+								LOD = use_cutint,
+								RT_tol_inside = RT_tol_inside,
+								int_tol = int_tol,
+								use_score_cut = use_score_cut,
+								score_cut = score_cut,
+								plot_it = FALSE,
+								verbose = FALSE,
+								RT_seperate = TRUE
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(target_pos_screen_listed[[i]][[m]])[1]
@@ -487,15 +487,10 @@
 		res_target_neg_screen<-list()  # default: no match at all
 		if(length(target_neg_screen_listed)>0){
 			for(i in 1:length(target_neg_screen_listed)){ # i - on compound_adduct
-# REMOVE ME:
-#cat(paste0("\n",i))
-# 
 				if(length(target_neg_screen_listed[[i]])>0){	
 					res_target_neg_screen[[i]]<-list()
 					for(m in 1:length(target_neg_screen_listed[[i]])){ # m - sample		
-# REMOVE ME:
-#cat("*")			
-# 		
+
 						at_ID<-set_ID[profileList_neg[[4]]==colnames(target_neg_screen_listed[[i]][[m]])[1]]	
 						if(length(target_neg_screen_listed[[i]][[m]])>0){
 							if(do_LOD){							
@@ -509,10 +504,10 @@
 							}else{
 								use_cutint<-cutint
 							}						
-							combination_matches<-recomb_score(
+							combination_matches<-recomb_score_pl(
 								cent_peak_mat=target_neg_screen_listed[[i]][[m]],
 								pattern_compound=pattern[[i]],
-								profileList=profileList_neg,
+								peaks=profileList_neg[["peaks"]],
 								LOD=use_cutint,
 								RT_tol_inside=RT_tol_inside,
 								int_tol=int_tol,

@@ -205,18 +205,18 @@
 							}else{
 								use_cutint<-cutint
 							}							
-							combination_matches<-recomb_score(
-								cent_peak_mat=IS_pos_screen_listed[[i]][[m]],
-								pattern_compound=pattern[[i]],
-								profileList=profileList_pos,
-								LOD=use_cutint,
-								RT_tol_inside=RT_tol_inside,
-								int_tol=int_tol,
-								use_score_cut=use_score_cut,
-								score_cut=score_cut,
-								plot_it=FALSE,
-								verbose=FALSE,
-								RT_seperate=TRUE
+							combination_matches <- recomb_score_pl(
+								cent_peak_mat = IS_pos_screen_listed[[i]][[m]],
+								pattern_compound = pattern[[i]],
+								peaks = profileList_pos[["peaks"]],
+								LOD = use_cutint,
+								RT_tol_inside = RT_tol_inside,
+								int_tol = int_tol,
+								use_score_cut = use_score_cut,
+								score_cut = score_cut,
+								plot_it = FALSE,
+								verbose = FALSE,
+								RT_seperate = TRUE
 							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(IS_pos_screen_listed[[i]][[m]])[1]
@@ -513,19 +513,19 @@
 							}else{
 								use_cutint<-cutint
 							}
-							combination_matches<-recomb_score(
-								cent_peak_mat=IS_neg_screen_listed[[i]][[m]],
-								pattern_compound=pattern[[i]],
-								profileList=profileList_neg,
-								LOD=use_cutint,
-								RT_tol_inside=RT_tol_inside,
-								int_tol=int_tol,
-								use_score_cut=use_score_cut,
-								score_cut=score_cut,
-								plot_it=FALSE,
-								verbose=FALSE,
-								RT_seperate=TRUE
-							)		
+							combination_matches <- recomb_score_pl(
+								cent_peak_mat = IS_neg_screen_listed[[i]][[m]],
+								pattern_compound = pattern[[i]],
+								peaks = profileList_neg[["peaks"]],
+								LOD = use_cutint,
+								RT_tol_inside = RT_tol_inside,
+								int_tol = int_tol,
+								use_score_cut = use_score_cut,
+								score_cut = score_cut,
+								plot_it = FALSE,
+								verbose = FALSE,
+								RT_seperate = TRUE
+							)
 							for(k in 1:length(combination_matches)){ # add file ID
 								combination_matches[[k]][[10]]<-colnames(IS_neg_screen_listed[[i]][[m]])[1]
 								names(combination_matches[[k]])[10]<-"file_ID"
