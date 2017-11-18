@@ -1504,10 +1504,19 @@ observe({
 	){
 		if( 
 			(isolate(input$profentry) <= length(profpeaks2[,1])) & 
-			(isolate(input$profentry) > 0) &
-			(any( profileList[["index_prof"]][,"profile_ID"] == as.numeric(profpeaks2[isolate(input$profentry), "profile_ID"])))
+			(isolate(input$profentry) > 0) 
 		){
-			updateNumericInput(session, "profID", value = as.numeric(as.character(profpeaks2[isolate(input$profentry),"profile_ID"])))
+			if(any( profileList[["index_prof"]][,"profile_ID"] == as.numeric(profpeaks2[isolate(input$profentry), "profile_ID"]))){
+				updateNumericInput(session, "profID", value = as.numeric(as.character(profpeaks2[isolate(input$profentry), "profile_ID"])))
+			}else{
+				updateNumericInput(session, "profID", value = 0)
+				output$timeprofile <- renderPlot({	
+					plot.new()
+					plot.window(xlim = c(0, 1), ylim = c(0, 1))
+					text(0.5, 0.5, labels="Invalid list entry", cex = 1.8, col = "red")
+				})			
+				output$oneproftable <- renderText("")
+			}
 		}else{
 			output$timeprofile <- renderPlot({	
 				plot.new()

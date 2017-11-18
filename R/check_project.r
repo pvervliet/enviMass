@@ -30,14 +30,37 @@ check_project<-function(
 	if(any(ls() == "logfile")){stop("\n illegal logfile detected #1 in check_project.r!")}
 	###############################################################################	
 	# on adduct table #############################################################
-	
-	
-	
-	
-	
-	
-	
-	
+	formula_add <- adducts$Formula_add[adducts$Formula_add != "FALSE"]
+	if(length(formula_add)){
+		formula_add2 <- enviPat::check_chemform(isotopes, formula_add )
+		if(any(formula_add2$warning)){
+			say <- paste0("Wrong Formula_add in adduct table found: ",
+				paste(formula_add2$new_formula[formula_add2$warning], collapse = ", "),
+				". Please revise!"
+			)	
+		}else{ # insert corrected formulas: e.g., missing numbers
+			k <- which(formula_add2$new_formula != formula_add)
+			if(length(k)){
+				adducts$Formula_add[adducts$Formula_add != "FALSE"] <<- formula_add2$new_formula
+			}
+		}
+	}
+	formula_ded <- adducts$Formula_ded[adducts$Formula_ded != "FALSE"]
+	if(length(formula_ded)){
+		formula_ded2 <- enviPat::check_chemform(isotopes, formula_ded )
+		if(any(formula_ded2$warning)){
+			say <- paste0("Wrong Formula_ded in adduct table found: ",
+				paste(formula_ded2$new_formula[formula_ded2$warning], collapse = ", "),
+				". Please revise!"
+			)	
+		}else{ # insert corrected formulas: e.g., missing numbers
+			k <- which(formula_ded2$new_formula != formula_ded)
+			if(length(k)){
+				adducts$Formula_ded[adducts$Formula_ded != "FALSE"] <<- formula_ded2$new_formula
+			}
+		}
+	}	
+	rm(formula_ded, formula_add)
 	###############################################################################	
 	# on project folders ##########################################################
 	if(!all(names(logfile) == c(
