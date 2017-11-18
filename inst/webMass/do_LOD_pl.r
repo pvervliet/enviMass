@@ -57,7 +57,10 @@ if(length(for_IDs)){
 			}
 		}
 	}
-	if(any(duplicated(names(LOD_splined)[!is.na(names(LOD_splined))]))){stop("\n Issue found in LOD_pl estimation -> non-unique IDs -> please report this problem!")}
+	if(any(duplicated(names(LOD_splined)[
+		(!is.na(names(LOD_splined))) &
+		(names(LOD_splined) != "")
+	]))){stop("\n Issue found in LOD_pl estimation -> non-unique IDs -> please report this problem!")}
 	save(LOD_splined, file = file.path(logfile$project_folder, "results", "LOD", "LOD_splined"))
 	rm(LOD_splined)
 	#################################################################################

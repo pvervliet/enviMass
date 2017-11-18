@@ -111,7 +111,7 @@ NULL
 .onAttach <- function(lib, pkg)
 {
 
-	packageStartupMessage("\n \n Welcome to enviMass version 3.413 \n Run webMass() to start the enviMass browser UI \n\n");
+	packageStartupMessage("\n \n Welcome to enviMass version 3.414 \n Run webMass() to start the enviMass browser UI \n\n");
 	
 	# add menus for enviMass & enviPick 
 	if(interactive() && .Platform$OS.type == "windows" && .Platform$GUI == "Rgui" ){

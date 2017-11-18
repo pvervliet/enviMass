@@ -1879,7 +1879,6 @@ if(logfile$version<3.29){
 	
 }
 	
-	
 if(logfile$version<3.3){
 
 	cat("\n Updating to version 3.3 ...")
@@ -1906,8 +1905,6 @@ if(logfile$version<3.3){
 	################################################################################################
 	
 }
-	
-	
 	
 if(logfile$version<3.31){
 
@@ -2009,8 +2006,6 @@ if(logfile$version<3.311){
 	
 }
 	
-	
-
 if(logfile$version < 3.4){
 
 	cat("\n Updating to version 3.4 ...")
@@ -2114,7 +2109,6 @@ if(logfile$version < 3.4){
 	
 }
 
-
 if(logfile$version < 3.41){
 
 	cat("\n Updating to version 3.41 ...")
@@ -2169,7 +2163,6 @@ if(logfile$version < 3.41){
 	
 }
 
-
 if(logfile$version < 3.411){
 
 	cat("\n Updating to version 3.411 ...")
@@ -2185,7 +2178,6 @@ if(logfile$version < 3.411){
 	################################################################################################
 	
 }
-
 
 if(logfile$version < 3.412){
 
@@ -2208,7 +2200,6 @@ if(logfile$version < 3.412){
 	
 }
 
-
 if(logfile$version < 3.413){
 
 	cat("\n Updating to version 3.413 ...")
@@ -2221,6 +2212,17 @@ if(logfile$version < 3.413){
 	
 }
 
+if(logfile$version < 3.414){
+
+	cat("\n Updating to version 3.414 ...")
+	################################################################################################	
+	logfile$version <<- 3.414
+	################################################################################################		
+	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
 
 
 ########################################################################
