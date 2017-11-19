@@ -131,10 +131,10 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*2, # precheck
-			ppm=ppm, 
-			RT=centro_RT, 
-			dRT=centro_dRT
+			dmz = mztol * 2, # precheck
+			ppm = ppm, 
+			RT = centro_RT, 
+			dRT = (centro_dRT + as.numeric(logfile$parameters$prof_drt))
 		)	
 		if(as.character(logfile$parameters$screen_target_maxonly)=="TRUE"){ # only retain max_peak-results?
 			getit[!centro_maxpeak]<-"FALSE"
@@ -162,6 +162,8 @@
 								}else{
 									if(delmass*1E6/pattern[[i]][j,1]>mztol){next}
 								}
+								delRT <- abs(profileList_pos[[2]][m,3] - pattern_RT[i])	
+								if(delRT > pattern_delRT[i]) next
 								at_ID<-set_ID[profileList_pos[[4]]==as.character(profileList_pos[[2]][m,6])]								
 								if(length(target_pos_screen_listed[[i]])<at_ID){							
 									target_pos_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
@@ -439,10 +441,10 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*2, # precheck
-			ppm=ppm, 
-			RT=centro_RT, 
-			dRT=centro_dRT
+			dmz = mztol * 2, # precheck
+			ppm = ppm, 
+			RT = centro_RT, 
+			dRT = (centro_dRT + as.numeric(logfile$parameters$prof_drt))
 		)	
 		if(as.character(logfile$parameters$screen_target_maxonly)=="TRUE"){ # only retain max_peak-results?
 			getit[!centro_maxpeak]<-"FALSE"
@@ -469,6 +471,8 @@
 								}else{
 									if(delmass*1E6/pattern[[i]][j,1]>mztol){next}
 								}
+								delRT <- abs(profileList_neg[[2]][m,3] - pattern_RT[i])	
+								if(delRT > pattern_delRT[i]) next
 								at_ID<-set_ID[profileList_neg[[4]]==as.character(profileList_neg[[2]][m,6])]								
 								if(length(target_neg_screen_listed[[i]])<at_ID){							
 									target_neg_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	

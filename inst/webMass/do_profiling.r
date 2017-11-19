@@ -100,13 +100,13 @@
 			####################################################################################	
 		}
 		########################################################################################
-		profileList_pos<-enviMass:::in_blind(profileList_pos)
-		profileList_pos<<-profileList_pos
-		save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"),compress=FALSE);
-		profileList_pos_copy<-profileList_pos
-		save(profileList_pos_copy,file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),compress=FALSE); # used for screening - does not include modifications of downstream compound subtraction		
-		links_peaks_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol; links_profiles_pos defined in do_components_profiles.r
-		save(links_peaks_pos,file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));
+		profileList_pos <- enviMass:::in_blind(profileList_pos)
+		profileList_pos <<- profileList_pos
+		save(profileList_pos,file = file.path(as.character(logfile[[1]]),"results","profileList_pos"), compress = FALSE);
+		profileList_pos_copy <- profileList_pos
+		save(profileList_pos_copy, file = file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"), compress = FALSE); # used for screening - does not include modifications of downstream compound subtraction		
+		links_peaks_pos <- list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol; links_profiles_pos defined in do_components_profiles.r
+		save(links_peaks_pos, file = file.path(as.character(logfile[[1]]),"results","links_peaks_pos"));
 		########################################################################################
 		
 	}

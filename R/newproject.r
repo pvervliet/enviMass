@@ -172,7 +172,7 @@ newproject <- function(pro_name, pro_dir, IS, targets){
 		logfile$parameters$replicate_ppm <- "TRUE";						
 		logfile$parameters$replicate_recalib <- "FALSE";					
 		logfile$parameters$replicate_delRT <- "30";					
-		logfile$parameters$replicate_IS_dInt <- "5";						
+		logfile$parameters$replicate_IS_dInt <- "10";						
 		# trend detection ######################################################
 		logfile$parameters$notrend <- "TRUE";		
 		logfile$parameters$trend_lags <- "4,7,14"; 	

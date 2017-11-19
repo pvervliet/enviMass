@@ -932,7 +932,7 @@
 				selectInput("replicate_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),	
 				#selectInput("replicate_recalib", "... and corrected by recalibration results (if available)", choices = c("TRUE"="TRUE","FALSE"="FALSE"), "FALSE"),	
 				numericInput("replicate_delRT", "RT tolerance window of peaks caused by the same analyte across replicate samples [s]", 30),
-				numericInput("replicate_IS_dInt", "Absolute log intensity tolerance X (log 10 scale, 10^X):", 9)
+				numericInput("replicate_IS_dInt", "Absolute log intensity tolerance X (log 10 scale, 10^X):", 10)
 			),	
             # ALLIGNMENT #######################################################
             #tabPanel("Alignment",

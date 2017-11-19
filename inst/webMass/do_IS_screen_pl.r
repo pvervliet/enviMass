@@ -126,7 +126,7 @@
 			dmz = mztol*2, # precheck for profiles
 			ppm = ppm, 
 			RT = centro_RT, 
-			dRT = centro_dRT
+			dRT = (centro_dRT + as.numeric(logfile$parameters$prof_drt))
 		)	
 		if( as.character(logfile$parameters$screen_IS_maxonly) == "TRUE" ){ # only retain max_peak-results?
 			getit[!centro_maxpeak] <- "FALSE"
@@ -154,6 +154,8 @@
 								}else{
 									if((delmass * 1E6 / pattern[[i]][j,1]) > mztol){next}
 								}
+								delRT <- abs(profileList_pos[[2]][m,3] - pattern_RT[i])	
+								if(delRT > pattern_delRT[i]) next
 								at_ID<-set_ID[profileList_pos[[4]] == as.character(profileList_pos[[2]][m,6])]								
 								if(length(IS_pos_screen_listed[[i]]) < at_ID){							
 									IS_pos_screen_listed[[i]][[at_ID]] <- matrix(ncol = 2, nrow = 0)	
@@ -443,7 +445,7 @@
 			dmz=mztol*2, # precheck for profiles
 			ppm=ppm, 
 			RT=centro_RT, 
-			dRT=centro_dRT
+			dRT = (centro_dRT + as.numeric(logfile$parameters$prof_drt))
 		)	
 		if( as.character(logfile$parameters$screen_IS_maxonly)=="TRUE" ){ # only retain max_peak-results?
 			getit[!centro_maxpeak]<-"FALSE"
@@ -463,15 +465,15 @@
 						for(k in 1:length(profs)){ # over their matched profile peaks = k		
 							if(profileList_neg[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # a check
 							for(m in profileList_neg[[7]][profs[k],1]:profileList_neg[[7]][profs[k],2]){ # over their sample peaks		
-								
 								if(retain_sample[profileList_neg[[2]][m,"sampleIDs"]] == FALSE ){next} # Is this file among the latest ones?									
-								
 								delmass<-abs(profileList_neg[[2]][m,1]-pattern[[i]][j,1])		
 								if(!ppm){
 									if(delmass>(mztol/1000)){next}
 								}else{
 									if((delmass*1E6/pattern[[i]][j,1])>mztol){next}
 								}
+								delRT <- abs(profileList_neg[[2]][m,3] - pattern_RT[i])	
+								if(delRT > pattern_delRT[i]) next
 								at_ID<-set_ID[profileList_neg[[4]]==as.character(profileList_neg[[2]][m,6])]								
 								if(length(IS_neg_screen_listed[[i]])<at_ID){							
 									IS_neg_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
