@@ -162,20 +162,20 @@
 			##########################################################################	
 			# FILTER & SAVE RESULTS ##################################################
 			cat("filtering: ")
-			EIC_pairs<-paired[paired[,4]>=0,,drop=FALSE]
-			EIC_pairs[,1]<-peaklist[EIC_pairs[,1],"peak_ID"] # insert peak ID! peaklist has been resorted here!
-			EIC_pairs[,2]<-peaklist[EIC_pairs[,2],"peak_ID"] # insert peak ID! peaklist has been resorted here!			
+			EIC_pairs <- paired[paired[,4] >= 0,,drop=FALSE]
+			EIC_pairs[,1] <- peaklist[EIC_pairs[,1],"peak_ID"] # insert peak ID! peaklist has been resorted here!
+			EIC_pairs[,2] <- peaklist[EIC_pairs[,2],"peak_ID"] # insert peak ID! peaklist has been resorted here!			
 			if(length(EIC_pairs[,1])==0){
 				cat("nothing found; aborted.");next;
 			}
 			# re-arrange: values increasing per row and towards bottoms over columns 
 			those<-(EIC_pairs[,1]>EIC_pairs[,2])
 			if(any(those)){
-				EIC_pairs[those,]<-EIC_pairs[those,c(2,1,3,4),drop=FALSE]
+				EIC_pairs[those,]<-EIC_pairs[those,c(2,1,3,4), drop = FALSE]
 			}
-			EIC_pairs<-EIC_pairs[order(EIC_pairs[,1],EIC_pairs[,2],decreasing=FALSE),,drop=FALSE]
-			save(EIC_pairs,file=file.path(logfile[[1]],"results","componentization","EIC_corr",for_file))
-			cat(as.character(round((sum(EIC_pairs[,4]>=as.numeric(logfile$parameters$EICor_mincor))/length(paired[,1])*100),digits=2)));
+			EIC_pairs<-EIC_pairs[order(EIC_pairs[,1],EIC_pairs[,2], decreasing = FALSE),, drop = FALSE]
+			save(EIC_pairs,file=file.path(logfile[[1]],"results","componentization","EIC_corr", for_file))
+			cat(as.character(round((sum(EIC_pairs[,4] >= as.numeric(logfile$parameters$EICor_mincor)) / length(paired[,1]) * 100), digits = 2)));
 			cat("% = ");
 			cat(as.character(length(EIC_pairs[,1])));
 			cat(" pairs corrrelated - ");

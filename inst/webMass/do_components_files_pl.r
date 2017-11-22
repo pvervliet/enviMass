@@ -13,15 +13,15 @@
 		measurements <- read.csv(file = file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character");
 		#for_IDs <- measurements$ID
 		if(mute(logfile$parameters$prof_select == "TRUE")){
-			for_IDs <- measurements[(measurements$include=="TRUE") & (measurements$components_files=="FALSE") & (measurements$profiled!="FALSE"),]$ID
+			for_IDs <- measurements[(measurements$include == "TRUE") & (measurements$components_files == "FALSE") & (measurements$profiled != "FALSE"),]$ID
 		}else{
-			for_IDs <- measurements[(measurements$include=="TRUE") & (measurements$components_files=="FALSE") ,]$ID		
+			for_IDs <- measurements[(measurements$include == "TRUE") & (measurements$components_files == "FALSE") ,]$ID		
 		}	
 		#######################################################################################
 		if(length(for_IDs)){	
 			for(i in for_IDs){
-				if(file.exists(file.path(logfile[[1]],"results","componentization","components",paste(i)))){ 
-					file.remove(file.path(logfile[[1]],"results","componentization","components",paste(i)))
+				if(file.exists(file.path(logfile[[1]], "results", "componentization", "components", paste(i)))){ 
+					file.remove(file.path(logfile[[1]], "results", "componentization", "components", paste(i)))
 				}
 			}
 			if(FALSE){ # for debugging - outside clusters

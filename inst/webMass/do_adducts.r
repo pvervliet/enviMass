@@ -68,7 +68,7 @@
 			}
 			adduct<-try(
 				enviMass::adduct_search2( # dont name it "adducts" -> conflict
-					peaklist=peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")], 
+					peaklist = peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")], 
 					adducts, 
 					rttol = as.numeric(logfile$parameters$adducts_rttol), 
 					mztol = use_mztol,
@@ -86,15 +86,15 @@
 				cat("\n No adduct relations detected");
 				next;
 			}
-			Adduct_pairs <- adduct[["Pairs"]][,c(1,2)]
-			those<-(Adduct_pairs[,1]>Adduct_pairs[,2])
+			Adduct_pairs <- adduct[["Pairs"]][,c(1,2), drop = FALSE]
+			those <- (Adduct_pairs[,1] > Adduct_pairs[,2])
 			if(any(those)){
-				Adduct_pairs[those,]<-Adduct_pairs[those,c(2,1)]
+				Adduct_pairs[those,] <- Adduct_pairs[those, c(2, 1), drop = FALSE]
 			}
-			Adduct_pairs<-Adduct_pairs[order(Adduct_pairs[,1],Adduct_pairs[,2],decreasing=FALSE),]
-			save(Adduct_pairs,file=(file.path(logfile[[1]],"results","componentization","adducts",paste(for_file,sep=""))))
-			adduct[["Pairs"]]<-0
-			save(adduct,file=(file.path(logfile[[1]],"results","componentization","adducts",paste("full",for_file,sep="_"))))
+			Adduct_pairs <- Adduct_pairs[order(Adduct_pairs[,1], Adduct_pairs[,2], decreasing = FALSE),, drop = FALSE]
+			save(Adduct_pairs, file = (file.path(logfile[[1]], "results", "componentization", "adducts", paste(for_file, sep = ""))))
+			adduct[["Pairs"]] <- 0
+			save(adduct, file = (file.path(logfile[[1]], "results", "componentization", "adducts", paste("full", for_file, sep = "_"))))
 			rm(peaklist,peaklist2,those,Adduct_pairs,with_adducts,with_mode,for_file,adduct)
 			##########################################################################	
 			measurements[b,"adducts"]<-"TRUE"

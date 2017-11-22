@@ -69,14 +69,14 @@ adduct_search2_wrap <-function(
 	if(length(adduct[["Pairs"]][,1])==0){
 		return("\n No adduct relations detected");
 	}
-	Adduct_pairs<-adduct[["Pairs"]][,c(1,2)]
-	those<-(Adduct_pairs[,1]>Adduct_pairs[,2])
+	Adduct_pairs <- adduct[["Pairs"]][,c(1,2), drop = FALSE]
+	those <- (Adduct_pairs[,1] > Adduct_pairs[,2])
 	if(any(those)){
-		Adduct_pairs[those,]<-Adduct_pairs[those,c(2,1)]
+		Adduct_pairs[those,] <- Adduct_pairs[those, c(2,1), drop = FALSE]
 	}
-	Adduct_pairs<-Adduct_pairs[order(Adduct_pairs[,1],Adduct_pairs[,2],decreasing=FALSE),]
-	save(Adduct_pairs,file=(file.path(logfile[[1]],"results","componentization","adducts",paste(for_file,sep=""))))
-	adduct[["Pairs"]]<-0
+	Adduct_pairs <- Adduct_pairs[order(Adduct_pairs[,1], Adduct_pairs[,2], decreasing = FALSE),, drop = FALSE]
+	save(Adduct_pairs,file=(file.path(logfile[[1]], "results", "componentization", "adducts", paste(for_file, sep = ""))))
+	adduct[["Pairs"]] <- 0
 	save(adduct,file=(file.path(logfile[[1]],"results","componentization","adducts",paste("full",for_file,sep="_"))))
 	rm(peaklist,peaklist2,those,Adduct_pairs,with_adducts,with_mode,for_file,adduct)
 	##########################################################################	

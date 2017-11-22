@@ -79,9 +79,9 @@ pattern_search3_wrap<-function(
 	pattern[["Pairs"]]<-0
 	those<-(Isot_pairs[,1]>Isot_pairs[,2])
 	if(any(those)){
-		Isot_pairs[those,]<-Isot_pairs[those,c(2,1)]
+		Isot_pairs[those,]<-Isot_pairs[those,c(2,1), drop = FALSE]
 	}
-	Isot_pairs<-Isot_pairs[order(Isot_pairs[,1],Isot_pairs[,2],decreasing=FALSE),]				
+	Isot_pairs<-Isot_pairs[order(Isot_pairs[,1],Isot_pairs[,2],decreasing=FALSE),, drop = FALSE]				
 	save(Isot_pairs,file=(file.path(logfile[[1]],"results","componentization","isotopologues",paste(for_file,sep="_"))))
 	save(pattern,file=(file.path(logfile[[1]],"results","componentization","isotopologues",paste("full",for_file,sep="_"))))
 	##########################################################################	

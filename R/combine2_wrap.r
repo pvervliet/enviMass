@@ -11,20 +11,20 @@ function(
 	##########################################################################
 	# get isotopologue grouping results ######################################
 	if(
-		do_isot & file.exists(file.path(logfile[[1]], "results", "componentization", "isotopologues", paste("full", for_file, sep="_")))
+		do_isot & file.exists(file.path(logfile[[1]], "results", "componentization", "isotopologues", paste("full", for_file, sep = "_")))
 	){
-		load(file.path(logfile[[1]],"results","componentization","isotopologues", paste("full", for_file, sep="_")))
+		load(file.path(logfile[[1]],"results","componentization","isotopologues", paste("full", for_file, sep = "_")))
 		do_pattern <- TRUE
 	}else{
-		pattern<-FALSE
+		pattern <- FALSE
 		do_pattern <- FALSE
 	}
 	##########################################################################
 	# get adduct grouping results ############################################
 	if(
-		do_addu & file.exists(file.path(logfile[[1]], "results", "componentization","adducts",paste("full", for_file,sep="_")))
+		do_addu & file.exists(file.path(logfile[[1]], "results", "componentization","adducts",paste("full", for_file,sep = "_")))
 	){
-		load(file.path(logfile[[1]], "results", "componentization", "adducts", paste("full", for_file, sep="_")))
+		load(file.path(logfile[[1]], "results", "componentization", "adducts", paste("full", for_file, sep = "_")))
 		do_adduct <- TRUE
 	}else{
 		adduct<-FALSE
@@ -33,11 +33,11 @@ function(
 	##########################################################################
 	# get adduct grouping results ############################################
 	if(
-		do_homol & file.exists(file.path(logfile[[1]], "results", "componentization", "homologues", paste("full",for_file,sep="_")))
+		do_homol & file.exists(file.path(logfile[[1]], "results", "componentization", "homologues", paste("full", for_file, sep = "_")))
 	){
-		load(file.path(logfile[[1]],"results", "componentization", "homologues", paste("full", for_file, sep="_")))
+		load(file.path(logfile[[1]],"results", "componentization", "homologues", paste("full", for_file, sep = "_")))
 	}else{ 
-		homol<-FALSE
+		homol <- FALSE
 	}
 	##########################################################################
 	if(!do_adduct & !do_pattern){
@@ -45,7 +45,7 @@ function(
 	}
 	##########################################################################
 	# build components #######################################################
-	component<-enviMass::combine2(
+	component <- enviMass::combine2(
 		pattern, 
 		adduct, 
 		homol, 
@@ -542,7 +542,7 @@ function(
 		rm(peaklist)
 	}
 	##########################################################################
-	save(component,file=(file.path(logfile[[1]],"results","componentization","components",paste(for_file))))
+	save(component, file = (file.path(logfile[[1]],"results","componentization","components",paste(for_file))))
 	##########################################################################	
 	return(NULL);
 
