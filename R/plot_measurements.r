@@ -17,26 +17,26 @@ plot_measurements<-function(
 ){
 
     ############################################################################
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");	
-	if(any(measurements[,"ID"]!="-")){
-		dated<-measurements[,"Date"]
-		timed<-measurements[,"Time"]
-		datetime<-c()
+	measurements <- read.csv(file = file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character");	
+	if(any(measurements[,"ID"] != "-")){
+		dated <- measurements[,"Date"]
+		timed <- measurements[,"Time"]
+		datetime <- c()
 		for(i in 1:length(timed)){
-		  datetime<-c(datetime,paste(dated[i],timed[i],"CET",sep=" "))
+		  datetime <- c(datetime, paste(dated[i], timed[i], "CET", sep = " "))
 		}
-		atPOSIX<-as.POSIXct(datetime);
-		attime2<-as.difftime(timed);
-		atdate<-as.Date(dated, tz="GMT");
-		ord<-order(as.numeric(atdate),as.numeric(attime2));
-		atPOSIXsort<-atPOSIX[ord];
-		dated<-as.POSIXct(atPOSIXsort)
+		atPOSIX <- as.POSIXct(datetime);
+		attime2 <- as.difftime(timed);
+		atdate <- as.Date(dated, tz = "GMT");
+		ord <- order(as.numeric(atdate), as.numeric(attime2));
+		atPOSIXsort <- atPOSIX[ord];
+		dated <- as.POSIXct(atPOSIXsort)
 		############################################################################
-		par(mar=c(2,4.5,.8,.2))
+		par(mar = c(2, 4.5, .8, .2))
 		plot.new()
-		if(length(ranges_overview$x)==0){
-			use_x_lim<-c(min(atPOSIX),max(atPOSIX))
-			dated2<-pretty(dated)
+		if(length(ranges_overview$x) == 0){
+			use_x_lim <- c(min(atPOSIX), max(atPOSIX))
+			dated2 <- pretty(dated)
 		}else{
 			use_x_lim<-ranges_overview$x	
 			dated2<-dated[
@@ -70,20 +70,20 @@ plot_measurements<-function(
 			mtext("Now zoomed in",side=3,col="gray",line=-1)
 		}
 		# time regions for calibration files
-		if(any((measurements$Type=="calibration")&(measurements$Mode=="positive"))){ # add bars for calibration groups, positive!
-			measurements2<-measurements[
-				(measurements$Type=="calibration")&(measurements$Mode=="positive")
+		if(any((measurements$Type == "calibration") & (measurements$Mode == "positive"))){ # add bars for calibration groups, positive!
+			measurements2 <- measurements[
+				(measurements$Type == "calibration") & (measurements$Mode == "positive")
 			,]
 			for(i in 1:length(measurements2[,"ID"])){
-				start_dated<-measurements2[i,"Date"]
-				start_timed<-measurements2[i,"Time"]
-				start_datetime<-paste(start_dated,start_timed,"CET",sep=" ")
-				atPOSIX_start<-as.POSIXct(start_datetime)
-				end_dated<-measurements2[i,"date_end"]
-				end_timed<-measurements2[i,"time_end"]
-				end_datetime<-paste(end_dated,end_timed,"CET",sep=" ")
+				start_dated <- measurements2[i,"Date"]
+				start_timed <- measurements2[i,"Time"]
+				start_datetime <- paste(start_dated, start_timed, "CET", sep = " ")
+				atPOSIX_start <- as.POSIXct(start_datetime)
+				end_dated <- measurements2[i, "date_end"]
+				end_timed <- measurements2[i, "time_end"]
+				end_datetime <- paste(end_dated, end_timed, "CET", sep = " ")
 				cat(end_datetime)
-				atPOSIX_end<-as.POSIXct(end_datetime)
+				atPOSIX_end <- as.POSIXct(end_datetime)
 				lines(y=c(10,10),x=c(atPOSIX_start,atPOSIX_end),col="red")
 				text(mean(c(atPOSIX_start,atPOSIX_end)),10,as.character(measurements2[i,]$tag2),pos=3,col="red")
 				lines(y=c(9.8,10.2),x=c(atPOSIX_start,atPOSIX_start),col="red")

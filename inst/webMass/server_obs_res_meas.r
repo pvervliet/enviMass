@@ -966,7 +966,7 @@ maincalc6<-reactive({
 	input$filterProf_meanblind
 	input$filterProf_notblind
 	input$filterProf_sort
-	input$filterProf_count
+	# input$filterProf_count <- REMOVE!
 	input$filterProf_medianblind
 	input$filterProf_medianblind_value
 	input$filterProf_minMD
@@ -1143,9 +1143,9 @@ maincalc6<-reactive({
 			expr6 <- list(src=file.path(logfile[[1]],"pics","profilehisto.png"));
 			output$profilehisto <- renderImage(expr6, deleteFile = FALSE);
 			# generate output table ############################################
-			if( (length(profpeaks2[,1]) > isolate(input$filterProf_count))  &  !is.na(isolate(input$filterProf_count)) ){
-				profpeaks2 <<- profpeaks2[1:isolate(input$filterProf_count),,drop=FALSE]
-			}
+			#if( (length(profpeaks2[,1]) > isolate(input$filterProf_count))  &  !is.na(isolate(input$filterProf_count)) ){
+			#	profpeaks2 <<- profpeaks2[1:isolate(input$filterProf_count),,drop=FALSE]
+			#}
 			profpeaks3 <<- as.data.frame(profpeaks2)
 			profpeaks3[,"mean_mz" ]<<-round(profpeaks3[,"mean_mz"],digits=6)
 			profpeaks3[,"mean_RT" ]<<-round(profpeaks3[,"mean_RT"],digits=1)
@@ -1235,6 +1235,56 @@ output$atprof2<-renderText(paste(maincalc6()))
 output$prof_number<-renderText(paste(maincalc6())) 
 ##############################################################################
 
+
+##############################################################################
+# update results per profilepeak list entry index ############################
+##############################################################################
+observe({
+	input$profentry
+	init$b
+	if(	
+		(isolate(init$a)=="TRUE") &  
+		!is.na(isolate(input$profentry)) & 
+		(isolate(input$profentry)!=0) & 
+		(any(objects(envir=as.environment(".GlobalEnv")) == "profileList")) & 
+		(any(objects(envir=as.environment(".GlobalEnv")) == "profpeaks2"))
+	){
+		if( 
+			(isolate(input$profentry) <= length(profpeaks2[,1])) & 
+			(isolate(input$profentry) > 0) 
+		){
+			if(any( profileList[["index_prof"]][,"profile_ID"] == as.numeric(profpeaks2[isolate(input$profentry), "profile_ID"]))){
+				updateNumericInput(session, "profID", value = as.numeric(as.character(profpeaks2[isolate(input$profentry), "profile_ID"])))
+			}else{
+				updateNumericInput(session, "profID", value = 0)
+				output$timeprofile <- renderPlot({	
+					plot.new()
+					plot.window(xlim = c(0, 1), ylim = c(0, 1))
+					text(0.5, 0.5, labels="Invalid list entry", cex = 1.8, col = "red")
+				})			
+				output$oneproftable<-DT::renderDataTable(cbind("No date available",""));
+			}
+		}else{
+			output$timeprofile <- renderPlot({	
+				plot.new()
+				plot.window(xlim = c(0, 1), ylim = c(0, 1))
+				text(0.5, 0.5, labels="Invalid list entry", cex = 1.8, col = "red")
+			})			
+			output$oneproftable<-DT::renderDataTable(cbind("No date available",""));
+		}
+	}else{
+		if(isolate(init$a) == "TRUE"){
+			output$timeprofile <- renderPlot({	
+				plot.new()
+				plot.window(xlim = c(0, 1), ylim = c(0, 1))
+				text(0.5, 0.5, labels = "Nothing to plot - invalid ID", cex = 1.8, col = "red")
+			})			
+			output$oneproftable<-DT::renderDataTable(cbind("No date available",""));
+		}
+	}
+})	
+##############################################################################
+
 ##############################################################################
 # PROFILE FITERING - update results for individual profileIDs ################
 ##############################################################################
@@ -1249,8 +1299,7 @@ observe({
 		(!is.na(isolate(input$profID))) & 
 		(isolate(input$profID)!=0) & 
 		any(objects(envir=as.environment(".GlobalEnv")) == "profileList") & 
-		any(objects(envir=as.environment(".GlobalEnv")) == "profpeaks2") &
-		any(objects(envir=as.environment(".GlobalEnv")) == "links_profiles") 		
+		any(objects(envir=as.environment(".GlobalEnv")) == "profpeaks2") 	
 	){
 		cat("\n plotting profile _2")
 		if(any(objects()=="profileList")){stop("illegal profileList found, #5");}
@@ -1274,7 +1323,7 @@ observe({
 				logscaled <- FALSE
 			}
 			output$timeprofile <- renderPlot({			
-				assign("peakTable", plotaprofile(
+				plotaprofile(
 					profileList,
 					profileID = prof_plot_IDs,
 					logint = logscaled,
@@ -1284,15 +1333,18 @@ observe({
 					threshold = as.numeric(logfile$parameters$trend_threshold),
 					ranges_x = ranges_timeprofile$x,
 					ranges_y = ranges_timeprofile$y,
-					),envir = as.environment(".GlobalEnv")
-				)	
+					return_data = FALSE
+				)
 				if((!is.null(ranges_timeprofile$x))||(!is.null(ranges_timeprofile$y))){
 					mtext("Now zoomed in", side = 3, col = "gray")
 				}
 			})			
 			##################################################################
 			# target / ISTD matches? #########################################
-			if(at_entry != 0){
+			if(
+				(at_entry != 0) &
+				any(objects(envir=as.environment(".GlobalEnv")) == "links_profiles")
+			){
 				# on targets #################################################
 				if(length(links_profiles[[at_entry]]$targ) !=  0){
 					if(!any(objects(envir=as.environment(".GlobalEnv")) == "target_table")){
@@ -1340,7 +1392,10 @@ observe({
 			}
 			##################################################################
 			plot_similar_profiles <- FALSE
-			if(at_entry != 0){
+			if(
+				(at_entry != 0) &
+				any(objects(envir=as.environment(".GlobalEnv")) == "links_profiles")
+			){
 				if(length(links_profiles[[at_entry]]$group) > 0){
 					prof_plot_IDs <<- c(prof_plot_IDs,links_profiles[[at_entry]]$group)
 					prof_plot_IDs <<- unique(prof_plot_IDs)
@@ -1421,7 +1476,13 @@ observe({
 				)			
 			});
 			##################################################################
-			output$oneproftable<-DT::renderDataTable(peakTable);
+			peakTable <<- plotaprofile( # peakTable will also be required further below for EIC extraction
+					profileList,
+					profileID = prof_plot_IDs,
+					plotit = FALSE,
+					return_data = TRUE
+				)
+			output$oneproftable <- DT::renderDataTable(peakTable);
 			updateNumericInput(session,"profpeakID",value = 0);
 			path=file.path(logfile[[1]],"pics","massdens.png");
 			png(filename = path, bg = "white", width = 550,height=200);			
@@ -1483,56 +1544,6 @@ observe({
 			dev.off();
 			expr_mass_int<-list(src=file.path(logfile[[1]],"pics","mass_int.png"));
 			output$massint<-renderImage(expr_mass_int, deleteFile = FALSE);	
-		}
-	}
-})	
-##############################################################################
-
-##############################################################################
-# update results per profilepeak list entry index ############################
-##############################################################################
-observe({
-	input$profentry
-	init$b
-	if(	
-		(isolate(init$a)=="TRUE") &  
-		!is.na(isolate(input$profentry)) & 
-		(isolate(input$profentry)!=0) & 
-		(any(objects(envir=as.environment(".GlobalEnv")) == "profileList")) & 
-		(any(objects(envir=as.environment(".GlobalEnv")) == "profpeaks2")) &
-		(any(objects(envir=as.environment(".GlobalEnv")) == "links_profiles"))
-	){
-		if( 
-			(isolate(input$profentry) <= length(profpeaks2[,1])) & 
-			(isolate(input$profentry) > 0) 
-		){
-			if(any( profileList[["index_prof"]][,"profile_ID"] == as.numeric(profpeaks2[isolate(input$profentry), "profile_ID"]))){
-				updateNumericInput(session, "profID", value = as.numeric(as.character(profpeaks2[isolate(input$profentry), "profile_ID"])))
-			}else{
-				updateNumericInput(session, "profID", value = 0)
-				output$timeprofile <- renderPlot({	
-					plot.new()
-					plot.window(xlim = c(0, 1), ylim = c(0, 1))
-					text(0.5, 0.5, labels="Invalid list entry", cex = 1.8, col = "red")
-				})			
-				output$oneproftable <- renderText("")
-			}
-		}else{
-			output$timeprofile <- renderPlot({	
-				plot.new()
-				plot.window(xlim = c(0, 1), ylim = c(0, 1))
-				text(0.5, 0.5, labels="Invalid list entry", cex = 1.8, col = "red")
-			})			
-			output$oneproftable <- renderText("")
-		}
-	}else{
-		if(isolate(init$a) == "TRUE"){
-			output$timeprofile <- renderPlot({	
-				plot.new()
-				plot.window(xlim = c(0, 1), ylim = c(0, 1))
-				text(0.5, 0.5, labels = "Nothing to plot - invalid ID", cex = 1.8, col = "red")
-			})			
-			output$oneproftable <- renderText("")
 		}
 	}
 })	
@@ -1773,6 +1784,7 @@ observe({
 		measurements[,c("qc","recal","align","norm", "LOD","isotopologues","adducts","homologues","EIC_correlation","blind","components_files")]<-"FALSE"
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		createAlert(session,anchorId = "reset", alertId="reset1", title = NULL, content="Project reset w/o peak picking",style = "warning",append=FALSE,dismiss=TRUE)
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nReset without peak picking \n")
 	}
@@ -1796,6 +1808,7 @@ observe({
 			}
 		}
 		createAlert(session,anchorId = "reset", alertId="reset2", title = NULL, content="Project reset",style = "warning",append=FALSE,dismiss=TRUE)
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 		cat("\nTotal reset \n")
 	}

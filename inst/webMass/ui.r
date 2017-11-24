@@ -108,6 +108,7 @@ shinyUI(
 	################################################################################
 		useShinyjs(),
 		useToastr(),
+		useShinyFeedback(), # include shinyFeedback
 		##############################################################################
 		conditionalPanel( 
 			condition = "output.textit == 'Waiting...'", 
@@ -137,11 +138,11 @@ shinyUI(
 				),
 				#useShinyjs(),  # Set up shinyjs
 				HTML('</font>'),
-				source("ui_busy.R", local=TRUE)$value,  
+				source("ui_busy.r", local=TRUE)$value,  
 				HTML('</font>'),
-				source("ui_mainPanel_startup.R", local=TRUE)$value,
+				source("ui_mainPanel_startup.r", local=TRUE)$value,
 				HTML('</font>'),	
-				source("ui_mainPanel.R", local=TRUE)$value 
+				source("ui_mainPanel.r", local=TRUE)$value 
 			, style = "float:left")
 			##########################################################################  
 		) 

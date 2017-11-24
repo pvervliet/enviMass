@@ -26,7 +26,7 @@ workflow_get<-function(path,logfile,session){
 	done_parameters<-rep(FALSE,length(logfile$parameters))
 	done_workflow<-rep(FALSE,length(logfile$workflow))	
 	##################################################################################
-	types<-c("numericInput","sliderInput","selectInput","checkboxInput","checkboxGroupInput","textInput","radioButtons")
+	types<-c("numericInput","sliderInput","selectInput","checkboxInput","checkboxGroupInput","textInput","radioButtons","knobInput")
 	types<-paste(types,"(",sep="")
 	for(i in 1:length(textit)){
 		for(j in 1:length(types)){
@@ -34,64 +34,70 @@ workflow_get<-function(path,logfile,session){
 				at<-gregexpr(pattern=types[j],textit[i], fixed = TRUE)
 				for(k in 1:length(at[[1]][1])){
 					# extract input name between quotes
-					from<-(at[[1]][1][k]+nchar(types[j])+1)
-					for(to in from:(from+10000)){
-						if( substr(textit[i],to,to)=="\""){
-							to<-(to-1)
+					from <- (at[[1]][1][k] + nchar(types[j])+1)
+					for(to in from:(from + 10000)){
+						if( substr(textit[i],to,to) == "\""){
+							to <- (to-1)
 							break;
 						}
 					}
 					if(grepl("inputId",substr(textit[i],from-1,to+1))){
 						stop("\n shiny input declared with explicit inputId - please revise; omit inputId!")
 					}
-					that<-substr(textit[i],from,to)
-					if(any(names(logfile$parameters)==that)){
-						if(types[j]=="numericInput("){
-							do<-"updateNumericInput"
-							eval(parse(text=
+					that<-substr(textit[i], from, to)
+					if(any(names(logfile$parameters) == that)){
+						if(types[j] == "numericInput("){
+							do <- "updateNumericInput"
+							eval(parse(text =
 								paste(do,"(session,\"",that,"\",value=as.numeric(logfile$parameters$",that,"))",sep="")
 							))
 						}
-						if(types[j]=="sliderInput("){
-							do<-"updateSliderInput"
-							eval(parse(text=
+						if(types[j] == "sliderInput("){
+							do <- "updateSliderInput"
+							eval(parse(text =
 								paste(do,"(session,\"",that,"\",value=as.numeric(logfile$parameters$",that,"))",sep="")
 							))					
 						}						
-						if(types[j]=="selectInput("){
-							do<-"updateSelectInput"
-							eval(parse(text=
+						if(types[j] == "selectInput("){
+							do <- "updateSelectInput"
+							eval(parse(text =
 								paste(do,"(session,\"",that,"\",selected=as.character(logfile$parameters$",that,"))",sep="")
 							))					
 						}						
-						if(types[j]=="checkboxInput("){
-							do<-"updateCheckboxInput"
-							eval(parse(text=
+						if(types[j] == "checkboxInput("){
+							do <- "updateCheckboxInput"
+							eval(parse(text =
 								paste(do,"(session,\"",that,"\",value=as.logical(logfile$parameters$",that,"))",sep="")
 							))					
 						}					
-						if(types[j]=="checkboxGroupInput("){
-							do<-"updateCheckboxGroupInput"
-							eval(parse(text=
+						if(types[j] == "checkboxGroupInput("){
+							do <- "updateCheckboxGroupInput"
+							eval(parse(text =
 								paste(do,"(session,\"",that,"\",value=as.logical(logfile$parameters$",that,"))",sep="")
 							))					
 						}
-						if(types[j]=="textInput("){
-							do<-"updateTextInput"
-							eval(parse(text=
+						if(types[j] == "textInput("){
+							do <- "updateTextInput"
+							eval(parse(text =
 								paste(do,"(session,\"",that,"\",value=as.character(logfile$parameters$",that,"))",sep="")
 							))					
 						}
-						if(types[j]=="radioButtons("){
-							do<-"updateRadioButtons"
-							eval(parse(text=
+						if(types[j] == "radioButtons("){
+							do <- "updateRadioButtons"
+							eval(parse(text =
 								paste(do,"(session,\"",that,"\",selected=as.character(logfile$parameters$",that,"))",sep="")
 							))												
 						}
+						if(types[j] == "knobInput("){						
+							do <- "updateKnobInput"	
+							eval(parse(text =
+								paste(do,"(session,\"",that,"\",value=as.character(logfile$parameters$",that,"))",sep="")
+							))						
+						}
+						
 						cat("\n Updated parameter: ");cat(that);
 						
 						done_parameters[names(logfile$parameters)==that]<-TRUE
-						
 						
 						next;
 					}

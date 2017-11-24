@@ -20,6 +20,7 @@
 #' @param ranges_x NULL or vector. Plot parameter.
 #' @param ranges_y NULL or vector. Plot parameter.
 #' @param plotit logical plot anything at all?
+#' @param return_data logical return peak table?
 #'
 #' @return A dataset.
 #' 
@@ -28,24 +29,25 @@
 #' @seealso  \code{startprofiles}, \code{agglomer}, \code{partcluster}, \code{intensup} 
 
 
-plotaprofile<-function(
+plotaprofile <- function(
 	profileList,
 	profileID,
-	logint=FALSE,
-	blindsub=TRUE,
-	blindfold=100,
-	lags=c(5,14),
-	threshold=3,
-	add=FALSE,
-	textit=TRUE,
-	simple=FALSE,
-	supersimple=FALSE,
-	colorit=FALSE,
-	use_lwd=FALSE,
-	ranges_x=NULL,
-	ranges_y=NULL,
-	plotit=TRUE,
-	main.title=TRUE
+	logint = FALSE,
+	blindsub = TRUE,
+	blindfold = 100,
+	lags = c(5,14),
+	threshold = 3,
+	add = FALSE,
+	textit = TRUE,
+	simple = FALSE,
+	supersimple = FALSE,
+	colorit = FALSE,
+	use_lwd = FALSE,
+	ranges_x = NULL,
+	ranges_y = NULL,
+	plotit = TRUE,
+	main.title = TRUE,
+	return_data = FALSE
 ){
 
     ############################################################################
@@ -276,8 +278,9 @@ plotaprofile<-function(
 	    }
 	}    
     ############################################################################
-    return(dataset)
-
+    if(return_data){
+		return(dataset)
+	}
 }
 
 

@@ -1193,7 +1193,7 @@ impproj<-reactive({
 			rm(measurements3)
 			#########################################################################
 			logfile$summary[1,2]<<-"TRUE"
-			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
+			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 			#########################################################################			
 			output$dowhat<-renderText("Files imported.");
@@ -1367,7 +1367,7 @@ observe({
 				enviMass::workflow_set(logfile,down="calibration",single_file=TRUE)
 			}							
 			######################################################################
-			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary));
+			output$summa_html<<-renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 			enviMass::reset_selections(session)
 			save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 			######################################################################
@@ -1865,7 +1865,7 @@ impfolder<-reactive({
 			if(many > 0){
 				enviMass::workflow_set(down = "peakpicking", single_file = TRUE) 
 				logfile$summary[1,2] <<- "TRUE"
-				output$summa_html <<- renderText(enviMass::summary_html(logfile$summary));
+				output$summa_html <<- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 				save(logfile, file = file.path(as.character(logfile[[1]]), "logfile.emp"));
 				output$dowhat <- renderText(paste(many, "files imported"))
 				cat(paste("\n", many, "files imported"))

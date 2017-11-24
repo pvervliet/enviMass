@@ -30,6 +30,10 @@ observe({ # Set calculation counter "do_flow"
 maincalc <- reactive({
     input$Calc
     if(input$Calc){
+		if(!any(objects(envir = as.environment(".GlobalEnv")) == "do_flow")){ # just in case the above has not reacted (happened) ...
+			do_flow <<- 0
+			time_start <<- Sys.time()	
+		}
 		if(do_flow == 0){	# check only once, initially at do_flow==0! really?
 			enviMass::reset_selections(session)
     		if( (isolate(input$ignore_large_files) == "TRUE") || (logfile$parameters$is_example == "TRUE")){ ignorefiles <- TRUE }else{ ignorefiles <- FALSE }
@@ -74,7 +78,7 @@ maincalc <- reactive({
 			}
 			####################################################################
 			closeAlert(session, alertId = "a3")
-			logfile$summary[1,2] <<- c(TRUE);
+			logfile$summary[1,2] <<- c(TRUE); # peakpicking
 			save(logfile, file = file.path(as.character(logfile[[1]]), "logfile.emp"));
 			summa <<- logfile$summary
 			summa[,2] <<- "..."

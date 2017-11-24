@@ -248,6 +248,7 @@ observe({
 			save(logfile,file = file.path(as.character(logfile[[1]]),"logfile.emp"));
 			cat("settings changed \n");
 			output$dowhat <<- renderText("Project settings modified");
+			output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 			########################################################################
 			if(any(ls() == "logfile")){stop("\n illegal logfile detected #2 in server_variable_out.r!")}
 			if(do_debug){cat("\n at_27")}
