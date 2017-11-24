@@ -79,7 +79,8 @@ check_project<-function(
 		"Positive_subtraction_files",
 		"Negative_subtraction_files",
 		"adducts_pos_group",
-		"adducts_neg_group"))
+		"adducts_neg_group",
+		"UI_options"))
 	){
 		say <- "Your logfile is corrupted _1,  project debug required!"
 	}

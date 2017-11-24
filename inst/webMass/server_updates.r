@@ -2224,9 +2224,28 @@ if(logfile$version < 3.414){
 	
 }
 
-if(logfile$version < 3.415){
+# CORRECT VERSION NUMBER FROM 3.4151 TO 3.415!!!
+if(logfile$version < 3.4151){
 
 	cat("\n Updating to version 3.415 ...")
+	################################################################################################
+	# on saving profile filtering settings #########################################################
+	if(!any(names(logfile) == "UI_options")){
+		logfile[[17]] <<- list(0)
+		names(logfile)[17] <<- c("UI_options")
+		# save profile filtering settings
+		logfile$UI_options$filterProf_minmass <<- "0"
+		logfile$UI_options$filterProf_maxmass <<- "3000"
+		logfile$UI_options$filterProf_minrt <<- "0"
+		logfile$UI_options$filterProf_maxrt <<- "100000"
+		logfile$UI_options$filterProf_minMD <<- "-0.5"
+		logfile$UI_options$filterProf_maxMD <<- "0.5"
+		logfile$UI_options$filterProf_medianblind <<- "yes"
+		logfile$UI_options$filterProf_medianblind_value <<- "10"
+		logfile$UI_options$filterProf_notblind <<- "no" 		
+		logfile$UI_options$filterProf_sort <<- "current trend intensity (decreasing)"		
+		logfile$UI_options$filterProf_components <<- "TRUE"		
+	}
 	################################################################################################	
 	logfile$version <<- 3.415
 	################################################################################################		
@@ -2235,6 +2254,7 @@ if(logfile$version < 3.415){
 	################################################################################################
 	
 }
+
 
 ########################################################################
 

@@ -2323,7 +2323,10 @@
 						HTML('<hr noshade="noshade" />'),  
 						#navbarPage("", 
 						tabsetPanel( 					
-							tabPanel("Overview & Filtering",		
+							tabPanel("Overview & Filtering",	
+									HTML('<hr noshade="noshade" />'),							
+									tags$p(align="justify","The below filtering options determine the set of profiles accessible in the rightmost Single Profiles tab."), 
+									HTML('<hr noshade="noshade" />'),
 									tags$h4("Profile inventory:"), 
 									div(style = widget_style7,tags$h5("Total number of peaks:"), textOutput("atprof1")),
 									div(style = widget_style8,tags$h5("Number of profiles:"), textOutput("atprof2")),
@@ -2381,6 +2384,18 @@
 											), 
 										selected="current trend intensity (decreasing)",width='80%'),
 									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no"="FALSE","yes"="TRUE"), selected="TRUE", inline = TRUE),
+									HTML('<hr noshade="noshade" />'),
+									searchInput(
+									  inputId = "search_profile_compound", 
+									  label = "Search profile(s) of a compound with the following name or ID (as used in the compound tables):",
+									  placeholder = "Atrazin-D5", 
+									  btnSearch = icon("search"), 
+									  btnReset = icon("remove"), 
+									  width = "100%"
+									),
+									tags$p(align="justify","This filter will ignore the other filtering options above!"),
+									HTML('<hr noshade="noshade" />'),
+									bsButton("save_profile_filter","Save above filter options as project default?",style="success"),
 									#HTML('<hr noshade="noshade" />'),
 									#div(style = widget_style3,numericInput("filterProf_count", "Restrict size of filtered profile list table:", 500, min=1)),
 									#conditionalPanel( # IS filter				

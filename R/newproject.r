@@ -303,6 +303,23 @@ newproject <- function(pro_name, pro_dir, IS, targets){
 		# add custom parameters ################################################
 		source(file = "workflow_parameters.r", local = TRUE)
 		if(any(duplicated(names(logfile$parameters)))){stop("Duplicated parameter names found - revise!")}	
+	
+	# UI options ###############################################################
+	logfile[[17]] <- list(0)
+	names(logfile)[17] <- c("UI_options")
+		# save profile filtering settings
+		logfile$UI_options$filterProf_minmass <- "0"
+		logfile$UI_options$filterProf_maxmass <- "3000"
+		logfile$UI_options$filterProf_minrt <- "0"
+		logfile$UI_options$filterProf_maxrt <- "100000"
+		logfile$UI_options$filterProf_minMD <- "-0.5"
+		logfile$UI_options$filterProf_maxMD <- "0.5"
+		logfile$UI_options$filterProf_medianblind <- "yes"
+		logfile$UI_options$filterProf_medianblind_value <- "10"
+		logfile$UI_options$filterProf_notblind <- "no" 		
+		logfile$UI_options$filterProf_sort <- "current trend intensity (decreasing)"		
+		logfile$UI_options$filterProf_components <- "TRUE"		
+		
 
 	# Workflow settings ########################################################
     logfile$workflow <- 0    # based on above Tasks_to_redo

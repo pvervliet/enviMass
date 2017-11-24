@@ -1,6 +1,8 @@
-# write variables to logfile ###################################################
-# observe what has changed and reset Tasks_to_do accordingly ###################
+# write UI variables to logfile ################################################
 
+################################################################################
+# On exporting parameters to project ###########################################
+# observe what has changed and reset Tasks_to_do accordingly ###################
 observe({
     input$savepar;
     input$saveflow;
@@ -29,7 +31,6 @@ observe({
 				found_it <- try(eval(parse(text = paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = ""))))
 				if(class(found_it) == "try-error"){	# present in UI?
 					cat("\n Error for parameter input detected: "); cat(for_param);					
-					#shinyjs::info(paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
 					mess <- paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?", sep = "")
 					shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
 					all_ok <- FALSE
@@ -37,7 +38,6 @@ observe({
 					found_it <- eval(parse(text=paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = "")))
 					if(is.na(found_it) || length(found_it) == 0){
 						cat("\n Invalid parameter input detected: ");cat(for_param);					
-						#shinyjs::info(paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep=""))
 						mess <- paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep = "")
 						shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
 						all_ok <- FALSE
@@ -54,8 +54,8 @@ observe({
 			found <- c()
 			# check standard parameters defined in function newproject()
 			for(i in 1:length(logfile$parameters)){	
-				if(names(logfile$parameters)[i] == ""){next} # for any empty entries
-				if(names(logfile$parameters)[i] == "external"){next} # for external parameters		
+				if(names(logfile$parameters)[i] == "") next # for any empty entries
+				if(names(logfile$parameters)[i] == "external") next # for external parameters		
 				old_param <- logfile$parameters[i]		
 				for_param <- names(logfile$parameters)[i]
 				eval(parse(text = paste("new_param<-","as.character(isolate(input$",for_param,"))", sep = "")))
@@ -255,5 +255,61 @@ observe({
 		}
     }
 
+})
+################################################################################
+
+################################################################################
+# On exporting UI options ######################################################
+observe({
+	input$save_profile_filter
+	cat("\nSaving profile filtering options as project default")
+    if(	
+		(exists("logfile")) & (isolate(input$save_profile_filter))
+	){
+	
+		if(any(ls() == "logfile")){stop("\n illegal logfile detected #2 in server_variable_out.r!")}
+		######################################################################## 
+		# checking parameter validity ##########################################
+		all_ok <- TRUE
+		for(i in 1:length(logfile$UI_options)){
+			if(names(logfile$UI_options)[i] == "") next # for any empty entries
+			for_param <- names(logfile$UI_options)[i]
+			if(any(names(input) == for_param)){
+				found_it <- try(eval(parse(text = paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = ""))))
+				if(class(found_it) == "try-error"){	# present in UI?
+					cat("\n Error for UI option input detected: "); cat(for_param);					
+					mess <- paste("Error on UI option input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?", sep = "")
+					shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
+					all_ok <- FALSE
+				}else{
+					found_it <- eval(parse(text=paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = "")))
+					if(is.na(found_it) || length(found_it) == 0){
+						cat("\n Invalid UI option input detected: ");cat(for_param);					
+						mess <- paste("Invalid UI option input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep = "")
+						shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
+						all_ok <- FALSE
+					}
+				}
+			}		
+		}
+		######################################################################## 
+		
+		######################################################################## 		
+		if(all_ok){ # otherwise report problem to try() in server_calculations.r
+			for(i in 1:length(logfile$UI_options)){
+				if(names(logfile$UI_options)[i] == "") next # for any empty entries
+				for_param <- names(logfile$UI_options)[i]			
+				found_it <- try(eval(parse(text = paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = ""))))
+				logfile$UI_options[i] <<- as.character(found_it)
+			}
+		}
+		######################################################################## 
+
+		######################################################################## 
+		save(logfile,file = file.path(as.character(logfile[[1]]),"logfile.emp"))
+		if(any(ls() == "logfile")){stop("\n illegal logfile detected #2 in server_variable_out.r!")}
+		######################################################################## 
+		
+	}
 })
 ################################################################################
