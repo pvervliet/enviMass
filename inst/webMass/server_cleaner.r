@@ -1,5 +1,8 @@
 	###############################################################################	
 	those_objects <- c(
+		"search_compound",
+		"compounds_IS",
+		"compounds_targets",
 		"target_table",
 		"ISTD_table",
 		"tab_screening_selected_pos",

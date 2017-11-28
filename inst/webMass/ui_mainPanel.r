@@ -1574,15 +1574,21 @@
 									tabPanel("Data",
 										fluidRow(
 											column(3,checkboxInput("peaks_mz_RT_use_peaks", "Plot peaks?", TRUE)),
+											column(3,checkboxInput("peaks_mz_RT_use_IDs", "Display peak IDs?", FALSE))
+										),
+										HTML('<hr noshade="noshade" />'),
+										fluidRow(											
 											column(4,checkboxInput("peaks_mz_RT_use_raw", "Show raw data (as density grid >1E5 data points)?", FALSE)),
-											column(3,checkboxInput("peaks_mz_RT_use_IDs", "Display peak IDs?", FALSE))								
-										)
+											column(3,checkboxInput("EIC_mz_RT_use_IDs", "Display EIC IDs?", FALSE))								
+										),
+										HTML('<hr noshade="noshade" />')
 									),
 									tabPanel("View",
 										fluidRow(
 											column(5,checkboxInput('showPanel1', 'Show marginal intensity distributions (for <1E5 raw data points)', FALSE)),
 											column(5,checkboxInput('showPanel2', 'Show interactive 3D plot (for <1E5 raw data points)', FALSE))
-										)
+										),
+										HTML('<hr noshade="noshade" />')
 									),
 									tabPanel("Search & Filter",
 										fluidRow(
@@ -2382,18 +2388,17 @@
 											"mass defect (decreasing)", 
 											"mean sample above blind intensity (decreasing)" 
 											), 
-										selected="current trend intensity (decreasing)",width='80%'),
-									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no"="FALSE","yes"="TRUE"), selected="TRUE", inline = TRUE),
+										selected = "peak number in samples (decreasing, zeros removed)", width = '80%'),
+									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no" = "FALSE","yes" = "TRUE"), selected = "FALSE", inline = TRUE),
 									HTML('<hr noshade="noshade" />'),
 									searchInput(
 									  inputId = "search_profile_compound", 
-									  label = "Search profile(s) of a compound with the following name or ID (as used in the compound tables):",
-									  placeholder = "Atrazin-D5", 
+									  label = "Search profile(s) of a compound with its full name or its ID (as used in the compound tables):",
+									  placeholder = "Type in compound name / ID or erase to clear filter", 
 									  btnSearch = icon("search"), 
 									  btnReset = icon("remove"), 
 									  width = "100%"
 									),
-									tags$p(align="justify","This filter will ignore the other filtering options above!"),
 									HTML('<hr noshade="noshade" />'),
 									bsButton("save_profile_filter","Save above filter options as project default?",style="success"),
 									#HTML('<hr noshade="noshade" />'),
@@ -2448,7 +2453,7 @@
 									HTML('<p> Enter the ID of a profile to extract relevant information. Profile IDs are listed both in the Summary tab and the Newest trends tab. 
 										Alternatively, sort and filter the profile list in the Summary tab and choose an entry number to show a listed profile. </p>'),							
 									div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
-									div(style = widget_style3,numericInput("profID", "profile ID:", 0)),
+									div(style = widget_style3,numericInput("profID", "(... or search by any profile ID - unfiltered:)", 0)),
 									div(style = widget_style3,
 										dropdownButton(
 											radioButtons("prof_log", "Plot logarithmic intensity?", c("no" = "no", "yes" = "yes")),

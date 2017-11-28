@@ -125,11 +125,12 @@ List while_checked(
 	NumericMatrix pattern_compound,
 	NumericMatrix peaks,
 	double RT_tol_inside,
-	double int_tol
+	double int_tol,
+	bool verbose
 ){
 
 	int list_size_results = 10, list_size_new_nodes = 10, at_size = 0, at_new_nodes = 0, m, n, old_size, check_nodes_size;
-	bool checked = true, get_plaus = false, verbose = false;
+	bool checked = true, get_plaus = false;//, verbose = false;
 	List results_peaks(list_size_results); // variable size
 	List results(list_size_results); // variable size
 	List new_nodes(list_size_new_nodes); // variable size

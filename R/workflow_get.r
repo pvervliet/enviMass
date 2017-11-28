@@ -98,7 +98,7 @@ workflow_get<-function(path, logfile, session){
 							))						
 						}
 						
-						cat("\n Updated parameter: ");cat(that);
+						if(logfile$parameters$verbose){cat("\n Updated parameter: ");cat(that);}
 						
 						done_parameters[names(logfile$parameters) == that]<-TRUE
 						
@@ -115,7 +115,7 @@ workflow_get<-function(path, logfile, session){
 							stop("\n Only used radioButtons for workflow settings?!")
 						}
 						done_workflow[names(logfile$workflow)==that] <- TRUE
-						cat("\n Updated workflow: ");cat(that);
+						if(logfile$parameters$verbose){cat("\n Updated workflow: ");cat(that);}
 						
 						next;
 					}
@@ -170,7 +170,7 @@ workflow_get<-function(path, logfile, session){
 							))						
 						}
 						
-						cat("\n Updated UI option: ");cat(that);
+						if(logfile$parameters$verbose){ cat("\n Updated UI option: ");cat(that);}
 						done_UIoptions[names(logfile$UI_options) == that] <- TRUE
 																
 					}
@@ -179,17 +179,19 @@ workflow_get<-function(path, logfile, session){
 			}
 		}			
 	}
-	if(any(!done_workflow)){
-		those <- paste(names(logfile$workflow)[!done_workflow], collapse = ", ")
-		cat("\n Fixed workflow steps: ");cat(those)
-	}
-	if(any(!done_parameters)){
-		those <- paste(names(logfile$parameters)[!done_parameters], collapse = ", ")
-		cat("\n Fixed parameters: ");cat(those)
-	}
-	if(any(!done_UIoptions)){
-		those <- paste(names(logfile$UI_options)[!done_UIoptions], collapse = ", ")
-		cat("\n Fixed UI options: ");cat(those)
+	if(logfile$parameters$verbose){
+		if(any(!done_workflow)){
+			those <- paste(names(logfile$workflow)[!done_workflow], collapse = ", ")
+			cat("\n Static workflow steps: ");cat(those)
+		}
+		if(any(!done_parameters)){
+			those <- paste(names(logfile$parameters)[!done_parameters], collapse = ", ")
+			cat("\n Static parameters: ");cat(those)
+		}
+		if(any(!done_UIoptions)){
+			those <- paste(names(logfile$UI_options)[!done_UIoptions], collapse = ", ")
+			cat("\n Static UI options: ");cat(those)
+		}
 	}
 	cat("\n")
 	##########################################################################################

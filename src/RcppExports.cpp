@@ -298,8 +298,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // while_checked
-List while_checked(List check_nodes, NumericMatrix pattern_compound, NumericMatrix peaks, double RT_tol_inside, double int_tol);
-RcppExport SEXP _enviMass_while_checked(SEXP check_nodesSEXP, SEXP pattern_compoundSEXP, SEXP peaksSEXP, SEXP RT_tol_insideSEXP, SEXP int_tolSEXP) {
+List while_checked(List check_nodes, NumericMatrix pattern_compound, NumericMatrix peaks, double RT_tol_inside, double int_tol, bool verbose);
+RcppExport SEXP _enviMass_while_checked(SEXP check_nodesSEXP, SEXP pattern_compoundSEXP, SEXP peaksSEXP, SEXP RT_tol_insideSEXP, SEXP int_tolSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -308,7 +308,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type peaks(peaksSEXP);
     Rcpp::traits::input_parameter< double >::type RT_tol_inside(RT_tol_insideSEXP);
     Rcpp::traits::input_parameter< double >::type int_tol(int_tolSEXP);
-    rcpp_result_gen = Rcpp::wrap(while_checked(check_nodes, pattern_compound, peaks, RT_tol_inside, int_tol));
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(while_checked(check_nodes, pattern_compound, peaks, RT_tol_inside, int_tol, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -333,7 +334,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_enviMass_binmz_prof", (DL_FUNC) &_enviMass_binmz_prof, 4},
     {"_enviMass_extractProfiles", (DL_FUNC) &_enviMass_extractProfiles, 5},
     {"_enviMass_extractProfiles_replicates", (DL_FUNC) &_enviMass_extractProfiles_replicates, 6},
-    {"_enviMass_while_checked", (DL_FUNC) &_enviMass_while_checked, 5},
+    {"_enviMass_while_checked", (DL_FUNC) &_enviMass_while_checked, 6},
     {NULL, NULL, 0}
 };
 

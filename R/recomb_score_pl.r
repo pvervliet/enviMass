@@ -74,7 +74,8 @@ recomb_score_pl<-function(
 		pattern_compound,
 		peaks,
 		RT_tol_inside = RT_tol_inside,
-		int_tol = int_tol
+		int_tol = int_tol,
+		verbose = verbose
 	)
 	#######################################################################	
 	results2 <- list()

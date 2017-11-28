@@ -145,20 +145,10 @@ maincalc <- reactive({
 			logfile$Tasks_to_redo[1:length(logfile$Tasks_to_redo)] <<- "FALSE"	
 			save(logfile, file = file.path(as.character(logfile[[1]]), "logfile.emp"));  
 			# clean .GlobalEnv and reload results ############################## 
-			if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList_pos")){rm(profileList_pos, envir = as.environment(".GlobalEnv"))}
-			if(any(objects() == "profileList_pos")){rm(profileList_pos)}
-			if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList_neg")){rm(profileList_neg, envir = as.environment(".GlobalEnv"))}
-			if(any(objects() == "profileList_neg")){rm(profileList_neg)}
-			#if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_pos"))){
-			#	load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"),verbose=TRUE)
-			#}
-			#if(file.exists(file.path(as.character(logfile[[1]]),"results","profileList_neg"))){
-			#	load(file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"),verbose=TRUE)
-			#}
-# BAUSTELLE - complete!			
-	
-	
-# BAUSTELLE - complete!				
+			enviMass::workflow_objects(
+				logfile,
+				Ion_mode_profiles = isolate(input$Ion_mode)
+			)			
 			####################################################################
         }
         do_flow <<- (do_flow+1);

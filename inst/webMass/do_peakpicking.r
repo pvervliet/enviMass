@@ -5,6 +5,7 @@
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
     leng<-dim(measurements)[1];         
 	
+	#i <- which(measurements[,"ID"] == "11") 
     for(i in 1:leng){ 
         # (measurement included & not yet picked) OR (peakpick forced) 
             if( (measurements[i,"include"]=="TRUE") & (measurements[i,"peakpicking"]=="FALSE") ){

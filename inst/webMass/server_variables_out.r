@@ -302,6 +302,7 @@ observe({
 				found_it <- try(eval(parse(text = paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = ""))))
 				logfile$UI_options[i] <<- as.character(found_it)
 			}
+			output$dowhat <<- renderText("Profile filtering saved as default.");
 		}
 		######################################################################## 
 

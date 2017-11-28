@@ -387,36 +387,12 @@ maincalc2<-reactive({
 					output$boxprofile<-renderImage(expr4n, deleteFile = FALSE)
 				}
 			}
-			if(
-				file.exists(file.path(logfile$project_folder,"results","profileList_pos")) &
-				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
-			){
-				load(file=file.path(as.character(logfile$project_folder),"results","profileList_pos"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-				if(isolate(input$Ion_mode)=="positive"){
-					assign("profileList",profileList_pos,envir=as.environment(".GlobalEnv"));				
-				}
-			}	
-			if(
-				file.exists(file.path(logfile$project_folder,"quantification","profileList_pos_cal")) &
-				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
-			){
-				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_pos_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-			}	
-			if(
-				file.exists(file.path(logfile$project_folder,"results","profileList_neg")) &
-				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
-			){
-				load(file=file.path(as.character(logfile$project_folder),"results","profileList_neg"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-				if(isolate(input$Ion_mode)=="negative"){
-					assign("profileList",profileList_neg,envir=as.environment(".GlobalEnv"));				
-				}
-			}	
-			if(
-				file.exists(file.path(logfile$project_folder,"quantification","profileList_neg_cal")) &
-				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
-			){
-				load(file=file.path(as.character(logfile$project_folder),"quantification","profileList_neg_cal"),envir=as.environment(".GlobalEnv"), verbose=TRUE);
-			}	
+
+			enviMass::workflow_objects(
+				logfile,
+				Ion_mode_profiles = isolate(input$Ion_mode)
+			)
+			
 			if(file.exists(file.path(logfile$project_folder,"pics","profilehisto.png"))){ 
 				expr6<-list(src=file.path(logfile$project_folder,"pics","profilehisto.png"))
 				output$profilehisto<-renderImage(expr6, deleteFile = FALSE)

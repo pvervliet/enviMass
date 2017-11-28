@@ -16,17 +16,17 @@
 
 workflow_set<-function(
 		down,
-		added=FALSE,
-		except=FALSE,
-		check_node=FALSE,
-		down_TF=c("TRUE","FALSE"),
-		single_file=FALSE,
+		added = FALSE,
+		except = FALSE,
+		check_node = FALSE,
+		down_TF = c("TRUE", "FALSE"),
+		single_file = FALSE,
 		...
 	){
 
 	########################################################################################	
-	if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in workflow_set.r!")}
-	if(any(is.na(match(down_TF,c("TRUE","FALSE"))))){stop("\n Wrong down_TF detectected - debug me!")}
+	if(any(ls() == "logfile")){stop("\n illegal logfile detected #1 in workflow_set.r!")}
+	if(any(is.na(match(down_TF, c("TRUE", "FALSE"))))){stop("\n Wrong down_TF detectected - debug me!")}
 	########################################################################################
 	# check inputs #########################################################################
 	if(!is.logical(added) & !is.logical(except)){
