@@ -19,7 +19,7 @@ observe({
 		##########################################################################
 		if(!exists("IS",envir=as.environment(".GlobalEnv"))){data(IS,package="enviMass")}
 		if(!exists("targets",envir=as.environment(".GlobalEnv"))){data(targets,package="enviMass")}
-		say_path<-enviMass::check_path(isolate(input$pro_name),isolate(input$pro_dir))
+		say_path <- enviMass::check_path(isolate(input$pro_name),isolate(input$pro_dir))
 		if(say_path!="Project path ok"){
 			createAlert(session, anchorId="failed_new", alertId = "failed_new_id", title = "Invalid project path", 
 				content = "Project already exists, the specified path is invalid or you lack permissions.", 
@@ -27,16 +27,16 @@ observe({
 			cat("Invalid - project already exists or path invalid \n")
 			shinyjs::info(say_path)
 		}else{
-			logfile_path<-enviMass::newproject(isolate(input$pro_name),isolate(input$pro_dir),IS,targets);
-			if(logfile_path!="FALSE"){
-				output$textit<-renderText(as.character(logfile_path));
-				load(logfile_path,envir=as.environment(".GlobalEnv"));
-				output$summa_html<-renderText(enviMass::summary_html(logfile$summary));
-				output$dowhat<-renderText("Started new project");
-				output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
-				output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
-				measurements<-read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
-				output$measurements<<-DT::renderDataTable(
+			logfile_path<-enviMass::newproject(isolate(input$pro_name), isolate(input$pro_dir), IS, targets);
+			if(logfile_path != "FALSE"){
+				output$textit <- renderText(as.character(logfile_path));
+				load(logfile_path, envir = as.environment(".GlobalEnv"));
+				output$summa_html <- renderText(enviMass::summary_html(logfile$summary));
+				output$dowhat <- renderText("Started new project");
+				output$IS <- DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
+				output$targets <- DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
+				measurements <- read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
+				output$measurements <<- DT::renderDataTable(
 					measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 				); 
 				output$sel_meas_comp_state<-renderText("")

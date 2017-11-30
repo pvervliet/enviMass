@@ -1499,7 +1499,7 @@ observe({
 						at_add <- strsplit(links_profiles[[at_entry]]$targ[k, 1], "_")[[1]][2]
 						at_tar <- compounds_targets[match(at_tar, compounds_targets$ID), "Name"]
 						targ_out <- c(targ_out, 
-							paste0(at_tar, " (", at_add , ", peak counts: ",  links_profiles[[at_entry]]$targ[k, 2], ", max score: ", links_profiles[[at_entry]]$targ[k, 3],")")
+							paste0(at_tar, " (", at_add , ", peak counts: ",  links_profiles[[at_entry]]$targ[k, 2], ", max score: ", round(links_profiles[[at_entry]]$targ[k, 3], digits = 2),")")
 						)		
 					}
 					targ_out <- paste(targ_out, collapse = ",")
@@ -1519,7 +1519,7 @@ observe({
 						at_add <- strsplit(links_profiles[[at_entry]]$IS[k, 1], "_")[[1]][2]
 						at_ISTD <- compounds_IS[match(at_ISTD, compounds_IS$ID), "Name"]
 						ISTD_out <- c(ISTD_out, 
-							paste0(at_ISTD, " (", at_add , ", peak counts: ",  links_profiles[[at_entry]]$IS[k, 2], ", max score: ", links_profiles[[at_entry]]$IS[k, 3],")")
+							paste0(at_ISTD, " (", at_add , ", peak counts: ",  links_profiles[[at_entry]]$IS[k, 2], ", max score: ", round(links_profiles[[at_entry]]$IS[k, 3], digits = 2),")")
 						)		
 					}
 					ISTD_out <- paste(ISTD_out, collapse = ",")

@@ -13,6 +13,8 @@ function(
 	############################################################################
 	for_file <- x
 	for_mode <- measurements[measurements$ID == for_file, "Mode"]	
+	if(any(objects()=="peaklist")){rm(peaklist)}
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 	load(file = file.path(logfile[[1]], "peaklist", for_file), envir = environment(), verbose=FALSE); # NOT into global env.!
 	peaklist[,"keep_2"] <- Inf
 	sample_peaklist <- peaklist; 
@@ -57,7 +59,7 @@ function(
 			getit <- search_peak( 
 				peaklist = peaks_blank, 
 				mz = sample_peaklist[,"m/z_corr"], 
-				dmz = (dmz*2), 
+				dmz = (dmz * 2), 
 				ppm = ppm, 
 				RT = sample_peaklist[,"RT_corr"], 
 				dRT = dRT,
@@ -68,8 +70,8 @@ function(
 				get_ratio = TRUE
 			)	
 			report <- "done"
-			which_affected <- (sample_peaklist[,"keep_2"] > getit) # if subtraction run over multiple blank files!
-			sample_peaklist[which_affected,"keep_2"] <- getit[which_affected]
+			which_affected <- (sample_peaklist[, "keep_2"] > getit) # if subtraction run over multiple blank files!
+			sample_peaklist[which_affected, "keep_2"] <- getit[which_affected]
 		}
 		########################################################################
 		

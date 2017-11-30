@@ -8,7 +8,7 @@
 #' @details enviMass workflow function
 #' 
 
-check_path<-function(pro_name,pro_dir){
+check_path<-function(pro_name, pro_dir){
 	
 	say_path<-"Project path ok"
 	##################################################################

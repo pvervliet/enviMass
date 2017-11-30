@@ -11,8 +11,7 @@
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}
 			load(file=file.path(logfile[[1]],"peaklist",as.character(measurements_incl[i,"ID"])),envir=as.environment(".GlobalEnv"));
-			keep_2<-rep(Inf,length(peaklist[,1])) 
-			peaklist[,colnames(peaklist)=="keep_2"]<-keep_2
+			peaklist[,colnames(peaklist)=="keep_2"] <- Inf
 			save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(measurements_incl[i,"ID"])))
 			if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
 			if(any(objects()=="peaklist")){rm(peaklist)}

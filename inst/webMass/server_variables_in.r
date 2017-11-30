@@ -22,15 +22,15 @@ updateTextInput(session, inputId = "PWpath", value = logfile$PW)
 
 #########################################################################
 # subtraction files, positive: ##########################################
-if(any( (measurements[,"ID"] != "-") & (measurements[,"Mode"] == "positive") & (measurements[,"Type"] == "blank"))){
+if(any( (measurements[,"ID"] != "-") & (measurements[,"Mode"] == "positive") & (measurements[,"Type"] != "sample"))){
 	IDs_pos <- measurements[
-		(measurements[,"Mode"] == "positive") & (measurements[,"Type"] == "blank")
+		(measurements[,"Mode"] == "positive") & (measurements[,"Type"] != "sample")
 	,1]
 	names_pos <- measurements[
-		(measurements[,"Mode"] == "positive") & (measurements[,"Type"] == "blank")
+		(measurements[,"Mode"] == "positive") & (measurements[,"Type"] != "sample")
 	,2]
 	IDs_pos <- paste(IDs_pos, names_pos, sep = " - ")
-	if(any(logfile[["Positive_subtraction_files"]]!="FALSE")){
+	if(any(logfile[["Positive_subtraction_files"]] != "FALSE")){
 		select_pos <- logfile[["Positive_subtraction_files"]]
 		select_pos <- select_pos[select_pos!="FALSE"]
 		select_pos <- select_pos[!is.na(match(select_pos,IDs_pos))]
@@ -41,22 +41,22 @@ if(any( (measurements[,"ID"] != "-") & (measurements[,"Mode"] == "positive") & (
 }
 #########################################################################
 # subtraction files, negative: ##########################################
-if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="negative") & (measurements[,"Type"]=="blank"))){
-	IDs_neg<-measurements[
-		(measurements[,"Mode"]=="negative") & (measurements[,"Type"]=="blank")
+if(any( (measurements[,"ID"] != "-") & (measurements[,"Mode"] == "negative") & (measurements[,"Type"] != "sample"))){
+	IDs_neg <- measurements[
+		(measurements[,"Mode"]=="negative") & (measurements[,"Type"] != "sample")
 	,1]
-	names_neg<-measurements[
-		(measurements[,"Mode"]=="negative") & (measurements[,"Type"]=="blank")
+	names_neg <- measurements[
+		(measurements[,"Mode"]=="negative") & (measurements[,"Type"] != "sample")
 	,2]
-	IDs_neg<-paste(IDs_neg,names_neg,sep=" - ")
-	if(any(logfile[["Negative_subtraction_files"]]!="FALSE")){
-		select_neg<-logfile[["Negative_subtraction_files"]]
-		select_neg<-select_neg[select_neg!="FALSE"]
-		select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
+	IDs_neg <- paste(IDs_neg,names_neg,sep=" - ")
+	if(any(logfile[["Negative_subtraction_files"]] != "FALSE")){
+		select_neg <- logfile[["Negative_subtraction_files"]]
+		select_neg <- select_neg[select_neg != "FALSE"]
+		select_neg <- select_neg[!is.na(match(select_neg, IDs_neg))]
 	}else{
 		select_neg<-NULL
 	}
-	updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
+	updateCheckboxGroupInput(session,inputId="files_neg_select_subtract", label="", choices = IDs_neg, selected = select_neg)
 }
 #########################################################################
 

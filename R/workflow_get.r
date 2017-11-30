@@ -12,7 +12,11 @@
 
 #path<-"D:/MS/R_packages/enviMass_devel/inst/webMass/ui_mainPanel.r"
 
-workflow_get<-function(path, logfile, session){
+workflow_get<-function(
+	path, 
+	logfile, 
+	session
+){
 
 	##########################################################################################
 	if(!file.exists(path)){stop("\n path in workflow_get invalid; debug!")}

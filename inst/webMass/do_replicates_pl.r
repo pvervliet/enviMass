@@ -1,8 +1,7 @@
 
     ############################################################################
 	measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	#measurements$tag3<-sample(letters, length(measurements$tag3), replace=TRUE)
-	replic <- (measurements$tag3 [measurements$tag3 != "FALSE" & measurements$include =="TRUE"])
+	replic <- (measurements$tag3 [(measurements$tag3 != "FALSE") & (measurements$include == "TRUE")])
     ############################################################################
 
     ############################################################################   
@@ -52,7 +51,7 @@
 		######################################################################
 		cluster_results <-unlist(cluster_results)
 		#if(any(cluster_results=="done")){
-			#measurements$replicates[match(for_IDs_pos[cluster_results=="done"], measurements$ID)]<-"TRUE"
+			#measurements$replicates[match(for_IDs_pos[cluster_results=="done"], measurements$ID)]<-"TRUE" # this measurements column does not exist yet!
 		#}
 		rm(cluster_results, replic)
 		######################################################################

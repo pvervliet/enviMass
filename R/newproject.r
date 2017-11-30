@@ -10,7 +10,18 @@
 #' @details enviMass workflow function. Creates a project folder, various subfolders, a logfile, dummy outputs, etc
 #' 
 
-newproject <- function(pro_name, pro_dir, IS, targets){
+# pro_name <- "new_project"
+# pro_dir <- "F:\\PART_1\\MS PROJECTS\\RUeS"
+
+newproject <- function(	
+	pro_name, 
+	pro_dir, 
+	IS, 
+	targets,
+	workflow_depend = FALSE,
+	workflow_must = FALSE,
+	skript_check = TRUE
+){
 
   ##############################################################################
   # checks #####################################################################
@@ -55,14 +66,14 @@ newproject <- function(pro_name, pro_dir, IS, targets){
   write.csv(measurements, file = file.path(pro_dir, pro_name, "dataframes", "measurements"), row.names = FALSE)
   ##############################################################################
   # create & save a logfile ####################################################
-	workflow_depend <- read.table(
-		file="workflow_depend"		
-	)
-	workflow_depend <- as.matrix(workflow_depend)
-	workflow_must <- read.table(
-		file="workflow_must"			
-	)
-	workflow_must <- as.matrix(workflow_must)
+	if(!is.matrix(workflow_depend)){
+		workflow_depend <- read.table(file = "workflow_depend")
+		workflow_depend <- as.matrix(workflow_depend)
+	}
+	if(!is.matrix(workflow_must)){	
+		workflow_must <- read.table(file = "workflow_must")
+		workflow_must <- as.matrix(workflow_must)
+	}
 	############################################################################
 	# some checks on matrices ##################################################
 	if(length(colnames(workflow_depend)) != length(rownames(workflow_depend))){
@@ -91,13 +102,15 @@ newproject <- function(pro_name, pro_dir, IS, targets){
 	}	
 	############################################################################
 	# some checks on script availability #######################################
-	files <- list.files()
-	for(i in 1:length(colnames(workflow_depend))){
-		if(!any(files == paste("do_", colnames(workflow_depend)[i],".r", sep = ""))){
-			stop(paste("Missing do_ scripts.r for node ", colnames(workflow_depend)[i],sep = ""))
-		}
-		if(!any(files == paste("dont_", colnames(workflow_depend)[i],".r", sep = ""))){
-			stop(paste("Missing dont_ scripts.r for node ", colnames(workflow_depend)[i], sep = ""))
+	if(skript_check){
+		files <- list.files()
+		for(i in 1:length(colnames(workflow_depend))){
+			if(!any(files == paste("do_", colnames(workflow_depend)[i],".r", sep = ""))){
+				stop(paste("Missing do_ scripts.r for node ", colnames(workflow_depend)[i],sep = ""))
+			}
+			if(!any(files == paste("dont_", colnames(workflow_depend)[i],".r", sep = ""))){
+				stop(paste("Missing dont_ scripts.r for node ", colnames(workflow_depend)[i], sep = ""))
+			}
 		}
 	}
 	############################################################################
@@ -301,8 +314,10 @@ newproject <- function(pro_name, pro_dir, IS, targets){
 		logfile$parameters$parallel_x3 <- "FALSE"		
 
 		# add custom parameters ################################################
-		source(file = "workflow_parameters.r", local = TRUE)
-		if(any(duplicated(names(logfile$parameters)))){stop("Duplicated parameter names found - revise!")}	
+		if(skript_check){
+			source(file = "workflow_parameters.r", local = TRUE)
+			if(any(duplicated(names(logfile$parameters)))){stop("Duplicated parameter names found - revise!")}	
+		}
 	
 	# UI options ###############################################################
 	logfile[[17]] <- list(0)
@@ -322,8 +337,8 @@ newproject <- function(pro_name, pro_dir, IS, targets){
 		
 
 	# Workflow settings ########################################################
+	names(logfile)[6] <- c("workflow")
     logfile$workflow <- 0    # based on above Tasks_to_redo
-    names(logfile)[6] <- c("workflow")
 	for(i in 1:length(names(logfile[[2]]))){
 		# use simple initial workflow settings as defaults
 		if(any(names(logfile[[2]])[i] == c("peakpicking", "qc") )){
@@ -366,7 +381,7 @@ newproject <- function(pro_name, pro_dir, IS, targets){
     logfile[[9]] <- "";
     names(logfile)[9] <- c("isotopes")
 	# enviMass VERSION NUMBER ##################################################
-    logfile[[10]] <- 3.415
+    logfile[[10]] <- as.character(packageVersion("enviMass"))
     names(logfile)[10] <- c("version")   
 	# subtraction files ########################################################
 	logfile[[13]] <- "FALSE"

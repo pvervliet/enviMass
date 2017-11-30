@@ -3,26 +3,63 @@ if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_updates.
 #stop("\n\nMaintenance work; enviMass will be back in a couple of hours! Please update enviMass again later.")
 
 # > REMOVE
-load(file.path("G:/PART_1/MS PROJECTS/RUeS/enviMass","logfile.emp"),envir=as.environment(".GlobalEnv"))
-logfile$version <- 2.2
-logfile$project_folder <- "G:/PART_1/MS PROJECTS/RUeS/enviMass"
+load(file.path("F:/PART_1/MS PROJECTS/RUeS/enviMass","logfile.emp"),envir=as.environment(".GlobalEnv"))
+#logfile$version <- 2.2
+logfile$project_folder <- "F:/PART_1/MS PROJECTS/RUeS/enviMass"
 
 # < REMOVE
 
 ########################################################################
 # package updates
-if(!any(names(resolution_list)==logfile$parameters$resolution)){
+if(!any(names(resolution_list) == logfile$parameters$resolution)){
 	shinyjs::info(paste0("Please specifiy your Instrument/Resolution for your instrument ",logfile$parameters$resolution," again (Settings tab): such specifications have changed and had to be reset."));
-	logfile$parameters$resolution<-"Elite_R240000@400";
+	logfile$parameters$resolution <- "Elite_R240000@400";
 	save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv"))	
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv"))	
 }	
-if(as.numeric(installed.packages()[installed.packages()[,1]=="enviPat","Version"]) < 2.2){
+if(as.numeric(installed.packages()[installed.packages()[,1] == "enviPat","Version"]) < 2.2){
 	shinyjs::info("Please first update enviPat (an enviMass package dependency) to version >= 2.2. Check www.enviMass.ch installation section for how to update all dependencies. Aborting enviMass ...");
 	stop("\n package enviPat update required! Abort ...")
 }
 
 ########################################################################
+
+
+
+
+########################################################################
+# update logfile
+# -> copied from Praktikumsraum
+# update measurements table
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ########################################################################
 # enviMass project changes

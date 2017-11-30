@@ -1,6 +1,6 @@
 
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements<-measurements[measurements[,"include"]=="TRUE",]
+	measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	measurements <- measurements[measurements[,"include"]=="TRUE",]
 	ppm<-logfile$parameters$replicate_ppm
 	mz_tol<-as.numeric(logfile$parameters$replicate_dmz)
 	rt_tol<-as.numeric(logfile$parameters$replicate_delRT)

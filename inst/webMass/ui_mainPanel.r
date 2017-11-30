@@ -2359,7 +2359,7 @@
 													placement = "top", trigger = "hover")
 											),
 											column(4,
-												numericInput("filterProf_medianblind_value", "Mean sample vs. blind intensity ratio:", 10, min=NA, max=NA)
+												numericInput("filterProf_medianblind_value", "Mean sample vs. blind intensity ratio:", 10, min = NA, max = NA)
 											)
 										),
 										div(style = widget_style3,radioButtons("filterProf_notblind", "... or remove all profiles which contain any blind peaks at all?", c("no"="no","yes"="yes"), inline = TRUE))
@@ -2450,7 +2450,7 @@
 							tabPanel("Single Profiles",
 									tags$h5("Number of filtered profiles:"), textOutput("prof_number"),		
 									HTML('<hr noshade="noshade" />'),			
-									HTML('<p> Enter the ID of a profile to extract relevant information. Profile IDs are listed both in the Summary tab and the Newest trends tab. 
+									HTML('<p> Enter the ID of a profile to extract relevant information. Profile IDs are listed both in the Summary tab and the Trends tab. 
 										Alternatively, sort and filter the profile list in the Summary tab and choose an entry number to show a listed profile. </p>'),							
 									div(style = widget_style3,numericInput("profentry", "Entry # in (filtered, sorted) profile list:", 0)),
 									div(style = widget_style3,numericInput("profID", "(... or search by any profile ID - unfiltered:)", 0)),

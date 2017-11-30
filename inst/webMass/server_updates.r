@@ -2226,9 +2226,9 @@ if(logfile$version < 3.414){
 
 
 # CORRECT VERSION NUMBER FROM 3.4151 TO 3.415!!!
-if(logfile$version < 3.4151){
+if(logfile$version < 3.4151 & FALSE){
 
-	cat("\n Updating to version 3.415 ...")
+	cat("\n Updating to version 3.4151 ...")
 	################################################################################################
 	# on saving profile filtering settings #########################################################
 	if(!any(names(logfile) == "UI_options")){
@@ -2248,7 +2248,7 @@ if(logfile$version < 3.4151){
 		logfile$UI_options$filterProf_components <<- "TRUE"		
 	}
 	################################################################################################	
-	logfile$version <<- 3.415
+	logfile$version <<- 3.4151
 	################################################################################################		
 	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 

@@ -82,7 +82,7 @@ check_project<-function(
 		"adducts_neg_group",
 		"UI_options"))
 	){
-		say <- "Your logfile is corrupted _1,  project debug required!"
+		say <- "Your logfile is corrupted_1,  project debug required!"
 	}
 	###############################################################################
 	# on parallelization: #########################################################

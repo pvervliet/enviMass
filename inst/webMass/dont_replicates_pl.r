@@ -2,7 +2,7 @@
 ##########################################################################
 measurements <- read.csv(file = file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character");
 for_IDs <- measurements$ID[
-	(measurements$include == "TRUE") & (measurements$blind == "FALSE") & (measurements$tag3 != "FALSE")
+	(measurements$include == "TRUE") & (measurements$tag3 != "FALSE")
 ]
 ###############################################################################
 
@@ -32,8 +32,6 @@ if(length(for_IDs)){
 	clusterEvalQ(cl = clus,{rm(list = ls()); NULL})	  
 	rm(cluster_results)
 	######################################################################
-	measurements$blind[match(for_IDs, measurements$ID)] <- "TRUE"
-	write.csv(measurements, file = file.path(logfile[[1]], "dataframes", "measurements"), row.names = FALSE);
 
 }
 ##########################################################################

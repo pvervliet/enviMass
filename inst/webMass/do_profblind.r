@@ -8,22 +8,22 @@ if(
 ){
 
 	##############################################################################
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
+	if(any(objects(envir=as.environment(".GlobalEnv")) == "profileList_pos")){rm(profileList_pos, envir = as.environment(".GlobalEnv"))}
 	if(any(objects()=="profileList_pos")){rm(profileList_pos)}	
-	load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));
+	load(file.path(as.character(logfile[[1]]),"results","profileList_pos"), envir = as.environment(".GlobalEnv"));
 	##############################################################################
-	len<-dim(profileList_pos[["index_prof"]])[1]
-	profileList_pos[["index_prof"]][,"above_blind?"]<-Inf
+	len <- dim(profileList_pos[["index_prof"]])[1]
+	profileList_pos[["index_prof"]][,"above_blind?"] <- Inf
 	for(n in 1:len){
-		these<-profileList_pos[["peaks"]][
+		these <- profileList_pos[["peaks"]][
 				profileList_pos[["index_prof"]][n,"start_ID"]:profileList_pos[["index_prof"]][n,"end_ID"]
 			,"in_blind"]	
-		if(any(these!=Inf)){
+		if(any(these != Inf)){
 			#a<-median(these[these!=Inf])
-			a<-mean(these[these!=Inf])
-			profileList_pos[["index_prof"]][n,"above_blind?"]<-a
+			a <- mean(these[these != Inf])
+			profileList_pos[["index_prof"]][n,"above_blind?"] <- a
 		}else{
-			profileList_pos[["index_prof"]][n,"above_blind?"]<-Inf
+			profileList_pos[["index_prof"]][n,"above_blind?"] <- Inf
 		}
 	}
 	##############################################################################
@@ -56,22 +56,22 @@ if(
 ){
 
 	##############################################################################
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="profileList_neg")){rm(profileList_pos)}	
-	load(file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));
+	if(any(objects(envir=as.environment(".GlobalEnv")) == "profileList_neg")){rm(profileList_pos, envir = as.environment(".GlobalEnv"))}
+	if(any(objects() == "profileList_neg")){rm(profileList_pos)}	
+	load(file.path(as.character(logfile[[1]]),"results","profileList_neg"), envir = as.environment(".GlobalEnv"));
 	##############################################################################
-	len<-dim(profileList_neg[["index_prof"]])[1]
-	profileList_neg[["index_prof"]][,"above_blind?"]<-Inf
+	len <- dim(profileList_neg[["index_prof"]])[1]
+	profileList_neg[["index_prof"]][,"above_blind?"] <- Inf
 	for(n in 1:len){
 		these<-profileList_neg[["peaks"]][
 				profileList_neg[["index_prof"]][n,"start_ID"]:profileList_neg[["index_prof"]][n,"end_ID"]
 			,"in_blind"]	
-		if(any(these!=Inf)){
+		if(any(these != Inf)){
 			#a<-median(these[these!=Inf])
-			a<-mean(these[these!=Inf])			
-			profileList_neg[["index_prof"]][n,"above_blind?"]<-a
+			a <- mean(these[these != Inf])			
+			profileList_neg[["index_prof"]][n,"above_blind?"] <- a
 		}else{
-			profileList_neg[["index_prof"]][n,"above_blind?"]<-Inf
+			profileList_neg[["index_prof"]][n,"above_blind?"] <- Inf
 		}
 	}
 	##############################################################################
@@ -90,8 +90,8 @@ if(
 		##########################################################################
 	}
 	##############################################################################
-	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
-	rm(profileList_neg,envir=as.environment(".GlobalEnv"))
+	save(profileList_neg, file = file.path(as.character(logfile[[1]]),"results","profileList_neg"));
+	rm(profileList_neg, envir = as.environment(".GlobalEnv"))
 	##############################################################################
 	
 }

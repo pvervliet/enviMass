@@ -10,8 +10,10 @@ for_IDs <- measurements$ID[
 
 ###############################################################################
 if(length(for_IDs)){
-	
+
 	###########################################################################
+	if(any(objects()=="peaklist")){rm(peaklist)}
+
 	clusterEvalQ(cl = clus,{rm(list = ls()); NULL})
 	cluster_results <- clusterApplyLB(cl = clus, 
 		x = for_IDs, 
