@@ -321,6 +321,7 @@ newproject <- function(
 			
 
 	# Workflow settings ########################################################
+	logfile[[6]] <- list()
 	names(logfile)[6] <- c("workflow")
     logfile$workflow <- 0    # based on above Tasks_to_redo
 	for(i in 1:length(names(logfile[[2]]))){
