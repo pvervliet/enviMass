@@ -2101,7 +2101,7 @@ if(logfile$version < 3.4){
 		names(logfile)[9] <<- c("isotopes")
 	}
 	################################################################################################	
-	logfile$version<<-3.4
+	logfile$version <<- 3.4
 	################################################################################################		
 	save(logfile,file=file.path(as.character(logfile[["project_folder"]]),"logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"),envir=as.environment(".GlobalEnv")) 
@@ -2226,7 +2226,7 @@ if(logfile$version < 3.414){
 
 
 # CORRECT VERSION NUMBER FROM 3.4151 TO 3.415!!!
-if(logfile$version < 3.4151 & FALSE){
+if(logfile$version < 3.4151){
 
 	cat("\n Updating to version 3.4151 ...")
 	################################################################################################

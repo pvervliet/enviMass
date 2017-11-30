@@ -22,7 +22,7 @@ workflow_get<-function(
 	if(!file.exists(path)){stop("\n path in workflow_get invalid; debug!")}
 	if(!length(logfile$parameters)){stop("\n logfile problem in workflow_get invalid; no parameters available. Debug!")}
 	if(!length(logfile$workflow)){stop("\n logfile problem in workflow_get invalid; no workflow nodes available. Debug!")}	
-	if(!length(logfile$UI_options)){stop("\n logfile problem in workflow_get invalid; no UI options available. Debug!")}	
+	if(!length(logfile$UI_options)){cat("\n logfile problem in workflow_get invalid; no UI options available. Debug!")}	
 	##########################################################################################
 	textit <- readLines(
 		file.path(path)

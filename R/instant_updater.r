@@ -106,7 +106,9 @@ function(
 	if(any(names(logfile_old) == "adducts_pos")) logfile$adducts_pos <- logfile_old$adducts_pos	
 	if(any(names(logfile_old) == "adducts_neg")) logfile$adducts_neg <- logfile_old$adducts_neg
 	# PW path
-	if(any(names(logfile_old) == "PW MSconvert path")) logfile$PW <- logfile_old$PW
+	if(any(names(logfile_old) == "PW MSconvert path")){ 
+		logfile[names(logfile) == "PW MSconvert path"] <- logfile_old[names(logfile_old) == "PW MSconvert path"]
+	}
 	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));	
 	########################################################################################
 	# update ISTD table ####################################################################

@@ -14,6 +14,7 @@ summary_html <- function(
 	Tasks_to_redo = FALSE
 ){
 	
+	use_summary <- use_summary[use_summary[,1] != "",]
 	use_summary[,1] <- as.character(use_summary[,1])
 	use_summary[,2] <- as.character(use_summary[,2])		
 	if((length(Tasks_to_redo) > 1) & (!any(use_summary[,2] == "..."))){
