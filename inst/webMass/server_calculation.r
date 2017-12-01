@@ -145,7 +145,7 @@ maincalc <- reactive({
 			logfile$Tasks_to_redo[1:length(logfile$Tasks_to_redo)] <<- "FALSE"	
 			save(logfile, file = file.path(as.character(logfile[[1]]), "logfile.emp"));  
 			# clean .GlobalEnv and reload results ############################## 
-			enviMass::workflow_objects(
+			enviMass:::workflow_objects(
 				logfile,
 				Ion_mode_profiles = isolate(input$Ion_mode)
 			)			
