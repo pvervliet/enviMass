@@ -21,15 +21,15 @@ atoms <-
 function(
 	masses,
 	intensities,
-	elements=c("C","H","N","O","Cl","Br","P"),
-	dmz=c(20,20,20,20,3,3,0),
-	ppm=TRUE,
-	charges=c(1,2),
+	elements = c("C", "H", "N", "O", "Cl", "Br", "P"),
+	dmz = c(20, 20, 20, 20, 3, 3, 0),
+	ppm = TRUE,
+	charges = c(1, 2),
 	isotopes,
 	int_cut,
-	inttol=0.2,
-	use_C=FALSE,
-	must_peak=FALSE
+	inttol = 0.2,
+	use_C = FALSE,
+	must_peak = FALSE
 ){
 
     ############################################################################
@@ -59,14 +59,16 @@ function(
 		at_isotopes<-which(as.character(isotopes[,1])==elements[i])
 		w_C<-as.numeric(unique(isotopes[at_isotopes,5]))
 		# single-isotopic element = estimate by monoisotopic mass alone ########	
-		if( length(at_isotopes)==1 & !must_peak ){
-			for(n in 1:length(charges)){ # make entry for all charges
-				iso_mass<-as.numeric(isotopes[at_isotopes,3])
-				if(!use_C || (w_C==0)){
-					bounds[n,i]<-floor(masses[1]/(iso_mass[1]/charges[n]))
-				}else{	
-					iso_mass<-(iso_mass+(1/w_C*12))
-					bounds[n,i]<-floor(masses[1]/(iso_mass[1]/charges[n]))
+		if( length(at_isotopes) == 1 ){
+			if(!must_peak){
+				for(n in 1:length(charges)){ # make entry for all charges
+					iso_mass<-as.numeric(isotopes[at_isotopes,3])
+					if(!use_C || (w_C==0)){
+						bounds[n,i]<-floor(masses[1]/(iso_mass[1]/charges[n]))
+					}else{	
+						iso_mass<-(iso_mass+(1/w_C*12))
+						bounds[n,i]<-floor(masses[1]/(iso_mass[1]/charges[n]))
+					}
 				}
 			}
 			next; # no pattern to be evaluated 

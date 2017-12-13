@@ -273,6 +273,11 @@ newproject <- function(
 		logfile$parameters$adducts_rttol <- "5"
 		logfile$parameters$adducts_mztol <- "2.5"
 		logfile$parameters$adducts_ppm <- "TRUE"		
+		# automatic atom bound estimation ######################################
+		logfile$parameters$do_atom_bounds_components <- "FALSE"
+		logfile$parameters$atom_bounds_components <- c("Cl","Br")
+		
+		
 		# homologues ###########################################################
 		logfile$parameters$homol_units <- c("CH2,C2H4O")
 		logfile$parameters$homol_charges <- c("1,2")

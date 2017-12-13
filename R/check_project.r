@@ -281,27 +281,39 @@ check_project<-function(
 	}
 	# data sets ok? ##############################################################
 	filed<-list.files(file.path(logfile[[1]],"files"))
-	if(!length(filed) & ignorefiles=="FALSE"){say<-"No files available!"}
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-	if(length(names(measurements))!=28){
-		say<-"Measurement table seems corrupted. Have you made any updates recently? Please report this issue!"
+	if(!length(filed) & ignorefiles == "FALSE"){say <- "No files available!"}
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character")
+	if(length(names(measurements)) != 28){
+		say <- "Measurement table seems corrupted. Have you made any updates recently? Please report this issue!"
 	}
-	if(any(measurements[,"Mode"]=="positive")){
-		if(all(is.na(match(measurements[measurements[,"Mode"]=="positive","Type"],c("sample","blank"))))){
-			say<-"No blanks or sample files included - hence, nothing to do. Add at least one to continue, positive mode."
+	if(any(measurements[,"Mode"] == "positive")){
+		if(all(is.na(match(measurements[measurements[,"Mode"] == "positive","Type"],c("sample","blank"))))){
+			say <- "No blanks or sample files included - hence, nothing to do. Add at least one to continue, positive mode."
 		}	
 	}
-	if(any(measurements[,"Mode"]=="negative")){
-		if(all(is.na(match(measurements[measurements[,"Mode"]=="negative","Type"],c("sample","blank"))))){
-			say<-"No blanks or sample files included - hence, nothing to do. Add at least one to continue, negative mode."
+	if(any(measurements[,"Mode"] == "negative")){
+		if(all(is.na(match(measurements[measurements[,"Mode"] == "negative","Type"],c("sample","blank"))))){
+			say <- "No blanks or sample files included - hence, nothing to do. Add at least one to continue, negative mode."
 		}	
 	}
-	# check: do blind subtraction?
-	if( 
-		(logfile$workflow[names(logfile$workflow)=="blind"]=="yes") &
-		!any(measurements[,"Type"]=="blank")
-	){
-		say<-"You have included the blind/blank subtraction in the workflow - but there are no blind/blank files. Please revise!"
+	##############################################################################
+	# blind peak subtraction enabled, but no blind files selected? ###############
+	if(logfile$workflow[names(logfile$workflow) == "blind"] == "yes"){
+		if(!any(measurements[,"Type"] == "blank")){
+			say <- "You have included the blind/blank subtraction in the workflow - but there are no blind/blank files. Please revise!"
+		}
+		if(
+			(logfile$parameters$subtract_pos_byfile == "TRUE") & 
+			all(logfile$Positive_subtraction_files == "FALSE") 
+		){
+			say <- "You have included the blind/blank subtraction in the workflow, and have chosen the blind settings option Additional non-sample files to subtract (positive ionization). But you missed to mark any files underneath that selection. Please revise!"
+		}
+		if(
+			(logfile$parameters$subtract_neg_byfile == "TRUE") & 
+			all(logfile$Negative_subtraction_files == "FALSE") 
+		){
+			say <- "You have included the blind/blank subtraction in the workflow, and have chosen the blind settings option Additional non-sample files to subtract (negative ionization). But you missed to mark any files underneath that selection. Please revise!"
+		}		
 	}
 	# check: do calibration?
 	if( 
@@ -505,17 +517,6 @@ check_project<-function(
 	# progress bar? ##############################################################
 	if(interactive() && !.Platform$OS.type == "windows" && .Platform$GUI == "Rgui" && logfile[[5]][21]=="TRUE"){
 		say<-"Disable the progress bar in the Settings General Tab; works only under Windows OS"
-	}
-	##############################################################################
-	# blind peak subtraction enabled, but no blind files selected? ###############
-	if(
-		(logfile$workflow[names(logfile$workflow)=="blind"]=="yes") &
-		(logfile$parameters$subtract_pos_bydate==FALSE) &
-		(logfile$parameters$subtract_pos_byfile==FALSE) &
-		(logfile$parameters$subtract_neg_bydate==FALSE) &
-		(logfile$parameters$subtract_neg_byfile==FALSE) 
-	){
-		say<-"Blind detection enabled in the workflow - but no blind files selected in the Settings->Blind tab? Please adjust."
 	}
 	##############################################################################
 	# Isotopologue grouping - quantiz data set available? ######################## 

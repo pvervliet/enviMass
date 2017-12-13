@@ -1128,7 +1128,10 @@
 								numericInput("isotop_rttol", "RT tolerance [s]:", 60),       
 								#sliderInput("isotop_inttol", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2)
 								knobInput("isotop_inttol", label = "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2, 
-											thickness = .3, width = 160, height = 160, fgColor = "#7499AB", inputColor = "#428BCA", displayPrevious = TRUE)
+											thickness = .3, width = 160, height = 160, fgColor = "#7499AB", inputColor = "#428BCA", displayPrevious = TRUE),
+								HTML('<hr noshade="noshade" />'),
+								selectInput("do_atom_bounds_components", "Run automatic atom bound estimation for a component?", choices = c("TRUE" = "TRUE","FALSE" = "FALSE"), "FALSE"),				
+								selectInput("atom_bounds_components", label = "Choose elements to include / exclude", choices = c("C","O","N","H","S","P","F","Cl","Br"), selected = c("Cl","Br"), multiple = TRUE)
 
 							),
 							tabPanel("Adduct grouping",	
@@ -1169,7 +1172,7 @@
 								numericInput("EICor_delRT", "RT tolerance window for candidate peak pairs [s]:", 5),
 								numericInput("EICor_minpeaks", "Min. number of data points (scans) shared by EIC pairs to check for their correlation:", 15),
 								numericInput("EICor_mincor", "Min. Pearson correlation [0,1] coefficient:", 0.95)
-							)						
+							)
 						), style = "color: #123123;"
 					),
 					tabPanel("Profile componentization",		

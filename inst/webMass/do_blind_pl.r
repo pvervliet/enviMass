@@ -32,7 +32,7 @@ if(length(for_IDs)){
 		measurements$blind[match(for_IDs[cluster_results == "done"], measurements$ID)] <- "TRUE"
 	}
 	write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);	
-	rm(measurements)
+	rm(measurements, cluster_results)
 	###########################################################################
 	
 }

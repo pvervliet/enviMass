@@ -1,4 +1,4 @@
-#' @title Compare two lists for matching elements in the first list with at least one in the second list
+#' @title Compare two vectors for matching elements in the first list with at least one in the second list
 #'
 #' @export
 #'
@@ -13,7 +13,7 @@
 #' @details  enviMass workflow function.
 #' 
 
-comp_list<-function(
+comp_list <- function(
 	list1,
 	list2,
 	as_pairs=TRUE
@@ -24,20 +24,18 @@ comp_list<-function(
 	##############################################################################
 	if(as_pairs){
 		for(i in 1:length(list1)){
-			if(list1[[i]]!=list2[[i]]){
+			if(list1[[i]] != list2[[i]]){
 				return(FALSE)
 			}
 		}
-	}else{
+	}else{ # simplify with unlist() / match() / identical()
 		for(i in 1:length(list1)){
-			found<-FALSE
-			for(j in 1:length(list2)){
-				if(list1[[i]]==list2[[j]]){
-					found<-TRUE;
-					break; # innermost loop
-				}
+			if(!any(list1[[i]] == list2)){
+				return(FALSE)
 			}
-			if(!found){
+		}
+		for(i in 1:length(list2)){
+			if(!any(list2[[i]] == list1)){
 				return(FALSE)
 			}
 		}

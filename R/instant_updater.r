@@ -9,8 +9,6 @@
 #' @details enviMass workflow function to rewrite an old into a new project while updating the version
 #' 
 
-#project_path <- "F:/PART_1/MS PROJECTS/RUeS/enviMass"
-#project_path_new <- "F:/PART_1/MS PROJECTS/RUeS"
 
 instant_updater <-
 function(

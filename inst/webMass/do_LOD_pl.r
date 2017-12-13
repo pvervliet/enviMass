@@ -64,9 +64,11 @@ if(length(for_IDs)){
 	save(LOD_splined, file = file.path(logfile$project_folder, "results", "LOD", "LOD_splined"))
 	rm(LOD_splined)
 	#################################################################################
-	cluster_results <-unlist(cluster_results)
+	cluster_results <- unlist(cluster_results)
 	if(any(cluster_results != "nothing")){
-		measurements$LOD[match(for_IDs[cluster_results=="done"], measurements$ID)]<-"TRUE"
+# improve -> cluster_results returns model, not "done"
+#measurements$LOD[match(for_IDs[cluster_results == "done"], measurements$ID)] <- "TRUE"
+		measurements$LOD[match(for_IDs, measurements$ID)] <- "TRUE"		
 	}
 	write.csv(measurements, file = file.path(logfile[[1]], "dataframes", "measurements"), row.names=FALSE);
 	rm(measurements, cluster_results)

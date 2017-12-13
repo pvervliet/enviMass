@@ -66,7 +66,7 @@
 				}
 			}
 			paired<-paired[1:(at-1),,drop=FALSE]
-			if(length(paired[,1])==0){
+			if(all(paired[,1]==0)){
 				cat("nothing found; aborted.");next;
 			}
 			###########################################################################

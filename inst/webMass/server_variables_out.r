@@ -1,5 +1,6 @@
 # write UI variables to logfile ################################################
 
+
 ################################################################################
 # On exporting parameters to project ###########################################
 # observe what has changed and reset Tasks_to_do accordingly ###################
@@ -19,7 +20,11 @@ observe({
 		createAlert(session,anchorId = "alert_2", alertId = "a2", title = NULL, 
               content = "Changes in the parameter settings require a project recalculation to become effective.",
               style = "warning", append = FALSE)
-		if(do_debug){cat("\n at_1")}	  
+		showModal(modalDialog( title = "Monitoring of parameter and workflow changes finished", 
+		  "Changes in the workflow settings require a project recalculation to become effective. 
+		  Any affected workflow tasks are highlighted red in the Project state table in the left sidebar.", footer = modalButton("Got it"),
+		  size = c("m"), easyClose = FALSE, fade = TRUE))
+		if(logfile$parameters$verbose) cat("\n at_1")
 		######################################################################## 		
 		
 		######################################################################## 
@@ -27,18 +32,18 @@ observe({
 		all_ok <- TRUE
 		for(i in 1:length(logfile$parameters)){
 			for_param <- names(logfile$parameters)[i]
-			if(any(names(input) == for_param)){
-				found_it <- try(eval(parse(text = paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = ""))))
+			if(any(names(isolate(input)) == for_param)){
+				found_it <- isolate(try(eval(parse(text = paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = "")))))
 				if(class(found_it) == "try-error"){	# present in UI?
-					cat("\n Error for parameter input detected: "); cat(for_param);					
-					mess <- paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?", sep = "")
+					if(logfile$parameters$verbose){ isolate(cat("\n Error for parameter input detected: ")); cat(for_param); }					
+					mess <- isolate(paste("Error on parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?", sep = ""))
 					shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
 					all_ok <- FALSE
 				}else{
-					found_it <- eval(parse(text=paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = "")))
+					found_it <- isolate(eval(parse(text=paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = ""))))
 					if(is.na(found_it) || length(found_it) == 0){
-						cat("\n Invalid parameter input detected: ");cat(for_param);					
-						mess <- paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep = "")
+						if(logfile$parameters$verbose){ isolate(cat("\n Invalid parameter input detected: ")); cat(for_param); }					
+						mess <- isolate(paste("Invalid parameter input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep = ""))
 						shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
 						all_ok <- FALSE
 					}
@@ -50,7 +55,7 @@ observe({
 		if(all_ok){ # otherwise report problem to try() in server_calculations.r
 			######################################################################## 						
 			# parameter settings ###################################################
-			cat("\n Checking parameter changes ... ")
+			if(logfile$parameters$verbose) cat("\n Checking parameter changes ... ")
 			found <- c()
 			# check standard parameters defined in function newproject()
 			for(i in 1:length(logfile$parameters)){	
@@ -58,22 +63,24 @@ observe({
 				if(names(logfile$parameters)[i] == "external") next # for external parameters		
 				old_param <- logfile$parameters[i]		
 				for_param <- names(logfile$parameters)[i]
-				eval(parse(text = paste("new_param<-","as.character(isolate(input$",for_param,"))", sep = "")))
-				if( length(new_param) > 0 ){ # in shiny input list?
-					if(!enviMass::comp_list(old_param,new_param, as_pairs = FALSE)){
+				isolate(eval(parse(text = paste("new_param<-","as.character(isolate(input$",for_param,"))", sep = ""))))
+				if( length(new_param) > 0 ){
+					if(!enviMass::comp_list(old_param[[1]], new_param, as_pairs = FALSE)){ # first argument a list, second not
 							# report changed parameter
-							cat(paste("\n","Changed parameter ",for_param," from ", sep = ""));
-							cat("\n"); print(old_param); cat("\n"); cat(" to "); cat("\n"); print(new_param);		
+							if(logfile$parameters$verbose){
+								cat(paste("\n","Changed parameter ",for_param," from ", sep = ""));
+								cat("\n"); print(old_param); cat("\n"); cat(" to "); cat("\n"); print(new_param);		
+							}
 							# find affected files
 							found <- c(found,
 								paste("logfile$parameters$", names(logfile$parameters)[i], sep = "")
-							)
-							logfile$parameters[i] <<- new_param
+							)	
+							logfile$parameters[[i]] <<- new_param
 					}else{
-						cat(paste(".", sep = ""))
+						if(logfile$parameters$verbose) cat(paste(".", sep = ""))
 					}		
 				}else{
-					cat(paste("\n",for_param," not found in input list. ", sep = ""))
+					if(logfile$parameters$verbose) isolate(cat(paste("\n",for_param," not found in input list. ", sep = "")))
 				}
 			}
 			# check external parameters defined in workflow_parameters.r
@@ -85,8 +92,8 @@ observe({
 						this <- which(names(external_old) == names(logfile$parameters$external)[i])
 						old_param <- external_old[[this]]
 						new_param <- logfile$parameters$external[[i]]
-						if(!enviMass::comp_list(old_param, new_param, as_pairs = FALSE)){
-							cat("*")
+						if(!enviMass::comp_list(old_param[[1]], new_param[[1]], as_pairs = FALSE)){ # both arguments lists
+							if(logfile$parameters$verbose) cat("*")
 							found <- c(found,paste("logfile$parameters$external$", names(logfile$parameters$external)[i], sep = ""))
 						}
 					}else{ # seems to be a new parameter
@@ -104,8 +111,9 @@ observe({
 					for(i in 1:dim(affected_table)[1]){
 						if(!any(names(logfile$workflow) == affected_table[i,1])) next
 						if( # just a message: 
-							((logfile$workflow[names(logfile$workflow) == affected_table[i,1]] == "yes") & (affected_table[i,2] == "TRUE")) ||
-							((logfile$workflow[names(logfile$workflow) == affected_table[i,1]] == "no") & (affected_table[i,2]== "FALSE"))
+							(((logfile$workflow[names(logfile$workflow) == affected_table[i,1]] == "yes") & (affected_table[i,2] == "TRUE")) ||
+							((logfile$workflow[names(logfile$workflow) == affected_table[i,1]] == "no") & (affected_table[i,2]== "FALSE"))) &
+							(logfile$parameters$verbose == "TRUE")
 						){
 							cat("\nAdapt settings affecting nodes: ")
 							print(affected_table[i,1]); cat("\n")
@@ -124,7 +132,7 @@ observe({
 			output$measurements <<- DT::renderDataTable(
 				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
 			); 
-			cat("Done checking of parameter changes.\n")
+			if(logfile$parameters$verbose) cat("Done checking of parameter changes.\n")
 			######################################################################## 		
 
 			########################################################################     
@@ -148,7 +156,7 @@ observe({
 					single_file = FALSE
 				)
 			}
-			if(do_debug){cat("\n at_3")}
+			if(logfile$parameters$verbose) cat("\n at_3")
 			######################################################################## 
 
 			######################################################################## 
@@ -167,7 +175,7 @@ observe({
 					single_file = FALSE
 				)
 			}
-			if(do_debug){cat("\n at_4")}
+			if(logfile$parameters$verbose) cat("\n at_4")
 			########################################################################
 			
 			######################################################################## 		
@@ -176,7 +184,7 @@ observe({
 			logfile$Positive_subtraction_files <<- c(isolate(input$files_pos_select_subtract),"FALSE")
 			at2 <- logfile$Positive_subtraction_files
 			if(any(is.na(at2))){stop("\nThere was an issue reading out the new settings - maybe comma / dot separation was not fullfilled?")}		
-			if(!enviMass::comp_list(at1,at2,as_pairs = FALSE)){ # both steps take partly the same parameters! 
+			if(!enviMass::comp_list(at1, at2, as_pairs = FALSE)){ # both steps take partly the same parameters! 
 				enviMass::workflow_set(
 					down = "blind",
 					check_node = TRUE,
@@ -196,37 +204,41 @@ observe({
 					single_file = FALSE
 				)
 			}		
-			if(do_debug){cat("\n at_8b")}
+			if(logfile$parameters$verbose) cat("\n at_8b")
 			########################################################################  		  
 			
 			########################################################################
 			# workflow settings ####################################################
-			cat("\n Checking workflow changes ... ")
+			if(logfile$parameters$verbose) cat("\n Checking workflow changes ... ")
 			found <- c()
 			for(i in 1:length(logfile$workflow)){	
 				if(names(logfile$workflow)[i] == ""){next} # for any empty entries, ?
 				old_node <- logfile$workflow[i]
 				for_node <- names(logfile$workflow)[i]
-				eval(parse(text = paste("new_node<-","as.character(isolate(input$", for_node,"))", sep = "")))
-				if( length(new_node)> 0 ){ # in shiny input list?
-					if(!enviMass::comp_list(old_node, new_node, as_pairs = TRUE)){
+				isolate(eval(parse(text = paste("new_node<-","as.character(isolate(input$", for_node,"))", sep = ""))))
+				if( length(new_node)> 0 ){
+					if(!enviMass::comp_list(old_node[[1]], new_node, as_pairs = TRUE)){ # first argument a list, second not
 							# report changed parameter
-							cat(paste("\n", "Changed parameter ", for_node, " from ", sep = ""));
-							cat("\n");print(old_node);cat("\n");cat(" to ");cat("\n");print(new_node);		
+							if(logfile$parameters$verbose){
+								cat(paste("\n", "Changed parameter ", for_node, " from ", sep = ""));
+								cat("\n");print(old_node);cat("\n");cat(" to ");cat("\n");print(new_node);		
+							}
 							# find affected files
 							found <- c(found,for_node)
 							logfile$workflow[i] <<- new_node
 					}else{
-						cat(paste(".", sep = ""))
+						if(logfile$parameters$verbose) cat(paste(".", sep = ""))
 					}		
 				}else{
-					cat(paste("\n", for_node," not found in input list.\n", sep = ""))
+					if(logfile$parameters$verbose) isolate(cat(paste("\n", for_node," not found in input list.\n", sep = "")))
 				}
 			}
 			# any parameter changed ?
 			if(length(found)){
-					cat("\nAdapt settings affecting workflow nodes: ")
-					print(found); cat("\n")
+					if(logfile$parameters$verbose){
+						cat("\nAdapt settings affecting workflow nodes: ")
+						print(found); cat("\n")
+					}
 					for(i in 1:length(found)){
 						enviMass::workflow_set(
 							down = found[i],
@@ -241,17 +253,17 @@ observe({
 			if( !do_isot & !do_addu ){ 
 				logfile$workflow[names(logfile$workflow) == "components_files"] <<- "no"
 			}
-			cat("Done checking of workflow changes.\n")
+			if(logfile$parameters$verbose) cat("Done checking of workflow changes.\n")
 			########################################################################
 		
 			########################################################################
 			save(logfile,file = file.path(as.character(logfile[[1]]),"logfile.emp"));
-			cat("settings changed \n");
+			if(logfile$parameters$verbose) cat("settings changed \n");
 			output$dowhat <<- renderText("Project settings modified");
 			output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 			########################################################################
 			if(any(ls() == "logfile")){stop("\n illegal logfile detected #2 in server_variable_out.r!")}
-			if(do_debug){cat("\n at_27")}
+			if(logfile$parameters$verbose) cat("\n at_27")
 		}
     }
 
@@ -262,7 +274,7 @@ observe({
 # On exporting UI options ######################################################
 observe({
 	input$save_profile_filter
-	cat("\nSaving profile filtering options as project default")
+	if(logfile$parameters$verbose) cat("\nSaving profile filtering options as project default")
     if(	
 		(exists("logfile")) & (isolate(input$save_profile_filter))
 	){
@@ -274,18 +286,18 @@ observe({
 		for(i in 1:length(logfile$UI_options)){
 			if(names(logfile$UI_options)[i] == "") next # for any empty entries
 			for_param <- names(logfile$UI_options)[i]
-			if(any(names(input) == for_param)){
-				found_it <- try(eval(parse(text = paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = ""))))
+			if(any(names(isolate(input)) == for_param)){
+				found_it <- isolate(try(eval(parse(text = paste("new_param <-", "as.character(isolate(input$",for_param,"))", sep = "")))))
 				if(class(found_it) == "try-error"){	# present in UI?
-					cat("\n Error for UI option input detected: "); cat(for_param);					
-					mess <- paste("Error on UI option input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?", sep = "")
+					if(logfile$parameters$verbose){ isolate(cat("\n Error for UI option input detected: ")); cat(for_param)}					
+					mess <- isolate(paste("Error on UI option input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?", sep = ""))
 					shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
 					all_ok <- FALSE
 				}else{
-					found_it <- eval(parse(text=paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = "")))
+					found_it <- isolate(eval(parse(text=paste("new_param <-", "as.character(isolate(input$",for_param,"))", sep = ""))))
 					if(is.na(found_it) || length(found_it) == 0){
-						cat("\n Invalid UI option input detected: ");cat(for_param);					
-						mess <- paste("Invalid UI option input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep = "")
+						if(logfile$parameters$verbose){ isolate(cat("\n Invalid UI option input detected: ")); cat(for_param)}					
+						mess <- isolate(paste("Invalid UI option input detected for ",for_param,". Comma instead of dot-seperated? Or vice versa?",sep = ""))
 						shinytoastr::toastr_error(mess, title = "Project check message:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
 						all_ok <- FALSE
 					}
@@ -299,7 +311,7 @@ observe({
 			for(i in 1:length(logfile$UI_options)){
 				if(names(logfile$UI_options)[i] == "") next # for any empty entries
 				for_param <- names(logfile$UI_options)[i]			
-				found_it <- try(eval(parse(text = paste("new_param<-", "as.character(isolate(input$",for_param,"))", sep = ""))))
+				found_it <- isolate(try(eval(parse(text = paste("new_param <-", "as.character(isolate(input$",for_param,"))", sep = "")))))
 				logfile$UI_options[i] <<- as.character(found_it)
 			}
 			output$dowhat <<- renderText("Profile filtering saved as default.");

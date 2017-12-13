@@ -542,6 +542,59 @@ function(
 		rm(peaklist)
 	}
 	##########################################################################
+	# extend component table (5) - add atom counts ###########################	 
+	if(
+		(logfile$parameters$do_atom_bounds_components == "TRUE") &
+		(length(logfile$parameters$atom_bounds_components))
+	){
+		num_elem <- length(mute(logfile$parameters$atom_bounds_components))
+		num_atom <- matrix(nrow = dim(component[["Components"]])[1], ncol = num_elem, 0)
+		for(i in 1:dim(component[["Components"]])[1]){
+			use_peaks <- as.numeric(strsplit(gsub("*", "", component[["Components"]][i, "ID pattern peaks |"], fixed = TRUE), ",")[[1]])
+			if(length(component[["pattern peak list"]]) > 1){ # peak pattern list available at all?
+				these <- match(use_peaks, component[["pattern peak list"]][,"peak ID"])
+				use_masses <- component[["pattern peak list"]][these, "m/z_corr"]
+				use_intensities <- component[["pattern peak list"]][these, "int_corr"]
+				use_RT <- mean(component[["pattern peak list"]][these, "RT_corr"])
+			}else{
+				these <- match(use_peaks, component[["adduct peak list"]][,"peak ID"])
+				use_masses <- component[["adduct peak list"]][these, "m/z_corr"]
+				use_intensities <- component[["adduct peak list"]][these, "int_corr"]	
+				use_RT <- mean(component[["adduct peak list"]][these, "RT_corr"])
+			}
+			if(do_LOD){							
+				with_model <- which(names(LOD_splined) == paste("LOD_", for_file, sep = ""))						
+				if(length(with_model) > 0){						
+					use_cutint <- 10^(predict(LOD_splined[[with_model]], use_RT)$y)
+				}else{
+					cat("\n Missing LOD model; using default intensity threshold. Debug?")
+					use_cutint <- as.numeric(logfile$parameters$IS_intcut)
+				}
+			}else{
+				use_cutint <- as.numeric(logfile$parameters$IS_intcut)
+			}
+			atom_counts <- enviMass:::atoms(
+				masses = use_masses,
+				intensities = use_intensities,
+				elements = logfile$parameters$atom_bounds_components,
+				dmz = rep(30, num_elem),
+				ppm = TRUE,
+				charges = c(1, 2),
+				isotopes,
+				int_cut = use_cutint,
+				inttol = (as.numeric(logfile$parameter$isotop_inttol) / 100),
+				use_C = FALSE,
+				must_peak = TRUE
+			)
+			num_atom[i,] <- do.call(pmax, data.frame(t(atom_counts)))
+		}
+		named <- colnames(component[["Components"]])
+		component[["Components"]] <- cbind(component[["Components"]], num_atom)
+		names(component[["Components"]]) <- c(named, paste0("max_atom_", logfile$parameters$atom_bounds_components))
+	}
+	##########################################################################
+				
+	##########################################################################
 	save(component, file = (file.path(logfile[[1]],"results","componentization","components",paste(for_file))))
 	##########################################################################	
 	return(NULL);

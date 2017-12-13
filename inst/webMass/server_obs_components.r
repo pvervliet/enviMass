@@ -1,30 +1,30 @@
 ##############################################################################
 # observe components outputs #################################################
 ##############################################################################
-if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
+if(any(ls() == "logfile")){stop("\n illegal logfile detected #1 in server_obs_screening.r!")}
 ee	<-	reactiveValues() # reactive value ...
-ee$entry<-0
-verbose<-TRUE
+ee$entry <- 0
+verbose <- TRUE
 
-ranges_homol <- reactiveValues(mass = FALSE, RT = FALSE, massD = FALSE, dmass = FALSE, dRT = FALSE, RTchrom=FALSE, intchrom=FALSE)
+ranges_homol <- reactiveValues(mass = FALSE, RT = FALSE, massD = FALSE, dmass = FALSE, dRT = FALSE, RTchrom = FALSE, intchrom = FALSE)
 refresh_homol <- reactiveValues()
 refresh_homol$a <- 0
 refresh_homol$b <- 0
 refresh_homol$c <- 0 # contains peaks
 refresh_homol$d <- 0
 
-ranges_compo <- reactiveValues(mass = FALSE, RTchrom=FALSE, intchrom=FALSE)
+ranges_compo <- reactiveValues(mass = FALSE, RTchrom = FALSE, intchrom = FALSE)
 refresh_compo <- reactiveValues()
 refresh_compo$a <- 0
 
 observe({ # - A
 	input$sel_meas_comp 
-	if(verbose){cat("\n in Comp_A")}
+	if(logfile$parameters$verbose) cat("\n in Comp_A")
 	if(isolate(init$a)=="TRUE"){
-		do_isot <- (logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes")
-		do_addu <- (logfile$workflow[names(logfile$workflow)=="adducts"]=="yes")
-		do_homol <- (logfile$workflow[names(logfile$workflow)=="homologues"]=="yes")	
-		do_EIC <- (logfile$workflow[names(logfile$workflow)=="EIC_correlation"]=="yes")
+		do_isot <- (logfile$workflow[names(logfile$workflow) == "isotopologues"] == "yes")
+		do_addu <- (logfile$workflow[names(logfile$workflow) == "adducts"] == "yes")
+		do_homol <- (logfile$workflow[names(logfile$workflow) == "homologues"] == "yes")	
+		do_EIC <- (logfile$workflow[names(logfile$workflow) == "EIC_correlation"] == "yes")
 		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if( 
 			(!is.na(isolate(input$sel_meas_comp))) &
@@ -62,8 +62,7 @@ observe({ # - A
 				# load componentization results ##################################
 				load(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp)),envir=as.environment(".GlobalEnv"))
 				#load(file.path(logfile[[1]],"results","componentization","components","1"))
-				if(verbose){cat("\n in Comp_A_1")}
-				cat("\n Loaded file")
+				if(logfile$parameters$verbose) cat("\n in Comp_A_1: loaded file")
 				# output components summary table ################################
 				if(!is.null(dim(component[["pattern peak list"]]))){
 					num_peaks_remain <- dim(component[["pattern peak list"]])[1]
@@ -121,6 +120,7 @@ observe({ # - A
 				output$max_size_comp<-renderText(paste("Max number of peaks in a component: ",as.character(max_size_comp),sep=""))				
 				output$num_comp_nontarget<-renderText(paste("Number of nontarget components with at least one non-blind peak: ",as.character(comp_nontarget),sep=""))
 				# output component table #########################################
+				names_max_atom <- names(component[["Components"]])[grepl("max_atom_", names(component[["Components"]]))]
 				comp_table_full <<- component[["Components"]][,c(
 					"Component ID |",
 					"Monois. peak ID |",
@@ -139,7 +139,8 @@ observe({ # - A
 					"ISTD peaks",
 					"Total peak number",
 					"Blind peak number",
-					"z"
+					"z",
+					names_max_atom # if not character(0)
 				), drop = FALSE]
 				comp_table_full[,4]<-round(comp_table_full[,4],digits=2)
 				comp_table_full[,5]<-(comp_table_full[,5]/60)
@@ -160,7 +161,7 @@ observe({ # - A
 							"Isot. peaks adducts","Adduct peak adducts",
 							"Target peaks","ISTD peaks",
 							"Total peak number","Blind peak number",
-							"Charge(s)"
+							"Charge(s)", names_max_atom
 						),
 						rownames=FALSE,
 						extensions = c('Buttons','FixedHeader','ColReorder'),
@@ -202,7 +203,7 @@ observe({ # - A
 				measurements[measurements$ID==isolate(input$sel_meas_comp),"include"]=="TRUE"
 			){
 				#################################################################
-				if(verbose){cat("\n in Comp_A_3")}
+				if(logfile$parameters$verbose) cat("\n in Comp_A_3")
 				load(file.path(logfile[[1]],"results","componentization","homologues",paste("full",isolate(input$sel_meas_comp),sep="_")),envir=as.environment(".GlobalEnv"))			
 				#load(file.path(logfile[[1]],"results","componentization","homologues","full_1"),envir=as.environment(".GlobalEnv"))			
 				isolate(refresh_homol$a<-(refresh_homol$a+1))
@@ -607,21 +608,21 @@ observe({
 observeEvent(input$homol_plot_dblclick, { 
           brush <- isolate(input$homol_plot_brush)
           if (!is.null(brush)) {
-            cat("\n Zoom in_1")
+            if(logfile$parameters$verbose) cat("\n Zoom in_1")
             isolate(ranges_homol$mass <- c(brush$xmin, brush$xmax))
             isolate(ranges_homol$RT <- c(brush$ymin, brush$ymax))
           } else {
-            cat("\n Zoom out full_1")
+            if(logfile$parameters$verbose) cat("\n Zoom out full_1")
             isolate(ranges_homol$mass <- FALSE)
             isolate(ranges_homol$RT <- FALSE)
           }
           refresh_homol$a<-(refresh_homol$a+1) # valid in both cases
 })
 observeEvent(input$homol_plot_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
-          cat("\n Zoom out part_1_a")
+          if(logfile$parameters$verbose) cat("\n Zoom out part_1_a")
           brush <- isolate(input$homol_plot_brush)
           if (is.null(brush)) {
-            cat("\n Zoom out part_1_b")
+            if(logfile$parameters$verbose) cat("\n Zoom out part_1_b")
             if(isolate(ranges_homol$mass[1])!=FALSE){
               old_range_mass<-abs(isolate(ranges_homol$mass[2]-ranges_homol$mass[1]))
               isolate(ranges_homol$mass[1]<-ranges_homol$mass[1]-.3*old_range_mass)
@@ -634,26 +635,26 @@ observeEvent(input$homol_plot_click, { # NOTE: brushing already triggers a click
             }
             refresh_homol$a<-(refresh_homol$a+1)
           }else{
-            cat("\n Doing hover - and nothing")
+            if(logfile$parameters$verbose) cat("\n Doing hover - and nothing")
           }   
 })
 ################################################################################
 observeEvent(input$homol_counts_dblclick, { 
           brush <- isolate(input$homol_counts_brush)
           if (!is.null(brush)) {
-            cat("\n Zoom in_1d")
+            if(logfile$parameters$verbose) cat("\n Zoom in_1d")
             isolate(ranges_homol$dmass <- c(brush$xmin, brush$xmax))
           } else {
-            cat("\n Zoom out full_1d")
+            if(logfile$parameters$verbose) cat("\n Zoom out full_1d")
             isolate(ranges_homol$dmass <- FALSE)
           }
           refresh_homol$a<-(refresh_homol$a+1) # valid in both cases
 })
 observeEvent(input$homol_counts_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
-          cat("\n Zoom out part_1_ad")
+          if(logfile$parameters$verbose) cat("\n Zoom out part_1_ad")
           brush <- isolate(input$homol_counts_brush)
           if (is.null(brush)) {
-              cat("\n Zoom out part_1_bd")
+              if(logfile$parameters$verbose) cat("\n Zoom out part_1_bd")
               if(isolate(ranges_homol$dmass[1])!=FALSE){
                 old_range_dmass<-abs(isolate(ranges_homol$dmass[2]-ranges_homol$dmass[1]))
                 isolate(ranges_homol$dmass[1]<-ranges_homol$dmass[1]-.3*old_range_dmass)
@@ -661,7 +662,7 @@ observeEvent(input$homol_counts_click, { # NOTE: brushing already triggers a cli
               }  
               refresh_homol$a<-(refresh_homol$a+1)
           }else{
-            cat("\n Doing hover_d")
+            if(logfile$parameters$verbose) cat("\n Doing hover_d")
             isolate(ranges_homol$dmass <- c(brush$xmin, brush$xmax))
             refresh_homol$b<-(refresh_homol$b+1)
           }   
@@ -670,19 +671,19 @@ observeEvent(input$homol_counts_click, { # NOTE: brushing already triggers a cli
 observeEvent(input$homol_RT_dblclick, { 
           brush <- isolate(input$homol_RT_brush)
           if (!is.null(brush)) {
-            cat("\n Zoom in_1d")
+            if(logfile$parameters$verbose) cat("\n Zoom in_1d")
             isolate(ranges_homol$dRT <- c(brush$xmin, brush$xmax))
           } else {
-            cat("\n Zoom out full_1d")
+            if(logfile$parameters$verbose) cat("\n Zoom out full_1d")
             isolate(ranges_homol$dRT <- FALSE)
           }
           refresh_homol$a<-(refresh_homol$a+1) # valid in both cases
 })
 observeEvent(input$homol_RT_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
-          cat("\n Zoom out part_1_ad")
+          if(logfile$parameters$verbose) cat("\n Zoom out part_1_ad")
           brush <- isolate(input$homol_RT_brush)
           if (is.null(brush)) {
-              cat("\n Zoom out part_1_bd")
+              if(logfile$parameters$verbose) cat("\n Zoom out part_1_bd")
               if(isolate(ranges_homol$dRT[1])!=FALSE){
                 old_range_dmass<-abs(isolate(ranges_homol$dRT[2]-ranges_homol$dRT[1]))
                 isolate(ranges_homol$dRT[1]<-ranges_homol$dRT[1]-.3*old_range_dmass)
@@ -690,7 +691,7 @@ observeEvent(input$homol_RT_click, { # NOTE: brushing already triggers a click -
               }  
               refresh_homol$a<-(refresh_homol$a+1)
           }else{
-            cat("\n Doing hover_d")
+            if(logfile$parameters$verbose) cat("\n Doing hover_d")
             isolate(ranges_homol$dRT <- c(brush$xmin, brush$xmax))
             refresh_homol$b<-(refresh_homol$b+1)
           }   
@@ -700,21 +701,21 @@ observeEvent(input$homol_RT_click, { # NOTE: brushing already triggers a click -
 observeEvent(input$homol_chromat_dblclick, { 
           brush <- isolate(input$homol_chromat_brush)
           if (!is.null(brush)) {
-            cat("\n Zoom in_1e")
+            if(logfile$parameters$verbose) cat("\n Zoom in_1e")
             isolate(ranges_homol$RTchrom <- c(brush$xmin, brush$xmax))
             isolate(ranges_homol$intchrom <- c(brush$ymin, brush$ymax))            
           } else {
-            cat("\n Zoom out full_1e")
+            if(logfile$parameters$verbose) cat("\n Zoom out full_1e")
             isolate(ranges_homol$RTchrom <- FALSE)
             isolate(ranges_homol$intchrom <- FALSE)
           }
           refresh_homol$d<-(refresh_homol$d+1) # valid in both cases
 })
 observeEvent(input$homol_chromat_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
-          cat("\n Zoom out part_1_ae")
+          if(logfile$parameters$verbose) cat("\n Zoom out part_1_ae")
           brush <- isolate(input$homol_chromat_brush)
           if (is.null(brush)) {
-              cat("\n Zoom out part_1_be")
+              if(logfile$parameters$verbose)  cat("\n Zoom out part_1_be")
               if(isolate(ranges_homol$RTchrom[1])!=FALSE){
                 old_range_dmass<-abs(isolate(ranges_homol$RTchrom[2]-ranges_homol$RTchrom[1]))
                 isolate(ranges_homol$RTchrom[1]<-ranges_homol$RTchrom[1]-.3*old_range_dmass)
@@ -726,7 +727,7 @@ observeEvent(input$homol_chromat_click, { # NOTE: brushing already triggers a cl
               }  
               refresh_homol$d<-(refresh_homol$d+1)
           }else{
-            cat("\n Doing hover_e - nothing")
+            if(logfile$parameters$verbose) cat("\n Doing hover_e - nothing")
           }   
 })     
 ################################################################################
@@ -740,7 +741,7 @@ observe({
     s1<-input$comp_table_full_rows_selected
     if(isolate(init$a)=="TRUE"){
         if(length(s1)){
-        	print(s1)
+        	if(logfile$parameters$verbose) print(s1)
             if(s1>=1){
 				updateNumericInput(session, inputId = "sel_meas_comp_comp", value = as.numeric(comp_table_full[s1,"Component ID |"]))
 				isolate(ranges_compo$mass<-FALSE)
@@ -753,7 +754,7 @@ observe({
 
 observe({ # - B
 	input$sel_meas_comp_peak 
-	if(verbose){cat("\n in Comp_B")}
+	if(logfile$parameters$verbose) cat("\n in Comp_B")
 	if(!is.na(as.numeric(isolate(input$sel_meas_comp_peak)))){
 	if(isolate(init$a)=="TRUE" & as.numeric(isolate(input$sel_meas_comp_peak))>0){
 		if(
@@ -774,11 +775,11 @@ observe({ # - B
 				that<-which(!is.na(unlist(lapply(strsplit(those,","), match, x=as.numeric(isolate(input$sel_meas_comp_peak))))))
 			}
 			if(length(that)==1){
-				if(verbose){cat("\n in Comp_B_1")}
+				if(logfile$parameters$verbose) cat("\n in Comp_B_1")
 				updateNumericInput(session,"sel_meas_comp_comp",value=that)
 			}else{
 				if(verbose){cat("\n in Comp_B_2")}
-				cat("\n Invalid peak selected!")
+				if(logfile$parameters$verbose) cat("\n Invalid peak selected!")
 				updateNumericInput(session,"sel_meas_comp_comp",value=0)
 				output$comp_plot_spec <- renderPlot({	
 					plot.new()
@@ -813,34 +814,83 @@ observe({ # - B
 
 observe({ # - C
 	input$sel_meas_comp_comp 
-	if(verbose){cat("\n in Comp_C")}
+	if(logfile$parameters$verbose) cat("\n in Comp_C")
 	if(!is.na(as.numeric(isolate(input$sel_meas_comp_comp)))){
-	if(isolate(init$a)=="TRUE" & as.numeric(isolate(input$sel_meas_comp_comp))){
+	if(isolate(init$a) == "TRUE" & as.numeric(isolate(input$sel_meas_comp_comp))){
 		if(
 			file.exists(file.path(logfile[[1]],"results","componentization","components",isolate(input$sel_meas_comp))) &
-			(isolate(input$sel_meas_comp_comp)>0)
+			(isolate(input$sel_meas_comp_comp) > 0)
 		){
 			if(
-				any(component[[1]][,1]==as.numeric(isolate(input$sel_meas_comp_comp)))
+				any(component[[1]][,1] == as.numeric(isolate(input$sel_meas_comp_comp)))
 			){
-				if(verbose){cat("\n in Comp_C_1")}
-				ee$entry<-as.numeric(isolate(input$sel_meas_comp_comp))	
+				if(logfile$parameters$verbose) cat("\n in Comp_C_1")
+				ee$entry <- as.numeric(isolate(input$sel_meas_comp_comp))	
+				if(logfile$parameters$verbose) print(ee$entry)
 			}else{
-				if(verbose){cat("\n in Comp_C_2")}
-				cat("\n Invalid component selected!")
+				if(logfile$parameters$verbose) cat("\n in Comp_C_2")
+				if(logfile$parameters$verbose) cat("\n Invalid component selected!")
 				updateNumericInput(session,"sel_meas_comp_comp",value=0)
 				updateNumericInput(session,"sel_meas_comp_peak",value=0)
+				output$found_compo<-renderText("Invalid peak ID") # for conditional panel
+				output$comp_plot_spec <- renderPlot({	
+					plot.new()
+					plot.window(xlim=c(0,1),ylim=c(0,1))
+					text(.5,.5,labels="No components for this peak, \n peak removed during replicate intersection, blind subtraction or \n invalid peak ID?.")
+				},res=110)	
+				output$comp_plot_chromat <- renderPlot({	
+					plot.new()
+				},res=110)				
+				# output circular plot
+				output$comp_plot_circ <- renderPlot({	
+					plot.new()
+				},res=110)		
 			}			
+		}else{
+			if(logfile$parameters$verbose) cat("\n in Comp_C_3")
+			if(logfile$parameters$verbose) cat("\n Invalid component selected!")
+			output$found_compo<-renderText("Invalid peak ID") # for conditional panel
+			output$comp_plot_spec <- renderPlot({	
+				plot.new()
+				plot.window(xlim=c(0,1),ylim=c(0,1))
+				text(.5,.5,labels="No components for this peak, \n peak removed during replicate intersection, blind subtraction or \n invalid peak ID?.")
+			},res=110)	
+			output$comp_plot_chromat <- renderPlot({	
+				plot.new()
+			},res=110)				
+			# output circular plot
+			output$comp_plot_circ <- renderPlot({	
+				plot.new()
+			},res=110)						
 		}
+	}else{
+		if(logfile$parameters$verbose) cat("\n in Comp_C_4")
+		if(logfile$parameters$verbose) cat("\n Invalid component selected!")
+		output$found_compo<-renderText("Invalid peak ID") # for conditional panel
+		output$comp_plot_spec <- renderPlot({	
+			plot.new()
+			plot.window(xlim=c(0,1),ylim=c(0,1))
+			text(.5,.5,labels="No components for this peak, \n peak removed during replicate intersection, blind subtraction or \n invalid peak ID?.")
+		},res=110)	
+		output$comp_plot_chromat <- renderPlot({	
+			plot.new()
+		},res=110)				
+		# output circular plot
+		output$comp_plot_circ <- renderPlot({	
+			plot.new()
+		},res=110)			
 	}
+	}else{
+		if(logfile$parameters$verbose) cat("\n in Comp_C_5")	
 	}
 })	
 
 observe({ # - D: generate outputs
 	ee$entry 
 	refresh_compo$a
+	if(logfile$parameters$verbose) print(ee$entry)
 	if( isolate(ee$entry)>0 || isolate(refresh_compo$a)>0 ){
-		if(verbose){cat("\n in Comp_D_1")}
+		if(logfile$parameters$verbose) cat("\n in Comp_D_1")
 		got_comp<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="check")			
 		if(got_comp=="available"){
 			output$found_compo<-renderText("")
@@ -889,19 +939,18 @@ observe({ # - D: generate outputs
         	}else{ # no MSlist in GlobalEnv
 				load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv"))  
         	}
-
 			output$comp_plot_chromat <- renderPlot({				
 		        par(mar=c(4.5,4,1,.8));
 		        enviMass:::plotchromat(
 		          	MSlist,
-		           	peakIDs=all_peaks,
-		           	RTlim=isolate(ranges_compo$RTchrom),
-		           	Intlim=isolate(ranges_compo$intchrom),
-		           	masslim=isolate(ranges_compo$mass),
-		           	n_col=max_peak_ID,#dim(peaklist)[1],
-		            set_RT=(input$comp_chromat_time),
-		            normalize=(input$comp_chromat_norm),
-		            chromat_full=(input$comp_chromat_type)
+		           	peakIDs = all_peaks,
+		           	RTlim = isolate(ranges_compo$RTchrom),
+		           	Intlim = isolate(ranges_compo$intchrom),
+		           	masslim = isolate(ranges_compo$mass),
+		           	n_col = max_peak_ID,#dim(peaklist)[1],
+		            set_RT = (input$comp_chromat_time),
+		            normalize = (input$comp_chromat_norm),
+		            chromat_full = (input$comp_chromat_type)
 		        );
 			},res=110)		
 			# output circular plot ##########################################################
@@ -1154,7 +1203,7 @@ observe({ # - D: generate outputs
 			}	
 		}	
 		######################################################################
-		
+			
 	}
 })
 ##############################################################################
@@ -1178,11 +1227,11 @@ observe({ # normalization switch when zoomed #################################
 observeEvent(input$comp_plot_chromat_dblclick, { # - E observe chromatogram plot
           brush <- isolate(input$comp_plot_chromat_brush)
           if (!is.null(brush)) {
-            cat("\n Zoom comp in_1e")
+            if(logfile$parameters$verbose) cat("\n Zoom comp in_1e")
             isolate(ranges_compo$RTchrom <- c(brush$xmin, brush$xmax))
             isolate(ranges_compo$intchrom <- c(brush$ymin, brush$ymax))            
           } else {
-            cat("\n Zoom out comp  full_1e")
+            if(logfile$parameters$verbose) cat("\n Zoom out comp  full_1e")
             isolate(ranges_compo$RTchrom <- FALSE)
             isolate(ranges_compo$intchrom <- FALSE)
           }
@@ -1192,7 +1241,7 @@ observeEvent(input$comp_plot_chromat_click, { # NOTE: brushing already triggers 
           cat("\n Zoom out comp  part_1_ae")
           brush <- isolate(input$comp_plot_chromat_brush)
           if (is.null(brush)) {
-              cat("\n Zoom out comp  part_1_be")
+              if(logfile$parameters$verbose) cat("\n Zoom out comp  part_1_be")
               if(isolate(ranges_compo$RTchrom[1])!=FALSE){
                 old_range_dmass<-abs(isolate(ranges_compo$RTchrom[2]-ranges_compo$RTchrom[1]))
                 isolate(ranges_compo$RTchrom[1]<-ranges_compo$RTchrom[1]-.3*old_range_dmass)
@@ -1211,19 +1260,19 @@ observeEvent(input$comp_plot_chromat_click, { # NOTE: brushing already triggers 
 observeEvent(input$comp_plot_spec_dblclick, { # - E observe chromatogram plot
           brush <- isolate(input$comp_plot_spec_brush)
           if (!is.null(brush)) {
-            cat("\n Zoom comp in_1e")
+            if(logfile$parameters$verbose) cat("\n Zoom comp in_1e")
             isolate(ranges_compo$mass <- c(brush$xmin, brush$xmax))      
           } else {
-            cat("\n Zoom out comp  full_1e")
+            if(logfile$parameters$verbose) cat("\n Zoom out comp  full_1e")
             isolate(ranges_compo$mass <- FALSE)
           }
           isolate(refresh_compo$a<-(refresh_compo$a+1)) # valid in both cases
 })
 observeEvent(input$comp_plot_spec_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
-          cat("\n Zoom out comp  part_1_ae")
+          if(logfile$parameters$verbose) cat("\n Zoom out comp  part_1_ae")
           brush <- isolate(input$comp_plot_spec_brush)
           if (is.null(brush)) {
-              cat("\n Zoom out comp  part_1_be")
+              if(logfile$parameters$verbose) cat("\n Zoom out comp  part_1_be")
               if(isolate(ranges_compo$mass[1])!=FALSE){
                 old_range_dmass<-abs(isolate(ranges_compo$mass[2]-ranges_compo$mass[1]))
                 isolate(ranges_compo$mass[1]<-ranges_compo$mass[1]-.3*old_range_dmass)
@@ -1231,7 +1280,7 @@ observeEvent(input$comp_plot_spec_click, { # NOTE: brushing already triggers a c
               }
               isolate(refresh_compo$a<-(refresh_compo$a+1))
           }else{
-            cat("\n Doing hover_e comp comp - nothing")
+            if(logfile$parameters$verbose) cat("\n Doing hover_e comp comp - nothing")
           }   
 })     
 
@@ -1244,13 +1293,13 @@ observeEvent(input$comp_plot_spec_click, { # NOTE: brushing already triggers a c
 # Update shift bounds from element election
 output$atom_bounds_that <- renderUI({
 	if(length(input$atom_bounds_this)){
-		cat("\n Am observing")
+		if(logfile$parameters$verbose) cat("\n Am observing")
 		those_elements <- input$atom_bounds_this
 		lapply(those_elements, function(i){
 			numericInput(inputId = paste0("ppm_", i),label = paste0("Maximum shifts for ", i),value = 30, width='200px')
 		})
 	}else{
-		cat("\n Am observing nothing")		
+		if(logfile$parameters$verbose) cat("\n Am observing nothing")		
 	}
 })
 
@@ -1272,11 +1321,11 @@ observe({ # - F: generate outputs
 				(isolate(input$sel_meas_comp)>0) &
 				found_peaklist
 			){
-				if(verbose){cat("\n in Atoms_1")}
+				if(logfile$parameters$verbose) cat("\n in Atoms_1")
 				######################################################################
 				# get additional peaks ###############################################
 				if(isolate(input$atom_bound_addpeaks)=="(b) all peaks with similar RT"){ # load peaklist 
-					if(verbose){cat("\n in Atoms_2")}		
+					if(logfile$parameters$verbose) cat("\n in Atoms_2")
 					load(file.path(logfile[[1]],"peaklist",as.character(isolate(input$sel_meas_comp))),envir=as.environment(".GlobalEnv"))
 			#load(file.path(logfile[[1]],"peaklist","2"),envir=as.environment(".GlobalEnv"))		
 					at_peak<<-which(peaklist[,"peak_ID"]==as.numeric(isolate(input$atom_bound_peak)))
@@ -1293,7 +1342,7 @@ observe({ # - F: generate outputs
 							atom_peaks)
 					}	
 				}else{ # get peaks from components - only selectable if selectInput adapted accordingly
-					if(verbose){cat("\n in Atoms_3")}	
+					if(logfile$parameters$verbose) cat("\n in Atoms_3") 
 					at_peak<<-which(!is.na(unlist(lapply(strsplit(gsub("*","",component[["Components"]][,"ID pattern peaks |"],fixed=TRUE),","), match, x=as.numeric(isolate(input$atom_bound_peak))))))
 					# search in adduct peaks
 					if(length(at_peak)==0){
@@ -1329,7 +1378,7 @@ observe({ # - F: generate outputs
 							peaklist[at_peak,1:3],
 							atom_peaks)
 					}else{
-						cat("\n Invalid peak selected - not found among components.")
+						if(logfile$parameters$verbose) cat("\n Invalid peak selected - not found among components.")
 					}
 				}
 				######################################################################
@@ -1339,7 +1388,7 @@ observe({ # - F: generate outputs
 						(logfile$workflow[names(logfile$workflow)=="LOD"]=="yes") &
 						(file.exists(file=file.path(logfile$project_folder,"results","LOD","LOD_splined")))
 					){
-						if(verbose){cat("\n in Atoms_4")}
+						if(logfile$parameters$verbose) cat("\n in Atoms_4")
 						load(file=file.path(logfile$project_folder,"results","LOD","LOD_splined"));
 						with_model<-which(names(LOD_splined)==paste("LOD_",as.character(isolate(input$sel_meas_comp)),sep=""))			
 						#with_model<-which(names(LOD_splined)==paste("LOD_","1163",sep=""))			
@@ -1350,8 +1399,8 @@ observe({ # - F: generate outputs
 							use_LOD<<-as.numeric(logfile$parameters$tar_intcut)			
 						}					
 					}else{
-						if(verbose){cat("\n in Atoms_5")}
-						cat("\n No LOD interpolation in workflow included - using Lower intensity threshold set for target screening!")
+						if(logfile$parameters$verbose) cat("\n in Atoms_5")
+						if(logfile$parameters$verbose) cat("\n No LOD interpolation in workflow included - using Lower intensity threshold set for target screening!")
 						use_LOD<<-as.numeric(logfile$parameters$tar_intcut)
 					}
 					##################################################################

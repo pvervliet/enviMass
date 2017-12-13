@@ -10,10 +10,11 @@ shinyServer(function(input, output, session){
   if(any(ls()=="logfile")){stop("\n illegal logfile detected in server.r #1")}  
   ##############################################################################
   # load data ##################################################################  
-  if(!any(objects(envir=as.environment(".GlobalEnv")) == "isotopes")){data(isotopes, package = "enviPat", envir = as.environment(".GlobalEnv"))}
-  updateSelectInput(session, inputId = "atom_bounds_this", choices = unique(isotopes[1:295,1]), selected = c("C","H","N","O","Cl","Br"))    
-  if(!any(objects(envir=as.environment(".GlobalEnv")) == "adducts")){data(adducts, package = "enviPat", envir = as.environment(".GlobalEnv"))}
-  if(!any(objects(envir=as.environment(".GlobalEnv")) == "resolution_list")){data(resolution_list, package = "enviPat", envir = as.environment(".GlobalEnv"))}
+  if(!any(objects(envir = as.environment(".GlobalEnv")) == "isotopes")){data(isotopes, package = "enviPat", envir = as.environment(".GlobalEnv"))}
+  updateSelectInput(session, inputId = "atom_bounds_this", choices = unique(isotopes[1:295,1]), selected = c("C","H","N","O","Cl","Br"))      
+  #updateSelectInput(session, inputId = "atom_bounds_components", choices = unique(isotopes[1:295,1]), selected = c("C","Cl","Br"))    
+  if(!any(objects(envir = as.environment(".GlobalEnv")) == "adducts")){data(adducts, package = "enviPat", envir = as.environment(".GlobalEnv"))}
+  if(!any(objects(envir = as.environment(".GlobalEnv")) == "resolution_list")){data(resolution_list, package = "enviPat", envir = as.environment(".GlobalEnv"))}
   if(any(names(resolution_list) == "Elite/R240000@400")){
 	shinyjs::info("library enviPat is not up to date - or you have loaded an old workspace containing old enviPat resolution data lists. Update enviPat and clean your workspace before continuing with enviMass!");
   }	
@@ -21,9 +22,9 @@ shinyServer(function(input, output, session){
   # define variables, inputs, outputs - if not in server.startup.R #############
   tried<-try(getVolumes()(),silent=FALSE)
   if(!inherits(tried,"try-error")){	
-	 shinyFileChoose(input, "pro_dir3", updateFreq = 30000, roots=getVolumes(), filetypes=c("emp"))
-	 shinyFileSave(input, "download_IS", updateFreq = 30000, roots=getVolumes() )
-	 shinyFileSave(input, "download_target", updateFreq = 30000, roots=getVolumes() )	
+	 shinyFileChoose(input, "pro_dir3", updateFreq = 30000, roots = getVolumes(), filetypes = c("emp"))
+	 shinyFileSave(input, "download_IS", updateFreq = 30000, roots = getVolumes() )
+	 shinyFileSave(input, "download_target", updateFreq = 30000, roots = getVolumes() )	
   }else{
 	 createAlert(session, anchorId = "alert_4", alertId="a4", title = NULL, content="logfile select via explorer disabled, please use folder path input instead",style = "alarm",append=FALSE,dismiss=TRUE)
   }
@@ -31,10 +32,10 @@ shinyServer(function(input, output, session){
   output$dowhat <- renderText("Open")
   output$sel_meas_comp_state <- renderText("")
   output$isotable <- renderTable(isotopes)
-  updateCheckboxGroupInput(session, "adducts_pos", "Positive ions:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
-  updateCheckboxGroupInput(session, "adducts_neg", "Negative ions:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               
-  updateCheckboxGroupInput(session, "adducts_pos_group", "Positive mode:", choices =  as.character(adducts[adducts[,6]=="positive",1]),selected=as.character(adducts[adducts[,6]=="positive",1][1]))
-  updateCheckboxGroupInput(session, "adducts_neg_group", "Negative mode:", choices =  as.character(adducts[adducts[,6]=="negative",1]),selected=as.character(adducts[adducts[,6]=="negative",1][1]))               
+  updateCheckboxGroupInput(session, "adducts_pos", "Positive ions:", choices =  as.character(adducts[adducts[,6]=="positive",1]), selected = as.character(adducts[adducts[,6]=="positive",1][1]))
+  updateCheckboxGroupInput(session, "adducts_neg", "Negative ions:", choices =  as.character(adducts[adducts[,6]=="negative",1]), selected = as.character(adducts[adducts[,6]=="negative",1][1]))               
+  updateCheckboxGroupInput(session, "adducts_pos_group", "Positive mode:", choices =  as.character(adducts[adducts[,6]=="positive",1]), selected = as.character(adducts[adducts[,6]=="positive",1][1]))
+  updateCheckboxGroupInput(session, "adducts_neg_group", "Negative mode:", choices =  as.character(adducts[adducts[,6]=="negative",1]), selected = as.character(adducts[adducts[,6]=="negative",1][1]))               
   updateSelectInput(session, "resolution", "Instrument resolution:", choices =  names(resolution_list), selected= (names(resolution_list)[1]))                   
   init <- reactiveValues() 	# reactive value to indicate ...
   init$a <- "FALSE"  			# ... if/when a project is opened
@@ -48,39 +49,38 @@ shinyServer(function(input, output, session){
   ##############################################################################
   # start projects or load them - get their individual logfile #################
   # also load parameter settings ###############################################
-  source("server_startup.r", local=TRUE) 
+  source("server_startup.r", local = TRUE) 
   ##############################################################################  
   # add compounds, measurements, etc ###########################################
-  source("server_obs_Add.r", local=TRUE)
+  source("server_obs_Add.r", local = TRUE)
   ##############################################################################  
   # observe request for results ################################################
-  source("server_obs_res_meas.r", local=TRUE)
+  source("server_obs_res_meas.r", local = TRUE)
   ##############################################################################  
   # observe parameter changes ##################################################  
-  source("server_variables_out.r", local=TRUE)
+  source("server_variables_out.r", local = TRUE)
   ############################################################################## 
   # output screening results ###################################################
-  source("server_obs_screening.r", local=TRUE)  
+  source("server_obs_screening.r", local = TRUE)  
   ############################################################################## 
   # output screening results ###################################################
-  source("server_obs_plots.r", local=TRUE)  
+  source("server_obs_plots.r", local = TRUE)  
   ############################################################################## 
   # observe calibration sets ###################################################
-  source("server_obs_calibration.r", local=TRUE)  
+  source("server_obs_calibration.r", local = TRUE)  
   ############################################################################## 
   # observe componentization outputs ###########################################
-  source("server_obs_components.r", local=TRUE)  
+  source("server_obs_components.r", local = TRUE)  
   ############################################################################## 
   # observe profiling outputs ##################################################
-  source("server_obs_profiles.r", local=TRUE)  
+  source("server_obs_profiles.r", local = TRUE)  
   # output network js ##########################################################
-  source("server_force.r", local=TRUE)    
+  source("server_force.r", local = TRUE)    
   # output parameter warnings ##################################################
-  source("server_warnings.r", local=TRUE)    
+  source("server_warnings.r", local = TRUE)    
   ##############################################################################  
   # run calculations ###########################################################
-  source("server_calculation.r", local=TRUE)
-cat("\nHERE_6")
+  source("server_calculation.r", local = TRUE)
   observe({ # Restart enviMass
     input$Restart
     if(input$Restart){

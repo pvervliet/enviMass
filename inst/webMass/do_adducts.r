@@ -66,7 +66,7 @@
 			}else{ # mmu
 				use_mztol<-(as.numeric(logfile$parameters$adducts_mztol)/1000)
 			}
-			adduct<-try(
+			adduct <- try(
 				enviMass::adduct_search2( # dont name it "adducts" -> conflict
 					peaklist = peaklist2[,c("m/z_corr","int_corr","RT_corr","peak_ID")], 
 					adducts, 
