@@ -274,7 +274,7 @@ observe({
 # On exporting UI options ######################################################
 observe({
 	input$save_profile_filter
-	if(logfile$parameters$verbose) cat("\nSaving profile filtering options as project default")
+	if(isolate(init$a)=="TRUE"){ if(logfile$parameters$verbose) cat("\nSaving profile filtering options as project default") }
     if(	
 		(exists("logfile")) & (isolate(input$save_profile_filter))
 	){

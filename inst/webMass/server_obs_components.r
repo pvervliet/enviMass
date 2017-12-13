@@ -19,7 +19,7 @@ refresh_compo$a <- 0
 
 observe({ # - A
 	input$sel_meas_comp 
-	if(logfile$parameters$verbose) cat("\n in Comp_A")
+	if(isolate(init$a)=="TRUE"){ if(logfile$parameters$verbose) cat("\n in Comp_A")}
 	if(isolate(init$a)=="TRUE"){
 		do_isot <- (logfile$workflow[names(logfile$workflow) == "isotopologues"] == "yes")
 		do_addu <- (logfile$workflow[names(logfile$workflow) == "adducts"] == "yes")
@@ -754,7 +754,7 @@ observe({
 
 observe({ # - B
 	input$sel_meas_comp_peak 
-	if(logfile$parameters$verbose) cat("\n in Comp_B")
+	if(isolate(init$a)=="TRUE"){ if(logfile$parameters$verbose) cat("\n in Comp_B") }
 	if(!is.na(as.numeric(isolate(input$sel_meas_comp_peak)))){
 	if(isolate(init$a)=="TRUE" & as.numeric(isolate(input$sel_meas_comp_peak))>0){
 		if(
@@ -814,7 +814,7 @@ observe({ # - B
 
 observe({ # - C
 	input$sel_meas_comp_comp 
-	if(logfile$parameters$verbose) cat("\n in Comp_C")
+	if(isolate(init$a)=="TRUE"){ if(logfile$parameters$verbose) cat("\n in Comp_C") }
 	if(!is.na(as.numeric(isolate(input$sel_meas_comp_comp)))){
 	if(isolate(init$a) == "TRUE" & as.numeric(isolate(input$sel_meas_comp_comp))){
 		if(
@@ -864,8 +864,7 @@ observe({ # - C
 			},res=110)						
 		}
 	}else{
-		if(logfile$parameters$verbose) cat("\n in Comp_C_4")
-		if(logfile$parameters$verbose) cat("\n Invalid component selected!")
+		if(isolate(init$a)=="TRUE"){ if(logfile$parameters$verbose) cat("\n Invalid component selected!")}
 		output$found_compo<-renderText("Invalid peak ID") # for conditional panel
 		output$comp_plot_spec <- renderPlot({	
 			plot.new()
@@ -888,7 +887,7 @@ observe({ # - C
 observe({ # - D: generate outputs
 	ee$entry 
 	refresh_compo$a
-	if(logfile$parameters$verbose) print(ee$entry)
+	if(isolate(init$a)=="TRUE"){ if(logfile$parameters$verbose) print(ee$entry) }
 	if( isolate(ee$entry)>0 || isolate(refresh_compo$a)>0 ){
 		if(logfile$parameters$verbose) cat("\n in Comp_D_1")
 		got_comp<-enviMass::plotcomp_parts(component, compoID=as.numeric(isolate(ee$entry)), what="check")			
