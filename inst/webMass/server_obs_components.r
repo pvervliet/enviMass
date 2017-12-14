@@ -142,11 +142,12 @@ observe({ # - A
 					"z",
 					names_max_atom # if not character(0)
 				), drop = FALSE]
+				comp_table_full[,3]<-round(comp_table_full[,3],digits=5)	
 				comp_table_full[,4]<-round(comp_table_full[,4],digits=2)
 				comp_table_full[,5]<-(comp_table_full[,5]/60)
 				comp_table_full[,5]<-round(comp_table_full[,5],digits=2)				
 				comp_table_full[,6]<-round(comp_table_full[,6],digits=1)
-				comp_table_full[,3]<-round(comp_table_full[,3],digits=5)	
+				comp_table_full[,7]<-round(comp_table_full[,7],digits=3)
 				output$comp_table_full <- DT::renderDataTable(
 					DT::datatable(
 						comp_table_full,
