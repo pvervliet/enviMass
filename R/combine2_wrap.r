@@ -551,6 +551,12 @@ function(
 		num_atom <- matrix(nrow = dim(component[["Components"]])[1], ncol = num_elem, 0)
 		for(i in 1:dim(component[["Components"]])[1]){
 			use_peaks <- as.numeric(strsplit(gsub("*", "", component[["Components"]][i, "ID pattern peaks |"], fixed = TRUE), ",")[[1]])
+			if(component[["Components"]][i, "z"] == "-"){
+				use_charges <- 1
+			}else{
+				use_charges <- as.numeric(strsplit(component[["Components"]][i, "z"], "/")[[1]])
+				use_charges <- use_charges[order(use_charges, decreasing = FALSE)]
+			}
 			if(length(component[["pattern peak list"]]) > 1){ # peak pattern list available at all?
 				these <- match(use_peaks, component[["pattern peak list"]][,"peak ID"])
 				use_masses <- component[["pattern peak list"]][these, "m/z_corr"]
@@ -579,7 +585,7 @@ function(
 				elements = logfile$parameters$atom_bounds_components,
 				dmz = rep(30, num_elem),
 				ppm = TRUE,
-				charges = c(1, 2),
+				charges = use_charges,
 				isotopes,
 				int_cut = use_cutint,
 				inttol = (as.numeric(logfile$parameter$isotop_inttol) / 100),
