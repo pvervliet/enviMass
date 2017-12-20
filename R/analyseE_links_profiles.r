@@ -15,7 +15,7 @@
 #' @details enviMass workflow function. 
 #' 
 
-analyseE_links_profiles<-function(
+analyseE_links_profiles <- function(
 	profileList_index, 
 	links_profiles, 
 	sort_what = "deltaint_newest", 
@@ -42,14 +42,19 @@ analyseE_links_profiles<-function(
 		along <- do.call(order, as.data.frame(profileList_index[, sort_what, drop = FALSE])) # for multiple columns	
 	}
 	################################################################	
+	not_done <- rep(TRUE, max_ID) # which profiles profile over decreasing ranking?
 	for(i in 1:length(along)){
-		#if(keep_out[those_profiles[along[i]]] == FALSE) next
+		not_done[those_profiles[along[i]]] <- FALSE
+		#if(keep_out[those_profiles[along[i]]] == FALSE) next # propagate through network ...
 		if(profileList_index[along[i],"links"] == 0) next
 		at_entry <- profileList_index[along[i], "links"]
 		if(!length(links_profiles[[at_entry]])) next	
 		if(length(links_profiles[[at_entry]][["group"]]) > 0){
-			those <- links_profiles[[at_entry]][["group"]]
+			those <- links_profiles[[at_entry]][["group"]] # those = profile IDs
+			# filter out those which range within the available profile IDs
 			those <- those[those <= max_ID]
+			# filter out lower rankings only - i.e. no those profiles processed before
+			those <- those[not_done[those]]
 			if(length(those)){
 				keep_out[those] <- FALSE
 			}

@@ -2258,14 +2258,31 @@ if(logfile$version < 3.4151){
 
 if(logfile$version < 3.43){
 
-	cat("\n Updating to version 3.42 ...")
+	cat("\n Updating to version 3.43 ...")
 	################################################################################################
 	if(!any(names(logfile$parameters) == "do_atom_bounds_components")){	
 		logfile$parameters$do_atom_bounds_components <<- "FALSE"
 		logfile$parameters$atom_bounds_components <<- c("Cl","Br")	
 	}
 	################################################################################################	
-#logfile$version <<- 3.42
+	logfile$version <<- 3.43
+	################################################################################################		
+	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+if(logfile$version < 3.431){
+
+	cat("\n Updating to version 3.431 ...")
+	################################################################################################
+	if(logfile$workflow[names(logfile$workflow)=="components_profiles"]=="yes"){
+		logfile$Tasks_to_redo[["components_profiles"]] <<- "TRUE"
+		shinyjs::info(paste0("Update requires a recalculation of Profile components - please hit the Calculate button as soon as possible."));
+	}
+	################################################################################################	
+	logfile$version <<- 3.431
 	################################################################################################		
 	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 

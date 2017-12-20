@@ -1534,6 +1534,7 @@ observe({
 				output$prof_ISTD <- renderText("ISTD matches: none") 			
 			}
 			##################################################################
+			# plot similar profiles? #########################################
 			plot_similar_profiles <- FALSE
 			if(
 				(at_entry != 0) &
@@ -1549,7 +1550,7 @@ observe({
 			}else{
 				prof_plot_IDs <<- prof_plot_ID1
 			}
-			output$similar_profiles_plot <- renderPlot({	
+			output$similar_profiles_plot <- renderPlot({
 				if(plot_similar_profiles){
 						enviMass::plot_components(
 							profileList = profileList,
@@ -1614,7 +1615,7 @@ observe({
 					options = list(
 						lengthMenu = c(15, 30, 50, 100),
 						fixedHeader = FALSE,
-						ordering=T,
+						ordering = T,
 						dom = 'Blfrtip',
 						buttons = c('excel', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 						scrollX = TRUE,
@@ -1629,7 +1630,21 @@ observe({
 					plotit = FALSE,
 					return_data = TRUE
 				)
-			output$oneproftable <- DT::renderDataTable(peakTable);
+			peakTable <- cbind(seq(1, dim(peakTable)[1], 1), peakTable)
+			output$oneproftable <- DT::renderDataTable({
+				DT::datatable(
+					peakTable,
+					colnames = c("", "Date", "Time", "ID sample", "Intensity sample", "ID blind", "Intensity blind", "ID peak"),
+					extensions = c('Buttons'),
+					rownames = FALSE,					
+					options = list(
+						lengthMenu = c(50, 150, 300),
+						ordering = T,
+						dom = 'Blfrtip',
+						buttons = c('excel', 'colvis')
+					)					
+				)
+			});
 			updateNumericInput(session,"profpeakID",value = 0);
 			path=file.path(logfile[[1]], "pics", "massdens.png");
 			png(filename = path, bg = "white", width = 550, height = 200);			

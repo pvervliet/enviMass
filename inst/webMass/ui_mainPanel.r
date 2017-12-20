@@ -1130,9 +1130,11 @@
 								knobInput("isotop_inttol", label = "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2, 
 											thickness = .3, width = 160, height = 160, fgColor = "#7499AB", inputColor = "#428BCA", displayPrevious = TRUE),
 								HTML('<hr noshade="noshade" />'),
-								selectInput("do_atom_bounds_components", "Run automatic atom bound estimation for a component?", choices = c("TRUE" = "TRUE","FALSE" = "FALSE"), "FALSE"),				
+								helpText("The below switch allows to include an estimation of the maximum number of atoms for selected elements for each component. The results will be displayed in additional columns max_atoms_ in the table
+								Results -> Grouping -> Components -> Full component list. Estimates are only based on the candidate monoisotopic peak of each component and the possible charges. The estimates are very conservative, i.e., likely too
+								high. More fine-tuned estimates for selected peaks or components can be derived under Results -> Grouping -> atom bounds."),
+								selectInput("do_atom_bounds_components", "Run atom bound estimation?", choices = c("TRUE" = "TRUE","FALSE" = "FALSE"), "FALSE"),				
 								selectInput("atom_bounds_components", label = "Choose elements to include / exclude", choices = c("C","O","N","H","S","P","F","Cl","Br"), selected = c("Cl","Br"), multiple = TRUE)
-
 							),
 							tabPanel("Adduct grouping",	
 								HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/adducts.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help on adduct grouping parameters.</a></p>'),	
