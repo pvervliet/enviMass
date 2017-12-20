@@ -28,43 +28,37 @@ analyseE_links_profiles<-function(
 	if(any(is.na(match(sort_what, colnames(profileList_index))))){stop("\nFunction analyseE_links_profiles: wrong sort_what - debug!")}	
 	################################################################	
 	those_profiles <- profileList_index[,"profile_ID"]
-	keep_out <- rep(TRUE, length(those_profiles))
+	max_ID <- max(those_profiles)
+	keep_out <- rep(TRUE, max_ID) # expand on all IDs up to maximum ID - and work on the IDs for higher comp speed
 	if(!is.null(use_profile)){
 		if(length(use_profile) != dim(profileList_index)[1]){
 			stop("\nArgument use_profile must be of same length as number of profiles - abort.")
 		}
-		keep_out[!use_profile] <- FALSE
-	}else{
-		use_profile <- rep(TRUE, length(those_profiles))
+		keep_out[those_profiles[!use_profile]] <- FALSE
 	}
 	if(sort_decreasing){
 		along <- rev(do.call(order, as.data.frame(profileList_index[, sort_what, drop = FALSE]))) # for multiple columns
 	}else{
 		along <- do.call(order, as.data.frame(profileList_index[, sort_what, drop = FALSE])) # for multiple columns	
 	}
-	################################################################
-	#if(with_bar){pBar <- txtProgressBar(min = 0, max = length(along), style = 3)}
+	################################################################	
 	for(i in 1:length(along)){
-		#if(with_bar){setTxtProgressBar(pBar, i, title = NULL, label = NULL)}
-		if(!is.null(use_profile)){ 
-			if(use_profile[along[i]] == FALSE) next	
-		}
-		if(keep_out[along[i]] == FALSE) next
+		#if(keep_out[those_profiles[along[i]]] == FALSE) next
 		if(profileList_index[along[i],"links"] == 0) next
 		at_entry <- profileList_index[along[i], "links"]
-		if(!length(links_profiles[[at_entry]])) next
+		if(!length(links_profiles[[at_entry]])) next	
 		if(length(links_profiles[[at_entry]][["group"]]) > 0){
-			those <- match(links_profiles[[at_entry]][["group"]], profileList_index[,"profile_ID"])
-			those <- those[!is.na(those)]
+			those <- links_profiles[[at_entry]][["group"]]
+			those <- those[those <= max_ID]
 			if(length(those)){
 				keep_out[those] <- FALSE
 			}
-		}
+		}		
 	}
-	#if(with_bar){close(pBar)}
-	################################################################
+	keep_out <- keep_out[those_profiles]
+	################################################################	
 	# print reduction factor #######################################
-	cat(paste0("Reduction factor from profile grouping: ", as.character(round((length(keep_out) / sum(keep_out)), digits = 3))))
+	cat(paste0("Reduction factor from profile grouping: ", as.character(round((length(keep_out) / sum(keep_out)), digits = 4))))
 	################################################################
 	if(return_excl){
 		return(those_profiles[!keep_out])
