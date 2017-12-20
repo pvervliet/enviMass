@@ -2277,9 +2277,14 @@ if(logfile$version < 3.431){
 
 	cat("\n Updating to version 3.431 ...")
 	################################################################################################
-	if(logfile$workflow[names(logfile$workflow)=="components_profiles"]=="yes"){
+	if(
+		(logfile$workflow[names(logfile$workflow)=="components_profiles"]=="yes") &
+		(logfile$parameters$parallel == "FALSE")
+	){
+		logfile$Tasks_to_redo[["IS_screen"]] <<- "TRUE"	
+		logfile$Tasks_to_redo[["target_screen"]] <<- "TRUE"	
 		logfile$Tasks_to_redo[["components_profiles"]] <<- "TRUE"
-		shinyjs::info(paste0("Update requires a recalculation of Profile components - please hit the Calculate button as soon as possible."));
+		shinyjs::info(paste0("Update requires a recalculation of some workflow nodes - please hit the Calculate button as soon as possible."));
 	}
 	################################################################################################	
 	logfile$version <<- 3.431

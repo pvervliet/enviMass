@@ -293,12 +293,16 @@
 											links_peaks_pos[[at_entry]][[6]]<-list()	# homol	
 											profileList_pos[["peaks"]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],"links"]<<-at_entry
 											profileList_pos_copy[["peaks"]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],"links"]<<-at_entry											
-											links_peaks_pos[[at_entry]][[1]][[1]]<-names(pattern)[i]
+											links_peaks_pos[[at_entry]][[1]][[1]] <- list()	
+											links_peaks_pos[[at_entry]][[1]][[1]][[1]] <- names(pattern)[i]
+											links_peaks_pos[[at_entry]][[1]][[1]][[2]] <- local_score
 										# or expand existing entry
 										}else{
 											at_entry<-profileList_pos[["peaks"]][res_target_pos_screen[[i]][[m]][[k]]$Peaks[a,2],5]
 											at_list<-(length(links_peaks_pos[[at_entry]][[1]])+1)
-											links_peaks_pos[[at_entry]][[1]][[at_list]]<-names(pattern)[i]
+											links_peaks_pos[[at_entry]][[1]][[at_list]] <- list()	
+											links_peaks_pos[[at_entry]][[1]][[at_list]][[1]] <- names(pattern)[i]
+											links_peaks_pos[[at_entry]][[1]][[at_list]][[2]] <- local_score
 										}
 									}
 								}
@@ -591,12 +595,16 @@
 											links_peaks_neg[[at_entry]][[6]]<-list()	# homol	
 											profileList_neg[[2]][res_target_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
 											profileList_neg_copy[[2]][res_target_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]<<-at_entry
-											links_peaks_neg[[at_entry]][[1]][[1]]<-names(pattern)[i]
+											links_peaks_neg[[at_entry]][[1]][[1]] <- list()	
+											links_peaks_neg[[at_entry]][[1]][[1]][[1]] <- names(pattern)[i]
+											links_peaks_neg[[at_entry]][[1]][[1]][[2]] <- local_score
 										# or expand existing entry
 										}else{
 											at_entry<-profileList_neg[[2]][res_target_neg_screen[[i]][[m]][[k]]$Peaks[a,2],5]
 											at_list<-(length(links_peaks_neg[[at_entry]][[1]])+1)
-											links_peaks_neg[[at_entry]][[1]][[at_list]]<-names(pattern)[i]
+											links_peaks_neg[[at_entry]][[1]][[at_list]] <- list()											
+											links_peaks_neg[[at_entry]][[1]][[at_list]][[1]] <- names(pattern)[i]
+											links_peaks_neg[[at_entry]][[1]][[at_list]][[2]] <- local_score
 										}
 									}
 								}
