@@ -1,14 +1,14 @@
 Package: enviMass
 Type: Package
 Title: Utilities to Process Mass Spectrometry (LC-MS) Data for Environmental Trend Analysis
-Version: 3.431
-Date: 2018-01-09
+Version: 3.432
+Date: 2018-01-18
 Author: Martin Loos
 Maintainer: Martin Loos <mloos@looscomputing.ch>
 Description: Utilities and workflow to process high resolution mass
     spectrometry (LC-MS) data for environmental trend analysis
 License: GPL-3
 BugReports: https://github.com/blosloos/enviMass/issues
-Depends: R(>= 3.0.1), shiny, shinyFiles, shinyBS, DT(>= 0.2), shinyjs, plotly, shinytoastr, parallel, shinyWidgets, shinyFeedback
-Imports: enviPick(>= 1.0), enviPat(>= 2.2), nontarget(>= 1.3), mgcv, tcltk, htmlTable, networkD3, Rcpp
+Depends: R(>= 3.0.1), shiny, shinyFiles, shinyBS, DT(>= 0.2), shinyjs, plotly, shinytoastr, parallel, shinyWidgets, shinyFeedback, shinyTree
+Imports: enviPick(>= 1.0), enviPat(>= 2.2), nontarget(>= 1.3), mgcv, tcltk, htmlTable, networkD3, Rcpp, mzR
 LinkingTo: Rcpp

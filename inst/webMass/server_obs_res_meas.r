@@ -980,9 +980,129 @@ observe({
 
 
 
-
-
-
+##############################################################################
+# View scan information ######################################################
+##############################################################################
+observe({
+    input$sel_scans_ID
+    input$method_definition	
+    input$sel_scans_number
+	if( (isolate(init$a) == "TRUE") & (!is.na(as.character(isolate(input$sel_scans_ID))))){
+		if(logfile$parameters$verbose == "TRUE") cat("\n Retrieving scan information _A")
+		path = file.path(logfile[[1]], "files", paste0(as.character(isolate(input$sel_scans_ID)), ".mzXML"))
+		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		if((file.exists(path)) & any(measurements$ID == as.character(isolate(input$sel_scans_ID))) & length(isolate(input$method_definition))){
+			if(logfile$parameters$verbose == "TRUE") cat("\n Retrieving scan information _B")	
+			# open file ######################################################
+			mzXML_file <- mzR:::openMSfile(filename = path, backend = c("Ramp"), verbose = FALSE)
+			output$scan_viewer_name <- renderText({
+				paste0("File name: ", measurements[measurements$ID == as.character(isolate(input$sel_scans_ID)), "Name"])
+			})
+			output$scan_viewer_type <- renderText({
+				paste0("File type: ", measurements[measurements$ID == as.character(isolate(input$sel_scans_ID)), "Type"])
+			})			
+			output$scan_viewer_mode <- renderText({
+				paste0("Tabulated ionization mode: ", measurements[measurements$ID == as.character(isolate(input$sel_scans_ID)), "Mode"])
+			})						
+			# collect file infos #############################################
+			file_name <- mzR::fileName(mzXML_file)
+			run_Info <- mzR::runInfo(mzXML_file)
+			run_Info$msLevels <- paste0(run_Info$msLevels, collapse = ", ")
+			run_Info <- as.data.frame(run_Info)
+			for_scans <- isolate(input$sel_scans_number)
+			if(for_scans < 1) for_scans <- 1
+			if(for_scans > run_Info$scanCount) for_scans <- run_Info$scanCount
+			instrument_Info <- as.data.frame(mzR::instrumentInfo(mzXML_file))
+			# collect & assign scan info #####################################
+			#method_definition <- c("polarity", "msLevel", "collisionEnergy", "precursorMZ")
+			polar <- c("-", "+")
+			method_definition <- isolate(input$method_definition)
+			heads <- mzR::header(mzXML_file)
+			method_definition2 <- method_definition[!is.na(match(method_definition, names(heads)))]
+			if(length(method_definition2) != length(method_definition)){ 
+				stop("\n WARNING: scan header declaration conflict for your files - please report this problem!")
+			}
+			names(heads)[names(heads) == "peaksCount"] <- "CentroidCount"
+			peaksCount <- heads[, "CentroidCount"]
+			heads_short <- heads[, method_definition2, drop = FALSE]
+			heads_summary <- unique(heads_short)
+			if(any(names(heads_summary) == "msLevel")){
+				heads_summary <- heads_summary[order(heads_summary$msLevel, decreasing = FALSE),,drop = FALSE]
+			}
+			scanTypes <- match(data.frame(t(heads_short)), data.frame(t(heads_summary))) # convert to list of vectors
+			scanTypes2 <- seq(1:dim(heads_summary)[1])
+			scanCounts <- rep(0, length(scanTypes2))
+			centroidCounts <- rep(0, length(scanTypes2))
+			for(n in 1:length(scanTypes2)){
+				these <- which(scanTypes == scanTypes2[n])
+				scanCounts[n] <- length(these)
+				centroidCounts[n] <- sum(peaksCount[these])
+			}
+			heads_summary <- cbind(scanTypes2, as.integer(scanCounts), as.integer(centroidCounts), heads_summary)
+			names(heads_summary)[1] <- "Scan type"
+			names(heads_summary)[2] <- "Scan counts"	
+			names(heads_summary)[3] <- "Centroid counts"		
+			if(any(names(heads_summary) == "polarity")){	
+				heads_summary$polarity <- polar[(heads_summary$polarity)+1]
+			}
+			# generate table outputs #########################################
+			output$instrument_Info <- renderTable(instrument_Info)
+			output$run_Info <- renderTable(run_Info)
+			output$heads_summary <- renderTable(heads_summary)
+			# convert into list tree #########################################
+			use_m <- vector("list", for_scans)
+			which_col <- !names(heads) %in% c("msLevel", "seqNum", "acquisitionNum", "polarity")
+			head_dim <- dim(heads[, which_col])[2]
+			for(n in 1:for_scans){
+				sub_list <- as.list(heads[n, which_col])
+				sub_list[1] <- structure(sub_list[1], sticon = "signal")
+				names(sub_list) <- paste(names(sub_list), heads[n, which_col], sep = ": ")
+				if(heads[n, "msLevel"] == 1){
+					use_m[[n]] <- sub_list
+				}else{
+					use_m[[n]] <- structure(sub_list, sticon = "signal")		
+				}
+				names(use_m)[n] <- paste0(
+					polar[heads[n, "polarity"] + 1], # 0 = -, 1 = +
+					" / MS level: ", 
+					heads[n, "msLevel"], 
+					" / Scan number: ",
+					heads[n, "seqNum"],
+					" - Scan type: ",		
+					scanTypes[n]
+				)
+				for(m in 1:head_dim) attr(use_m[[n]][[m]], "sticon") <- "empty"
+			}
+			# generate shinyTree output ######################################
+			output$scan_tree <- renderTree(use_m, quoted = FALSE)
+			# close mzR file connection ######################################
+			mzR:::close(mzXML_file)	
+			##################################################################
+		}else{
+			##################################################################
+			if(logfile$parameters$verbose == "TRUE") cat("\n Retrieving scan information _C")
+			if(!length(isolate(input$method_definition))){
+				output$scan_viewer_name <- renderText({paste0("No scan type definition parameters selected - please select at least one!")})
+			}else{
+				if(!file.exists(path) & any(measurements$ID == as.character(isolate(input$sel_scans_ID)))){
+					output$scan_viewer_name <- renderText({paste0(".mzXML file not available")})	
+				}else{
+					output$scan_viewer_name <- renderText({paste0("File name: Invalid file ID")})				
+				}
+			}
+			#output$instrument_Info <- renderTable(as.data.frame("Not available"))
+			#output$run_Info <- renderTable("Not available")
+			#output$heads_summary <- renderTable("Not available")		
+			#output$scan_viewer_type <- renderText({""})			
+			#output$scan_viewer_mode <- renderText({""})								
+			#use_m2 <- vector("list", 1)
+			#names(use_m2)[1] <- "Invalid File ID"
+			#output$scan_tree <- renderTree(use_m2, quoted = FALSE)
+			##################################################################		
+		}
+	}
+})
+##############################################################################
 
 
 

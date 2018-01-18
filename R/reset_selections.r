@@ -22,6 +22,7 @@ reset_selections<-function(session){
 	updateNumericInput(session,"sel_meas_comp_peak", value = 0)
 	updateNumericInput(session,"sel_meas_comp_comp", value = 0)
 	updateNumericInput(session,"atom_bound_peak", value = 0)
+	updateNumericInput(session,"sel_scans_ID", value = 0)		
 	################################################################
 	#output$recal_pic<-renderImage({
 	#	outfile <- tempfile(fileext='.png')
