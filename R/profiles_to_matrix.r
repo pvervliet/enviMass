@@ -7,6 +7,7 @@
 #' @param links_profiles List of links among profiles, i.e., links_profiles_pos or links_profiles_neg. Only used if reduce_comp=TRUE.
 #' @param reduce_comp. Logical. Reduce profiles by their components. See details.
 #' @param sort_by. Vector of character strings. One or several of colnames(profileList[["index_prof"]]) to prioritize profiles with.
+#' @param sort_decreasing. Logical. Should the sort_by done in decreasing (TRUE) or increasing (FALSE) order? Applied to all strings of sort_by.
 #' @param n_profiles Integer. How many of the most sort_by profiles to include? Set to NULL to include all.
 #' @param only_sample_peaks. Logical. TRUE = should peaks of sample files (and not, e.g., blank files) be included only?
 #' @param n_latest_peaks. NULL or Integer. If integer, number of latest file peaks to include.
@@ -31,7 +32,7 @@
 #'
 #'
 
-profiles_to_matrix2 <- function(
+profiles_to_matrix <- function(
 	profileList,
 	links_profiles = NULL,
 	sort_by = c("number_peaks_sample", "mean_int"),
@@ -48,9 +49,9 @@ profiles_to_matrix2 <- function(
 	if(any(is.na(match(sort_by, colnames(profileList[["index_prof"]]))))){stop("Argument sort_by not matching column names - abort.")}
     if(!profileList[["state"]]["profiling"][[1]]){stop("\nprofileList not profiled - abort.")}
     len <- dim(profileList[["index_prof"]])[1]
-    if(!is.logical(sort_decreasing)){stop("\nArgument normalize must be logical - abort.")}
-    if(!is.logical(reduce_comp)){stop("\nArgument normalize must be logical - abort.")}	
-    if(!is.logical(only_sample_peaks)){stop("\nArgument normalize must be logical - abort.")}
+    if(!is.logical(sort_decreasing)){stop("\nArgument sort_decreasing must be logical - abort.")}
+    if(!is.logical(reduce_comp)){stop("\nArgument reduce_comp must be logical - abort.")}	
+    if(!is.logical(only_sample_peaks)){stop("\nArgument only_sample_peaks must be logical - abort.")}
     if(!is.logical(normalize)){stop("\nArgument normalize must be logical - abort.")}
 	if((reduce_comp) & (!is.list(links_profiles))){stop("\n Either set reduce_comp=FALSE or provide a valid links_profiles list - abort.")}
 	############################################################################
