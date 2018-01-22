@@ -882,24 +882,24 @@ addmeasu <- reactive({
 					#cat("\n Objects_glob: ");print(ls(envir=as.environment(".GlobalEnv")));cat("\n\n")
 					#########################################################################			
 					# subtraction files, positive: ##########################################
-					if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="positive") & (measurements[,"Type"]=="blank"))){
-						IDs_pos<-measurements[
-							(measurements[,"Mode"]=="positive") & (measurements[,"Type"]=="blank")
+					if(any( (measurements[,"ID"] != "-") & (measurements[,"Mode"] == "positive") & (measurements[,"Type"] == "blank"))){
+						IDs_pos <- measurements[
+							(measurements[,"Mode"] == "positive") & (measurements[,"Type"] == "blank")
 						,"ID"]
-						names_pos<-measurements[
-							(measurements[,"Mode"]=="positive") & (measurements[,"Type"]=="blank")
+						names_pos <- measurements[
+							(measurements[,"Mode"] == "positive") & (measurements[,"Type"] == "blank")
 						,"Name"]
-						IDs_pos<-paste(IDs_pos,names_pos,sep=" - ")
-						if(any(logfile[["Positive_subtraction_files"]]!="FALSE")){
-							select_pos<-logfile[["Positive_subtraction_files"]]
-							select_pos<-select_pos[select_pos!="FALSE"]
+						IDs_pos <- paste(IDs_pos, names_pos, sep = " - ")
+						if(any(logfile[["Positive_subtraction_files"]] != "FALSE")){
+							select_pos <- logfile[["Positive_subtraction_files"]]
+							select_pos <- select_pos[select_pos!="FALSE"]
 							# include changes from file additions / removals
-							select_pos<-select_pos[!is.na(match(select_pos,IDs_pos))]
+							select_pos <- select_pos[!is.na(match(select_pos,IDs_pos))]
 							logfile[["Positive_subtraction_files"]]<<-c(select_pos,"FALSE")
 						}else{
-							select_pos<-NULL
+							select_pos <- NULL
 						}
-						updateCheckboxGroupInput(session,inputId="files_pos_select_subtract", label="", choices=IDs_pos, selected = select_pos)
+						updateCheckboxGroupInput(session, inputId = "files_pos_select_subtract", label = "", choices = IDs_pos, selected = select_pos)
 					}
 					# subtraction files, negative: ##########################################
 					if(any( (measurements[,"ID"]!="-") & (measurements[,"Mode"]=="negative") & (measurements[,"Type"]=="blank"))){
@@ -909,17 +909,17 @@ addmeasu <- reactive({
 						names_neg<-measurements[
 							(measurements[,"Mode"]=="negative") & (measurements[,"Type"]=="blank")
 						,"Name"]
-						IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
-						if(any(logfile[["Negative_subtraction_files"]]!="FALSE")){
-							select_neg<-logfile[["Negative_subtraction_files"]]
-							select_neg<-select_neg[select_neg!="FALSE"]
+						IDs_neg<-paste(IDs_neg, names_neg, sep = " - ")
+						if(any(logfile[["Negative_subtraction_files"]] != "FALSE")){
+							select_neg <- logfile[["Negative_subtraction_files"]]
+							select_neg <- select_neg[select_neg!="FALSE"]
 							# include changes from file additions / removals
-							select_neg<-select_neg[!is.na(match(select_neg,IDs_neg))]
-							logfile[["Negative_subtraction_files"]]<<-c(select_neg,"FALSE")
+							select_neg <- select_neg[!is.na(match(select_neg,IDs_neg))]
+							logfile[["Negative_subtraction_files"]] <<- c(select_neg, "FALSE")
 						}else{
-							select_neg<-NULL
+							select_neg <- NULL
 						}
-						updateCheckboxGroupInput(session, inputId="files_neg_select_subtract", label="", choices=IDs_neg, selected = select_neg)
+						updateCheckboxGroupInput(session, inputId = "files_neg_select_subtract", label = "", choices=IDs_neg, selected = select_neg)
 					}
 					#########################################################################
 					rm(measurements)
