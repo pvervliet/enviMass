@@ -1012,7 +1012,7 @@ observe({
 			names_neg<-measurements3[
 				(measurements3[,"Mode"]=="negative") & (measurements3[,"Type"]!="sample")
 			,"Name"]
-			IDs_neg<-paste(IDs_neg,names_pos,sep=" - ")
+			IDs_neg<-paste(IDs_neg, names_neg, sep = " - ")
 			if(any(logfile[[14]]!="FALSE")){
 				select_neg<-logfile[[14]]
 				select_neg<-select_neg[select_neg!="FALSE"]
