@@ -552,7 +552,9 @@ check_project<-function(
 			"Q-Exactive,ExactivePlus_R70000@200",
 			"Sciex_TripleTOF5600_R25000@200",
 			"Sciex_TripleTOF6600_R25000@200",
-			"Sciex_QTOFX500R_R25000@200"
+			"Sciex_QTOFX500R_R25000@200",
+			"Agilent_QTOF6550_low_extended2GHz_highRes",
+			"Agilent_QTOF6550_low_highRes4GHz_highRes"
 		)
 		if(any(avail==logfile$parameters$resolution)){ # available on www.envimass.ch
 			if(logfile$parameters$resolution=="OrbitrapXL,Velos,VelosPro_R60000@400"){
@@ -576,6 +578,12 @@ check_project<-function(
 			if(logfile$parameters$resolution=="Sciex_QTOFX500R_R25000@200"){
 				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
 			}
+			if(logfile$parameters$resolution=="Agilent_QTOF6550_low_extended2GHz_highRes"){
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Agilent_QTOF6550_low_extended2GHz_highRes/quantiz"
+			}			
+			if(logfile$parameters$resolution=="Agilent_QTOF6550_low_highRes4GHz_highRes"){
+				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Agilent_QTOF6550_low_highRes4GHz_highRes/quantiz"
+			}	
 			dest_file<-file.path(logfile[[1]],"dataframes","quantiz")
 			url_quantiz<-try(download.file(url=get_url, destfile=dest_file, mode = "wb"))
 			if(class(url_quantiz)=="try-error"){
@@ -587,7 +595,7 @@ check_project<-function(
 				load_quantiz<-try(load(file.path(logfile[[1]],"dataframes","quantiz")) )
 				if(class(load_quantiz)=="try-error"){
 					cat("\n Loading of missing isotopologue space failed.\n")	
-					say<-"Loading failure of downloaded of isotopologue space. Please proceed manually as described on www.enviMass.ch -> Data input -> Download available isotopologue spaces."
+					say<-"Loading failure of downloaded isotopologue space. Please proceed manually as described on www.enviMass.ch -> Data input -> Download available isotopologue spaces."
 				}
 			}
 		}else{	# not available on www.wnvimass.ch
