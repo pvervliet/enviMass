@@ -55,13 +55,15 @@
 			peaklist4 <- peaklist[order(peaklist[,"peak_ID"], decreasing = FALSE),] # match with IDs 
 			peaklist4 <- peaklist4[(peaklist4[,"keep"] == 1),, drop = FALSE] # remove non-replicates 
 			if(logfile$parameters$homol_blind == "TRUE"){ # remove blind peaks -> seperate peaklist2 to match peak counts of adduct & isotopologue searches
+				cat("- blind peaks removed -")
+				if((measurements[b,names(measurements)=="Type"] == "blank")) next; # omit blind files altogether
 				peaklist2 <- as.data.frame(peaklist4[
 					(peaklist4[,"keep_2"] >= as.numeric(logfile$parameters$homol_blind_value)), # above blind intensity threshold
 					c("m/z_corr", "int_corr", "RT_corr", "peak_ID"), drop = FALSE])
-				cat("- blind peaks removed -")
 			}else{
 				peaklist2 <- as.data.frame(peaklist4[,c("m/z_corr", "int_corr", "RT_corr", "peak_ID"), drop= FALSE])
 			}
+
 			##########################################################################
 			cat("series extraction - ")		
 			if(logfile$parameters$homol_ppm=="TRUE"){
