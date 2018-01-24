@@ -1,5 +1,7 @@
 	###############################################################################	
 	those_objects <- c(
+		"patternRT_pos",
+		"patternRT_neg",
 		"search_compound",
 		"compounds_IS",
 		"compounds_targets",

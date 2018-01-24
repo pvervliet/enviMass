@@ -15,7 +15,7 @@ refresh_screening$plots_neg <- 0
 
 ##############################################################################
 # POSITIVE IONIZATION ########################################################
-observe({ 
+observe({
 	input$Pos_compound_select  
 	input$screen_pos_summarize
 	input$Pos_type_select
@@ -37,50 +37,53 @@ observe({
 				)
 			){			
 
-				if(isolate(input$Pos_type_select)=="Sample/blind files"){
-					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"),verbose=TRUE)
+				if(isolate(input$Pos_type_select) == "Sample/blind files"){
+					load(file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"), verbose = TRUE)
 				}
-				if(isolate(input$Pos_type_select)=="Calibration files"){
-					load(file=file.path(logfile$project_folder,"quantification","results_screen_target_pos_cal"),verbose=TRUE)
-					results_screen_target_pos<-results_screen_target_pos_cal # contains sample vs. blank intensity ratios
+				if(isolate(input$Pos_type_select) == "Calibration files"){
+					load(file = file.path(logfile$project_folder,"quantification","results_screen_target_pos_cal"), verbose = TRUE)
+					results_screen_target_pos <- results_screen_target_pos_cal # contains sample vs. blank intensity ratios
 				}
-				screen_dev_pos<<-results_screen_target_pos[[3]] 
-				screen_dev_pos[,2]<<-log10(screen_dev_pos[,2])
-				rat_sam_blank_pos<<-results_screen_target_pos[[1]][,10,drop=FALSE]
-				if( isolate(input$screen_pos_summarize=="yes") ){
-					results_screen_pos<<-results_screen_target_pos[[1]]
+				screen_dev_pos <<- results_screen_target_pos[[3]] 
+				screen_dev_pos[,2] <<- log10(screen_dev_pos[,2])
+				rat_sam_blank_pos <<- results_screen_target_pos[[1]][,10,drop=FALSE]
+				if( isolate(input$screen_pos_summarize== "yes") ){
+					results_screen_pos <<- results_screen_target_pos[[1]]
 				}else{
-					results_screen_pos<<-results_screen_target_pos[[2]]
+					results_screen_pos <<- results_screen_target_pos[[2]]
 				}
-				table_screening_pos<-DT::datatable(
-											results_screen_pos, escape = FALSE,selection = 'single',
+				table_screening_pos <- DT::datatable(
+											results_screen_pos, escape = FALSE, selection = 'single',
 						                	extensions = c('Buttons','FixedHeader','ColReorder'),
 						                	rownames = FALSE,
+											filter = list(position = 'top', clear = FALSE, plain = TRUE),
 											options = list(
-												lengthMenu = c(25, 50, 100, 200, 1000),
+												lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
 												fixedHeader = FALSE,
-												ordering=T,
+												ordering = T,
 												dom = 'Blfrtip',
-												buttons = c('excel', 'csv','colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+												buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
 												scrollX = TRUE,
 												colReorder = TRUE
 											)
-										) %>% formatStyle('Max. sample score',background = styleColorBar(c(0,1), 'lightgreen'),backgroundPosition = 'right')
-				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos},server = FALSE)
+										) %>% formatStyle('Max. sample score', background = styleColorBar(c(0,1), 'lightgreen'), backgroundPosition = 'right')
+				output$Table_screening_pos <- DT::renderDataTable({table_screening_pos}, server = FALSE)
 				rm(results_screen_target_pos)
-				found_table<-TRUE
-				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"),verbose=TRUE);	
-				load(file=file.path(logfile[[1]],"results","pattern_pos_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
-				pattern_pos<<-pattern_pos_target;rm(pattern_pos_target,envir=as.environment(".GlobalEnv"));
-				patt_pos_ID<-rep("",length(pattern_pos))
-				patt_pos_add<-rep("",length(pattern_pos))
+				found_table <- TRUE
+				load(file = file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"), envir = as.environment(".GlobalEnv"), verbose = TRUE);	
+				load(file = file.path(logfile[[1]],"results","pattern_pos_target"), envir = as.environment(".GlobalEnv"), verbose = TRUE);
+				load(file = file.path(logfile[[1]],"results","patternRT_pos_target"), envir = as.environment(".GlobalEnv"));
+				pattern_pos <<- pattern_pos_target; rm(pattern_pos_target, envir = as.environment(".GlobalEnv"));
+				patternRT_pos <<- patternRT_pos_target; rm(patternRT_pos_target, envir = as.environment(".GlobalEnv"));
+				patt_pos_ID <- rep("",length(pattern_pos))
+				patt_pos_add <- rep("",length(pattern_pos))
 				for(i in 1:length(pattern_pos)){
-					patt_pos_ID[i]<-strsplit(names(pattern_pos[i]),"_",fixed=TRUE)[[1]][1]
-					patt_pos_add[i]<-strsplit(names(pattern_pos[i]),"_",fixed=TRUE)[[1]][2]
+					patt_pos_ID[i] <- strsplit(names(pattern_pos[i]), "_", fixed = TRUE)[[1]][1]
+					patt_pos_add[i] <- strsplit(names(pattern_pos[i]), "_", fixed = TRUE)[[1]][2]
 				}
-				patt_pos_ID<<-patt_pos_ID
-				patt_pos_add<<-patt_pos_add
-				load(file=file.path(logfile[[1]],"results","patternRT_pos_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
+				patt_pos_ID <<- patt_pos_ID
+				patt_pos_add <<- patt_pos_add
+				load(file = file.path(logfile[[1]],"results","patternRT_pos_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
 				pattern_RT_pos<-patternRT_pos_target;rm(patternRT_pos_target,envir=as.environment(".GlobalEnv"));
 				load(file=file.path(logfile[[1]],"results","patternDelRT_pos_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
 				pattern_delRT_pos<-patternDelRT_pos_target;rm(patternDelRT_pos_target,envir=as.environment(".GlobalEnv"));
@@ -139,8 +142,9 @@ observe({
 				table_screening_pos<-DT::datatable(
 											results_screen_pos, escape = FALSE, selection = 'single',
 											extensions = 'Buttons',		
+											filter = list(position = 'top', clear = FALSE, plain = TRUE),							
 											options = list(	
-												lengthMenu = c(25,100,200),
+												lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),	
 												ordering=TRUE,
 												dom = 'Bfrtip',
 												buttons = c('excel')
@@ -151,6 +155,8 @@ observe({
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_pos_IS"),envir=as.environment(".GlobalEnv"));
+				load(file=file.path(logfile[[1]],"results","patternRT_pos_IS"),envir=as.environment(".GlobalEnv"));
+				patternRT_pos<<-patternRT_pos_IS;rm(patternRT_pos_IS,envir=as.environment(".GlobalEnv"));		
 				pattern_pos<<-pattern_pos_IS;rm(pattern_pos_IS,envir=as.environment(".GlobalEnv"));
 				patt_pos_ID<-rep("",length(pattern_pos))
 				patt_pos_add<-rep("",length(pattern_pos))
@@ -199,6 +205,8 @@ observe({
 			isolate(refresh_screening$plots_pos<-(refresh_screening$plots_pos+1))
 			output$plot_pattern_pos <- renderPlot({plot.new()})
 			output$plot_selec_dist_pos <- renderPlot({plot.new()})
+			output$table_pattern_pos <- renderTable(as.data.frame("No data"))
+			output$table_patternRT_pos <- renderText({""})
 			# make Table over samples ##############################################################################################
 			# initialize intensity range for selected internal standard
 			output$count_aboveBlank_pos<-renderText({
@@ -488,45 +496,48 @@ observe({ ####################################################################
 	s<-input$Table_screening_pos_row_last_clicked
 	if (length(s) & isolate(input$screen_pos_summarize=="yes")) {
 		# plot pattern & matches
+		use_comp <- ((patt_pos_ID == as.character(results_screen_pos[s,1])) & (patt_pos_add == as.character(results_screen_pos[s,3])))
+		if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}															
+		pattern_sel <- pattern_pos[use_comp][[1]]
+		res_pos_screen_sel <- res_pos_screen[use_comp][[1]]
 		output$plot_pattern_pos <- renderPlot({
 			cat("render plot_pattern_pos ->")
-				use_comp<-(
-					(patt_pos_ID==as.character(results_screen_pos[s,1])) & (patt_pos_add==as.character(results_screen_pos[s,3]))
-				)
-				if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}															
-				pattern_sel<-pattern_pos[use_comp][[1]]
-				res_pos_screen_sel<-res_pos_screen[use_comp][[1]]
-				plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",
-					xlim=ranges_plot_pattern_pos$x,ylim=ranges_plot_pattern_pos$y,
-					main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1)
-				if(length(res_pos_screen_sel)>0){
-					for(i in 1:length(res_pos_screen_sel)){
-						if(length(res_pos_screen_sel[[i]])>0){
-							for(j in 1:length(res_pos_screen_sel[[i]])){
-								found_matches<-res_pos_screen_sel[[i]][[j]]$Peaks
-								if(isolate(input$Pos_type_select)=="Sample/blind files"){
-									x<-profileList_pos_copy[[2]][found_matches[,2],1]
-									y<-(profileList_pos_copy[[2]][found_matches[,2],2]*res_pos_screen_sel[[i]][[j]][[6]])
-								}
-							if(isolate(input$Pos_type_select)=="Calibration files"){
-									x<-profileList_pos_cal[[2]][found_matches[,2],1]
-									y<-(profileList_pos_cal[[2]][found_matches[,2],2]*res_pos_screen_sel[[i]][[j]][[6]])										
-								}
-								y<-y[order(x)]
-								x<-x[order(x)]
-								lines(x=x,y=y,col="grey")										
-								points(x,y,col="darkgreen",cex=2)
+			plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",
+				xlim=ranges_plot_pattern_pos$x,ylim=ranges_plot_pattern_pos$y,
+				main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1)
+			if(length(res_pos_screen_sel)>0){
+				for(i in 1:length(res_pos_screen_sel)){
+					if(length(res_pos_screen_sel[[i]])>0){
+						for(j in 1:length(res_pos_screen_sel[[i]])){
+							found_matches<-res_pos_screen_sel[[i]][[j]]$Peaks
+							if(isolate(input$Pos_type_select)=="Sample/blind files"){
+								x<-profileList_pos_copy[[2]][found_matches[,2],1]
+								y<-(profileList_pos_copy[[2]][found_matches[,2],2]*res_pos_screen_sel[[i]][[j]][[6]])
 							}
+						if(isolate(input$Pos_type_select)=="Calibration files"){
+								x<-profileList_pos_cal[[2]][found_matches[,2],1]
+								y<-(profileList_pos_cal[[2]][found_matches[,2],2]*res_pos_screen_sel[[i]][[j]][[6]])										
+							}
+							y<-y[order(x)]
+							x<-x[order(x)]
+							lines(x=x,y=y,col="grey")										
+							points(x,y,col="darkgreen",cex=2)
 						}
 					}
 				}
-				points(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity")
-				legend(x="topright",legend=c("Theoretical pattern","Matches","Co-occurrences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
-			})
+			}
+			points(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity")
+			legend(x="topright",legend=c("Theoretical pattern","Matches","Co-occurrences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
+		})
+		# generate table output
+		output$table_pattern_pos <- renderTable(as.data.frame(pattern_sel), digits = 6)
+		output$table_patternRT_pos <- renderText({paste0("Expected RT:  ", as.character(patternRT_pos[use_comp]), " s / ", as.character(round(patternRT_pos[use_comp] / 60, digits = 2)), " min")})
 	}else{
 		output$plot_pattern_pos <- renderPlot({
 			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No compound selected or adducts collapsed",col="red",cex=1.6)		
 		})		
+		output$table_pattern_pos <- renderTable(as.data.frame("No data"))
+		output$table_patternRT_pos <- renderText({paste0("No data")})
 	}
 })
 observe({ ####################################################################
@@ -1009,8 +1020,9 @@ observe({
 											results_screen_neg, escape = FALSE,selection = 'single',
 						                	extensions = c('Buttons','FixedHeader','ColReorder'),
 						                	rownames = FALSE,
+											filter = list(position = 'top', clear = FALSE, plain = TRUE),
 											options = list(
-												lengthMenu = c(25, 50, 100, 200, 1000),
+												lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
 												fixedHeader = FALSE,
 												ordering=T,
 												dom = 'Blfrtip',
@@ -1024,6 +1036,8 @@ observe({
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"),verbose=TRUE);	
 				load(file=file.path(logfile[[1]],"results","pattern_neg_target"),envir=as.environment(".GlobalEnv"),verbose=TRUE);
+				load(file = file.path(logfile[[1]],"results","patternRT_neg_target"), envir = as.environment(".GlobalEnv"));
+				patternRT_neg <<- patternRT_neg_target; rm(patternRT_neg_target, envir = as.environment(".GlobalEnv"));	
 				pattern_neg<<-pattern_neg_target;rm(pattern_neg_target,envir=as.environment(".GlobalEnv"));
 				patt_neg_ID<-rep("",length(pattern_neg))
 				patt_neg_add<-rep("",length(pattern_neg))
@@ -1092,9 +1106,10 @@ observe({
 				table_screening_neg<-DT::datatable(
 											results_screen_neg, escape = FALSE, selection = 'single',
 											extensions = 'Buttons',		
+											filter = list(position = 'top', clear = FALSE, plain = TRUE),
 											options = list(	
-												lengthMenu = c(25,100,200),
-												ordering=TRUE,
+												lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+												ordering = TRUE,
 												dom = 'Bfrtip',
 												buttons = c('excel')
 											),
@@ -1104,6 +1119,8 @@ observe({
 				found_table<-TRUE
 				load(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"),envir=as.environment(".GlobalEnv"));	
 				load(file=file.path(logfile[[1]],"results","pattern_neg_IS"),envir=as.environment(".GlobalEnv"));
+				load(file=file.path(logfile[[1]],"results","patternRT_neg_IS"),envir=as.environment(".GlobalEnv"));
+				patternRT_neg<<-patternRT_neg_IS;rm(patternRT_neg_IS,envir=as.environment(".GlobalEnv"));
 				pattern_neg<<-pattern_neg_IS;rm(pattern_neg_IS,envir=as.environment(".GlobalEnv"));
 				patt_neg_ID<-rep("",length(pattern_neg))
 				patt_neg_add<-rep("",length(pattern_neg))
@@ -1152,6 +1169,7 @@ observe({
 			isolate(refresh_screening$plots_neg<-(refresh_screening$plots_neg+1))
 			output$plot_pattern_neg <- renderPlot({plot.new()})
 			output$plot_selec_dist_neg <- renderPlot({plot.new()})
+			output$table_pattern_neg <- renderTable(as.data.frame("No data"))
 			# make Table over samples ##############################################################################################
 			# initialize intensity range for selected internal standard
 			output$count_aboveBlank_neg<-renderText({
@@ -1441,45 +1459,49 @@ observe({ ####################################################################
 	s<-input$Table_screening_neg_row_last_clicked
 	if (length(s) & isolate(input$screen_neg_summarize=="yes")) {
 		# plot pattern & matches
+		cat("render plot_pattern_neg ->")
+		use_comp<-( (patt_neg_ID==as.character(results_screen_neg[s,1])) & (patt_neg_add==as.character(results_screen_neg[s,3])) )
+		if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}															
+		pattern_sel<-pattern_neg[use_comp][[1]]
+		res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
 		output$plot_pattern_neg <- renderPlot({
-			cat("render plot_pattern_neg ->")
-				use_comp<-(
-					(patt_neg_ID==as.character(results_screen_neg[s,1])) & (patt_neg_add==as.character(results_screen_neg[s,3]))
-				)
-				if(sum(use_comp)>1){stop("Report this issue for a debug on server_obs_screening.r #1")}															
-				pattern_sel<-pattern_neg[use_comp][[1]]
-				res_neg_screen_sel<-res_neg_screen[use_comp][[1]]
-				plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",
-					xlim=ranges_plot_pattern_neg$x,ylim=ranges_plot_pattern_neg$y,
-					main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1)
-				if(length(res_neg_screen_sel)>0){
-					for(i in 1:length(res_neg_screen_sel)){
-						if(length(res_neg_screen_sel[[i]])>0){
-							for(j in 1:length(res_neg_screen_sel[[i]])){
-								found_matches<-res_neg_screen_sel[[i]][[j]]$Peaks
-								if(isolate(input$Neg_type_select)=="Sample/blind files"){
-									x<-profileList_neg_copy[[2]][found_matches[,2],1]
-									y<-(profileList_neg_copy[[2]][found_matches[,2],2]*res_neg_screen_sel[[i]][[j]][[6]])
-								}
-							if(isolate(input$Neg_type_select)=="Calibration files"){
-									x<-profileList_neg_cal[[2]][found_matches[,2],1]
-									y<-(profileList_neg_cal[[2]][found_matches[,2],2]*res_neg_screen_sel[[i]][[j]][[6]])										
-								}
-								y<-y[order(x)]
-								x<-x[order(x)]
-								lines(x=x,y=y,col="grey")										
-								points(x,y,col="darkgreen",cex=2)
+			plot(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity",
+				xlim=ranges_plot_pattern_neg$x,ylim=ranges_plot_pattern_neg$y,
+				main="Brush and double-click to zoom in, double-click to zoom out.",cex.main=1)
+			if(length(res_neg_screen_sel)>0){
+				for(i in 1:length(res_neg_screen_sel)){
+					if(length(res_neg_screen_sel[[i]])>0){
+						for(j in 1:length(res_neg_screen_sel[[i]])){
+							found_matches<-res_neg_screen_sel[[i]][[j]]$Peaks
+							if(isolate(input$Neg_type_select)=="Sample/blind files"){
+								x<-profileList_neg_copy[[2]][found_matches[,2],1]
+								y<-(profileList_neg_copy[[2]][found_matches[,2],2]*res_neg_screen_sel[[i]][[j]][[6]])
 							}
+						if(isolate(input$Neg_type_select)=="Calibration files"){
+								x<-profileList_neg_cal[[2]][found_matches[,2],1]
+								y<-(profileList_neg_cal[[2]][found_matches[,2],2]*res_neg_screen_sel[[i]][[j]][[6]])										
+							}
+							y<-y[order(x)]
+							x<-x[order(x)]
+							lines(x=x,y=y,col="grey")										
+							points(x,y,col="darkgreen",cex=2)
 						}
 					}
 				}
-				points(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity")
-				legend(x="topright",legend=c("Theoretical pattern","Matches","Co-occurrences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
-			})
+			}
+			points(pattern_sel[,1],pattern_sel[,2],type="h",lwd=3,col="red",xlab="m/z",ylab="Rescaled intensity")
+			legend(x="topright",legend=c("Theoretical pattern","Matches","Co-occurrences"),fill=c("red","darkgreen","grey"),border=c("red","darkgreen","grey"))
+		})		
+		# generate table output
+		output$table_pattern_neg <- renderTable(as.data.frame(pattern_sel), digits = 6)	
+		output$table_patternRT_neg <- renderText({paste0("Expected RT [s]: ", as.character(patternRT_neg[use_comp]))})
+		output$table_patternRT_neg <- renderText({paste0("Expected RT:  ", as.character(patternRT_neg[use_comp]), " s / ", as.character(round(patternRT_neg[use_comp] / 60, digits = 2)), " min")})
 	}else{
 		output$plot_pattern_neg <- renderPlot({
 			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No compound selected or adducts collapsed",col="red",cex=1.6)		
 		})		
+		output$table_pattern_neg <- renderTable(as.data.frame(pattern_sel))
+		output$table_patternRT_neg <- renderText({paste0("No data")})
 	}
 })
 observe({ ####################################################################

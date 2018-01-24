@@ -182,6 +182,11 @@
 								title = "File import to existing files",
 								content = "If a file in the folder with the same filename as one already existing in the project is found, should it be imported (new ID assigned)?", 
 								placement = "right", trigger = "hover"),
+							checkboxInput("Import_file_folder_namedate", "Guess date from file name?", FALSE),
+							bsPopover("Import_file_folder_namedate", 
+								title = "Set file date",
+								content = "If checked, file dates are tried to be derived from the file name - otherwise, consecutive file dates are set (starting with the last unused file date, if available). Permissible date formats in file names: _YYYY_MM_DD_ / _YY_MM_DD_ / _YYYYMMDD_ / _YYMMDD_ / -YYYY-MM-DD- / -YY-MM-DD- / -YYYYMMDD- / -YYMMDD- (where - and _ at start and end of the date field can be empty spaces as well). First match in name used.", 
+								placement = "right", trigger = "hover"),
 							bsButton("Import_file_folder","Import",style="primary"),
 							HTML('<hr noshade="noshade" />'),
 							textOutput("had_import_folder")						
@@ -1858,7 +1863,13 @@
 											),
 											HTML('<hr noshade="noshade" />'),
 											tags$p(align="justify","The above red bars show the theoretical centroid pattern for the selected compound. Screening matches of this pattern with measured peaks 
-												are depicted as green circles. The grey lines connect peaks which have been jointly matched to this pattern, i.e., are present in the same peaklist of a file.")
+												are depicted as green circles. The grey lines connect peaks which have been jointly matched to this pattern, i.e., are present in the same peaklist of a file.
+												The exact values are tabulated below."),
+											HTML('<hr noshade="noshade" />'),
+											fluidRow(
+												column(4, tableOutput("table_pattern_pos")),
+												column(5, textOutput("table_patternRT_pos"))
+											)
 										),
 										bsCollapsePanel(title="Characteristics for selected compound",
 											textOutput('screening_details_comp_pos2'),
@@ -1920,7 +1931,13 @@
 								HTML('<hr noshade="noshade" />'),
 								tags$p(align="justify","The below Sample and Blank matches show the number of files with screening matches above the cutoff score, 
 								with multiple matches per file above this cutoff merged."),
+###								
 								DT::dataTableOutput('Table_screening_pos'),
+								
+								
+								
+								
+###															
 								HTML('<hr noshade="noshade" />'),
 								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_all",
 									bsCollapsePanel(title="Summary plots",
@@ -1989,7 +2006,13 @@
 											),
 											HTML('<hr noshade="noshade" />'),
 											tags$p(align="justify","The above red bars show the theoretical centroid pattern for the selected compound. Screening matches of this pattern with measured peaks 
-												are depicted as green circles. The grey lines connect peaks which have been jointly matched to this pattern, i.e., are present in the same peaklist of a file.")											
+												are depicted as green circles. The grey lines connect peaks which have been jointly matched to this pattern, i.e., are present in the same peaklist of a file.
+												The exact values are tabulated below."),
+											HTML('<hr noshade="noshade" />'),
+											fluidRow(
+												column(3, tableOutput("table_pattern_neg")),
+												column(3, textOutput("table_patternRT_neg"))
+											)
 										),
 										bsCollapsePanel(title="Characteristics for selected compound",
 											textOutput('screening_details_comp_neg2'),

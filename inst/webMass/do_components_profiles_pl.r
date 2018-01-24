@@ -643,6 +643,7 @@ if(
 		# (6.2) check EIC correlation ############################################
 		anaB <- enviMass::analyseB_links_profiles(
 				links_profiles = links_profiles_pos,  
+				profileList = profileList_pos,
 				min_count = .4, 	# isot, adduc:  "ref_1">=(min_count*number_samples)
 				for_which = logfile$parameters$for_which_profcomp_pos
 			)
@@ -1454,6 +1455,7 @@ if(
 		# (6.2) by ISTD - check their EIC correlation ###########################
 		fil2<-enviMass::analyseB_links_profiles(
 				links_profiles = links_profiles_neg,  
+				profileList = profileList_neg,
 				min_count=.4, 	# isot, adduc:  "ref_1">=(min_count*number_samples)
 				for_which=logfile$parameters$for_which_profcomp_neg
 			)

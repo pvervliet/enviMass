@@ -51,6 +51,7 @@
 						if( (class(estim_values) != "try-error") & (!all(is.na(estim_values))) ){
 							use_peak_dmzdens <- estim_values[[1]]
 							use_peak_minint_log10 <- estim_values[[2]]
+							#use_peak_minint_log10 <- use_peak_minint_log10 / 1000 # force threshold reduction
 							if(as.numeric(logfile$parameters$peak_maxint_log10) < use_peak_minint_log10){
 								use_peak_maxint_log10 <- log10(max(MSlist[["Scans"]][[2]][,"intensity"])+1)
 							}else{

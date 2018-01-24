@@ -1702,7 +1702,8 @@ observe({
 impfolder<-reactive({
 	input$Import_file_folder
 	if(isolate(input$Import_file_folder)){
-		file_in <<- as.character(isolate(input$import_file_folder))
+		file_in <<- as.character(isolate(input$import_file_folder))		
+#file_in <- "D:/Projects/new_project_name/trial_files_upload"
 		getfiles <<- list.files(path=file_in)
 		if(length(getfiles)>0){
 			cat("\nStarting upload ...");
@@ -1726,31 +1727,37 @@ impfolder<-reactive({
 						}
 					}
 					# guess file properties
-					file_guessed <- enviMass:::file_guess(getfiles[i])
-					# define minimum available date
-					if(length(measurements1[,"ID"])==0){
-						at_date<<-as.character(isolate(input$Measadd_date))
-					}else{
-						all_dates<-measurements1[,"Date"]
-						at_date<<-enviMass::minDate(all_dates,get_min=FALSE)
-						at_date<<-enviMass::incrDate(Date=at_date,increment=1);#cat(paste("\n",at_date))	
+					file_guessed <- enviMass:::file_guess(getfiles[i], propose = TRUE)
+					if(isolate(input$Import_file_folder_namedate)){# if fails, date proposed by file_guess
+						at_date <<- file_guessed$Date 
+					}else{ # define minimum available date
+						if(length(measurements1[,"ID"])==0){
+							at_date <<- as.character(isolate(input$Measadd_date))
+						}else{
+							all_dates <- measurements1[,"Date"]
+							at_date <<- enviMass::minDate(all_dates,get_min=FALSE)
+							at_date <<- enviMass::incrDate(Date=at_date,increment=1);#cat(paste("\n",at_date))	
+						}
 					}
-					newID<-as.character(getID(as.numeric(measurements1[,"ID"])))
-					if(file_ending==".mzXML"){			
+					newID <- as.character(getID(as.numeric(measurements1[,"ID"])))
+					if(file_ending == ".mzXML"){			
 						file.copy(
 							from=filepath,
 							to=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
 							overwrite=TRUE)	
 						if( file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) ){ # check: copy completed?			
-							mz1<-readMzXmlData::readMzXmlFile(
-								mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
-								removeMetaData = FALSE,verbose = FALSE)
-							ioniz<-mz1[[1]]$metaData$polarity											
+							#mz1 <- readMzXmlData::readMzXmlFile(
+							#	mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")),
+							#	removeMetaData = FALSE,verbose = FALSE)
+							#ioniz<-mz1[[1]]$metaData$polarity			
+							mz1 <- mzR:::openMSfile(filename = file.path(logfile[[1]], "files", paste(newID, ".mzXML", sep = "")), backend = c("Ramp"), verbose = FALSE)
+							ioniz <- mzR:::header(mz1)[1,]$polarity
+							mzR:::close(mz1)	
 							with_mode <- "unknown"
-							if(ioniz=="+"){
+							if(ioniz == 1){#if(ioniz=="+"){
 								with_mode <- "positive"
 							}
-							if(ioniz=="-"){
+							if(ioniz == 0){#if(ioniz=="-"){
 								with_mode <- "negative"
 							}							
 							measurements2 <- c(
@@ -1805,15 +1812,18 @@ impfolder<-reactive({
 								use_format = "mzXML");     				  
 							file.remove(file.path(logfile[[1]], "files", paste(newID, ".raw", sep = "")))
 							if( file.exists(file.path(logfile[[1]], "files",paste(newID, ".mzXML", sep = ""))) ){ # copy completed and conversion ok?			
-								mz1 <- readMzXmlData::readMzXmlFile(
-									mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep = "")),
-									removeMetaData = FALSE,verbose = FALSE)
-								ioniz <- mz1[[1]]$metaData$polarity											
+								#mz1 <- readMzXmlData::readMzXmlFile(
+								#	mzXmlFile=file.path(logfile[[1]],"files",paste(newID,".mzXML",sep = "")),
+								#	removeMetaData = FALSE,verbose = FALSE)
+								#ioniz <- mz1[[1]]$metaData$polarity											
+								mz1 <- mzR:::openMSfile(filename = file.path(logfile[[1]], "files", paste(newID, ".mzXML", sep = "")), backend = c("Ramp"), verbose = FALSE)
+								ioniz <- mzR:::header(mz1)[1,]$polarity
+								mzR:::close(mz1)	
 								with_mode <- "unknown"
-								if(ioniz == "+"){
+								if(ioniz == 1){#if(ioniz=="+"){
 									with_mode <- "positive"
 								}
-								if(ioniz=="-"){
+								if(ioniz == 0){#if(ioniz=="-"){
 									with_mode <- "negative"
 								}							
 								measurements2 <- c(
