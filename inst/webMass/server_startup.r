@@ -324,7 +324,8 @@ maincalc2<-reactive({
 					enviMass:::plot_ISTD_norm(
 						int_norm_ISTD = int_norm_ISTD_pos,
 						logfile = logfile,
-						what = "normalization"
+						what = "normalization",
+						ion_mode = "positive"
 					)
 				},res = 100) 
 				output$int_norm_ISTD_pos_counts <- renderPlot({   
@@ -332,7 +333,8 @@ maincalc2<-reactive({
 					enviMass:::plot_ISTD_norm(
 						int_norm_ISTD = int_norm_ISTD_pos,
 						logfile = logfile,
-						what = "counts"
+						what = "counts",
+						ion_mode = "positive"
 					)
 				},res = 100) 					
 			}else{
@@ -353,7 +355,8 @@ maincalc2<-reactive({
 					enviMass:::plot_ISTD_norm(
 						int_norm_ISTD = int_norm_ISTD_neg,
 						logfile = logfile,
-						what = "normalization"
+						what = "normalization",
+						ion_mode = "negative"
 					)
 				},res = 100) 
 				output$int_norm_ISTD_neg_counts <- renderPlot({   
@@ -361,7 +364,8 @@ maincalc2<-reactive({
 					enviMass:::plot_ISTD_norm(
 						int_norm_ISTD = int_norm_ISTD_neg,
 						logfile = logfile,
-						what = "counts"
+						what = "counts",
+						ion_mode = "negative"
 					)
 				},res = 100) 					
 			}else{

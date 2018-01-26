@@ -12,7 +12,8 @@ function(
 	int_norm_ISTD,
 	xlim = FALSE,
 	logfile,
-	what
+	what,
+	ion_mode = "positive"
 ){
 
 	if( is.na( match(what, c("normalization", "counts")) ) ) stop("\n Wrong what argument in plot_ISTD_norm!")
@@ -37,7 +38,12 @@ function(
 			count_IS[2] <- length(int_norm_ISTD$lis_delint_IS[[k]])
 		}
 	}		
-	if( logfile$parameters$ISnorm_medblank == "TRUE" & length(int_norm_ISTD$lis_delint_b)){ # on blank
+	if( 
+		(
+			((logfile$parameters$ISnorm_medblank_pos == "TRUE") & (ion_mode == "positive") ) ||
+			((logfile$parameters$ISnorm_medblank_neg == "TRUE") & (ion_mode == "negative") )
+		) & length(int_norm_ISTD$lis_delint_b)
+	){ # on blank
 		for( k in 1:length(int_norm_ISTD$lis_delint_b) ){
 			if(length(int_norm_ISTD$lis_delint_b[[k]]) > 0){ 
 				if( median(int_norm_ISTD$lis_delint_b[[k]]) < ylimit_del[1] ){
@@ -55,7 +61,12 @@ function(
 			}
 		}
 	}	
-	if( logfile$parameters$ISnorm_medsam == "TRUE" & length(int_norm_ISTD$lis_delint_nb) ){ # on non-blank
+	if( 
+		(
+			((logfile$parameters$ISnorm_medsam_pos == "TRUE") & (ion_mode == "positive") ) ||
+			((logfile$parameters$ISnorm_medsam_neg == "TRUE") & (ion_mode == "negative") )
+		) & length(int_norm_ISTD$lis_delint_nb)
+	){ # on non-blank
 		for( k in 1:length(int_norm_ISTD$lis_delint_nb) ){
 			if(length(int_norm_ISTD$lis_delint_nb[[k]]) > 0){ 
 				if( median(int_norm_ISTD$lis_delint_nb[[k]]) < ylimit_del[1] ){
@@ -120,14 +131,26 @@ function(
 		for(k in 1:length(int_norm_ISTD$lis_delint_IS)){
 			points( rep(k, length(int_norm_ISTD$lis_delint_IS[[k]])), int_norm_ISTD$lis_delint_IS[[k]], pch = 19, cex=  0.6, col = "darkgrey" )
 		}		
-		if( (logfile$parameters$ISnorm_medblank == "TRUE") & length(int_norm_ISTD$lis_delint_b)){	
+		if( 
+			(
+				((logfile$parameters$ISnorm_medblank_pos == "TRUE") & (ion_mode == "positive") ) ||
+				((logfile$parameters$ISnorm_medblank_neg == "TRUE") & (ion_mode == "negative") )
+			) & length(int_norm_ISTD$lis_delint_b)
+		){ # on blank
+		#if( (logfile$parameters$ISnorm_medblank == "TRUE") & length(int_norm_ISTD$lis_delint_b)){	
 			for(k in 1:length(int_norm_ISTD$lis_delint_b)){
 				if(length(int_norm_ISTD$lis_delint_b[[k]]) > 0){
 					points(k, median(int_norm_ISTD$lis_delint_b[[k]]), pch = 21, cex = .9, bg = "blue")
 				}	
 			}
 		}
-		if( (logfile$parameters$ISnorm_medsam=="TRUE") & length(int_norm_ISTD$lis_delint_nb)){	
+		if( 
+			(
+				((logfile$parameters$ISnorm_medsam_pos == "TRUE") & (ion_mode == "positive") ) ||
+				((logfile$parameters$ISnorm_medsam_neg == "TRUE") & (ion_mode == "negative") )
+			) & length(int_norm_ISTD$lis_delint_nb)
+		){ # on non-blank
+		#if( (logfile$parameters$ISnorm_medsam=="TRUE") & length(int_norm_ISTD$lis_delint_nb)){	
 			for(k in 1:length(int_norm_ISTD$lis_delint_nb)){
 				if(length(int_norm_ISTD$lis_delint_nb[[k]]) > 0){ 
 					points(k, median(int_norm_ISTD$lis_delint_nb[[k]]), pch = 21, cex = .9, bg="green3")
@@ -186,11 +209,15 @@ function(
 		lines(countit, col = "red", lwd = 1.5)
 		abline(h = as.numeric(logfile$parameters$ISnorm_numbIS), col = "red", lwd = 1, lty = 2)
 		mtext("Number of IS peaks", side = 2, line = 2.5, col = "red", cex = 1)			
-		if( logfile$parameters$ISnorm_medblank=="TRUE" & length(int_norm_ISTD$lis_delint_b) ){	
+		if( 
+			(
+				((logfile$parameters$ISnorm_medblank_pos == "TRUE") & (ion_mode == "positive") ) ||
+				((logfile$parameters$ISnorm_medblank_neg == "TRUE") & (ion_mode == "negative") )
+			) & length(int_norm_ISTD$lis_delint_b)
+		){ # on blank
+		#if( logfile$parameters$ISnorm_medblank=="TRUE" & length(int_norm_ISTD$lis_delint_b) ){	
 			plot.window( xlim = use_xlim, ylim = c(count_b[1] - 1, count_b[2] + 1) )	
 			countit <- c()	
-			
-			
 			for( k in 1:length(int_norm_ISTD$lis_delint_b) ){
 				countit <- c(countit, length(int_norm_ISTD$lis_delint_b[[k]]))	
 			}
@@ -198,7 +225,13 @@ function(
 			axis(4, col="blue", col.ticks = "blue", col.axis = "blue", cex.axis = .9)
 			mtext("Number of blank peaks", side = 4, line = 2.3, col = "blue", cex = 1)
 		}
-		if( logfile$parameters$ISnorm_medsam == "TRUE" & length(int_norm_ISTD$lis_delint_nb) ){	
+		if( 
+			(
+				((logfile$parameters$ISnorm_medsam_pos == "TRUE") & (ion_mode == "positive") ) ||
+				((logfile$parameters$ISnorm_medsam_neg == "TRUE") & (ion_mode == "negative") )
+			) & length(int_norm_ISTD$lis_delint_nb)
+		){ # on non-blank	
+		#if( logfile$parameters$ISnorm_medsam == "TRUE" & length(int_norm_ISTD$lis_delint_nb) ){	
 			plot.window( xlim = use_xlim, ylim = c(count_nb[1] - 1, count_nb[2] + 1) )	
 			countit <- c()	
 			for( k in 1:length(int_norm_ISTD$lis_delint_nb) ){

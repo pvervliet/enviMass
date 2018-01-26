@@ -678,7 +678,7 @@ addmeasu <- reactive({
 							custom_ID<-as.character(isolate(input$Measadd_ID2))
 						}
 						if(isolate(input$Measadd_type)=="spiked"){
-							use_profiling<-"FALSE"
+							use_profiling <- "TRUE"
 							start_date<-as.character(isolate(input$Measadd_recov_date)) # anything
 							start_time<-as.character(isolate(input$Measadd_recov_time)) # anything	
 							tag1<-"FALSE"
@@ -822,7 +822,7 @@ addmeasu <- reactive({
 						custom_ID<-as.character(isolate(input$Measadd_ID2))
 					}
 					if(isolate(input$Measadd_type)=="spiked"){
-						use_profiling<-"FALSE"
+						use_profiling<-"TRUE"
 						start_date<-as.character(isolate(input$Measadd_recov_date)) # anything
 						start_time<-as.character(isolate(input$Measadd_recov_time)) # anything	
 						tag1<-"FALSE"
@@ -1281,7 +1281,7 @@ observe({
 				custom_ID<-as.character(isolate(input$Modif_ID2))
 			}
 			if(isolate(input$Modif_type)=="spiked"){ 
-				use_profiling<-"FALSE"
+				use_profiling<-"TRUE"
 				start_date<-as.character(isolate(input$Modif_recov_date))
 				start_time<-as.character(isolate(input$Modif_recov_time))
 				tag1<-"FALSE"				
