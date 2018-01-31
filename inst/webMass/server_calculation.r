@@ -155,9 +155,24 @@ maincalc <- reactive({
 		if(do_flow == (length(logfile$summary[,1]) + 2)){
 			output$summa_html <<- renderText(enviMass::summary_html(logfile$summary));
 			measurements <- read.csv(file = file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character")
-			output$measurements <<- DT::renderDataTable( # in case a node deletes "measurements" and the table output is still waiting
-				measurements[,c("ID", "Name", "Type", "Mode", "Place", "Date", "Time", "include", "profiled", "tag1", "tag2", "tag3", "date_end", "time_end", "ID_2")]
-			); 	
+			measurements_tab <- measurements # because measurements[,"ID"] used further down!
+			measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+			measurements_tab <- DT::datatable(
+				measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+					"tag2","tag3","date_end","time_end","ID_2")],
+				extensions = c('Buttons','ColReorder','FixedHeader'),
+				rownames = FALSE,
+				options = list(
+					lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+					fixedHeader = TRUE,
+					ordering = T,
+					dom = 'Blfrtip',
+					buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)					
+			)
+			output$measurements <- DT::renderDataTable(measurements_tab); 		
 		}
         if(do_flow < (length(logfile$summary[,1]) + 3)){
 			invalidateLater(1, session=NULL)

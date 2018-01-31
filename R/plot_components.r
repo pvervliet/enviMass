@@ -160,9 +160,9 @@ plot_components<-function(
 			}
 			if(j==this){
 				if(sum(all_int!=0)>1){
-					lines(samp[all_int!=0],(all_int)[all_int!=0],col="red",lwd=2.5)
+					lines(samp[all_int!=0],(all_int)[all_int!=0],col="darkgreen",lwd=2.5)
 				}else{
-					points(samp[all_int!=0],(all_int)[all_int!=0],col="red",pch=19)
+					points(samp[all_int!=0],(all_int)[all_int!=0],col="darkgreen",pch=19)
 				}
 			}
 		}	

@@ -57,6 +57,7 @@ observe({
 		#############################################################################
 		# adjust task/workflow settings #############################################
 		enviMass::workflow_set(logfile,down="pattern")		  
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		#############################################################################			
 		output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		logfile[[2]][3:7]<<-rep(TRUE,length(3:7));
@@ -169,6 +170,7 @@ observe({
 		)
 		write.table(IS_mod,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 		enviMass::workflow_set(logfile,down="pattern")
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		output$dowhat<-renderText("Modified an IS entry");
 		if(say != "Project consistent"){
@@ -239,6 +241,7 @@ observe({
 				#############################################################################
 				# adjust task/workflow settings #############################################
 				enviMass::workflow_set(logfile,down="pattern")	
+				output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 				####################################################################
 				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
 				output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
@@ -284,6 +287,7 @@ observe({
 		#############################################################################
 		# adjust task/workflow settings #############################################
 		enviMass::workflow_set(logfile,down="pattern")	
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		####################################################################
 		output$IS<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
@@ -355,6 +359,7 @@ observe({
 		#############################################################################
 		# adjust task/workflow settings #############################################
 		enviMass::workflow_set(logfile,down="pattern")	
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		#############################################################################			
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
 		output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
@@ -472,6 +477,7 @@ observe({
 		)
 		write.table(target_mod,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
 		enviMass::workflow_set(logfile,down="pattern")
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
 		output$dowhat<-renderText("Modified a target entry");
 		if(say!="Project consistent"){
@@ -545,6 +551,7 @@ observe({
 				#############################################################################
 				# adjust task/workflow settings #############################################
 				enviMass::workflow_set(logfile,down="pattern")	
+				output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 				####################################################################
 				save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));   
 				output$targets<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));
@@ -593,6 +600,7 @@ observe({
 		#############################################################################
 		# adjust task/workflow settings #############################################
 		enviMass::workflow_set(logfile,down="pattern")	
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		#############################################################################			
 		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      	  
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
@@ -705,18 +713,31 @@ addmeasu <- reactive({
 							custom_ID,
 							"FALSE"							
 						)
-						measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
-						names(measurements3)<-nameit;
-						measurements3[,"Date"]<-enviMass::convDate(measurements3[,"Date"]);
-						measurements3[,"date_end"]<-enviMass::convDate(measurements3[,"date_end"]);
-						write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
+						measurements3 <- rbind(measurements2, measurements1, stringsAsFactors = FALSE);
+						names(measurements3) <- nameit;
+						measurements3[,"Date"] <- enviMass::convDate(measurements3[,"Date"]);
+						measurements3[,"date_end"] <- enviMass::convDate(measurements3[,"date_end"]);
+						write.csv(measurements3, file = file.path(logfile[[1]],"dataframes","measurements"), row.names = FALSE);
 						rm(measurements1,measurements2,measurements3);
-						measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-						measurements<-measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2"),drop=FALSE]
-						measurements_html<-DT::datatable(measurements)
-						output$measurements<-renderDataTable(
-							measurements_html, quoted = FALSE
-						); 
+						measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character")
+						measurements_tab <- measurements # because measurements[,"ID"] used further down!
+						measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+						measurements_tab <- DT::datatable(
+							measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+								"tag2","tag3","date_end","time_end","ID_2")],
+							extensions = c('Buttons','ColReorder','FixedHeader'),
+							rownames = FALSE,
+							options = list(
+								lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+								fixedHeader = TRUE,
+								ordering = T,
+								dom = 'Blfrtip',
+								buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+								scrollX = TRUE,
+								colReorder = TRUE
+							)					
+						)
+						output$measurements <- DT::renderDataTable(measurements_tab); 					
 						#############################################################################
 						# adjust task/workflow settings #############################################
 						doit<-as.character(isolate(input$Measadd_incl))
@@ -724,10 +745,12 @@ addmeasu <- reactive({
 						if(doit=="TRUE"){
 							if( isolate(input$Measadd_type)!="calibration" ){ # exclude calibration
 								enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+								output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 							}
 							if( isolate(input$Measadd_type)=="calibration" ){ # still, do everything
 								enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
-								enviMass::workflow_set(logfile,down="calibration",single_file=TRUE)									
+								enviMass::workflow_set(logfile,down="calibration",single_file=TRUE)			
+								output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));								
 							}						
 						}
 						#############################################################################			
@@ -775,7 +798,7 @@ addmeasu <- reactive({
 						rm(measurements)
 						save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
 						#########################################################################
-						output$dowhat<-renderText("Measurement added");
+						output$dowhat <- renderText("Measurement added");
 						cat("Measurement added\n")
 						return("Measurement added\n")
 					}else{
@@ -789,50 +812,50 @@ addmeasu <- reactive({
 					return("Path to PW MSConvert invalid")
 				}
 			}else{ #ok
-				measurements1<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				nameit<-names(measurements1);
-				measurements1<-measurements1[measurements1[,"ID"]!="-",]		
-				newID<-getID(as.numeric(measurements1[,"ID"]))
+				measurements1 <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				nameit <- names(measurements1);
+				measurements1 <- measurements1[measurements1[,"ID"] != "-",]		
+				newID <- getID(as.numeric(measurements1[,"ID"]))
 				file.copy(
-					from=isolate(input$Measadd_path[[4]]),
-					to=file.path(logfile[[1]],"files",paste(as.character(newID),".mzXML",sep="")),
-					overwrite=TRUE);
+					from = isolate(input$Measadd_path[[4]]),
+					to = file.path(logfile[[1]], "files", paste(as.character(newID), ".mzXML", sep = "")),
+					overwrite = TRUE);
 				file.remove(isolate(input$Measadd_path[[4]]));
 				if( (file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")))) || (file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))))){
 					if(isolate(input$Measadd_type)=="calibration"){ # default for calibration files: no profiling!
-						use_profiling<-"FALSE"
-						start_date<-as.character(isolate(input$Measadd_cal_date1))
-						start_time<-as.character(isolate(input$Measadd_cal_time1))
-						tag1<-as.character(isolate(input$Measadd_tag1))
-						tag2<-as.character(isolate(input$Measadd_tag2))
-						tag3<-"FALSE"
-						end_date<-as.character(isolate(input$Measadd_cal_date2))
-						end_time<-as.character(isolate(input$Measadd_cal_time2))
-						custom_ID<-as.character(isolate(input$Measadd_cal_ID2))
+						use_profiling <- "FALSE"
+						start_date <- as.character(isolate(input$Measadd_cal_date1))
+						start_time <- as.character(isolate(input$Measadd_cal_time1))
+						tag1 <- as.character(isolate(input$Measadd_tag1))
+						tag2 <- as.character(isolate(input$Measadd_tag2))
+						tag3 <- "FALSE"
+						end_date <- as.character(isolate(input$Measadd_cal_date2))
+						end_time <- as.character(isolate(input$Measadd_cal_time2))
+						custom_ID <- as.character(isolate(input$Measadd_cal_ID2))
 					}
-					if(isolate(input$Measadd_type)=="sample" || isolate(input$Measadd_type)=="blank"){
-						use_profiling<-as.character(isolate(input$Measadd_profiled))
-						start_date<-as.character(isolate(input$Measadd_date))
-						start_time<-as.character(isolate(input$Measadd_time))
-						tag1<-"FALSE"						
-						tag2<-"FALSE"
-						tag3<-as.character(isolate(input$Measadd_tag3))
-						end_date<-"FALSE"
-						end_time<-"FALSE"
-						custom_ID<-as.character(isolate(input$Measadd_ID2))
+					if(isolate(input$Measadd_type) == "sample" || isolate(input$Measadd_type) == "blank"){
+						use_profiling <- as.character(isolate(input$Measadd_profiled))
+						start_date <- as.character(isolate(input$Measadd_date))
+						start_time <- as.character(isolate(input$Measadd_time))
+						tag1 <- "FALSE"						
+						tag2 <- "FALSE"
+						tag3 <- as.character(isolate(input$Measadd_tag3))
+						end_date <- "FALSE"
+						end_time <- "FALSE"
+						custom_ID <- as.character(isolate(input$Measadd_ID2))
 					}
-					if(isolate(input$Measadd_type)=="spiked"){
-						use_profiling<-"TRUE"
-						start_date<-as.character(isolate(input$Measadd_recov_date)) # anything
-						start_time<-as.character(isolate(input$Measadd_recov_time)) # anything	
-						tag1<-"FALSE"
-						tag2<-as.character(isolate(input$Measadd_spiked_tag2))
-						tag3<-"FALSE"
-						end_date<-"FALSE"
-						end_time<-"FALSE"
-						custom_ID<-as.character(isolate(input$Measadd_recov_ID2))
+					if(isolate(input$Measadd_type) == "spiked"){
+						use_profiling <- "TRUE"
+						start_date <- as.character(isolate(input$Measadd_recov_date)) # anything
+						start_time <- as.character(isolate(input$Measadd_recov_time)) # anything	
+						tag1 <- "FALSE"
+						tag2 <- as.character(isolate(input$Measadd_spiked_tag2))
+						tag3 <- "FALSE"
+						end_date <- "FALSE"
+						end_time <- "FALSE"
+						custom_ID <- as.character(isolate(input$Measadd_recov_ID2))
 					}
-					measurements2<-c(
+					measurements2 <- c(
 						as.character(newID),
 						as.character(isolate(input$Measadd_name)),
 						as.character(isolate(input$Measadd_type)),
@@ -848,29 +871,44 @@ addmeasu <- reactive({
 						"FALSE","FALSE","FALSE","FALSE","FALSE",
 						custom_ID,"FALSE"
 					)
-					measurements3<-rbind(measurements2,measurements1,stringsAsFactors=FALSE);
-					names(measurements3)<-nameit;
-					measurements3[,"Date"]<-enviMass::convDate(measurements3[,"Date"]);
-					measurements3[,"date_end"]<-enviMass::convDate(measurements3[,"date_end"]);
-					write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-					rm(measurements1,measurements2,measurements3);
-					measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-					measurements<-measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2"),drop=FALSE]
-					measurements_html<-DT::datatable(measurements)
-					output$measurements<<-DT::renderDataTable(
-						measurements_html
-					); 
+					measurements3 <- rbind(measurements2,measurements1,stringsAsFactors=FALSE);
+					names(measurements3) <- nameit;
+					measurements3[,"Date"] <- enviMass::convDate(measurements3[,"Date"]);
+					measurements3[,"date_end"] <- enviMass::convDate(measurements3[,"date_end"]);
+					write.csv(measurements3, file = file.path(logfile[[1]],"dataframes","measurements"), row.names = FALSE);
+					rm(measurements1, measurements2, measurements3);
+					measurements <- read.csv(file = file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character")
+					measurements_tab <- measurements # because measurements[,"ID"] used further down!
+					measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+					measurements_tab <- DT::datatable(
+						measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+							"tag2","tag3","date_end","time_end","ID_2")],
+						extensions = c('Buttons','ColReorder','FixedHeader'),
+						rownames = FALSE,
+						options = list(
+							lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+							fixedHeader = TRUE,
+							ordering = T,
+							dom = 'Blfrtip',
+							buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+							scrollX = TRUE,
+							colReorder = TRUE
+						)					
+					)
+					output$measurements <- DT::renderDataTable(measurements_tab); 		
 					#############################################################################
 					# adjust task/workflow settings #############################################
 					doit<-as.character(isolate(input$Measadd_incl))
 					doit<<-as.character(isolate(input$Measadd_incl))
 					if(doit=="TRUE"){
 						if( isolate(input$Measadd_type)!="calibration" ){ # exclude calibration
-							enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+							enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")
+							output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));							
 						}
 						if( isolate(input$Measadd_type)=="calibration" ){ # still, do everything
 							enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)	
 							enviMass::workflow_set(logfile,down="calibration",single_file=TRUE)
+							output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 						}						
 					}
 					#############################################################################			
@@ -976,10 +1014,12 @@ observe({
 		if(adjustit=="TRUE"){
 			if(delete_type!="calibration"){ # exclude calibration
 				enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE,except="calibration")	
+				output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 			}
 			if(delete_type=="calibration"){ # still, do everything
 				enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)
 				enviMass::workflow_set(logfile,down="calibration",single_file=TRUE)
+				output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 			}
 		}	
 		#########################################################################			
@@ -1068,10 +1108,25 @@ observe({
 		#############################################################################
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
         #############################################################################			
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-		output$measurements<<-DT::renderDataTable(
-			measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-		); 
+		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+		measurements_tab <- measurements # because measurements[,"ID"] = character
+		measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+		measurements_tab <- DT::datatable(
+			measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+				"tag2","tag3","date_end","time_end","ID_2")],
+			extensions = c('Buttons','ColReorder','FixedHeader'),
+			rownames = FALSE,
+			options = list(
+				lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+				fixedHeader = TRUE,
+				ordering = T,
+				dom = 'Blfrtip',
+				buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+				scrollX = TRUE,
+				colReorder = TRUE
+			)					
+		)
+		output$measurements <- DT::renderDataTable(measurements_tab); 		
         save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));      
         output$dowhat<-renderText("Measurement deleted");
       }else{
@@ -1143,12 +1198,27 @@ impproj<-reactive({
 				measurements_1<-measurements_1[measurements_1[,"ID"]!="-",]
 			}
 			write.csv(measurements_1,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-			output$measurements<<-DT::renderDataTable(
-				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-			); 
-			rm(measurements_1,measurements_2);
-			enviMass::workflow_set(logfile,down="peakpicking",single_file=TRUE)			
+			measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character")
+			measurements_tab <- measurements # because measurements[,"ID"] = character
+			measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+			measurements_tab <- DT::datatable(
+				measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+					"tag2","tag3","date_end","time_end","ID_2")],
+				extensions = c('Buttons','ColReorder','FixedHeader'),
+				rownames = FALSE,
+				options = list(
+					lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+					fixedHeader = TRUE,
+					ordering = T,
+					dom = 'Blfrtip',
+					buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)					
+			)
+			output$measurements <- DT::renderDataTable(measurements_tab); 		
+			rm(measurements_1, measurements_2);
+			enviMass::workflow_set(logfile, down = "peakpicking", single_file = TRUE)
 			#########################################################################			
 			# subtraction files, positive: ##########################################
 			measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -1247,7 +1317,7 @@ observe({
 		}else{
 			updateTextInput(session,"Modif_name",value = "INVALID ID")		
 			updateTextInput(session,"Modif_place",value = "INVALID ID")
-			updateTextInput(session,"Modif_tag3",value = "INVALID ID")			
+			updateTextInput(session,"Modif_tag3",value = "INVALID ID")
 		}
 	}
 })  
@@ -1311,10 +1381,25 @@ observe({
 			output$dowhat<-renderText("Specifications saved to file table.");
 			cat("\n specifications exported from mask to file table")
 			rm(measurements3)
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-			output$measurements<<-DT::renderDataTable(
-				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-			);
+			measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+			measurements_tab <- measurements # because measurements[,"ID"] = character
+			measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+			measurements_tab <- DT::datatable(
+				measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+					"tag2","tag3","date_end","time_end","ID_2")],
+				extensions = c('Buttons','ColReorder','FixedHeader'),
+				rownames = FALSE,
+				options = list(
+					lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+					fixedHeader = TRUE,
+					ordering = T,
+					dom = 'Blfrtip',
+					buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)					
+			)
+			output$measurements <- DT::renderDataTable(measurements_tab); 		
 			######################################################################			
 			# subtraction files, positive: #######################################
 			measurements3<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
@@ -1449,13 +1534,29 @@ observe({
 			if( any_include & any_calibrated ){ # included & calibration models exist? Changed time period only affects quantification, calibration models remain the same
 				enviMass::workflow_set(down="quantification",check_node=TRUE,check_TP=c("TRUE"))	
 				enviMass::workflow_set(down="calibration")	
+				output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 				enviMass::reset_selections(session)				
 			}	
 			############################################################################
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-			output$measurements<<-DT::renderDataTable(
-				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-			); 
+			measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+			measurements_tab <- measurements # because measurements[,"ID"] = character
+			measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+			measurements_tab <- DT::datatable(
+				measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+					"tag2","tag3","date_end","time_end","ID_2")],
+				extensions = c('Buttons','ColReorder','FixedHeader'),
+				rownames = FALSE,
+				options = list(
+					lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+					fixedHeader = TRUE,
+					ordering = T,
+					dom = 'Blfrtip',
+					buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)					
+			)
+			output$measurements <- DT::renderDataTable(measurements_tab); 		
 			output$Modif_cal_text_load<-renderText({"Modified specifications saved."})
 			cat("\n Changed calibration group specifications.")
 		}else{
@@ -1586,12 +1687,28 @@ observe({
 			############################################################################
 			enviMass::workflow_set(down="LOD",single_file=TRUE)
 			enviMass::workflow_set(down="calibration",single_file=TRUE)
+			output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 			enviMass::reset_selections(session)
 			############################################################################
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-			output$measurements<<-DT::renderDataTable(
-				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-			);
+			measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+			measurements_tab <- measurements # because measurements[,"ID"] = character
+			measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+			measurements_tab <- DT::datatable(
+				measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+					"tag2","tag3","date_end","time_end","ID_2")],
+				extensions = c('Buttons','ColReorder','FixedHeader'),
+				rownames = FALSE,
+				options = list(
+					lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+					fixedHeader = TRUE,
+					ordering = T,
+					dom = 'Blfrtip',
+					buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)					
+			)
+			output$measurements <- DT::renderDataTable(measurements_tab); 		
 			cat("Calibration file set copied.")
 			output$Modif_cal_text_load<-renderText({"Calibration file set copied."})
 			enviMass::reset_selections(session)
@@ -1679,13 +1796,29 @@ observe({
 			if(any_include){ # included & calibration models exist?
 				enviMass::workflow_set(down="quantification",check_node=TRUE,check_TP=c("TRUE"))	# is this optional? after all, the sets are just removed ...
 				enviMass::workflow_set(down="calibration")
+				output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 				enviMass::reset_selections(session) # stops, in combination with Tasks_to_redo, invalid selections in the calibration tab!
 			}	
 			############################################################################
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-			output$measurements<<-DT::renderDataTable(
-				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-			); 
+			measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+			measurements_tab <- measurements # because measurements[,"ID"] = character
+			measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+			measurements_tab <- DT::datatable(
+				measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+					"tag2","tag3","date_end","time_end","ID_2")],
+				extensions = c('Buttons','ColReorder','FixedHeader'),
+				rownames = FALSE,
+				options = list(
+					lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+					fixedHeader = TRUE,
+					ordering = T,
+					dom = 'Blfrtip',
+					buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)					
+			)
+			output$measurements <- DT::renderDataTable(measurements_tab); 		
 			output$Modif_cal_text_load<-renderText({"Calibration group deleted."})
 			enviMass::reset_selections(session)
 			cat("\n Calibration group deleted.")
@@ -1784,10 +1917,25 @@ impfolder<-reactive({
 							write.csv(measurements3,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 							rm(measurements1,measurements2,measurements3);
 							#############################################################################			
-							measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-							output$measurements <<- DT::renderDataTable(
-								measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-							);
+							measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
+							measurements_tab <- measurements # because measurements[,"ID"] = character
+							measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+							measurements_tab <- DT::datatable(
+								measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+									"tag2","tag3","date_end","time_end","ID_2")],
+								extensions = c('Buttons','ColReorder','FixedHeader'),
+								rownames = FALSE,
+								options = list(
+									lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+									fixedHeader = TRUE,
+									ordering = T,
+									dom = 'Blfrtip',
+									buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+									scrollX = TRUE,
+									colReorder = TRUE
+								)					
+							)
+							output$measurements <- DT::renderDataTable(measurements_tab); 		
 							save(logfile, file = file.path(as.character(logfile[[1]]),"logfile.emp"));      
 							output$dowhat <- renderText("Files copied");
 							cat(" - file copied")
@@ -1851,9 +1999,24 @@ impfolder<-reactive({
 								rm(measurements1, measurements2, measurements3);
 								#############################################################################			
 								measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character")
-								output$measurements <<- DT::renderDataTable(
-									measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-								);
+								measurements_tab <- measurements # because measurements[,"ID"] = character
+								measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+								measurements_tab <- DT::datatable(
+									measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+										"tag2","tag3","date_end","time_end","ID_2")],
+									extensions = c('Buttons','ColReorder','FixedHeader'),
+									rownames = FALSE,
+									options = list(
+										lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+										fixedHeader = TRUE,
+										ordering = T,
+										dom = 'Blfrtip',
+										buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+										scrollX = TRUE,
+										colReorder = TRUE
+									)					
+								)
+								output$measurements <- DT::renderDataTable(measurements_tab); 		
 								save(logfile,file = file.path(as.character(logfile[[1]]),"logfile.emp"));      
 								output$dowhat <- renderText("Files copied");
 								cat(" - file copied")
@@ -1934,6 +2097,7 @@ observe({
 				source("server_variables_in.R", local=TRUE)
 				output$dowhat<<-renderText("Parameters imported.");
 				enviMass::workflow_set(down="peakpicking",single_file=FALSE) # reset the whole workflow ... could be improved ...
+				output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 				enviMass::reset_selections(session)
 				###############################################################
 				cat(" done. \n")

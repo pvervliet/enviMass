@@ -71,8 +71,8 @@ profiles_to_matrix <- function(
 	keep <- rep(TRUE,len)
 	profile_IDs <- profileList[["index_prof"]][,"profile_ID"]
     # filter out profiles which do not contain sample peaks ####################
-	if(only_sample_peaks){	
-		keep[profileList[["index_prof"]][,"number_peaks_sample"]==0] <- FALSE
+	if(only_sample_peaks){
+		keep[profileList[["index_prof"]][,"number_peaks_sample"] == 0] <- FALSE
 	}
 	# filter out profiles which range not above blind intensities ##############
 	if(!is.null(mean_above_blind)[1]){
@@ -96,6 +96,7 @@ profiles_to_matrix <- function(
 		}
 	}
     # sort #####################################################################	
+	if(!sum(keep)) stop("\n profile_to_matrix: there are no profiles remaining with these settings - please revise!")
 	max_ord <- profileList[["index_prof"]][,sort_by,drop=FALSE]
 	profile_IDs <- profile_IDs[keep]
 	max_ord <- max_ord[keep,,drop=FALSE]

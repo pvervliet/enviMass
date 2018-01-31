@@ -250,9 +250,9 @@
 										}
 									}
 									# make entries for further below usage in summary table
-									if(length(get_conc)==0){next}
+									if(length(get_conc) == 0){next}
 									for(a in 1:length(get_conc)){
-											res_target_pos_screen[[i]][[j]][[for_k[a]]]$conc<-c(
+											res_target_pos_screen[[i]][[j]][[for_k[a]]]$conc <- c(
 												res_target_pos_screen[[i]][[j]][[for_k[a]]]$conc,
 												get_conc[a]
 											)
@@ -263,16 +263,16 @@
 									}																	
 									if(length(get_conc)==0){next}
 									#if(length(get_conc)>1){stop()}
-									get_conc<-round(get_conc,digits=4)
-									get_conc<-unique(get_conc)							
-									at_3<-which(those_targets$ID==at_ID)
-									target_quant_table_pos_warn[at_1,at_2]<-"1"
-									warn_conc_1<-those_targets$warn_1[at_3]
-									if(warn_conc_1!="FALSE"){
-										warn_conc_1<-as.numeric(warn_conc_1)
+									get_conc <- round(get_conc, digits = as.numeric(logfile$parameters$quant_digits))
+									get_conc <- unique(get_conc)							
+									at_3 <- which(those_targets$ID==at_ID)
+									target_quant_table_pos_warn[at_1, at_2] <- "1"
+									warn_conc_1 <- those_targets$warn_1[at_3]
+									if(warn_conc_1 != "FALSE"){
+										warn_conc_1 <- as.numeric(warn_conc_1)
 										#if(any(get_conc>=warn_conc_1)){
-										if(any(get_conc[1]>=warn_conc_1)){
-											target_quant_table_pos_warn[at_1,at_2]<-"2"																				
+										if(any(get_conc[1] >= warn_conc_1)){
+											target_quant_table_pos_warn[at_1,at_2] <- "2"																				
 										}
 									}
 									warn_conc_2<-those_targets$warn_2[at_3]
@@ -409,7 +409,7 @@
 					if( is.na(results_screen_target_pos[[1]][at_entry,11]) ){
 						results_screen_target_pos[[1]][at_entry,11]<-round(
 							res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
-							digits=3)
+							digits = as.numeric(logfile$parameters$quant_digits))
 					}else{
 						if(
 							results_screen_target_pos[[1]][at_entry,11]<
@@ -423,7 +423,7 @@
 						if( is.na(results_screen_target_pos[[1]][at_entry,12]) ){
 							results_screen_target_pos[[1]][at_entry,12]<-round(
 								res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
-								digits=3)
+								digits = as.numeric(logfile$parameters$quant_digits))
 						}else{
 							if(
 								results_screen_target_pos[[1]][at_entry,12]<
@@ -439,7 +439,7 @@
 					if( is.na(results_screen_target_pos[[2]][at_entry,8]) ){
 						results_screen_target_pos[[2]][at_entry,8]<-round(
 							res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
-							digits=3)
+							digits = as.numeric(logfile$parameters$quant_digits))
 					}else{
 						if(
 							results_screen_target_pos[[2]][at_entry,8]<
@@ -453,7 +453,7 @@
 						if( is.na(results_screen_target_pos[[2]][at_entry,9]) ){
 							results_screen_target_pos[[2]][at_entry,9]<-round(
 								res_target_pos_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
-								digits=3)
+								digits = as.numeric(logfile$parameters$quant_digits))
 						}else{
 							if(
 								results_screen_target_pos[[2]][at_entry,9]<
@@ -716,7 +716,7 @@
 									}																	
 									if(length(get_conc)==0){next}
 									#if(length(get_conc)>1){stop()}
-									get_conc<-round(get_conc,digits=4)
+									get_conc<-round(get_conc,digits = as.numeric(logfile$parameters$quant_digits))
 									get_conc<-unique(get_conc)							
 									at_3<-which(those_targets$ID==at_ID)
 									target_quant_table_neg_warn[at_1,at_2]<-"1"
@@ -860,7 +860,7 @@
 					if( is.na(results_screen_target_neg[[1]][at_entry,11]) ){
 						results_screen_target_neg[[1]][at_entry,11]<-round(
 							res_target_neg_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
-							digits=3)
+							digits = as.numeric(logfile$parameters$quant_digits))
 					}else{
 						if(
 							results_screen_target_neg[[1]][at_entry,11]<
@@ -874,7 +874,7 @@
 						if( is.na(results_screen_target_neg[[1]][at_entry,12]) ){
 							results_screen_target_neg[[1]][at_entry,12]<-round(
 								res_target_neg_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
-								digits=3)
+								digits = as.numeric(logfile$parameters$quant_digits))
 						}else{
 							if(
 								results_screen_target_neg[[1]][at_entry,12]<
@@ -890,7 +890,7 @@
 					if( is.na(results_screen_target_neg[[2]][at_entry,8]) ){
 						results_screen_target_neg[[2]][at_entry,8]<-round(
 							res_target_neg_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
-							digits=3)
+							digits = as.numeric(logfile$parameters$quant_digits))
 					}else{
 						if(
 							results_screen_target_neg[[2]][at_entry,8]<
@@ -904,7 +904,7 @@
 						if( is.na(results_screen_target_neg[[2]][at_entry,9]) ){
 							results_screen_target_neg[[2]][at_entry,9]<-round(
 								res_target_neg_screen [[ found_which[[m]][1] ]] [[ found_which[[m]][2] ]] [[ found_which[[m]][3] ]]$conc[n],
-								digits=3)
+								digits = as.numeric(logfile$parameters$quant_digits))
 						}else{
 							if(
 								results_screen_target_neg[[2]][at_entry,9]<

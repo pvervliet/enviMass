@@ -28,8 +28,8 @@ if(
 ){
 
 	##############################################################################
-	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="profileList_neg")){rm(profileList_pos)}	
+	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){rm(profileList_neg,envir=as.environment(".GlobalEnv"))}
+	if(any(objects()=="profileList_neg")){rm(profileList_neg)}	
 	load(file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));
 	##############################################################################
 	profileList_neg[["index_prof"]][,"above_blind?"]<-Inf

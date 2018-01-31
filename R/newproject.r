@@ -210,6 +210,7 @@ newproject <- function(
 		logfile$parameters$prof_comp_maxfiles <- "15"
 		logfile$parameters$prof_select <- "TRUE";		
 		logfile$parameters$replicates_prof <- "yes";		
+		logfile$parameters$replicates_mean_prof <- "TRUE";				
 		# IS screening #########################################################
 		logfile$parameters$IS_drt1 <- "30"; 			# RT tolerance of peaks in sample relative to their expected RT [s]
 		logfile$parameters$IS_drt2 <- "10"; 			# RT tolerance of peaks within an isotope pattern [s]
@@ -263,6 +264,7 @@ newproject <- function(
 		# quantification #######################################################
 		logfile$parameters$quant_files_included <- "100"
 		logfile$parameters$recov_files_included <- "20"
+		logfile$parameters$quant_digits <- "2"		
 		# isotopologue grouping ################################################		
 		logfile$parameters$isotop_mztol <- "2.5"
 		logfile$parameters$isotop_ppm <- "TRUE"

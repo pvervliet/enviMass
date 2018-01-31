@@ -36,9 +36,24 @@ observe({
 				output$IS <- DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
 				output$targets <- DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
 				measurements <- read.csv(file=file.path(logfile$project_folder,"dataframes","measurements"),colClasses = "character")
-				output$measurements <<- DT::renderDataTable(
-					measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-				); 
+				measurements_tab <- measurements # because measurements[,"ID"] = character
+				measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+				measurements_tab <- DT::datatable(
+					measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+						"tag2","tag3","date_end","time_end","ID_2")],
+					extensions = c('Buttons','ColReorder','FixedHeader'),
+					rownames = FALSE,
+					options = list(
+						lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+						fixedHeader = TRUE,
+						ordering = T,
+						dom = 'Blfrtip',
+						buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+						scrollX = TRUE,
+						colReorder = TRUE
+					)					
+				)
+				output$measurements <- DT::renderDataTable(measurements_tab); 		
 				output$sel_meas_comp_state<-renderText("")
 				# SET DUMMY RESULTS ####################################################
 				enviMass::reset_selections(session)
@@ -180,10 +195,25 @@ maincalc2<-reactive({
 			output$dowhat <- renderText("Opened existing project");
 			output$IS <- DT::renderDataTable(read.table(file = file.path(logfile$project_folder, "dataframes", "IS.txt"), header = TRUE, sep = "\t", colClasses = "character"));
 			output$targets <- DT::renderDataTable(read.table(file = file.path(logfile$project_folder, "dataframes", "targets.txt"), header = TRUE, sep = "\t", colClasses = "character"));              
-			measurements <- read.csv(file = file.path(logfile$project_folder, "dataframes", "measurements"), colClasses = "character")
-			output$measurements <<- DT::renderDataTable(
-				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-			); 
+			measurements <- read.csv(file = file.path(logfile$project_folder, "dataframes", "measurements"), colClasses = "character")			
+			measurements_tab <- measurements # because measurements[,"ID"] = character
+			measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+			measurements_tab <- DT::datatable(
+				measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+					"tag2","tag3","date_end","time_end","ID_2")],
+				extensions = c('Buttons','ColReorder','FixedHeader'),
+				rownames = FALSE,
+				options = list(
+					lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+					fixedHeader = TRUE,
+					ordering = T,
+					dom = 'Blfrtip',
+					buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)					
+			)
+			output$measurements <- DT::renderDataTable(measurements_tab); 		
 			output$sel_meas_comp_state <- renderText("")
 			# RETRIEVE RESULTS #####################################################
 			enviMass::reset_selections(session)

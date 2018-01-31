@@ -1772,6 +1772,7 @@ if(logfile$version<3.28){
 		check_node=TRUE, 	
 		single_file=FALSE
 	)
+	output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 	shinyjs::info(paste0("Sample peaklists now contain intensity ratios above blind - please press the Calculate button any time soon to make these changes permanent to your project results (entails a project recalculation except peakpicking)!"));
 	################################################################################################	
 	logfile$version<<-3.28
@@ -1896,6 +1897,7 @@ if(logfile$version<3.3){
 		check_node=TRUE, 	
 		single_file=FALSE
 	)
+	output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 	shinyjs::info(paste0("Profile list structure has been modified for profile componentization &  new filtering functionalities - please press the Calculate button any time soon to make these changes permanent to your project results (entails a project recalculation except peakpicking)!"));
 	################################################################################################	
 	logfile$version<<-3.3
@@ -1995,6 +1997,7 @@ if(logfile$version<3.311){
 			check_node=TRUE, 	
 			single_file=FALSE
 		)		
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		shinyjs::info(paste0("Important patch in blind subtraction/annotation step - please recalculate your project!"));
 	}
 	################################################################################################	
@@ -2079,6 +2082,7 @@ if(logfile$version < 3.4){
 			check_node=TRUE, 	
 			single_file=FALSE
 		)		
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		shinyjs::info(paste0("Peak intensity distribution checks now run as default - please recalculate your project!"));
 		
 	}
@@ -2190,6 +2194,7 @@ if(logfile$version < 3.412){
 		check_node=TRUE, 	
 		single_file=FALSE
 	)		
+	output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 	shinyjs::info(paste0("Please recalculate your project by pressing the Calculate button."));
 	################################################################################################	
 	logfile$version <<- 3.412
@@ -2288,6 +2293,26 @@ if(logfile$version < 3.431){
 	}
 	################################################################################################	
 	logfile$version <<- 3.431
+	################################################################################################		
+	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+
+if(logfile$version < 3.44){
+
+	cat("\n Updating to version 3.44 ...")
+	################################################################################################
+	if(!any(names(logfile$parameters) == "quant_digits")){	
+		logfile$parameters$quant_digits <<- "2"		
+	}
+	if(!any(names(logfile$parameters) == "replicates_mean_prof")){	
+		logfile$parameters$replicates_mean_prof <<- "TRUE";
+	}	
+	################################################################################################	
+	logfile$version <<- 3.44
 	################################################################################################		
 	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 

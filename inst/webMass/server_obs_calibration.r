@@ -1237,7 +1237,7 @@ observe({ # - P
 	input$save_Cal
 	if(verbose){cat("\n in P")}
 	if((isolate(init$a)=="TRUE")){
-		if(sum(isolate(dd$d[,8]))>=2){ # not to save am invalid model ...
+		if(sum(isolate(dd$d[,8]))>=2){ # not to save an invalid model ...
 			if(isolate(input$Ion_mode_Cal)=="positive"){
 				IS_ID<-isolate(input$Cal_IS_ID)
 				target_ID<-isolate(input$Cal_target_ID)
@@ -1369,7 +1369,8 @@ observe({ # - P
 					})				
 				}
 			}
-			enviMass::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE,except="calibration")	
+			enviMass::workflow_set(down = "quantification", check_node = TRUE, single_file = FALSE, except = "calibration")	
+			output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 			isolate(redo_cal$a<-(redo_cal$a+1))
 		}	
 	}
@@ -1458,6 +1459,7 @@ observe({ # - Q
 			}			
 		}
 		enviMass::workflow_set(down="quantification",check_node=TRUE,single_file=FALSE,except="calibration")	
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		isolate(redo_cal$a<-(redo_cal$a+1))
 	}
 })
@@ -1521,7 +1523,9 @@ observe({
 					,sep="")
 				})				
 			}
-		}	
+		}
+		enviMass::workflow_set(down = "quantification", check_node = TRUE, single_file = FALSE, except = "calibration")	
+		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 	}
 })
 ###########################################################################################################

@@ -56,7 +56,7 @@ observe({
 											results_screen_pos, escape = FALSE, selection = 'single',
 						                	extensions = c('Buttons','FixedHeader','ColReorder'),
 						                	rownames = FALSE,
-											filter = list(position = 'top', clear = FALSE, plain = TRUE),
+											#filter = list(position = 'top', clear = FALSE, plain = TRUE), # makes table too slow
 											options = list(
 												lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
 												fixedHeader = FALSE,
@@ -142,7 +142,7 @@ observe({
 				table_screening_pos<-DT::datatable(
 											results_screen_pos, escape = FALSE, selection = 'single',
 											extensions = 'Buttons',		
-											filter = list(position = 'top', clear = FALSE, plain = TRUE),							
+											#filter = list(position = 'top', clear = FALSE, plain = TRUE), # makes table too slow						
 											options = list(	
 												lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),	
 												ordering=TRUE,
@@ -1020,7 +1020,7 @@ observe({
 											results_screen_neg, escape = FALSE,selection = 'single',
 						                	extensions = c('Buttons','FixedHeader','ColReorder'),
 						                	rownames = FALSE,
-											filter = list(position = 'top', clear = FALSE, plain = TRUE),
+											#filter = list(position = 'top', clear = FALSE, plain = TRUE), # makes table too slow
 											options = list(
 												lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
 												fixedHeader = FALSE,
@@ -1106,7 +1106,7 @@ observe({
 				table_screening_neg<-DT::datatable(
 											results_screen_neg, escape = FALSE, selection = 'single',
 											extensions = 'Buttons',		
-											filter = list(position = 'top', clear = FALSE, plain = TRUE),
+											#filter = list(position = 'top', clear = FALSE, plain = TRUE), # makes table too slow
 											options = list(	
 												lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
 												ordering = TRUE,

@@ -63,7 +63,7 @@
 									column(width = 5, dateInput("Measadd_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
 									column(width = 5, textInput("Measadd_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
 									column(width = 5, dateInput("Measadd_cal_date2", "Date end", value="2018-01-01", min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-									column(width = 5, textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00")),
+									column(width = 5, textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "11:59:59")),
 									column(width = 5, textInput("Measadd_cal_ID2", "Custom ID:", value = "FALSE"))					
 								)
 							),
@@ -122,7 +122,7 @@
 									column(width = 5, dateInput("Modif_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
 									column(width = 5, textInput("Modif_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
 									column(width = 5, dateInput("Modif_cal_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-									column(width = 5, textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "12:00:00")),
+									column(width = 5, textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "11:59:59")),
 									column(width = 5, textInput("Modif_cal_ID2", "Custom ID", value = "FALSE"))							
 								)
 							),
@@ -154,7 +154,7 @@
 								column(width = 5, dateInput("Modif_calgroup_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
 								column(width = 5, textInput("Modif_calgroup_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
 								column(width = 5, dateInput("Modif_calgroup_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5, textInput("Modif_calgroup_time2", "Time end (HH:MM:SS)", value = "12:00:00"))
+								column(width = 5, textInput("Modif_calgroup_time2", "Time end (HH:MM:SS)", value = "11:59:59"))
 							),
 							bsButton("Change_cal","Save",style="primary"),					
 							HTML('<hr noshade="noshade" />'),
@@ -1023,7 +1023,7 @@
                 tabPanel("Targets & Suspects",
 					div(style = widget_style2,
 						tags$h5("Retention time"), HTML('<hr noshade="noshade" />'),
-						numericInput("tar_drt1", "RT tolerance of peaks in sample relative to their expected RT [s]", 30),
+						numericInput("tar_drt1", "RT tolerance of peaks relative to their expected RT [s]", 30),
 						numericInput("tar_drt2", "RT tolerance of peaks within an isotope pattern [s]", 50)
 					),
 				  	div(style = widget_style2,
@@ -1064,7 +1064,8 @@
 				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/quantification.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
 				HTML('<hr noshade="noshade" />'),
 				numericInput("quant_files_included", "Number of latest file to include in the quantification:", 30),
-				numericInput("recov_files_included", "Number of latest spiked files to include for recovery estimation:", 30)			
+				numericInput("recov_files_included", "Number of latest spiked files to include for recovery estimation:", 30),
+				numericInput("quant_digits", "Decimal places / digits shown for concentrations:", value= 2, min = 0, max = 10, step = 1)
 			),
             # INTENSITY NORMALIZATION ##########################################
             tabPanel("Normalization",
@@ -1115,8 +1116,8 @@
 				#tags$h5("Profile extraction"),
 				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/profiling.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),	
 				HTML('<hr noshade="noshade" />'),
-				#sliderInput("prof_maxfiles", "Maximum number of newest (by date/time) files to be processed per ion mode:", min = 50, max = 3000, value = 100, step= 1),
-				knobInput("prof_maxfiles", label = "Maximum number of newest (by date/time) files to be processed per ion mode:", min = 50, max = 3000, value = 100, step= 1, 
+				#sliderInput("prof_maxfiles", "Maximum number of newest (by date/time) files to be processed per ion mode:", min = 50, max = 5000, value = 100, step= 1),
+				knobInput("prof_maxfiles", label = "Maximum number of newest (by date/time) files to be processed per ion mode:", min = 50, max = 5000, value = 100, step= 1, 
 							thickness = .3, width = 160, height = 160, fgColor = "#7499AB", inputColor = "#428BCA", displayPrevious = TRUE),
 				numericInput("prof_dmz", "Peak mass deviation within profiles: +/- m/z tolerance ...", 3),                
                 selectInput("prof_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),
@@ -1395,11 +1396,11 @@
 								fluidRow(
 									column(4,
 										checkboxInput("cal_model_bound_low", "Set a lower bound for the intensity ratio?",  width = NULL),
-										numericInput("cal_model_bound_low_value", "Lower bound log10:", 0)
+										numericInput("cal_model_bound_low_value", "Lower ratio bound:", 0)
 									),
 									column(4,
 										checkboxInput("cal_model_bound_up", "Set an upper bound for the intensity ratio?",  width = NULL),
-										numericInput("cal_model_bound_up_value", "Upper bound log10:", 20)
+										numericInput("cal_model_bound_up_value", "Upper ratio bound:", 20)
 									)									
 								),						
 								HTML('<hr noshade="noshade" />'),
@@ -2567,7 +2568,7 @@
 											),
 											value="test1"),
 										##################################################################
-										bsCollapsePanel("Similar lower-ranked profiles",
+										bsCollapsePanel("Similar component profiles",
 											plotOutput("similar_profiles_plot", 
 												dblclick = "similar_profiles_plot_dblclick",
 												brush = brushOpts(

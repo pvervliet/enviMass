@@ -130,9 +130,24 @@ isolate( # still ... there is a remaining dependency ...
 			}
 			# update !single_file entry changes in measurements
 			measurements <- read.csv(file = file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character");
-			output$measurements <<- DT::renderDataTable(
-				measurements[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1","tag2","tag3","date_end","time_end","ID_2")]
-			); 
+			measurements_tab <- measurements # because measurements[,"ID"] = character
+			measurements_tab[,1] <- as.numeric(measurements_tab[,1])
+			measurements_tab <- DT::datatable(
+				measurements_tab[,c("ID","Name","Type","Mode","Place","Date","Time","include","profiled","tag1",
+					"tag2","tag3","date_end","time_end","ID_2")],
+				extensions = c('Buttons','ColReorder','FixedHeader'),
+				rownames = FALSE,
+				options = list(
+					lengthMenu = list(c(25, 50, 100, -1), list('25', '50', '100', 'All')),
+					fixedHeader = TRUE,
+					ordering = T,
+					dom = 'Blfrtip',
+					buttons = c('excel', 'csv', 'colvis'),#buttons = c('excel', 'pdf', 'print', 'csv'),
+					scrollX = TRUE,
+					colReorder = TRUE
+				)					
+			)
+			output$measurements <- DT::renderDataTable(measurements_tab); 		
 			if(logfile$parameters$verbose) cat("Done checking of parameter changes.\n")
 			######################################################################## 		
 
