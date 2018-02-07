@@ -113,6 +113,7 @@
 		target_quant_table_pos_warn<-target_quant_table_pos
 		target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),3:length(target_quant_table_pos_warn[1,])]<-"0"
 		# QUANTIFY #########################################################################
+		found_which<-list() # save indices to write faster into summary table
 		if(length(cal_models_pos_used)>0){ # no calibration models? 
 			res_IS_names<-rep("",length(res_IS_pos_screen))
 			res_IS_adduct<-rep("",length(res_IS_pos_screen))
@@ -120,7 +121,6 @@
 				res_IS_names[i]<-strsplit(names(res_IS_pos_screen)[i],"_")[[1]][1]
 				res_IS_adduct[i]<-strsplit(names(res_IS_pos_screen)[i],"_")[[1]][2]
 			}
-			found_which<-list() # save indices to write faster into summary table
 			if(length(res_target_pos_screen)>0){
 				for(i in 1:length(res_target_pos_screen)){
 					at_adduct_target<-strsplit(names(res_target_pos_screen)[i],"_")[[1]][2]
@@ -566,6 +566,7 @@
 		target_quant_table_neg_warn<-target_quant_table_neg
 		target_quant_table_neg_warn[6:length(target_quant_table_neg_warn[,1]),3:length(target_quant_table_neg_warn[1,])]<-"0"
 		# QUANTIFY #########################################################################
+		found_which<-list() # save indices to write faster into summary table
 		if(length(cal_models_neg_used)>0){ # no calibration models? 
 			res_IS_names<-rep("",length(res_IS_neg_screen))
 			res_IS_adduct<-rep("",length(res_IS_neg_screen))
@@ -573,7 +574,6 @@
 				res_IS_names[i]<-strsplit(names(res_IS_neg_screen)[i],"_")[[1]][1]
 				res_IS_adduct[i]<-strsplit(names(res_IS_neg_screen)[i],"_")[[1]][2]
 			}
-			found_which<-list() # save indices to write faster into summary table
 			if(length(res_target_neg_screen)>0){
 				for(i in 1:length(res_target_neg_screen)){
 					at_adduct_target<-strsplit(names(res_target_neg_screen)[i],"_")[[1]][2]
