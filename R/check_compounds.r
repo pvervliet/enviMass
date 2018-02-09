@@ -15,7 +15,7 @@
 #' @details enviMass workflow function; run before further calculations are started in the workflow.
 #' 
 
-check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,write_tables=FALSE,check_relat=TRUE){
+check_compounds <- function(intstand_check,targets_check,isotopes,adducts,logfile,write_tables=FALSE,check_relat=TRUE){
 
 	say<-"Project consistent"
 	##############################################################################
@@ -48,18 +48,18 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 			say<-"Please revise: do not use underscores in internal standard IDs."
 		}
 		# main adduct correct? ####################################################
-		if(any(!charmatch(intstand_check[intstand_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
-			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="positive","main_adduct"][!charmatch(intstand_check[intstand_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
+		if(any(!match(intstand_check[intstand_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="positive","main_adduct"][!match(intstand_check[intstand_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
 			say<-paste("IS main_adduct (column 6, positive ion_mode): wrong main_adduct:",wrongadduct,". Please revise!")
 		}
-		if(any(!charmatch(intstand_check[intstand_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
-			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="negative","main_adduct"][!charmatch(intstand_check[intstand_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
+		if(any(!match(intstand_check[intstand_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="negative","main_adduct"][!match(intstand_check[intstand_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
 			say<-paste("IS main_adduct (column 6, negative ion_mode): wrong main_adduct:",wrongadduct,". Please revise!")
 		}
 		# ionization mode correct? ################################################
-		if(any(!charmatch(intstand_check[,"ion_mode"],c("positive","negative"),nomatch=FALSE))){
+		if(any(!match(intstand_check[,"ion_mode"],c("positive","negative"),nomatch=FALSE))){
 			say<-"Invalid IS ion_mode (column 7) entry (must be positive or negative)"
 		}
 		# RT numeric? #############################################################
@@ -99,16 +99,16 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 		if(length(got)>0){
 			say<-paste("Invalid Upper_intensity_bound for internal standards with ID ",intstand_check[got,"ID"],". Must be numeric or Inf if not specified. Please revise!",sep="")
 		}
-		# quantization adduct correct? #############################################
-		if(any(!charmatch(intstand_check[intstand_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
-			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="positive","Quant_adduct"][!charmatch(intstand_check[intstand_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
+		# quantifiaction adduct correct? ###########################################
+		if(any(!match(intstand_check[intstand_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="positive","Quant_adduct"][!match(intstand_check[intstand_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("IS main_adduct (column 19, positive ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
+			say<-paste("IS Quant_adduct (column 19, positive ion_mode): wrong Quant_adduct: ",wrongadduct,". Please revise!")
 		}
-		if(any(!charmatch(intstand_check[intstand_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
-			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="negative","Quant_adduct"][!charmatch(intstand_check[intstand_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
+		if(any(!match(intstand_check[intstand_check[,"ion_mode"]=="negative","Quant_adduct"], c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"), nomatch = FALSE))){
+			wrongadduct<-intstand_check[intstand_check[,"ion_mode"]=="negative","Quant_adduct"][!match(intstand_check[intstand_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("IS main_adduct (column 19, negative ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
+			say<-paste("IS Quant_adduct (column 19, negative ion_mode): wrong Quant_adduct: ",wrongadduct,". Please revise!")
 		}
 		# check Quant_peak ########################################################
 		got<-which(is.na(as.numeric(intstand_check[intstand_check[,"Quant_peak"]!="FALSE","Quant_peak"])))
@@ -116,7 +116,7 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 			say<-paste("Invalid Quant_peak for internal standards with ID ",intstand_check[got,"ID"],". must be either FALSE or an integer. Please revise!",sep="")
 		}		
 		# check Quant_rule ########################################################
-		got<-which(any(!charmatch(intstand_check[,"Quant_rule"],c("most intense peak","closest RT","closest m/z","FALSE"))))
+		got<-which(any(!match(intstand_check[,"Quant_rule"],c("most intense peak","closest RT","closest m/z","FALSE"))))
 		if(length(got)>0){		
 			say<-paste("Invalid Quant_rule for internal standards with ID ",intstand_check[got,"ID"],". must be either most 'intense peak', 'closest RT' or 'closest m/z'. Please revise!",sep="")
 		}
@@ -180,18 +180,18 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 			say<-"Please revise: do not use underscores for target IDs."
 		}
 		# main adduct correct? ####################################################
-		if(any(!charmatch(targets_check[targets_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
-			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="positive","main_adduct"][!charmatch(targets_check[targets_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
+		if(any(!match(targets_check[targets_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="positive","main_adduct"][!match(targets_check[targets_check[,"ion_mode"]=="positive","main_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
 			say<-paste("target main_adduct (column 7, positive ion_mode): wrong main_adduct:",wrongadduct,". Please revise!")
 		}
-		if(any(!charmatch(targets_check[targets_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
-			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="negative","main_adduct"][!charmatch(targets_check[targets_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
+		if(any(!match(targets_check[targets_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="negative","main_adduct"][!match(targets_check[targets_check[,"ion_mode"]=="negative","main_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
 			say<-paste("target main_adduct (column 7, negative ion_mode): wrong main_adduct:",wrongadduct,". Please revise!")
 		}
 		# ionization mode correct? ################################################
-		if(any(!charmatch(targets_check[,"ion_mode"],c("positive","negative"),nomatch=FALSE))){
+		if(any(!match(targets_check[,"ion_mode"],c("positive","negative"),nomatch=FALSE))){
 			say<-"Invalid target ion_mode (column 8) entry (must be positive or negative)"
 		}
 		# RT numeric? #############################################################
@@ -221,16 +221,16 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 		}		
 		# check from 
 		# check to
-		# quantization adduct correct? #############################################
-		if(any(!charmatch(targets_check[targets_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
-			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="positive","Quant_adduct"][!charmatch(targets_check[targets_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
+		# quantifiaction adduct correct? ##########################################
+		if(any(!match(targets_check[targets_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="positive","Quant_adduct"][!match(targets_check[targets_check[,"ion_mode"]=="positive","Quant_adduct"],c(as.character(adducts[adducts[,6]=="positive",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("target main_adduct (column 20, positive ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
+			say<-paste("target Quant_adduct (column 20, positive ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
 		}
-		if(any(!charmatch(targets_check[targets_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
-			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="negative","Quant_adduct"][!charmatch(targets_check[targets_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
+		if(any(!match(targets_check[targets_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE))){
+			wrongadduct<-targets_check[targets_check[,"ion_mode"]=="negative","Quant_adduct"][!match(targets_check[targets_check[,"ion_mode"]=="negative","Quant_adduct"],c(as.character(adducts[adducts[,6]=="negative",1]),"FALSE"),nomatch=FALSE)]
 			wrongadduct<-wrongadduct[1]
-			say<-paste("target main_adduct (column 20, negative ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
+			say<-paste("target Quant_adduct (column 20, negative ion_mode): wrong Quant_adduct:",wrongadduct,". Please revise!")
 		}
 		# check Quant_peak ########################################################
 		got<-which(is.na(as.numeric(targets_check[targets_check[,"Quant_peak"]!="FALSE","Quant_peak"])))
@@ -238,7 +238,7 @@ check_compounds<-function(intstand_check,targets_check,isotopes,adducts,logfile,
 			say<-paste("Invalid Quant_peak for internal standards with ID ",targets_check[got,"ID"],". must be either FALSE or an integer. Please revise!",sep="")
 		}		
 		# check Quant_rule ########################################################
-		got<-which(any(!charmatch(targets_check[,"Quant_rule"],c("most intense peak","closest RT","closest m/z","FALSE"))))
+		got<-which(any(!match(targets_check[,"Quant_rule"],c("most intense peak","closest RT","closest m/z","FALSE"))))
 		if(length(got)>0){		
 			say<-paste("Invalid Quant_rule for internal standards with ID ",targets_check[got,"ID"],". must be either most 'intense peak', 'closest RT' or 'closest m/z'. Please revise!",sep="")
 		}

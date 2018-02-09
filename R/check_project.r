@@ -14,7 +14,7 @@
 #' @details enviMass workflow function; run before further calculations are started in the workflow.
 #' 
 
-check_project<-function(
+check_project <- function(
 	isotopes,
 	adducts,
 	skipcheck = FALSE,
@@ -111,6 +111,7 @@ check_project<-function(
 	# directories available? ##################################################### 
 	if(!file.exists(file.path(logfile[[1]], "files"))& ignorefiles=="FALSE"){say <- "files directory missing!"}
 	if(!file.exists(file.path(logfile[[1]], "MSlist"))& ignorefiles=="FALSE"){say <- "MSlist directory missing!"}  
+	if(!file.exists(file.path(logfile[[1]], "MSraw"))& ignorefiles=="FALSE"){say <- "MSraw directory missing!"} 
 	if(!file.exists(file.path(logfile[[1]], "features"))){say <- "features directory missing!"}
 	if(!file.exists(file.path(logfile[[1]], "results"))){say <- "results directory missing!"}
 	if(!file.exists(file.path(logfile[[1]], "results", "screening"))){say <- "results/screening directory missing!"} 

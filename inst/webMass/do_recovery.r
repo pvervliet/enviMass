@@ -20,52 +20,62 @@
 		file.exists(file.path(logfile[[1]],"quantification","target_quant_table_pos")) 
 	){
 		
-		load(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
-		those_files<-measurements[(measurements[,"Mode"]=="positive" & measurements[,"Type"]=="spiked" & measurements[,"include"]=="TRUE"),,drop=FALSE]
-		atdate<-those_files[,6]
-		atdate<-as.Date(atdate, tz="GMT");
-		attime<-those_files[,7]
-		attime<-as.difftime(attime);
-		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
-		those_files<-those_files[ord,,drop=FALSE]	
-		if(logfile$parameters$recov_files_included!="FALSE"){
-			if(as.numeric(logfile$parameters$recov_files_included)<length(those_files[,1])){
-				those_files<-those_files[1:as.numeric(logfile$parameters$recov_files_included),,drop=FALSE]		
+		load(file.path(logfile[[1]], "quantification", "target_quant_table_pos"))
+		those_files <- measurements[(measurements[,"Mode"] == "positive" & measurements[,"Type"] == "spiked" & measurements[,"include"] == "TRUE"),, drop = FALSE]
+		atdate <- those_files[,6]
+		atdate <- as.Date(atdate, tz="GMT");
+		attime <- those_files[,7]
+		attime <- as.difftime(attime);
+		ord <- order(as.numeric(atdate), as.numeric(attime), as.numeric(those_files[,1]), decreasing = TRUE);
+		those_files <- those_files[ord,, drop = FALSE]	
+		if(logfile$parameters$recov_files_included != "FALSE"){
+			if(as.numeric(logfile$parameters$recov_files_included) < length(those_files[,1])){
+				those_files <- those_files[1:as.numeric(logfile$parameters$recov_files_included),, drop = FALSE]		
 			}
 		}
-		those_targets<-target_quant_table_pos[6:length(target_quant_table_pos[,1]),1:2,drop=FALSE]
-		target_recov_table_pos<-matrix(nrow=(length(those_targets[,1])+4),ncol=(length(those_files[,1])+2),"")
-		colnames(target_recov_table_pos)<-c("Target ID","Target name",those_files[,"ID"])
-		rownames(target_recov_table_pos)<-c("Name","Type","Date","Time",those_targets[,1])
-		target_recov_table_pos[1,]<-c("","",as.character(those_files[,"Name"]))
-		target_recov_table_pos[2,]<-c("","",as.character(those_files[,"Type"]))
-		target_recov_table_pos[3,]<-c("","",as.character(those_files[,"Date"]))
-		target_recov_table_pos[4,]<-c("","",as.character(those_files[,"Time"]))		
-		target_recov_table_pos[,1]<-c("","","","",those_targets[,1])
-		target_recov_table_pos[,2]<-c("","","","",those_targets[,2])		
+		those_targets <- target_quant_table_pos[6:length(target_quant_table_pos[,1]), 1:2, drop = FALSE]
+		target_recov_table_pos <- matrix(nrow = (length(those_targets[,1]) + 4), ncol = (length(those_files[,1]) + 2), "")
+		colnames(target_recov_table_pos) <- c("Target ID", "Target name", those_files[,"ID"])
+		rownames(target_recov_table_pos) <- c("Name", "Type", "Date", "Time", those_targets[,1])
+		target_recov_table_pos[1,] <- c("", "", as.character(those_files[,"Name"]))
+		target_recov_table_pos[2,] <- c("", "", as.character(those_files[,"Type"]))
+		target_recov_table_pos[3,] <- c("", "", as.character(those_files[,"Date"]))
+		target_recov_table_pos[4,] <- c("", "", as.character(those_files[,"Time"]))		
+		target_recov_table_pos[,1] <- c("", "", "", "", those_targets[,1])
+		target_recov_table_pos[,2] <- c("", "", "", "", those_targets[,2])		
 		##################################################################################################################
 		for(i in 1:length(those_files[,"ID"])){
-				from_ID<-those_files[i,"ID"]
-				to_ID<-those_files[i,"tag2"]
-				if(!any(measurements[measurements[,"Mode"]=="positive","ID"]==to_ID)){ # this should not happen anyway - included in check_project
+				from_ID <- those_files[i,"ID"]
+				to_ID <- those_files[i,"tag2"]
+				if(!any(measurements[measurements[,"Mode"] == "positive", "ID"] == to_ID)){ # this should not happen anyway - included in check_project
 					cat("\n WARNING: Missing relation for spiked file detected! Please revise");
 					next;
 				}
-				if(!any(colnames(target_quant_table_pos)==from_ID)){
-					next;
-				}
+				if(!any(colnames(target_quant_table_pos) == from_ID)) next;
 				for(j in 5:length(target_recov_table_pos[,1])){
-					target_ID<-target_recov_table_pos[j,1]
-					from_quant<-target_quant_table_pos[
-						target_quant_table_pos[,1]==target_ID,
-						colnames(target_quant_table_pos)==from_ID
+					target_ID <- target_recov_table_pos[j,1]
+					from_quant <- target_quant_table_pos[
+						target_quant_table_pos[,1] == target_ID,
+						colnames(target_quant_table_pos) == from_ID
 					]		
-					if(grepl("!",from_quant)){next}
+					if(grepl("!",from_quant)){
+						if(grepl("no target matches",from_quant)){ # set conz to 0 if no peak was found 
+							from_quant <- "0" 
+						}else{
+							next;
+						}
+					}
 					to_quant<-target_quant_table_pos[
 						target_quant_table_pos[,1]==target_ID,
 						colnames(target_quant_table_pos)==to_ID
 					]
-					if(grepl("!",to_quant)){next}
+					if(grepl("!",to_quant)){
+						if(grepl("no target matches",to_quant)){ # set conz to 0 if no peak was found 
+							to_quant <- "0" 
+						}else{
+							next;
+						}
+					}
 					from_quant<-as.numeric(strsplit(from_quant,",")[[1]])
 					to_quant<-as.numeric(strsplit(to_quant,",")[[1]])				
 					recov<-c()
@@ -129,21 +139,31 @@
 					cat("\n WARNING: Missing relation for spiked file detected! Please revise");
 					next;
 				}
-				if(!any(colnames(target_quant_table_neg)==from_ID)){
-					next;
-				}
+				if(!any(colnames(target_quant_table_neg)==from_ID)) next;
 				for(j in 5:length(target_recov_table_neg[,1])){
 					target_ID<-target_recov_table_neg[j,1]
 					from_quant<-target_quant_table_neg[
 						target_quant_table_neg[,1]==target_ID,
 						colnames(target_quant_table_neg)==from_ID
 					]		
-					if(grepl("!",from_quant)){next}
+					if(grepl("!",from_quant)){
+						if(grepl("no target matches",from_quant)){ # set conz to 0 if no peak was found 
+							from_quant <- "0" 
+						}else{
+							next;
+						}
+					}
 					to_quant<-target_quant_table_neg[
 						target_quant_table_neg[,1]==target_ID,
 						colnames(target_quant_table_neg)==to_ID
 					]
-					if(grepl("!",to_quant)){next}
+					if(grepl("!",to_quant)){
+						if(grepl("no target matches",to_quant)){ # set conz to 0 if no peak was found 
+							to_quant <- "0" 
+						}else{
+							next;
+						}
+					}
 					from_quant<-as.numeric(strsplit(from_quant,",")[[1]])
 					to_quant<-as.numeric(strsplit(to_quant,",")[[1]])				
 					recov<-c()

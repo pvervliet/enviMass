@@ -1361,7 +1361,7 @@
 							bsButton("use_Cal","Use for quantification",style="warning"),
 							bsPopover("use_Cal", 
 								title = "Make entry to target compound list",
-								content = "Save the selected Internal standard as the one to quantify with (= entry into column 6 of the target compound table)?", 
+								content = "Save the selected Internal standard as the one to quantify with (= entry into column 6 of the target compound table)? NOTE: this does not save the model, but only the relevant relation between Target and Internal standard compound. Use the green button to save the model.", 
 								placement = "bottom", trigger = "hover"),							
 							bsButton("remove_Cal","Remove model",style="danger"),
 							bsPopover("remove_Cal", 

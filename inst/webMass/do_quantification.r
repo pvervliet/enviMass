@@ -467,6 +467,7 @@
 				}	
 			}
 		}
+		rm(found_which)
 		# INSERT & SAVE RESULTS ############################################################
 		save(res_target_pos_screen,file=file.path(logfile$project_folder,"results","screening","res_target_pos_screen"))
 		save(results_screen_target_pos,file=file.path(logfile$project_folder,"results","screening","results_screen_target_pos"))
@@ -918,6 +919,7 @@
 				}	
 			}
 		}
+		rm(found_which)
 		# INSERT & SAVE RESULTS ############################################################
 		save(res_target_neg_screen,file=file.path(logfile$project_folder,"results","screening","res_target_neg_screen"))
 		save(results_screen_target_neg,file=file.path(logfile$project_folder,"results","screening","results_screen_target_neg"))

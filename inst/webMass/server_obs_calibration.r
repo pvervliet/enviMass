@@ -714,7 +714,7 @@ observe({ # - K
 									rep(1,length(those)),
 									round(rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
 									round(profileList_pos_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
-									round((profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])),digits=3), # ratio									
+									round((profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])),digits=5), # ratio									
 									rep(as.numeric(
 										measurements[measurements[,"ID"]==target_in_file[i],]$tag1	
 									),length(those)), # concentration
@@ -869,7 +869,7 @@ observe({ # - K
 									rep(1,length(those)),
 									round(rep(profileList_neg_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
 									round(profileList_neg_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
-									round((profileList_neg_cal[[2]][target_with_peak[i],2]/(profileList_neg_cal[[2]][IS_with_peak[those],2])),digits=2), # ratio									
+									round((profileList_neg_cal[[2]][target_with_peak[i],2]/(profileList_neg_cal[[2]][IS_with_peak[those],2])),digits=5), # ratio									
 									rep(as.numeric(
 										measurements[measurements[,"ID"]==target_in_file[i],]$tag1	
 									),length(those)), # concentration
@@ -892,7 +892,7 @@ observe({ # - K
 				mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same entries? - remove
 				mat_cal<-mat_cal[
 					order(mat_cal[,5],mat_cal[,11],mat_cal[,12],mat_cal[,7],mat_cal[,6],decreasing=TRUE)
-				,]
+				,,drop=FALSE]
 				mat_cal<-mat_cal[!duplicated(mat_cal[,c(11,12)]),,drop=FALSE] # same peaks in different combinations - remove
 				mat_cal[,1]<-(1:length(mat_cal[,1]))
 				min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
@@ -1471,56 +1471,57 @@ observe({
 	input$use_Cal
 	if(verbose){cat("\n in R")}
 	if(
-		isolate(input$Cal_IS_ID!="none") & isolate(input$Cal_target_ID!="none") & 
-		isolate(input$Cal_IS_name!="none") & isolate(input$Cal_target_name!="none") 					
+		isolate(input$Cal_IS_ID != "none") & isolate(input$Cal_target_ID != "none") & 
+		isolate(input$Cal_IS_name != "none") & isolate(input$Cal_target_name != "none") 					
 	){
-		change_IS_target_ID<-isolate(input$Cal_target_ID)
-		change_IS_IS_ID<-isolate(input$Cal_IS_ID)
-		this<-which(targets[,1]==change_IS_target_ID)
-		targets[this,6]<-as.character(change_IS_IS_ID)
-		targets[this,6]<<-as.character(change_IS_IS_ID)
-		write.table(targets,file=file.path(logfile[[1]],"dataframes","targets.txt"),row.names=FALSE,sep="\t",quote=FALSE)
-		output$targets<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character"));      
+		change_IS_target_ID <- isolate(input$Cal_target_ID)
+		change_IS_IS_ID <- isolate(input$Cal_IS_ID)
+		targets_to_save <- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"), header = TRUE, sep = "\t", colClasses = "character");
+		this <- which(targets_to_save[,1] == change_IS_target_ID)
+		targets_to_save[this,6] <- as.character(change_IS_IS_ID)
+		write.table(targets_to_save, file = file.path(logfile[[1]],"dataframes","targets.txt"), row.names = FALSE, sep = "\t", quote = FALSE)
+		output$targets <<- DT::renderDataTable(read.table(file = file.path(logfile[[1]], "dataframes", "targets.txt"), header = TRUE, sep = "\t", colClasses = "character"));      
+		rm(targets_to_save)
 		cat("\n Changed/set default IS to be used in quantification for the selected target.")
-		if(isolate(input$Ion_mode_Cal)=="positive"){		
+		if(isolate(input$Ion_mode_Cal) == "positive"){		
 			# count missing models
-			at_Cal<-isolate(input$Cal_file_set)
-			use_cal<-which(names(cal_models_pos)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
-			if(length(use_cal)>0){
-				output$number_missing_models<-renderText({
+			at_Cal <- isolate(input$Cal_file_set)
+			use_cal <- which(names(cal_models_pos) == at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
+			if(length(use_cal) > 0){
+				output$number_missing_models <- renderText({
 					paste("Number of Targets with missing calibration models: ",
 						as.character(sum(is.na(match(
-							paste("_",targets[,"ID_internal_standard"],"_",targets[,"ID"],"_",sep=""),
+							paste("_", targets[,"ID_internal_standard"], "_", targets[,"ID"], "_", sep = ""),
 							names(cal_models_pos[[use_cal]])
 						))))
-					,sep="")
+					,sep = "")
 				})	
 			}else{
-				output$number_missing_models<-renderText({
+				output$number_missing_models <- renderText({
 					paste("Number of Targets with missing calibration models: ",
 						as.character(length(targets[,1]))
-					,sep="")
+					,sep = "")
 				})				
 			}
 		}
-		if(isolate(input$Ion_mode_Cal)=="negative"){		
+		if(isolate(input$Ion_mode_Cal) == "negative"){		
 			# count missing models
-			at_Cal<-isolate(input$Cal_file_set)
-			use_cal<-which(names(cal_models_neg)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
-			if(length(use_cal)>0){
-				output$number_missing_models<-renderText({
+			at_Cal <- isolate(input$Cal_file_set)
+			use_cal <- which(names(cal_models_neg) == at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
+			if(length(use_cal) > 0){
+				output$number_missing_models <- renderText({
 					paste("Number of Targets with missing calibration models: ",
-						as.character(sum(is.na(match(
-							paste("_",targets[,"ID_internal_standard"],"_",targets[,"ID"],"_",sep=""),
+						as.character( sum( is.na( match(
+							paste("_", targets[,"ID_internal_standard"], "_", targets[,"ID"], "_", sep = ""),
 							names(cal_models_neg[[use_cal]])
 						))))
-					,sep="")
+					, sep = "")
 				})	
 			}else{
-				output$number_missing_models<-renderText({
+				output$number_missing_models <- renderText({
 					paste("Number of Targets with missing calibration models: ",
 						as.character(length(targets[,1]))
-					,sep="")
+					, sep = "")
 				})				
 			}
 		}
@@ -1530,9 +1531,9 @@ observe({
 })
 ###########################################################################################################
 
-if(any(ls()=="logfile")){stop("\n illegal logfile detected in server_obs_calibration.r!")}
-if(any(ls()=="cal_models_neg")){stop("\n illegal cal_models_neg detected in server_obs_calibration.r!")}
-if(any(ls()=="cal_models_pos")){stop("\n illegal cal_models_pos detected in server_obs_calibration.r!")} 
+if(any(ls() == "logfile")){stop("\n illegal logfile detected in server_obs_calibration.r!")}
+if(any(ls() == "cal_models_neg")){stop("\n illegal cal_models_neg detected in server_obs_calibration.r!")}
+if(any(ls() == "cal_models_pos")){stop("\n illegal cal_models_pos detected in server_obs_calibration.r!")} 
  
  
  

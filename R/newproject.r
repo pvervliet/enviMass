@@ -36,6 +36,7 @@ newproject <- function(
   }
   dir.create(file.path(pro_dir, pro_name, "files"), recursive = TRUE)      # subfolder
   dir.create(file.path(pro_dir, pro_name, "MSlist"), recursive = TRUE)     # subfolder
+  dir.create(file.path(pro_dir, pro_name, "MSraw"), recursive = TRUE)     # subfolder
   dir.create(file.path(pro_dir, pro_name, "peaklist"), recursive = TRUE)   # subfolder  
   dir.create(file.path(pro_dir, pro_name, "features"), recursive = TRUE)   # subfolder
   dir.create(file.path(pro_dir, pro_name, "results"), recursive = TRUE)    # subfolder

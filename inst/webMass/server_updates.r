@@ -2321,6 +2321,23 @@ if(logfile$version < 3.44){
 }
 
 
+if(logfile$version < 3.45){
+
+	cat("\n Updating to version 3.45 ...")
+	################################################################################################
+	if(!file.exists(file.path(logfile$project_folder,"MSraw"))){
+		dir.create(file.path(logfile$project_folder,"MSraw"), recursive = TRUE)    	 
+	}
+	################################################################################################	
+	logfile$version <<- 3.45
+	################################################################################################		
+	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
 #logfile$parameters$is_example<-"TRUE"
 #save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));

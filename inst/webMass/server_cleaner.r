@@ -1,5 +1,6 @@
 	###############################################################################	
 	those_objects <- c(
+		"found_which",
 		"patternRT_pos",
 		"patternRT_neg",
 		"search_compound",
