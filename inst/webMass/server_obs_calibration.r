@@ -734,18 +734,18 @@ observe({ # - K
 				rownames(mat_cal)<-NULL
 				if(verbose){cat("\n in K_4")}
 				# filter ################################################################
-				mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same entries? - remove
+				mat_cal<-mat_cal[!duplicated(mat_cal),, drop = FALSE] # same entries? - remove
 				mat_cal<-mat_cal[
-					order(mat_cal[,5],mat_cal[,11],mat_cal[,12],mat_cal[,7],mat_cal[,6],decreasing=TRUE)
+					order(mat_cal[,5], mat_cal[,11], mat_cal[,12], mat_cal[,7], mat_cal[,6], decreasing = TRUE)
 				,,drop=FALSE]
-				mat_cal<-mat_cal[!duplicated(mat_cal[,c(11,12),drop=FALSE]),,drop=FALSE] # same peaks in different combinations - remove
-				mat_cal[,1]<-(1:length(mat_cal[,1]))
-				min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
-				if(min_int!=0){min_int<-10^min_int}
-				max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
-				max_int<-(max_int^10)
-				mat_cal[mat_cal[,3]<min_int,8]<-0
-				mat_cal[mat_cal[,3]>max_int,8]<-0
+				mat_cal <- mat_cal[!duplicated(mat_cal[,c(11,12), drop = FALSE]),, drop = FALSE] # same peaks in different combinations - remove
+				mat_cal[,1] <- (1:length(mat_cal[,1]))
+				min_int <- as.numeric(intstand[intstand[,1] == IS_ID,17])
+				if(min_int != 0){min_int <- 10^min_int}
+				max_int <- as.numeric(intstand[intstand[,1] == IS_ID,18])
+				max_int <- (max_int^10)
+				mat_cal[mat_cal[,3] < min_int,8] <- 0
+				mat_cal[mat_cal[,3] > max_int,8] <- 0
 				# adapt point selection to existing model (if any) ######################
 				use_cal<-which(names(cal_models_pos)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
 				if(length(names(cal_models_pos[[use_cal]]))>0){				
@@ -888,25 +888,25 @@ observe({ # - K
 				}
 				rownames(mat_cal)<-NULL
 				if(verbose){cat("\n in K_negative_7")}
-				# filter ################################################################
-				mat_cal<-mat_cal[!duplicated(mat_cal),,drop=FALSE] # same entries? - remove
-				mat_cal<-mat_cal[
-					order(mat_cal[,5],mat_cal[,11],mat_cal[,12],mat_cal[,7],mat_cal[,6],decreasing=TRUE)
-				,,drop=FALSE]
-				mat_cal<-mat_cal[!duplicated(mat_cal[,c(11,12)]),,drop=FALSE] # same peaks in different combinations - remove
-				mat_cal[,1]<-(1:length(mat_cal[,1]))
-				min_int<-as.numeric(intstand[intstand[,1]==IS_ID,17])
-				if(min_int!=0){min_int<-10^min_int}
-				max_int<-as.numeric(intstand[intstand[,1]==IS_ID,18])
-				max_int<-(max_int^10)
-				mat_cal[mat_cal[,3]<min_int,8]<-0
-				mat_cal[mat_cal[,3]>max_int,8]<-0
+				# filter ################################################################			
+				mat_cal <- mat_cal[!duplicated(mat_cal),,drop=FALSE] # same entries? - remove
+				mat_cal <- mat_cal[
+					order(mat_cal[,5], mat_cal[,11], mat_cal[,12], mat_cal[,7], mat_cal[,6], decreasing = TRUE)
+				,,drop = FALSE]
+				mat_cal <- mat_cal[!duplicated(mat_cal[,c(11,12), drop = FALSE]),, drop = FALSE] # same peaks in different combinations - remove
+				mat_cal[,1] <- (1:length(mat_cal[,1]))
+				min_int <- as.numeric(intstand[intstand[,1] == IS_ID,17])
+				if(min_int != 0){min_int <- 10^min_int}
+				max_int <- as.numeric(intstand[intstand[,1] == IS_ID,18])
+				max_int <- (max_int^10)
+				mat_cal[mat_cal[,3] < min_int,8] <- 0
+				mat_cal[mat_cal[,3] > max_int,8] <- 0
 				# adapt point selection to existing model (if any) ######################
-				use_cal<-which(names(cal_models_neg)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
-				if(length(names(cal_models_neg[[use_cal]]))>0){				
-					use_precision<-isolate(input$use_precision)
-					at_model<-which(names(cal_models_neg[[use_cal]])==paste("_",IS_ID,"_",target_ID,"_",sep=""))
-					if(length(at_model)>0){
+				use_cal <- which(names(cal_models_neg) == at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
+				if(length(names(cal_models_neg[[use_cal]])) > 0){				
+					use_precision <- isolate(input$use_precision)
+					at_model <- which(names(cal_models_neg[[use_cal]])==paste("_",IS_ID,"_",target_ID,"_",sep=""))
+					if(length(at_model) > 0){
 						cal_models_neg[[use_cal]][[at_model]]$data
 						for(k in 1:length(mat_cal[,1])){
 							if(!any(
