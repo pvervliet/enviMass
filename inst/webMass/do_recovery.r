@@ -10,7 +10,7 @@
 		}
 	}	
 	rm(those)
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");		
+	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");	
 	######################################################################################################################
 	
 	######################################################################################################################	
@@ -21,6 +21,7 @@
 	){
 		
 		load(file.path(logfile[[1]], "quantification", "target_quant_table_pos"))
+		target_quant_table_pos <- target_quant_table_pos[,!is.na(colnames(target_quant_table_pos)), drop = FALSE]
 		those_files <- measurements[(measurements[,"Mode"] == "positive" & measurements[,"Type"] == "spiked" & measurements[,"include"] == "TRUE"),, drop = FALSE]
 		atdate <- those_files[,6]
 		atdate <- as.Date(atdate, tz="GMT");
@@ -45,59 +46,74 @@
 		target_recov_table_pos[,2] <- c("", "", "", "", those_targets[,2])		
 		##################################################################################################################
 		for(i in 1:length(those_files[,"ID"])){
-				from_ID <- those_files[i,"ID"]
-				to_ID <- those_files[i,"tag2"]
+				from_ID <- those_files[i, "ID"]
+				to_ID <- those_files[i, "tag2"]
 				if(!any(measurements[measurements[,"Mode"] == "positive", "ID"] == to_ID)){ # this should not happen anyway - included in check_project
 					cat("\n WARNING: Missing relation for spiked file detected! Please revise");
 					next;
 				}
 				if(!any(colnames(target_quant_table_pos) == from_ID)) next;
+				if(!any(colnames(target_quant_table_pos) == to_ID)) next;
 				for(j in 5:length(target_recov_table_pos[,1])){
 					target_ID <- target_recov_table_pos[j,1]
 					from_quant <- target_quant_table_pos[
 						target_quant_table_pos[,1] == target_ID,
 						colnames(target_quant_table_pos) == from_ID
 					]		
+					if(is.na(from_quant) | (from_quant == "NA")){
+						target_recov_table_pos[
+							target_recov_table_pos[,1] == target_ID,
+							colnames(target_recov_table_pos) == from_ID
+						] <- "NA";
+						next;
+					}
 					if(grepl("!",from_quant)){
-						if(grepl("no target matches",from_quant)){ # set conz to 0 if no peak was found 
+						if(grepl("no target matches", from_quant)){ # set conz to 0 if no peak was found 
 							from_quant <- "0" 
 						}else{
 							next;
 						}
 					}
-					to_quant<-target_quant_table_pos[
-						target_quant_table_pos[,1]==target_ID,
-						colnames(target_quant_table_pos)==to_ID
+					to_quant <- target_quant_table_pos[
+						target_quant_table_pos[,1] == target_ID,
+						colnames(target_quant_table_pos) == to_ID
 					]
-					if(grepl("!",to_quant)){
-						if(grepl("no target matches",to_quant)){ # set conz to 0 if no peak was found 
+					if(is.na(to_quant) | (to_quant == "NA")){
+						target_recov_table_pos[
+							target_recov_table_pos[,1] == target_ID,
+							colnames(target_recov_table_pos) == from_ID
+						] <- "NA";
+						next;
+					}
+					if(grepl("!", to_quant)){
+						if(grepl("no target matches", to_quant)){ # set conz to 0 if no peak was found 
 							to_quant <- "0" 
 						}else{
 							next;
 						}
 					}
-					from_quant<-as.numeric(strsplit(from_quant,",")[[1]])
-					to_quant<-as.numeric(strsplit(to_quant,",")[[1]])				
-					recov<-c()
+					from_quant <- as.numeric(strsplit(from_quant,",")[[1]])
+					to_quant <- as.numeric(strsplit(to_quant,",")[[1]])				
+					recov <- c()
 					for(n in 1:length(from_quant)){
 						for(m in 1:length(to_quant)){
-							recov<-c(recov,
+							recov <- c(recov,
 								from_quant[n]-to_quant[m]
 							)
 						}
 					}
-					recov<-recov[recov>=0] # cannot be negatively concentrated!
-					if(length(recov)==0){next}
-					recov<-paste(as.character(recov),collapse=",")
+					recov <- recov[recov >= 0] # cannot be negatively concentrated!
+					if(length(recov) == 0){next}
+					recov <- paste(as.character(recov), collapse = ",")
 					target_recov_table_pos[
-						target_recov_table_pos[,1]==target_ID,
-						colnames(target_recov_table_pos)==from_ID
-					]<-recov				
+						target_recov_table_pos[,1] == target_ID,
+						colnames(target_recov_table_pos) == from_ID
+					] <- recov				
 				}			
 		}
 		##################################################################################################################
-		save(target_recov_table_pos,file=file.path(logfile[[1]],"quantification","target_recov_table_pos"))
-		rm(target_quant_table_pos,target_recov_table_pos)
+		save(target_recov_table_pos, file = file.path(logfile[[1]], "quantification", "target_recov_table_pos"))
+		rm(target_quant_table_pos, target_recov_table_pos)
 	}
 	######################################################################################################################
 
@@ -109,6 +125,7 @@
 	){
 		
 		load(file.path(logfile[[1]],"quantification","target_quant_table_neg"))
+		target_quant_table_neg <- target_quant_table_neg[,!is.na(colnames(target_quant_table_neg)), drop = FALSE]
 		those_files<-measurements[(measurements[,"Mode"]=="negative" & measurements[,"Type"]=="spiked" & measurements[,"include"]=="TRUE"),,drop=FALSE]
 		atdate<-those_files[,6]
 		atdate<-as.Date(atdate, tz="GMT");
@@ -140,12 +157,20 @@
 					next;
 				}
 				if(!any(colnames(target_quant_table_neg)==from_ID)) next;
+				if(!any(colnames(target_quant_table_neg) == to_ID)) next;
 				for(j in 5:length(target_recov_table_neg[,1])){
 					target_ID<-target_recov_table_neg[j,1]
 					from_quant<-target_quant_table_neg[
 						target_quant_table_neg[,1]==target_ID,
 						colnames(target_quant_table_neg)==from_ID
 					]		
+					if(is.na(from_quant) | (from_quant == "NA")){
+						target_recov_table_neg[
+							target_recov_table_neg[,1] == target_ID,
+							colnames(target_recov_table_neg) == from_ID
+						] <- "NA";
+						next;
+					}
 					if(grepl("!",from_quant)){
 						if(grepl("no target matches",from_quant)){ # set conz to 0 if no peak was found 
 							from_quant <- "0" 
@@ -157,6 +182,13 @@
 						target_quant_table_neg[,1]==target_ID,
 						colnames(target_quant_table_neg)==to_ID
 					]
+					if(is.na(to_quant) | (to_quant == "NA")){
+						target_recov_table_neg[
+							target_recov_table_neg[,1] == target_ID,
+							colnames(target_recov_table_neg) == from_ID
+						] <- "NA";
+						next;
+					}
 					if(grepl("!",to_quant)){
 						if(grepl("no target matches",to_quant)){ # set conz to 0 if no peak was found 
 							to_quant <- "0" 

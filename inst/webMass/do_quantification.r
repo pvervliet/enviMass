@@ -50,70 +50,70 @@
 		use_files<-measurements[(measurements[,"Type"]!="calibration"),,drop=FALSE] # MUST retain spiked files!
 		use_group<-c()
 		for(i in 1:length(use_files[,1])){ # determine which file belongs to which calibration group
-			attime<-as.difftime(use_files[i,7]);atdate<-as.Date(use_files[i,6], tz="GMT");
-			numuse<-(as.numeric(atdate)+as.numeric(attime/(24*60*60)))		
-			if(any((numuse>=numstart) & (numuse<=numend))){
-				use_group<-c(use_group,
-					cal_files[(numuse>=numstart) & (numuse<=numend),1]
+			attime <- as.difftime(use_files[i,7]); atdate<-as.Date(use_files[i,6], tz="GMT");
+			numuse <- (as.numeric(atdate) + as.numeric(attime/(24*60*60)))		
+			if(any((numuse >= numstart) & (numuse <= numend))){
+				use_group <- c(use_group,
+					cal_files[(numuse >= numstart) & (numuse <= numend),1]
 				)
 			}else{
-				use_group<-c(use_group,"FALSE")
+				use_group <- c(use_group,"FALSE")
 			}
 		}		
 		# load available calibration models into a single list - check availability ########
-		cal_models_pos_used<-list()
-		use_group_names<-unique(use_group)
-		use_group_names<-use_group_names[use_group_names!="FALSE"]
-		if(length(use_group_names)>0){	
+		cal_models_pos_used <- list()
+		use_group_names <- unique(use_group)
+		use_group_names <- use_group_names[use_group_names != "FALSE"]
+		if(length(use_group_names) > 0){	
 			cat("\nLoading calibration models ...")
 			for(i in 1:length(use_group_names)){
-				if(file.exists(file.path(logfile[[1]],"quantification",paste("cal_models_pos",use_group_names[i],sep="_")))){
-					source(file=file.path(logfile[[1]],"quantification",paste("cal_models_pos",use_group_names[i],sep="_")),local=as.environment(".GlobalEnv"))
-					at<-(length(cal_models_pos_used)+1)
-					cal_models_pos_used[[at]]<-cal_models_pos[[1]]
-					names(cal_models_pos_used)[at]<-names(cal_models_pos)
-					rm(cal_models_pos,envir=as.environment(".GlobalEnv"))
+				if(file.exists(file.path(logfile[[1]], "quantification", paste("cal_models_pos", use_group_names[i], sep = "_")))){
+					source(file = file.path(logfile[[1]],"quantification", paste("cal_models_pos", use_group_names[i], sep = "_")),local=as.environment(".GlobalEnv"))
+					at <- (length(cal_models_pos_used) + 1)
+					cal_models_pos_used[[at]] <- cal_models_pos[[1]]
+					names(cal_models_pos_used)[at] <- names(cal_models_pos)
+					rm(cal_models_pos, envir = as.environment(".GlobalEnv"))
 				}
 			}
 			cat(" done.\n")
 		}
 		# REMOVE PREVIOUS RESULTS & RE-INITIATE ############################################
-		if(file.exists(file.path(logfile[[1]],"quantification","target_quant_table_pos"))){
-			file.remove(file.path(logfile[[1]],"quantification","target_quant_table_pos"))
+		if(file.exists(file.path(logfile[[1]], "quantification", "target_quant_table_pos"))){
+			file.remove(file.path(logfile[[1]], "quantification", "target_quant_table_pos"))
 		}
-		those_files<-use_files[use_group!="FALSE",,drop=FALSE] # only files covered by a calibration model are considered!
-		if(length(those_files[,1])==0){
+		those_files <- use_files[use_group != "FALSE",, drop = FALSE] # only files covered by a calibration model are considered!
+		if(length(those_files[,1]) == 0){
 			shinyjs::info("No samples to be quantified (positive mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
 			stop("\nNo samples to be quantified (positive mode)? Check if timing of samples are covered by calibration file sets periods; otherwise consider removing the quantification step from your workflow!")
 		}
 		# sort those files by decreasing date!
-		atdate<-those_files[,6]
-		atdate<-as.Date(atdate, tz="GMT");
-		attime<-those_files[,7]
-		attime<-as.difftime(attime);
-		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
-		those_files<-those_files[ord,,drop=FALSE]	
-		if(logfile$parameters$quant_files_included!="FALSE"){ # restrict number of files to inlcude
-			if(logfile$parameters$quant_files_included<length(those_files[,1])){
-				those_files<-those_files[1:logfile$parameters$quant_files_included,,drop=FALSE]		
+		atdate <- those_files[,6]
+		atdate <- as.Date(atdate, tz = "GMT");
+		attime <- those_files[,7]
+		attime <- as.difftime(attime);
+		ord <- order(as.numeric(atdate), as.numeric(attime), as.numeric(those_files[,1]), decreasing = TRUE);
+		those_files <- those_files[ord,, drop = FALSE]	
+		if(logfile$parameters$quant_files_included != "FALSE"){ # restrict number of files to inlcude
+			if(as.numeric(logfile$parameters$quant_files_included) < length(those_files[,1])){
+				those_files <- those_files[1:as.numeric(logfile$parameters$quant_files_included),, drop = FALSE]		
 			}
 		}
-		those_targets<-target_table[target_table[,"ID_internal_standard"]!="FALSE",,drop=FALSE]
-		those_targets<-those_targets[those_targets[,"ion_mode"]=="positive",,drop=FALSE]
-		target_quant_table_pos<-matrix(nrow=(length(those_targets[,1])+5),ncol=(length(those_files[,1])+2),"")
-		colnames(target_quant_table_pos)<-c("Target ID","Target name",those_files[,1])
-		rownames(target_quant_table_pos)<-c("Name","Type","Date","Time","Custom ID",rep("",length(those_targets[,1])))
-		target_quant_table_pos[1,]<-c("","",as.character(those_files[,"Name"]))
-		target_quant_table_pos[2,]<-c("","",as.character(those_files[,"Type"]))
-		target_quant_table_pos[3,]<-c("","",as.character(those_files[,"Date"]))
-		target_quant_table_pos[4,]<-c("","",as.character(those_files[,"Time"]))	
-		target_quant_table_pos[5,]<-c("","",as.character(those_files[,"ID_2"]))			
-		target_quant_table_pos[,1]<-c("","","","","",those_targets[,1])
-		target_quant_table_pos[,2]<-c("","","","","",those_targets[,2])
-		target_quant_table_pos_warn<-target_quant_table_pos
-		target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]),3:length(target_quant_table_pos_warn[1,])]<-"0"
+		those_targets <- target_table[target_table[,"ID_internal_standard"] != "FALSE",, drop = FALSE]
+		those_targets <- those_targets[those_targets[,"ion_mode"] == "positive",, drop = FALSE]
+		target_quant_table_pos <- matrix(nrow = (length(those_targets[,1]) + 5), ncol = (length(those_files[,1]) + 2),"")
+		colnames(target_quant_table_pos) <- c("Target ID", "Target name", those_files[,1])
+		rownames(target_quant_table_pos) <- c("Name", "Type", "Date", "Time", "Custom ID", rep("", length(those_targets[,1])))
+		target_quant_table_pos[1,] <- c("", "", as.character(those_files[,"Name"]))
+		target_quant_table_pos[2,] <- c("", "", as.character(those_files[,"Type"]))
+		target_quant_table_pos[3,] <- c("", "", as.character(those_files[,"Date"]))
+		target_quant_table_pos[4,] <- c("", "", as.character(those_files[,"Time"]))	
+		target_quant_table_pos[5,] <- c("", "", as.character(those_files[,"ID_2"]))			
+		target_quant_table_pos[,1] <- c("", "", "", "", "", those_targets[,1])
+		target_quant_table_pos[,2] <- c("", "", "", "", "", those_targets[,2])
+		target_quant_table_pos_warn <- target_quant_table_pos
+		target_quant_table_pos_warn[6:length(target_quant_table_pos_warn[,1]), 3:length(target_quant_table_pos_warn[1,])] <- "0"
 		# QUANTIFY #########################################################################
-		found_which<-list() # save indices to write faster into summary table
+		found_which <- list() # save indices to write faster into summary table
 		if(length(cal_models_pos_used)>0){ # no calibration models? 
 			res_IS_names<-rep("",length(res_IS_pos_screen))
 			res_IS_adduct<-rep("",length(res_IS_pos_screen))
@@ -548,8 +548,8 @@
 		ord<-order(as.numeric(atdate),as.numeric(attime),as.numeric(those_files[,1]),decreasing=TRUE);
 		those_files<-those_files[ord,,drop=FALSE]	
 		if(logfile$parameters$quant_files_included!="FALSE"){ # restrict number of files to include
-			if(logfile$parameters$quant_files_included<length(those_files[,1])){
-				those_files<-those_files[1:logfile$parameters$quant_files_included,,drop=FALSE]		
+			if(as.numeric(logfile$parameters$quant_files_included) < length(those_files[,1])){
+				those_files<-those_files[1:as.numeric(logfile$parameters$quant_files_included),, drop = FALSE]		
 			}
 		}
 		those_targets<-target_table[target_table[,"ID_internal_standard"]!="FALSE",,drop=FALSE]
