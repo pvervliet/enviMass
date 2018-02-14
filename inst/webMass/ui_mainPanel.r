@@ -1481,9 +1481,10 @@
 									),	
 									HTML('<hr noshade="noshade" />'),
 									tags$p(align = "justify", "The above top panel shows the log intensity quantile distribution of picked peaks for each of the included positive ionization 
-									mode files (gray lines). The red line shows the mean intensity for a quantile over all these files. In turn, the bottom plot details the maximum and median intensity 
-									deviation from this mentioned mean for each file, with files stated by their IDs and connected by the gray line for their temporal order. 
-									Please note that top panel quantiles distributions become highlighted for depicted files upon any zooming in the bottom plot.")
+									mode files (gray lines). In addition, the red line shows the mean intensity at a quantile over all these files. 
+									In turn, the bottom plot details the maximum (x-axis) and median (y-axis) quantile intensity 
+									deviation of each file from the mentioned quantile mean, with files stated by their IDs and connected by the gray line for their temporal order. 
+									Please note that top panel quantile distributions become highlighted in black for depicted files upon zooming in the bottom plot.")
 								),
 								bsCollapsePanel(title = "IS-based intensity normalization", 
 									plotOutput("int_norm_ISTD_pos_median", 
@@ -1562,10 +1563,11 @@
 										height = "450px"
 									),	
 									HTML('<hr noshade="noshade" />'),
-									tags$p(align = "justify", "The above top panel shows the quantile log intensity distribution of picked peaks for each of the included negative ionization 
-									mode files (gray lines). The red line shows the mean intensity for a quantile over all these files. In turn, the bottom plot details the maximum and median intensity 
-									deviation from this mentioned mean for each file, with files stated by their IDs and connected by the gray line for their temporal order. 
-									Please note that top panel quantiles distributions become highlighted for depicted files upon any zooming in the bottom plot.")
+									tags$p(align = "justify", "The above top panel shows the log intensity quantile distribution of picked peaks for each of the included negative ionization 
+									mode files (gray lines). In addition, the red line shows the mean intensity at a quantile over all these files. 
+									In turn, the bottom plot details the maximum (x-axis) and median (y-axis) quantile intensity 
+									deviation of each file from the mentioned quantile mean, with files stated by their IDs and connected by the gray line for their temporal order. 
+									Please note that top panel quantile distributions become highlighted in black for depicted files upon zooming in the bottom plot.")
 								),
 								bsCollapsePanel(title = "IS-based intensity normalization", 
 									plotOutput("int_norm_ISTD_neg_median", 
