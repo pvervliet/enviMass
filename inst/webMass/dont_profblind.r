@@ -3,13 +3,13 @@
 
 ##################################################################################
 # POSITIVE #######################################################################
-if( 
-	file.exists(file.path(logfile[[1]],"results","profileList_pos")) 
+if(
+	file.exists(file.path(logfile[[1]],"results","profileList_pos"))
 ){
 
 	##############################################################################
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){rm(profileList_pos,envir=as.environment(".GlobalEnv"))}
-	if(any(objects()=="profileList_pos")){rm(profileList_pos)}	
+	if(any(objects()=="profileList_pos")){rm(profileList_pos)}
 	load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));
 	##############################################################################
 	profileList_pos[["index_prof"]][,"above_blind?"]<-Inf
@@ -24,7 +24,7 @@ if(
 ##################################################################################
 # NEGATIVE #######################################################################
 if( 
-	file.exists(file.path(logfile[[1]],"results","profileList_neg")) 
+	file.exists(file.path(logfile[[1]],"results","profileList_neg"))
 ){
 
 	##############################################################################
