@@ -131,14 +131,17 @@ newproject <- function(
     logfile[[3]] <- summar
     names(logfile)[3] <- c("summary")
     # ProteoWizard MSConvert path ##############################################
-    logfile[[4]] <- "C:/Program Files/ProteoWizard/ProteoWizard 3.0.9283/msconvert.exe"
+    logfile[[4]] <- "C:/Program Files/ProteoWizard/ProteoWizard 3.0.11028/msconvert.exe"
     names(logfile)[4] <- c("PW MSconvert path")
     # Parameters settings ######################################################
+		
 		# order of entries not a sequence! #####################################
 		logfile[[5]] <- list(0)
 		names(logfile)[5] <- c("parameters")
 		logfile$parameters$verbose  <-  "TRUE"
 		logfile$parameters$test  <-  "FALSE"
+		# file processing ######################################################
+		logfile$parameters$files_SIM  <-  "FALSE"		
 		# peak picking ###########################################################
 		logfile$parameters$peak_MSlevel  <-  "1"; 	
 		logfile$parameters$peak_drtgap  <-  "300"; 

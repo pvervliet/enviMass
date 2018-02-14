@@ -2338,6 +2338,23 @@ if(logfile$version < 3.45){
 }
 
 
+if(logfile$version < 3.452){
+
+	cat("\n Updating to version 3.452 ...")
+	################################################################################################
+	if(!any(names(logfile$parameters) == "logfile$parameters$files_SIM")){	
+		logfile$parameters$files_SIM <<- "FALSE"		
+	}
+	################################################################################################	
+	#logfile$version <<- 3.452
+	################################################################################################		
+	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
 #logfile$parameters$is_example<-"TRUE"
 #save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));

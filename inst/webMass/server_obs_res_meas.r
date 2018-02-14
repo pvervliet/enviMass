@@ -987,9 +987,12 @@ observe({
     input$sel_scans_ID
     input$method_definition	
     input$sel_scans_number
+	input$method_MS1_range_use
+	input$method_MS1_range
 	if( (isolate(init$a) == "TRUE") & (!is.na(as.character(isolate(input$sel_scans_ID))))){
 		if(logfile$parameters$verbose == "TRUE") cat("\n Retrieving scan information _A")
 		path = file.path(logfile[[1]], "files", paste0(as.character(isolate(input$sel_scans_ID)), ".mzXML"))
+		#path = file.path(logfile[[1]], "files", "1.mzXML")
 		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if((file.exists(path)) & any(measurements$ID == as.character(isolate(input$sel_scans_ID))) & length(isolate(input$method_definition))){
 			if(logfile$parameters$verbose == "TRUE") cat("\n Retrieving scan information _B")	
@@ -1019,7 +1022,7 @@ observe({
 			method_definition <- isolate(input$method_definition)
 			heads <- mzR::header(mzXML_file)
 			method_definition2 <- method_definition[!is.na(match(method_definition, names(heads)))]
-			if(length(method_definition2) != length(method_definition)){ 
+			if(length(method_definition2) != length(method_definition)){
 				stop("\n WARNING: scan header declaration conflict for your files - please report this problem!")
 			}
 			names(heads)[names(heads) == "peaksCount"] <- "CentroidCount"
@@ -1027,22 +1030,72 @@ observe({
 			heads_short <- heads[, method_definition2, drop = FALSE]
 			heads_summary <- unique(heads_short)
 			if(any(names(heads_summary) == "msLevel")){
-				heads_summary <- heads_summary[order(heads_summary$msLevel, decreasing = FALSE),,drop = FALSE]
+				heads_summary <- heads_summary[order(heads_summary$msLevel, decreasing = FALSE),, drop = FALSE]
+				if(
+					isolate(input$method_MS1_range_use) & 
+					any(heads_summary$msLevel == 1) &
+					any(names(heads) == "lowMZ") &
+					any(names(heads) == "highMZ")
+				){
+					mass_sep <- isolate(input$method_MS1_range)
+					which_MS1 <- which(heads_summary$msLevel == 1)
+					heads_summary <- rbind(heads_summary[which_MS1,], heads_summary)
+					heads_names <- names(heads_summary)
+					heads_summary <- cbind(heads_summary, rep(0, dim(heads_summary)[1]))
+					names(heads_summary) <- c(heads_names, "incl_MS1_mass")
+					heads_summary[which_MS1, "incl_MS1_mass"] <- as.character(mass_sep)
+				}
 			}
-			scanTypes <- match(data.frame(t(heads_short)), data.frame(t(heads_summary))) # convert to list of vectors
 			scanTypes2 <- seq(1:dim(heads_summary)[1])
 			scanCounts <- rep(0, length(scanTypes2))
-			centroidCounts <- rep(0, length(scanTypes2))
-			for(n in 1:length(scanTypes2)){
-				these <- which(scanTypes == scanTypes2[n])
-				scanCounts[n] <- length(these)
-				centroidCounts[n] <- sum(peaksCount[these])
+			centroidCounts <- rep(0, length(scanTypes2))			
+			if(any(names(heads_summary) == "incl_MS1_mass")){
+				drop_which <- which(names(heads_summary) == "incl_MS1_mass")
+				mass_sep <- isolate(input$method_MS1_range)
+				scanTypes <- rep(0, dim(heads_short)[1])
+				for(n in 1:dim(heads_short)[1]){
+					if(heads_short[n, "msLevel"] == 1){
+					
+						if((heads[n,"lowMZ"] <= mass_sep) & (heads[n,"highMZ"] >= mass_sep)){
+							incl_MS1_mass <- mass_sep
+						}else{
+							incl_MS1_mass <- 0
+						}
+						
+						#this <- 
+						#
+						#match(
+						#	data.frame((t(cbind(heads_short[n,], incl_MS1_mass)))), 
+						#	data.frame((t(heads_summary[,])))
+						#)
+					
+					
+						
+						#match(data.frame(t(heads_short[n,])), data.frame(t(heads_summary[, -drop_which])))[1]
+						
+						
+				
+				
+					}else{ # msLevel = 2
+						this <- match(data.frame(t(heads_short[n,])), data.frame(t(heads_summary[, -drop_which])))[1]
+						scanCounts[this] <- (scanCounts[this] + 1)
+						centroidCounts[this] <- (centroidCounts[this] + peaksCount[n])
+#scanTypes[n] <- 
+					}
+				}
+			}else{
+				scanTypes <- match(data.frame(t(heads_short)), data.frame(t(heads_summary))) # convert to list of vectors
+				for(n in 1:length(scanTypes2)){
+					these <- which(scanTypes == scanTypes2[n])
+					scanCounts[n] <- length(these)
+					centroidCounts[n] <- sum(peaksCount[these])
+				}
 			}
 			heads_summary <- cbind(scanTypes2, as.integer(scanCounts), as.integer(centroidCounts), heads_summary)
 			names(heads_summary)[1] <- "Scan type"
 			names(heads_summary)[2] <- "Scan counts"	
 			names(heads_summary)[3] <- "Centroid counts"		
-			if(any(names(heads_summary) == "polarity")){	
+			if(any(names(heads_summary) == "polarity")){
 				heads_summary$polarity <- polar[(heads_summary$polarity)+1]
 			}
 			# generate table outputs #########################################

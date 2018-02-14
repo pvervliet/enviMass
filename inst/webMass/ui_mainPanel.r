@@ -253,11 +253,19 @@
 					conditionalPanel(			
 						condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID')",
 						HTML('<h1 align="center"> &#x21e9; </h1> '),
-						HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Scan type definition </font></p> '),						
-						selectInput("method_definition", label = "Parameters for defining scan types", 
-							choices = c("polarity", "msLevel", "collisionEnergy", "precursorMZ", "ionisationEnergy"), 
-							selected = c("polarity", "msLevel", "collisionEnergy", "precursorMZ"), 
-							multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
+						HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Scan type definition </font></p> '),
+						fluidRow(
+							column(width = 6, 						
+								selectInput("method_definition", label = "Parameters for defining scan types", 
+									choices = c("polarity", "msLevel", "collisionEnergy", "precursorMZ", "ionisationEnergy", "basePeakMZ"), 
+									selected = c("polarity", "msLevel", "collisionEnergy", "precursorMZ"), 
+									multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
+							),
+							column(width = 4, 								
+								checkboxInput("method_MS1_range_use", "Use MS1 mass seperator?", FALSE),
+								numericInput("method_MS1_range", "-> m/z seperator:", 70, min = 0)
+							)							
+						)
 					),
 					conditionalPanel(			
 						condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID') & (output.scan_viewer_name != 'No scan type definition parameters selected - please select at least one!') & (output.scan_viewer_name != '.mzXML file not available')",
@@ -1263,7 +1271,8 @@
             # GENERAL SETTINGS #################################################
             tabPanel("General",
 				div(style = widget_style10,
-					textInput("PWpath", "Path to Proteowizard MSConvert (use / in Windows, include msconvert.exe)", value = "C:/Program Files/ProteoWizard/ProteoWizard 3.0.5140/msconvert.exe")
+					textInput("PWpath", "Path to Proteowizard (PW) MSConvert (use / in Windows, include msconvert.exe)", value = "C:/Program Files/ProteoWizard/ProteoWizard 3.0.5140/msconvert.exe"),
+					checkboxInput("files_SIM", "Enable PW SIM sim as spectra?", FALSE)
 				),
 				div(style = widget_style10,
 					tags$h5("Multi-core processing"),

@@ -659,7 +659,9 @@ addmeasu <- reactive({
 					  file.path(logfile[[1]],"files"),
 					  as.character(isolate(input$PWpath)),
 					  notintern=FALSE,
-					  use_format="mzXML");     				  
+					  use_format="mzXML",
+					  sim_as_scan = as.logical(logfile$parameters$files_SIM)
+					  );     				  
 					file.remove(file.path(logfile[[1]],"files",paste(as.character(newID),".raw",sep="")))
 					file.remove(isolate(input$Measadd_path[[4]]));
 					if(  file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep=""))) || file.exists(file.path(logfile[[1]],"files",paste(newID,".mzXML",sep="")))  ){
@@ -1843,7 +1845,7 @@ impfolder<-reactive({
 			many<-0;					
 			for(i in 1:length(getfiles)){
 				filepath <- file.path(file_in, getfiles[i])
-				file_ending <- enviMass::filetype(getfiles[i], check=TRUE)
+				file_ending <- enviMass::filetype(getfiles[i], check = TRUE)
 				if(
 					file.exists(filepath) & file_ending # in case of modifications meanwhile
 				){
@@ -1957,7 +1959,9 @@ impfolder<-reactive({
 								file.path(logfile[[1]],"files"),
 								as.character(isolate(input$PWpath)),
 								notintern = FALSE,
-								use_format = "mzXML");     				  
+								use_format = "mzXML",
+								sim_as_scan = as.logical(logfile$parameters$files_SIM)
+							);     				  
 							file.remove(file.path(logfile[[1]], "files", paste(newID, ".raw", sep = "")))
 							if( file.exists(file.path(logfile[[1]], "files",paste(newID, ".mzXML", sep = ""))) ){ # copy completed and conversion ok?			
 								#mz1 <- readMzXmlData::readMzXmlFile(
