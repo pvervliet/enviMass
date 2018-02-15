@@ -5,279 +5,232 @@
 		bsAlert("alert_3"),
 		tabsetPanel(
 		#navbarPage("",
-        ########################################################################
-        # MEASUREMENTS #########################################################
-        ########################################################################
+		########################################################################
+		# MEASUREMENTS #########################################################
+		########################################################################
 		tabPanel("Measurements",
-			tabsetPanel(	
-				################################################################
-				tabPanel("File manager",
-					HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/inputs/files.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details</a></p>'),	
-					bsCollapse(multiple = FALSE, open = "files_open", id = "files",
-						# ADD FILE #################################################
-						bsCollapsePanel("Add LC-MS file", 		
-							helpText("To add a new file.mzXML to your project, first browse to its folder location and select the file. 
-								Based on the filename, a guess for the file type, its ionization mode and date is made. 
-								Then specify/check its properties and finally press the load button. "),		
-							helpText("Permissible date formats in file names: 
-								_YYYY_MM_DD_ / _YY_MM_DD_ / _YYYYMMDD_ / _YYMMDD_ / -YYYY-MM-DD- / -YY-MM-DD- / -YYYYMMDD- / -YYMMDD- 
-								 (where - and _ at start and end of the date field can be empty spaces as well). First match in name used."),		
-							HTML('<hr noshade="noshade" />'),
-							fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
-							bsPopover("Measadd_path", 
-									title = "WARNING",
-									content = "Files must be centroided. If reload fails, press cancel in the file upload window first", 
-									placement = "right", trigger = "hover"),
-							textOutput("file_to_load"),
-							HTML('<hr noshade="noshade" />'),
-							HTML('<h1 align = "left"> &#x21e9; </h1> '),	
-							fluidRow(
-								column(width = 5, textInput("Measadd_name", "Name:", value = "File XY")),
-								column(width = 5, selectInput("Measadd_type", "Type:", choices = c("sample", "blank", "calibration", "spiked"))),
-								column(width = 5, selectInput("Measadd_incl", "Include?", choices = c("TRUE","FALSE"))),
-								column(width = 5, selectInput("Measadd_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
-							),
-							conditionalPanel(
-								condition = "input.Measadd_type != 'calibration' & input.Measadd_type != 'spiked'",						
-								HTML('<hr noshade="noshade" />'),
-								fluidRow(
-									column(width = 5, textInput("Measadd_place", "Place:", value = "Rhine")),		
-									column(width = 5, dateInput("Measadd_date", "Date:", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-									column(width = 5, textInput("Measadd_time", "Time (HH:MM:SS):", value = "12:00:00")),							
-									column(width = 5,
-										conditionalPanel(
-											condition = "input.Measadd_type == 'sample'",								
-												textInput("Measadd_tag3", "Replicate group (tag3):", value = "FALSE")
-										)
-									),
-									column(width = 5, textInput("Measadd_ID2", "Custom ID:", value = "FALSE")),
-									column(width = 5, selectInput("Measadd_profiled", "Use for profiling (if Settings/Profiling/Omit adjusted to do so)?", choices = c("TRUE","FALSE"), selected = "TRUE"))
-								)			
-							),	
-							conditionalPanel(
-								condition = "input.Measadd_type == 'calibration'", 
-								HTML('<hr noshade="noshade" />'),
-								fluidRow(
-									column(width = 5, textInput("Measadd_tag1", "Concentration (no units; tag1)", value = "FALSE")),
-									column(width = 5, textInput("Measadd_tag2", "Name of calibration file set (required; tag2)", value = "Group A")),
-									column(width = 5, dateInput("Measadd_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-									column(width = 5, textInput("Measadd_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
-									column(width = 5, dateInput("Measadd_cal_date2", "Date end", value="2018-01-01", min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-									column(width = 5, textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "11:59:59")),
-									column(width = 5, textInput("Measadd_cal_ID2", "Custom ID:", value = "FALSE"))					
-								)
-							),
-							conditionalPanel(
-								condition = "input.Measadd_type == 'spiked'", 
-								HTML('<hr noshade="noshade" />'),
-								fluidRow(
-									column(width = 5, textInput("Measadd_spiked_tag2", "ID of reference file (tag2)", value = "FALSE")),
-									column(width = 5, dateInput("Measadd_recov_date", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-									column(width = 5, textInput("Measadd_recov_time", "Time start (HH:MM:SS)", value = "12:00:00")),
-									column(width = 5, textInput("Measadd_recov_ID2", "Custom ID:", value = "FALSE"))
-								)
-							),						
-							HTML('<hr noshade="noshade" />'),
-							HTML('<h1 align="left"> &#x21e9; </h1> '),
-							bsButton("Load_file", "Load file into project", style = "success"),
-							textOutput("had_meas_added")
-						, style = "success"),
-						# DELETE FILE ##################################################
-						bsCollapsePanel("Delete LC-MS file", 		
-							tags$h5("Delete file by its unique ID from the below file table"),
-							textInput("Measdel_ID", "ID:", value = "123"),
-							bsButton("Measdel","Remove",style="primary")		
-						,style="success"),				
-						# MODIFY FILE ##################################################
-						bsCollapsePanel("Modify specifications for a single file", 
-							fluidRow(
-								column(width = 4, helpText("Load settings of a file into below mask by its ID, modify and then save the new settings into the main table. Modifications make a full recalculation default.")),
-								column(width = 3, textInput("Modif_ID", "ID:", value = "123"), bsButton("Modif_load","Load",style="primary"))
-							),
-							HTML('<hr noshade="noshade" />'),
-							fluidRow(
-								column(width = 5, textInput("Modif_name", "Name:", value = "Sample 1")),
-								column(width = 5, selectInput("Modif_type", "Type:", choices = c("sample", "blank", "calibration", "spiked"))),
-								column(width = 5, selectInput("Modif_include","Include in workflow?",choices = c("TRUE","FALSE"),selected="TRUE")),
-								column(width = 5, selectInput("Modif_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
-							),
-							conditionalPanel(
-								condition = "input.Modif_type == 'sample' | input.Modif_type == 'blank'", 						
-								HTML('<hr noshade="noshade" />'),
-								fluidRow(
-									column(width = 5, textInput("Modif_place", "Place:", value = "Rhine")),										
-									column(width = 5, dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-									column(width = 5, textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),
-									column(width = 5, textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE")),
-									column(width = 5, textInput("Modif_ID2", "Custom ID", value = "FALSE")),
-									column(width = 5, selectInput("Modif_profiled","Use for profiling (if Settings/Profiling/Omit adjusted to do so)?",choices = c("TRUE","FALSE"),selected="TRUE"))								
-								)
-							),
-							conditionalPanel(
-								condition = "input.Modif_type == 'calibration'", 
-								HTML('<hr noshade="noshade" />'),
-								fluidRow(
-									column(width = 5, textInput("Modif_tag1", "Concentration (no units; tag1)", value = "0")),
-									column(width = 5, textInput("Modif_tag2", "Calibration group (tag2)", value = "FALSE")),
-									column(width = 5, dateInput("Modif_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-									column(width = 5, textInput("Modif_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
-									column(width = 5, dateInput("Modif_cal_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-									column(width = 5, textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "11:59:59")),
-									column(width = 5, textInput("Modif_cal_ID2", "Custom ID", value = "FALSE"))							
-								)
-							),
-							conditionalPanel(
-								condition = "input.Modif_type == 'spiked'", 
-								HTML('<hr noshade="noshade" />'),
-								fluidRow(
-									column(width = 5, textInput("Modif_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE")),
-									column(width = 5, dateInput("Modif_recov_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
-									column(width = 5, textInput("Modif_recov_time", "Time:(HH:MM:SS)", value = "12:00:00")),
-									column(width = 5, textInput("Modif_recov_ID2", "Custom ID", value = "FALSE"))
-								)
-							),						
-							HTML('<hr noshade="noshade" />'),
-							bsButton("Modif_export","Save",style="primary")
-						,style="success"),
-						# MODIFY CALIBRATION GROUP ######################################
-						bsCollapsePanel("Modify, copy or delete a calibration group", 
-							fluidRow(
-								column(width = 4, helpText("Load a calibration group to be modified, deleted or copied below. To do so, select the ionization mode, insert the calibration group name (tag2 in the file table) and press Load.")),
-								column(width = 3, selectInput("Modif_cal_mode", "Choose ionization mode:", choices = c("positive", "negative"))),
-								column(width = 3, textInput("Modif_cal_group", "Calibration group (tag2):", value = "existinggroup"), bsButton("Load_cal","Load",style="primary"))
-							),
-							HTML('<hr noshade="noshade" />'),
-							htmlOutput('Modif_cal_text_load'),
-							HTML('<hr noshade="noshade" />'),
-							helpText("Modify the specifications for all files of the above loaded calibration group and press Save to make the changes permanent"),
-							fluidRow(
-								column(width = 5, dateInput("Modif_calgroup_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5, textInput("Modif_calgroup_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
-								column(width = 5, dateInput("Modif_calgroup_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
-								column(width = 5, textInput("Modif_calgroup_time2", "Time end (HH:MM:SS)", value = "11:59:59"))
-							),
-							bsButton("Change_cal","Save",style="primary"),					
-							HTML('<hr noshade="noshade" />'),
-							helpText("Copy the calibration group to create a new calibration group with a different name. This will directly incorporate the above (changed) specifications for the new group."),
-							textInput("Copy_cal_group", "New calibration group name (no underscores permitted!):", value = "newgroup"),
-							bsButton("Copy_cal","Copy",style="primary"),	
-							HTML('<hr noshade="noshade" />'),
-							helpText("Delete all the files and any associated contents of the loaded calibration group."),
-							bsButton("Del_cal","Delete",style="primary"),
-							bsModal("Del_cal_confirm", "Sure about deleting the selected calibration file set?", "Del_cal", size = "small",
-								bsButton("yes_delete_cal","Yes",style="warning")
-							)
-						,style="success"),		
-						# BATCH UPLOAD ##################################################
-						bsCollapsePanel("Batch upload from folder", 	
-							tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be change in the above file modification section. 
-							File dates are set in the sequence of files provided in the folder."),	
-							textInput("import_file_folder", "Folder path:", value = "C:\\...\\folder"),
-							bsPopover("import_file_folder", 
-								title = "Insert full path, including the project folder, but excluding the logfile.emp.",
-								content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
-								placement = "right", trigger = "hover"),
-							checkboxInput("Import_file_folder_overwrite", "Import files with same name?", FALSE),
-							bsPopover("Import_file_folder_overwrite", 
-								title = "File import to existing files",
-								content = "If a file in the folder with the same filename as one already existing in the project is found, should it be imported (new ID assigned)?", 
-								placement = "right", trigger = "hover"),
-							checkboxInput("Import_file_folder_namedate", "Guess date from file name?", FALSE),
-							bsPopover("Import_file_folder_namedate", 
-								title = "Set file date",
-								content = "If checked, file dates are tried to be derived from the file name - otherwise, consecutive file dates are set (starting with the last unused file date, if available). Permissible date formats in file names: _YYYY_MM_DD_ / _YY_MM_DD_ / _YYYYMMDD_ / _YYMMDD_ / -YYYY-MM-DD- / -YY-MM-DD- / -YYYYMMDD- / -YYMMDD- (where - and _ at start and end of the date field can be empty spaces as well). First match in name used.", 
-								placement = "right", trigger = "hover"),
-							bsButton("Import_file_folder","Import",style="primary"),
-							HTML('<hr noshade="noshade" />'),
-							textOutput("had_import_folder")						
-						,style="success"),
-						# IMPORT from other project ######################################
-						bsCollapsePanel("Import files from another project", 		
-							tags$h5("Select project folder to import files from:"),
-							textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
-							bsPopover("import_pro_dir", 
-								title = "Insert full path, including the project folder, but excluding the logfile.emp.",
-								content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
-								placement = "right", trigger = "hover"),
-							checkboxInput("Merge_project", "Omit duplicates?", FALSE),
-							bsPopover("Merge_project", 
-								title = "File duplicate handling",
-								content = "A file with the same type, time, date, ionization and place as one which already exists will not be imported.", 
-								placement = "right", trigger = "hover"),
-							bsButton("Import_project","Import",style="primary"),		
-							HTML('<hr noshade="noshade" />'),
-							textOutput("had_import_project")	
-						,style="info"),
-						# File overview ##################################################
-						bsCollapsePanel("File overview", 
-							helpText("The below plot indicates available files as dots at their respective date and time, listed over the different file categories 
-							and seperately for each of the two ion modes."),
-							helpText("Select a time period via mouse brush to list the file IDs for it. Double-click into the area to zoom in; double-click again to zoom out."),
-							plotOutput("file_overview", 
-								dblclick = "file_overview_dblclick",
-								brush = brushOpts(
-									id = "file_overview_brush",
-									resetOnNew = TRUE,
-									direction = "x",
-									fill="red"
-								),
-								height = "600px"
-							),
-							HTML('<hr noshade="noshade" />'),
-							HTML('<font size="5"> + </font><font size="3"> Last selected file IDs, positive ionization:</font>'),
-							htmlOutput("info_files_pos_samp"),htmlOutput("info_files_pos_blind"),htmlOutput("info_files_pos_cal"),htmlOutput("info_files_pos_calgroup"),htmlOutput("info_files_pos_spiked"),
-							HTML('<hr noshade="noshade" />'),		
-							HTML('<font size="5"> - </font><font size="3"> Last selected file IDs, negative ionization:</font>'),
-							htmlOutput("info_files_neg_samp"),htmlOutput("info_files_neg_blind"),htmlOutput("info_files_neg_cal"),htmlOutput("info_files_neg_calgroup"),htmlOutput("info_files_neg_spiked")
-						,style="warning")
-					),	
+			HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/inputs/files.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details</a></p>'),	
+			bsCollapse(multiple = FALSE, open = "files_open", id = "files",
+				# ADD FILE #################################################
+				bsCollapsePanel("Add LC-MS file", 		
+					helpText("To add a new file.mzXML to your project, first browse to its folder location and select the file. 
+							Based on the filename, a guess for the file type, its ionization mode and date is made. 
+						Then specify/check its properties and finally press the load button. "),		
+					helpText("Permissible date formats in file names: 
+						_YYYY_MM_DD_ / _YY_MM_DD_ / _YYYYMMDD_ / _YYMMDD_ / -YYYY-MM-DD- / -YY-MM-DD- / -YYYYMMDD- / -YYMMDD- 
+						 (where - and _ at start and end of the date field can be empty spaces as well). First match in name used."),		
 					HTML('<hr noshade="noshade" />'),
-					DT::dataTableOutput("measurements")	
-				),
-				################################################################
-				tabPanel("Method setup",
+					fileInput("Measadd_path", "Select centroided .mzXML file:", multiple = FALSE, accept = c(".mzXML",".raw")),
+					bsPopover("Measadd_path", 
+							title = "WARNING",
+							content = "Files must be centroided. If reload fails, press cancel in the file upload window first", 
+							placement = "right", trigger = "hover"),
+					textOutput("file_to_load"),
 					HTML('<hr noshade="noshade" />'),
-					tags$p(align="justify","Select a file by its ID to show information on its method and its individual scans. Moreover, the below Scan type definition 
-					section allows to select parameters by which the different scans are to be distinguished/combined. While enviMass uses the msLevel 1 scans 
-					only at the time being, such Scan type definitions will mainly be used to process msLevel 2 scans in the future."),											
-					div(style = widget_style3, numericInput("sel_scans_ID", "Type in file ID:", 0)),
-					textOutput('scan_viewer_name'),
-					conditionalPanel(			
-						condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID') & (output.scan_viewer_name != 'No scan type definition parameters selected - please select at least one!') & (output.scan_viewer_name != '.mzXML file not available')",						
-						textOutput('scan_viewer_type'),
-						textOutput('scan_viewer_mode'),
-						HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Method information </font></p> '),
-						tableOutput("instrument_Info"),
-						tableOutput("run_Info")
-					),	
-					conditionalPanel(			
-						condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID')",
-						HTML('<h1 align="center"> &#x21e9; </h1> '),
-						HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Scan type definition </font></p> '),
+					HTML('<h1 align = "left"> &#x21e9; </h1> '),	
+					fluidRow(
+						column(width = 5, textInput("Measadd_name", "Name:", value = "File XY")),
+						column(width = 5, selectInput("Measadd_type", "Type:", choices = c("sample", "blank", "calibration", "spiked"))),
+						column(width = 5, selectInput("Measadd_incl", "Include?", choices = c("TRUE","FALSE"))),
+						column(width = 5, selectInput("Measadd_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
+					),
+					conditionalPanel(
+						condition = "input.Measadd_type != 'calibration' & input.Measadd_type != 'spiked'",						
+						HTML('<hr noshade="noshade" />'),
 						fluidRow(
-							column(width = 6, 						
-								selectInput("method_definition", label = "Parameters for defining scan types", 
-									choices = c("polarity", "msLevel", "collisionEnergy", "precursorMZ", "ionisationEnergy", "basePeakMZ"), 
-									selected = c("polarity", "msLevel", "collisionEnergy", "precursorMZ"), 
-									multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
+							column(width = 5, textInput("Measadd_place", "Place:", value = "Rhine")),		
+							column(width = 5, dateInput("Measadd_date", "Date:", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+							column(width = 5, textInput("Measadd_time", "Time (HH:MM:SS):", value = "12:00:00")),							
+							column(width = 5,
+								conditionalPanel(
+									condition = "input.Measadd_type == 'sample'",								
+										textInput("Measadd_tag3", "Replicate group (tag3):", value = "FALSE")
+								)
 							),
-							column(width = 4, 								
-								checkboxInput("method_MS1_range_use", "Use MS1 mass seperator?", FALSE),
-								numericInput("method_MS1_range", "-> m/z seperator:", 70, min = 0)
-							)							
+							column(width = 5, textInput("Measadd_ID2", "Custom ID:", value = "FALSE")),
+							column(width = 5, selectInput("Measadd_profiled", "Use for profiling (if Settings/Profiling/Omit adjusted to do so)?", choices = c("TRUE","FALSE"), selected = "TRUE"))
+						)			
+					),	
+					conditionalPanel(
+						condition = "input.Measadd_type == 'calibration'", 
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, textInput("Measadd_tag1", "Concentration (no units; tag1)", value = "FALSE")),
+							column(width = 5, textInput("Measadd_tag2", "Name of calibration file set (required; tag2)", value = "Group A")),
+							column(width = 5, dateInput("Measadd_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+							column(width = 5, textInput("Measadd_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+							column(width = 5, dateInput("Measadd_cal_date2", "Date end", value="2018-01-01", min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+							column(width = 5, textInput("Measadd_cal_time2", "Time end (HH:MM:SS)", value = "11:59:59")),
+							column(width = 5, textInput("Measadd_cal_ID2", "Custom ID:", value = "FALSE"))					
 						)
 					),
-					conditionalPanel(			
-						condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID') & (output.scan_viewer_name != 'No scan type definition parameters selected - please select at least one!') & (output.scan_viewer_name != '.mzXML file not available')",
-						tableOutput("heads_summary"),
-						HTML('<h1 align="center"> &#x21e9; </h1> '),
-						HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Scan viewer </font></p> '),	
-						div(style = widget_style3, numericInput("sel_scans_number", "Number of viewed scans", 50)),
-						shinyTree(outputId = "scan_tree", checkbox = FALSE, search = FALSE, dragAndDrop = FALSE)
+					conditionalPanel(
+						condition = "input.Measadd_type == 'spiked'", 
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, textInput("Measadd_spiked_tag2", "ID of reference file (tag2)", value = "FALSE")),
+							column(width = 5, dateInput("Measadd_recov_date", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+							column(width = 5, textInput("Measadd_recov_time", "Time start (HH:MM:SS)", value = "12:00:00")),
+							column(width = 5, textInput("Measadd_recov_ID2", "Custom ID:", value = "FALSE"))
+						)
+					),						
+					HTML('<hr noshade="noshade" />'),
+					HTML('<h1 align="left"> &#x21e9; </h1> '),
+					bsButton("Load_file", "Load file into project", style = "success"),
+					textOutput("had_meas_added")
+				, style = "success"),
+				# DELETE FILE ##################################################
+				bsCollapsePanel("Delete LC-MS file", 		
+					tags$h5("Delete file by its unique ID from the below file table"),
+					textInput("Measdel_ID", "ID:", value = "123"),
+					bsButton("Measdel","Remove",style="primary")		
+				,style="success"),				
+				# MODIFY FILE ##################################################
+				bsCollapsePanel("Modify specifications for a single file", 
+					fluidRow(
+						column(width = 4, helpText("Load settings of a file into below mask by its ID, modify and then save the new settings into the main table. Modifications make a full recalculation default.")),
+						column(width = 3, textInput("Modif_ID", "ID:", value = "123"), bsButton("Modif_load","Load",style="primary"))
+					),
+					HTML('<hr noshade="noshade" />'),
+					fluidRow(
+						column(width = 5, textInput("Modif_name", "Name:", value = "Sample 1")),
+						column(width = 5, selectInput("Modif_type", "Type:", choices = c("sample", "blank", "calibration", "spiked"))),
+						column(width = 5, selectInput("Modif_include","Include in workflow?",choices = c("TRUE","FALSE"),selected="TRUE")),
+						column(width = 5, selectInput("Modif_mode", "Choose ionization mode:", choices = c("positive", "negative")))	
+					),
+					conditionalPanel(
+						condition = "input.Modif_type == 'sample' | input.Modif_type == 'blank'", 						
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, textInput("Modif_place", "Place:", value = "Rhine")),										
+							column(width = 5, dateInput("Modif_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+							column(width = 5, textInput("Modif_time", "Time:(HH:MM:SS)", value = "12:00:00")),
+							column(width = 5, textInput("Modif_tag3", "Replicate group (tag3)", value = "FALSE")),
+							column(width = 5, textInput("Modif_ID2", "Custom ID", value = "FALSE")),
+							column(width = 5, selectInput("Modif_profiled","Use for profiling (if Settings/Profiling/Omit adjusted to do so)?",choices = c("TRUE","FALSE"),selected="TRUE"))								
+						)
+					),
+					conditionalPanel(
+						condition = "input.Modif_type == 'calibration'", 
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, textInput("Modif_tag1", "Concentration (no units; tag1)", value = "0")),
+							column(width = 5, textInput("Modif_tag2", "Calibration group (tag2)", value = "FALSE")),
+							column(width = 5, dateInput("Modif_cal_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+							column(width = 5, textInput("Modif_cal_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+							column(width = 5, dateInput("Modif_cal_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+							column(width = 5, textInput("Modif_cal_time2", "Time end (HH:MM:SS)", value = "11:59:59")),
+							column(width = 5, textInput("Modif_cal_ID2", "Custom ID", value = "FALSE"))							
+						)
+					),
+					conditionalPanel(
+						condition = "input.Modif_type == 'spiked'", 
+						HTML('<hr noshade="noshade" />'),
+						fluidRow(
+							column(width = 5, textInput("Modif_spiked_tag2", "ID of file to subtract from (tag2)", value = "FALSE")),
+							column(width = 5, dateInput("Modif_recov_date", "Date", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),	
+							column(width = 5, textInput("Modif_recov_time", "Time:(HH:MM:SS)", value = "12:00:00")),
+							column(width = 5, textInput("Modif_recov_ID2", "Custom ID", value = "FALSE"))
+						)
+					),						
+					HTML('<hr noshade="noshade" />'),
+					bsButton("Modif_export","Save",style="primary")
+				,style="success"),
+				# MODIFY CALIBRATION GROUP ######################################
+				bsCollapsePanel("Modify, copy or delete a calibration group", 
+					fluidRow(
+						column(width = 4, helpText("Load a calibration group to be modified, deleted or copied below. To do so, select the ionization mode, insert the calibration group name (tag2 in the file table) and press Load.")),
+						column(width = 3, selectInput("Modif_cal_mode", "Choose ionization mode:", choices = c("positive", "negative"))),
+						column(width = 3, textInput("Modif_cal_group", "Calibration group (tag2):", value = "existinggroup"), bsButton("Load_cal","Load",style="primary"))
+					),
+					HTML('<hr noshade="noshade" />'),
+					htmlOutput('Modif_cal_text_load'),
+					HTML('<hr noshade="noshade" />'),
+					helpText("Modify the specifications for all files of the above loaded calibration group and press Save to make the changes permanent"),
+					fluidRow(
+						column(width = 5, dateInput("Modif_calgroup_date1", "Date start", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+						column(width = 5, textInput("Modif_calgroup_time1", "Time start (HH:MM:SS)", value = "12:00:00")),
+						column(width = 5, dateInput("Modif_calgroup_date2", "Date end", value = NULL, min = NULL,max = NULL, format = "yyyy-mm-dd", startview = "month",weekstart = 0, language = "en")),
+						column(width = 5, textInput("Modif_calgroup_time2", "Time end (HH:MM:SS)", value = "11:59:59"))
+					),
+					bsButton("Change_cal","Save",style="primary"),					
+					HTML('<hr noshade="noshade" />'),
+					helpText("Copy the calibration group to create a new calibration group with a different name. This will directly incorporate the above (changed) specifications for the new group."),
+					textInput("Copy_cal_group", "New calibration group name (no underscores permitted!):", value = "newgroup"),
+					bsButton("Copy_cal","Copy",style="primary"),	
+					HTML('<hr noshade="noshade" />'),
+					helpText("Delete all the files and any associated contents of the loaded calibration group."),
+					bsButton("Del_cal","Delete",style="primary"),
+					bsModal("Del_cal_confirm", "Sure about deleting the selected calibration file set?", "Del_cal", size = "small",
+						bsButton("yes_delete_cal","Yes",style="warning")
 					)
-				)
-				################################################################								
-			)
+				,style="success"),		
+				# BATCH UPLOAD ##################################################
+				bsCollapsePanel("Batch upload from folder", 	
+					tags$h5("Read in batches of files (.mzXML) from a folder; file specifications will be guessed and can later be change in the above file modification section. 
+					File dates are set in the sequence of files provided in the folder."),	
+					textInput("import_file_folder", "Folder path:", value = "C:\\...\\folder"),
+					bsPopover("import_file_folder", 
+						title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+						content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
+						placement = "right", trigger = "hover"),
+					checkboxInput("Import_file_folder_overwrite", "Import files with same name?", FALSE),
+					bsPopover("Import_file_folder_overwrite", 
+						title = "File import to existing files",
+						content = "If a file in the folder with the same filename as one already existing in the project is found, should it be imported (new ID assigned)?", 
+						placement = "right", trigger = "hover"),
+					checkboxInput("Import_file_folder_namedate", "Guess date from file name?", FALSE),
+					bsPopover("Import_file_folder_namedate", 
+						title = "Set file date",
+						content = "If checked, file dates are tried to be derived from the file name - otherwise, consecutive file dates are set (starting with the last unused file date, if available). Permissible date formats in file names: _YYYY_MM_DD_ / _YY_MM_DD_ / _YYYYMMDD_ / _YYMMDD_ / -YYYY-MM-DD- / -YY-MM-DD- / -YYYYMMDD- / -YYMMDD- (where - and _ at start and end of the date field can be empty spaces as well). First match in name used.", 
+						placement = "right", trigger = "hover"),
+					bsButton("Import_file_folder","Import",style="primary"),
+					HTML('<hr noshade="noshade" />'),
+					textOutput("had_import_folder")						
+				,style="success"),
+				# IMPORT from other project ######################################
+				bsCollapsePanel("Import files from another project", 		
+					tags$h5("Select project folder to import files from:"),
+					textInput("import_pro_dir", "", value = "C:\\...\\old_project_name"),
+					bsPopover("import_pro_dir", 
+						title = "Insert full path, including the project folder, but excluding the logfile.emp.",
+						content = "Using your OS explorer, you may navigate into your project folder and copy/paste the full path.", 
+						placement = "right", trigger = "hover"),
+					checkboxInput("Merge_project", "Omit duplicates?", FALSE),
+					bsPopover("Merge_project", 
+						title = "File duplicate handling",
+						content = "A file with the same type, time, date, ionization and place as one which already exists will not be imported.", 
+						placement = "right", trigger = "hover"),
+					bsButton("Import_project","Import",style="primary"),		
+					HTML('<hr noshade="noshade" />'),
+					textOutput("had_import_project")	
+				,style="info"),
+				# File overview ##################################################
+				bsCollapsePanel("File overview", 
+					helpText("The below plot indicates available files as dots at their respective date and time, listed over the different file categories 
+					and seperately for each of the two ion modes."),
+					helpText("Select a time period via mouse brush to list the file IDs for it. Double-click into the area to zoom in; double-click again to zoom out."),
+					plotOutput("file_overview", 
+						dblclick = "file_overview_dblclick",
+						brush = brushOpts(
+							id = "file_overview_brush",
+							resetOnNew = TRUE,
+							direction = "x",
+							fill="red"
+						),
+						height = "600px"
+					),
+					HTML('<hr noshade="noshade" />'),
+					HTML('<font size="5"> + </font><font size="3"> Last selected file IDs, positive ionization:</font>'),
+					htmlOutput("info_files_pos_samp"),htmlOutput("info_files_pos_blind"),htmlOutput("info_files_pos_cal"),htmlOutput("info_files_pos_calgroup"),htmlOutput("info_files_pos_spiked"),
+					HTML('<hr noshade="noshade" />'),		
+					HTML('<font size="5"> - </font><font size="3"> Last selected file IDs, negative ionization:</font>'),
+					htmlOutput("info_files_neg_samp"),htmlOutput("info_files_neg_blind"),htmlOutput("info_files_neg_cal"),htmlOutput("info_files_neg_calgroup"),htmlOutput("info_files_neg_spiked")
+				,style="warning")
+			),	
+			HTML('<hr noshade="noshade" />'),
+			DT::dataTableOutput("measurements")	
+
 	    ),
         ########################################################################
         # Compounds ############################################################
@@ -892,6 +845,58 @@
 		  bsAlert("alert_2"),
 		  HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/inputs/parameters.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Help on how to specify parameters.</a></p>'),	
           tabsetPanel(
+			################################################################
+			tabPanel("Method setup",
+				tags$h5("The below method setup allows to define how scans from measurement files are to be distinguished and subsequently handled separately in the workflow. Note that only one such setup can be defined and applied to all processed files."),
+				tabsetPanel(
+					tabPanel("Define new method",		  
+						HTML('<hr noshade="noshade" />'),
+						tags$p(align="justify","Select a file by its ID to show the properties for its individual scans. The below Scan type definition 
+						section allows to select parameters by which the different scans are to be distinguished/combined. While enviMass uses the msLevel 1 scans 
+						only at the time being, such Scan type definitions will also be used to process msLevel 2 scans in the future."),											
+						div(style = widget_style3, numericInput("sel_scans_ID", "Type in file ID:", 0)),
+						textOutput('scan_viewer_name'),
+						conditionalPanel(			
+							condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID') & (output.scan_viewer_name != 'No scan type definition parameters selected - please select at least one!') & (output.scan_viewer_name != '.mzXML file not available')",						
+							textOutput('scan_viewer_type'),
+							textOutput('scan_viewer_mode'),
+							HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Method information </font></p> '),
+							tableOutput("instrument_Info"),
+							tableOutput("run_Info")
+						),	
+						conditionalPanel(			
+							condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID')",
+							HTML('<h1 align="center"> &#x21e9; </h1> '),
+							HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Scan type definition </font></p> '),
+							fluidRow(
+								column(width = 6, 						
+									selectInput("method_definition", label = "Parameters for defining scan types", 
+										choices = c("polarity", "msLevel", "collisionEnergy", "precursorMZ", "ionisationEnergy", "basePeakMZ"), 
+										selected = c("polarity", "msLevel", "collisionEnergy", "precursorMZ"), 
+										multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
+								),
+								column(width = 6, 								
+									checkboxInput("method_MS1_separation", "Separate consecutive MS1 scans? (msLevel definition required)", FALSE)
+								)							
+							)
+						),
+						conditionalPanel(			
+							condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID') & (output.scan_viewer_name != 'No scan type definition parameters selected - please select at least one!') & (output.scan_viewer_name != '.mzXML file not available')",
+							tableOutput("heads_summary"),
+							HTML('<h1 align="center"> &#x21e9; </h1> '),
+							HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Scan viewer </font></p> '),	
+							div(style = widget_style3, numericInput("sel_scans_number", "Number of viewed scans", 50)),
+							shinyTree(outputId = "scan_tree", checkbox = FALSE, search = FALSE, dragAndDrop = FALSE)
+						)
+					),
+					tabPanel("Existing method",	
+						HTML('<hr noshade="noshade" />')
+						
+						
+						
+					)
+				)
+			),	  
             # PEAK PICKING #####################################################
             tabPanel("Peak picking",
   				HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/peakpicking.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="left">&#8594; Check help for details & parameter descriptions.</a></p>'),			

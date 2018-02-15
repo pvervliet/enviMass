@@ -1,5 +1,6 @@
 	###############################################################################	
 	those_objects <- c(
+		"heads_summary",
 		"found_which",
 		"patternRT_pos",
 		"patternRT_neg",
