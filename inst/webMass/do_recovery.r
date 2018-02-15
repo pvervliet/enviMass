@@ -11,6 +11,7 @@
 	}	
 	rm(those)
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");	
+	#measurements<-read.csv(file=file.path("H:/PART_1/MS PROJECTS/RUeS/debug","measurements"),colClasses = "character");		
 	######################################################################################################################
 	
 	######################################################################################################################	
@@ -21,6 +22,7 @@
 	){
 		
 		load(file.path(logfile[[1]], "quantification", "target_quant_table_pos"))
+		#load(file.path("H:/PART_1/MS PROJECTS/RUeS/debug", "target_quant_table_pos"))		
 		target_quant_table_pos <- target_quant_table_pos[,!is.na(colnames(target_quant_table_pos)), drop = FALSE]
 		those_files <- measurements[(measurements[,"Mode"] == "positive" & measurements[,"Type"] == "spiked" & measurements[,"include"] == "TRUE"),, drop = FALSE]
 		atdate <- those_files[,6]

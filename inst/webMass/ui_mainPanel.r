@@ -1659,8 +1659,8 @@
 												textInput("peaks_mz_RT_use_window_mass", "m/z",  "216.101"),
 												helpText( a("Calculate a mass?", href="http://www.envipat.eawag.ch/index.php",target="_blank"))
 											),
-											column(2,textInput("peaks_mz_RT_use_window_RT", "RT", "500")),
-											column(3,textInput("peaks_mz_RT_use_window_RT_tol", "RT tolerance", "60"))
+											column(2,textInput("peaks_mz_RT_use_window_RT", "RT [s]", "500")),
+											column(3,textInput("peaks_mz_RT_use_window_RT_tol", "RT tolerance [s]", "60"))
 										),
 										fluidRow(
 											column(4,checkboxInput("peaks_mz_RT_use_bar", "Add a blue ppm bar to search window?", FALSE)),									
