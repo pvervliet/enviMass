@@ -408,6 +408,9 @@ newproject <- function(
 		logfile$UI_options$filterProf_notblind <- "no" 		
 		logfile$UI_options$filterProf_sort <- "current trend intensity (decreasing)"		
 		logfile$UI_options$filterProf_components <- "TRUE"			
+	# Method setup table #######################################################
+	logfile[[18]] <- "Not available"
+	names(logfile)[18] <- c("method_setup")
 	# calibration model ########################################################
 	cal_models_pos <- list()
 	save(cal_models_pos, file = file.path(logfile$project_folder, "quantification", "cal_models_pos"));	

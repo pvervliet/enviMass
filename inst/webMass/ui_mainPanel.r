@@ -848,13 +848,14 @@
 			################################################################
 			tabPanel("Method setup",
 				HTML('<hr noshade="noshade" />'),
-				tags$p(align="justify","The below Define new method Tab specifies how individual scans are to be distinguished/combined and subsequently handled in the workflow. 
-				Note that only one such method setup can be defined and then applied to all the files of a project. The currently used method is listed in the Existing method tab below and used during workflow processing ..."),											
 				div(style = widget_style10,
-					checkboxInput("method_use", "... provided the method setup is enabled at all? (Mind the -> Apply button above)", value = FALSE, width = '610px')
+					checkboxInput("method_use", "Enable method setup? Mind the Apply button.", value = FALSE, width = '470px')
 				),
-				tags$h5("Without enabling the setup, all MS1 scans of a file will otherwise be combined and all MS2 scans discarded as default. (NOTE: enviMass only utilizes the msLevel 1 scans 
-						at the time being; msLevel 2 Scan type definitions will effectively be used in future versions.)"),
+				HTML('<h1 align="center"> &#x21e9; </h1> '),
+				tags$p(align = "justify", "The below Define new method Tab specifies how individual scans are to be distinguished/combined and subsequently handled in the workflow. 
+				Note that only one such method setup can be defined and is then applied to all the files of a project. The currently used method is listed in the Existing method tab below and used if the method setup is enabled above.									
+				Otherwise, all MS1 scans of a file will be combined and all MS2 scans discarded as default. 
+				(NOTICE: enviMass only utilizes the msLevel 1 scans at the time being; msLevel 2 Scan type definitions will effectively be used in future versions.)"),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),
 				tabsetPanel(
 					tabPanel("Define new method",		  
@@ -891,33 +892,30 @@
 						),
 						conditionalPanel(			
 							condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID') & (output.scan_viewer_name != 'No scan type definition parameters selected - please select at least one!') & (output.scan_viewer_name != '.mzXML file not available')",
-							tableOutput("heads_summary"),
+							HTML('<h1 align="center"> &#x21e9; </h1> '),
+							tableOutput("heads_summary_new"),
 							HTML('<hr noshade="noshade" />'),
 							HTML('<h1 align="center"> &#x21e9; </h1> '),
 							tags$p(align="justify","Choose the Scan types from the above table and Press Save method to apply this method for your project (all selected msLevel 1 scans will be pooled, msLevel 2 scan types will be handled separately):"),								
-
 							fluidRow(
 								column(width = 7,		
 									div(style = widget_style10,									
 										checkboxGroupInput("method_use_ScanTypes", label = "Select above Scan types to include:", choices = c("1", "2", "3", "4", "5"), selected = c("1"), inline = TRUE)
 									)
 								),
-								column(width = 4,
-									bsButton("save_method", "Save method", style = "success")
-								)
+								column(width = 4, bsButton("save_method", "Save method", style = "success"))
 							),
-
 							HTML('<h1 align="center"> &#x21e7; </h1> '),
 							HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Scan viewer </font></p> '),	
 							div(style = widget_style3, numericInput("sel_scans_number", "Number of viewed scans", 50)),
 							shinyTree(outputId = "scan_tree", checkbox = FALSE, search = FALSE, dragAndDrop = FALSE)
 						)
 					),
-					tabPanel("-> Existing method",	
-						HTML('<hr noshade="noshade" />')
-						
-						
-						
+					tabPanel("Existing method",	
+						HTML('<hr noshade="noshade" />'),
+						tags$p(align = "justify","The below existing method is used in the workflow, provided the method setup is enabled. Define a new method in the Tab to the left to set up a new way to define scans."),								
+						HTML('<hr noshade="noshade" />'),
+						tableOutput("heads_summary_existing")
 					)
 				)
 			),	  
@@ -1301,7 +1299,7 @@
             tabPanel("General",
 				div(style = widget_style10,
 					textInput("PWpath", "Path to Proteowizard (PW) MSConvert (use / in Windows, include msconvert.exe)", value = "C:/Program Files/ProteoWizard/ProteoWizard 3.0.5140/msconvert.exe"),
-					checkboxInput("files_SIM", "Enable PW SIM sim as spectra?", FALSE)
+					checkboxInput("files_SIM", "Enable PW sim-as-spectra?", FALSE)
 				),
 				div(style = widget_style10,
 					tags$h5("Multi-core processing"),

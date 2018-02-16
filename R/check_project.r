@@ -80,7 +80,8 @@ check_project <- function(
 		"Negative_subtraction_files",
 		"adducts_pos_group",
 		"adducts_neg_group",
-		"UI_options"))
+		"UI_options",
+		"method_setup"))
 	){
 		say <- "Your logfile is corrupted_1,  project debug required!"
 	}
@@ -557,62 +558,67 @@ check_project <- function(
 			"Agilent_QTOF6550_low_extended2GHz_highRes",
 			"Agilent_QTOF6550_low_highRes4GHz_highRes"
 		)
-		if(any(avail==logfile$parameters$resolution)){ # available on www.envimass.ch
-			if(logfile$parameters$resolution=="OrbitrapXL,Velos,VelosPro_R60000@400"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/OrbitrapXL_Velos_VelosPro_R60K@400/quantiz"
+		if(any(avail == logfile$parameters$resolution)){ # available on www.envimass.ch
+			if(logfile$parameters$resolution == "OrbitrapXL,Velos,VelosPro_R60000@400"){
+				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/OrbitrapXL_Velos_VelosPro_R60K@400/quantiz"
 			}
 			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_280K@200/quantiz"
+				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_280K@200/quantiz"
 			}			
 			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R140000@200"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R140K@200/quantiz"
+				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R140K@200/quantiz"
 			}				
 			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R70000@200"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R70K@200/quantiz"
+				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R70K@200/quantiz"
 			}				
 			if(logfile$parameters$resolution=="Sciex_TripleTOF5600_R25000@200"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
+				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
 			}
 			if(logfile$parameters$resolution=="Sciex_TripleTOF6600_R25000@200"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
+				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
 			}
 			if(logfile$parameters$resolution=="Sciex_QTOFX500R_R25000@200"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
+				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
 			}
 			if(logfile$parameters$resolution=="Agilent_QTOF6550_low_extended2GHz_highRes"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Agilent_QTOF6550_low_extended2GHz_highRes/quantiz"
+				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Agilent_QTOF6550_low_extended2GHz_highRes/quantiz"
 			}			
 			if(logfile$parameters$resolution=="Agilent_QTOF6550_low_highRes4GHz_highRes"){
-				get_url<-"http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Agilent_QTOF6550_low_highRes4GHz_highRes/quantiz"
+				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Agilent_QTOF6550_low_highRes4GHz_highRes/quantiz"
 			}	
-			dest_file<-file.path(logfile[[1]],"dataframes","quantiz")
-			url_quantiz<-try(download.file(url=get_url, destfile=dest_file, mode = "wb"))
-			if(class(url_quantiz)=="try-error"){
+			dest_file <- file.path(logfile[[1]], "dataframes", "quantiz")
+			url_quantiz <- try(download.file(url=get_url, destfile = dest_file, mode = "wb"))
+			if(class(url_quantiz) == "try-error"){
 				cat("\n Download of missing isotopologue space failed.")
-				say<-"Unable to download missing isotopologue space. Please either check your internet connection and retry or
+				say <- "Unable to download missing isotopologue space. Please either check your internet connection and retry or
 				proceed manually as described on www.enviMass.ch -> Data input -> Download available isotopologue spaces." 
 			}else{
 				cat("\n Download of missing isotopologue space completed.\n")			  
-				load_quantiz<-try(load(file.path(logfile[[1]],"dataframes","quantiz")) )
-				if(class(load_quantiz)=="try-error"){
+				load_quantiz <- try(load(file.path(logfile[[1]], "dataframes", "quantiz")) )
+				if(class(load_quantiz) == "try-error"){
 					cat("\n Loading of missing isotopologue space failed.\n")	
-					say<-"Loading failure of downloaded isotopologue space. Please proceed manually as described on www.enviMass.ch -> Data input -> Download available isotopologue spaces."
+					say <- "Loading failure of downloaded isotopologue space. Please proceed manually as described on www.enviMass.ch -> Data input -> Download available isotopologue spaces."
 				}
 			}
 		}else{	# not available on www.wnvimass.ch
-			say<-"The isotopologue grouping step is enabled in the workflow. We regret that no data set for the isotopologue space for the selected instrument and resolution is at present available for enviMass. Please remove the isotopologue grouping step from the workflow." 
+			say <- "The isotopologue grouping step is enabled in the workflow. We regret that no data set for the isotopologue space for the selected instrument and resolution is at present available for enviMass. Please remove the isotopologue grouping step from the workflow." 
 		} 
 	}
 	###############################################################################
 	# Homologue series detection ################################################## 
-	if(logfile$workflow[names(logfile$workflow)=="homologues"]=="yes"){
-		if(logfile$parameters$external$homol_units[1]!="FALSE"){
-			these<-enviPat::check_chemform(isotopes,logfile$parameters$external$homol_units)[,1] 
-			if(any(these!="FALSE")){
+	if(logfile$workflow[names(logfile$workflow) == "homologues"] == "yes"){
+		if(logfile$parameters$external$homol_units[1] != "FALSE"){
+			these <- enviPat::check_chemform(isotopes, logfile$parameters$external$homol_units)[,1] 
+			if(any(these != "FALSE")){
 				say <- "Invalid chemical formulas for predefined homologue series units found - please revise" 
 			}  
 		}
 	} 
+	###############################################################################
+	# Method setup ################################################################
+	if( as.logical(logfile$parameters$method_use) & is.character(logfile$method_setup) ){
+		say <- "Method setup is enabeled but no valid existing method is available. Either disable the method setup or define a method in the project Settings."
+	}
 	##############################################################################
 	if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in check_project.r!")}
 	return(say);

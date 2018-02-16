@@ -17,30 +17,30 @@ observe({
 	if(!is.na(isolate(input$sel_meas))){
     if(isolate(input$sel_meas)!=0){
 		##########################################################################	
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-		if(any(measurements[,"ID"]==as.character(isolate(input$sel_meas)))){
-			output$file_proc_name<-renderText(paste("File name: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Name"],sep=""))
-			output$file_proc_type<-renderText(paste("File type: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Type"],sep=""))
-			output$file_proc_mode<-renderText(paste("Ionization mode: ",measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"Mode"],sep=""))
+		measurements<-read.csv(file = file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character");
+		if(any(measurements[,"ID"] == as.character(isolate(input$sel_meas)))){
+			output$file_proc_name <- renderText(paste("File name: ",measurements[measurements[,"ID"] == as.character(isolate(input$sel_meas)),"Name"],sep=""))
+			output$file_proc_type <- renderText(paste("File type: ",measurements[measurements[,"ID"] == as.character(isolate(input$sel_meas)),"Type"],sep=""))
+			output$file_proc_mode <- renderText(paste("Ionization mode: ",measurements[measurements[,"ID"] == as.character(isolate(input$sel_meas)),"Mode"],sep=""))
 			# peaklist info ##########################################################
 			if(	file.exists(file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas)))) &
-				(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"include"]=="TRUE")
+				(measurements[measurements[,"ID"] == as.character(isolate(input$sel_meas)),"include"] == "TRUE")
 			){
-				load(file=file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"),verbose=FALSE);
+				load(file = file.path(logfile$project_folder,"peaklist",as.character(isolate(input$sel_meas))),envir = as.environment(".GlobalEnv"),verbose=FALSE);
 				#load(file=file.path(logfile$project_folder,"peaklist",as.character(2165)),envir=as.environment(".GlobalEnv"),verbose=FALSE);			
-				output$file_peak_number<-renderText(as.character(length(peaklist[,1])));	
-				blind_aff<-round(
-					(sum(peaklist[,colnames(peaklist)=="keep_2"]<Inf))/length(peaklist[,1])*100
+				output$file_peak_number <- renderText(as.character(length(peaklist[,1])));	
+				blind_aff <- round(
+					(sum(peaklist[,colnames(peaklist) == "keep_2"] < Inf))/length(peaklist[,1])*100
 				,digits=3)
-				output$file_blind_aff<-renderText(as.character(blind_aff));
-				output$file_blind_aff2<-renderText(as.character(blind_aff));
-				blind_rem<-round(
-					(sum(peaklist[,colnames(peaklist)=="keep_2"]<as.numeric(logfile$parameters$blind_threshold)))/length(peaklist[,1])*100
+				output$file_blind_aff <- renderText(as.character(blind_aff));
+				output$file_blind_aff2 <- renderText(as.character(blind_aff));
+				blind_rem <- round(
+					(sum(peaklist[,colnames(peaklist) == "keep_2"] < as.numeric(logfile$parameters$blind_threshold))) / length(peaklist[,1])*100
 				,digits=3)
-				output$file_blind_rem<-renderText(as.character(blind_rem));
-				output$file_blind_rem2<-renderText(as.character(blind_rem));
+				output$file_blind_rem <- renderText(as.character(blind_rem));
+				output$file_blind_rem2 <- renderText(as.character(blind_rem));
 				repl_rem<-round(
-					(sum(peaklist[,colnames(peaklist)=="keep"]==0))/length(peaklist[,1])*100
+					(sum(peaklist[,colnames(peaklist) == "keep"] == 0)) / length(peaklist[,1])*100
 				,digits=3)
 				output$file_repl_rem<-renderText(as.character(repl_rem));
 				######################################################################
@@ -48,14 +48,14 @@ observe({
 	  			######################################################################
 			}else{
 				cat("\n no processed peaklist found for the selected file.")
-				isolate(refresh_plot$b<-0)	
-				isolate(refresh_plot$c<-0)	
-				output$file_peak_number<-renderText("none");
-				output$file_blind_aff<-renderText("none");
-				output$file_blind_aff2<-renderText("none");
-				output$file_blind_rem<-renderText("none");
-				output$file_blind_rem2<-renderText("none");
-				output$file_repl_rem<-renderText("none");
+				isolate(refresh_plot$b <- 0)	
+				isolate(refresh_plot$c <- 0)	
+				output$file_peak_number <- renderText("none");
+				output$file_blind_aff <- renderText("none");
+				output$file_blind_aff2 <- renderText("none");
+				output$file_blind_rem <- renderText("none");
+				output$file_blind_rem2 <- renderText("none");
+				output$file_repl_rem <- renderText("none");
 			}
 			##########################################################################		
 			# blind/blank peak tagging ###############################################
@@ -132,23 +132,23 @@ observe({
 				(measurements[measurements[,"ID"]==as.character(isolate(input$sel_meas)),"include"]=="TRUE")
 			){
 				output$showLOD<-renderText("LOD interpolation results:")
-				expr_LOD<-list( src=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="")) )
-				output$LOD_pic<-renderImage(expr_LOD, deleteFile = FALSE)	
+				expr_LOD <- list( src=file.path(logfile[[1]],"results","LOD",paste("plot_LOD_",as.character(isolate(input$sel_meas)),".png",sep="")) )
+				output$LOD_pic <- renderImage(expr_LOD, deleteFile = FALSE)	
 				cat("\n LOD pic file found")
 			}else{
-				output$showLOD<-renderText("No LOD interpolation available.")
+				output$showLOD <- renderText("No LOD interpolation available.")
 				cat("\n LOD pic file not found")
 			}
 			##########################################################################			
 			output$dowhat<-renderText("Processing per file viewed.");	
 		}else{
-			output$showblank<-renderText("FALSE")
-			output$showrecal<-renderText("FALSE")
-			output$showintensitydistrib<-renderText("FALSE")
-			output$showLOD<-renderText("FALSE")
-			output$dowhat<-renderText("Invalid ID chosen to view processing results.");	
-			isolate(refresh_plot$b<-0)	
-			isolate(refresh_plot$c<-0)	
+			output$showblank <- renderText("FALSE")
+			output$showrecal <- renderText("FALSE")
+			output$showintensitydistrib <- renderText("FALSE")
+			output$showLOD <- renderText("FALSE")
+			output$dowhat <- renderText("Invalid ID chosen to view processing results.");	
+			isolate(refresh_plot$b <- 0)	
+			isolate(refresh_plot$c <- 0)	
 		}
     }
 	}
@@ -214,7 +214,7 @@ observe({
     s5<-input$exp_peaklist_rows_selected
     if(isolate(init$a)=="TRUE"){
         if(length(s5)){
-        	cat("\n Selected rows: ");print(s5)
+        	if(logfile$parameters$verbose){ cat("\n Selected rows: ");print(s5)} 
         	these_peaks<<-peaklist[s5,"peak_ID"];print(these_peaks)
         	##################################################################
         	if(any(objects(envir=as.environment(".GlobalEnv"))=="MSlist")){
@@ -230,10 +230,10 @@ observe({
 				load(file.path(logfile[[1]],"MSlist",as.character(isolate(input$sel_meas))),envir=as.environment(".GlobalEnv"))  
         	}
         	##################################################################
-	        isolate(refresh_plot$b<-(refresh_plot$b+1))
+	        isolate(refresh_plot$b <- (refresh_plot$b+1))
         	##################################################################
         }else{
-        	cat("\n Selected nothing: ");print(s5)
+        	if(logfile$parameters$verbose) cat("\n Selected nothing: ");print(s5)
         }
 	}
 })
@@ -285,11 +285,11 @@ observeEvent(input$peak_chromat_dblclick, {
 	if(isolate(init$a)=="TRUE"){
           brush <- isolate(input$peak_chromat_brush)
           if (!is.null(brush)) {
-            cat("\n Zoom in_1e")
+            if(logfile$parameters$verbose) cat("\n Zoom in_1e")
             isolate(ranges_peaks_mz_RT$xchroma <- c(brush$xmin, brush$xmax))
             isolate(ranges_peaks_mz_RT$ychroma <- c(brush$ymin, brush$ymax))            
           } else {
-            cat("\n Zoom out full_1e")
+            if(logfile$parameters$verbose) cat("\n Zoom out full_1e")
             isolate(ranges_peaks_mz_RT$xchroma <- FALSE)
             isolate(ranges_peaks_mz_RT$ychroma <- FALSE)
           }
@@ -299,10 +299,10 @@ observeEvent(input$peak_chromat_dblclick, {
 ##############################################################################
 observeEvent(input$peak_chromat_click, { # NOTE: brushing already triggers a click -> use brush with delay=0, which embeds the slower click
 	if(isolate(init$a)=="TRUE"){
-          cat("\n Zoom out part_1_ae")
+          if(logfile$parameters$verbose) cat("\n Zoom out part_1_ae")
           brush <- isolate(input$peak_chromat_brush)
           if (is.null(brush)) {
-              cat("\n Zoom out part_1_be")
+              if(logfile$parameters$verbose) cat("\n Zoom out part_1_be")
               if(isolate(ranges_peaks_mz_RT$xchroma[1])!=FALSE){
                 old_range_dmass<-abs(isolate(ranges_peaks_mz_RT$xchroma[2]-ranges_peaks_mz_RT$xchroma[1]))
                 isolate(ranges_peaks_mz_RT$xchroma[1]<-ranges_peaks_mz_RT$xchroma[1]-.3*old_range_dmass)
@@ -316,7 +316,7 @@ observeEvent(input$peak_chromat_click, { # NOTE: brushing already triggers a cli
               }  
               isolate(refresh_plot$b<-(refresh_plot$b+1))
           }else{
-            cat("\n Doing hover_e - nothing")
+            if(logfile$parameters$verbose) cat("\n Doing hover_e - nothing")
           }   
     }
 })     
@@ -825,7 +825,7 @@ observeEvent(input$plot_peaks_mz_RT_dblclick, {
 		isolate(ranges_peaks_mz_RT$y <- NULL)
     }
 	refresh_plot$a<-(refresh_plot$a+1)
-	cat("\n Zooming with brush")
+	if(logfile$parameters$verbose) cat("\n Zooming with brush")
 })
 
 observe({
@@ -833,7 +833,7 @@ observe({
 	if(isolate(init$a)=="TRUE"){
 		if(!is.na(isolate(input$sel_meas_ID))){ 
 			if(!is.null(isolate(ranges_peaks_mz_RT$x))){
-				cat("\n Zooming out on X")
+				if(logfile$parameters$verbose) cat("\n Zooming out on X")
 				old_range<-abs(isolate(ranges_peaks_mz_RT$x[2]-ranges_peaks_mz_RT$x[1]))
 				isolate(ranges_peaks_mz_RT$x[1]<-ranges_peaks_mz_RT$x[1]-.5*old_range)
 				isolate(ranges_peaks_mz_RT$x[2]<-ranges_peaks_mz_RT$x[2]+.5*old_range)
@@ -897,9 +897,9 @@ observe({
 								points(peakit[,3],peakit[,1],pch=19,col="red",cex=1.5)				
 							}
 						})	
-						cat("\n EIC & peak extracted")
+						if(logfile$parameters$verbose) cat("\n EIC & peak extracted")
 					}else{
-						cat("\n Peak based on single measurement - plotting skipped.")
+						if(logfile$parameters$verbose) cat("\n Peak based on single measurement - plotting skipped.")
 					}
 				}	
 			}else{
@@ -929,31 +929,31 @@ observe({
 		createAlert(session,anchorId = "reset", alertId="reset1", title = NULL, content="Project reset w/o peak picking",style = "warning",append=FALSE,dismiss=TRUE)
 		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-		cat("\nReset without peak picking \n")
+		if(logfile$parameters$verbose) cat("\nReset without peak picking \n")
 	}
 })
 observe({
     input$reset_2
     if( (isolate(init$a)=="TRUE") & isolate(input$reset_2) ){
 		if(any(ls()=="logfile")){stop(paste("\n illegal logfile detected in server_obs_res_mean.r #1"))}		
-		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,,TRUE)
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		logfile$Tasks_to_redo <<- replace(logfile$Tasks_to_redo,,TRUE)
+		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 		if(TRUE){
 			measurements[,c("peakpicking","qc","recal","align","norm", "LOD","isotopologues","adducts","homologues","EIC_correlation","blind","components_files")]<-"FALSE"
 		}
 		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 		rm(measurements)
 		# delete all peaklists
-		those<-list.files(file.path(logfile$project_folder,"peaklist"))
+		those <- list.files(file.path(logfile$project_folder,"peaklist"))
 		if(length(those)>0){
 			for(i in 1:length(those)){
 				file.remove(file.path(logfile$project_folder,"peaklist",those[i]))
 			}
 		}
-		createAlert(session,anchorId = "reset", alertId="reset2", title = NULL, content="Project reset",style = "warning",append=FALSE,dismiss=TRUE)
+		createAlert(session, anchorId = "reset", alertId = "reset2", title = NULL, content = "Project reset", style = "warning", append = FALSE, dismiss = TRUE)
 		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
 		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
-		cat("\nTotal reset \n")
+		if(logfile$parameters$verbose) cat("\nTotal reset \n")
 	}
 })
 ##############################################################################
@@ -971,8 +971,8 @@ observe({
 			that<-resolution_list[names(resolution_list) == as.character(input$resolution)][[1]]
 			plot(that[,1],that[,2],pch=19,cex=0.5,xlab="m/z",ylab="Resolution")		
 		dev.off()
-		exprres<-list(src=file.path(logfile[[1]],"pics","resolution"))
-		output$plot_resolution<-renderImage(exprres, deleteFile = FALSE)	
+		exprres <- list(src=file.path(logfile[[1]],"pics","resolution"))
+		output$plot_resolution <- renderImage(exprres, deleteFile = FALSE)	
 	}
 })
 ##############################################################################
@@ -1092,7 +1092,7 @@ observe({
 			# generate table outputs #########################################
 			output$instrument_Info <- renderTable(instrument_Info)
 			output$run_Info <- renderTable(run_Info)
-			output$heads_summary <- renderTable(heads_summary)
+			output$heads_summary_new <- renderTable(heads_summary)
 			# convert into list tree #########################################
 			use_m <- vector("list", for_scans)
 			which_col <- !names(heads) %in% c("msLevel", "seqNum", "acquisitionNum", "polarity")
@@ -1149,13 +1149,37 @@ observe({
 
 observe({
     input$save_method
-	if( (isolate(init$a) == "TRUE") & isolate(input$save_method) ){
-
-	
-	
-	
-	
-	
+	if( 
+		(isolate(init$a) == "TRUE") & isolate(input$save_method) & 
+		(any(objects(envir = as.environment(".GlobalEnv")) == "heads_summary"))
+	){
+		if(logfile$parameters$verbose) cat("\n Saving method ...")
+		use_ScanTypes <- isolate(input$method_use_ScanTypes)
+		if(is.null(use_ScanTypes)){
+			shinytoastr::toastr_error("No Scan type to include selected. Please use the green check box field next to the Save method button for this first.", title = "Method setup error:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
+			output$dowhat <- renderText("Method setup failed");
+			if(logfile$parameters$verbose) cat(" failed.\n")
+		}else{
+			say <- "Existing method (if any) replaced."
+			# save table to Existing method ##################################
+			used_scans <- rep(FALSE, dim(heads_summary)[1])
+			used_scans[as.numeric(use_ScanTypes)] <- TRUE
+			heads_summary_existing <- cbind(heads_summary, used_scans)
+			output$heads_summary_existing <- renderTable(heads_summary_existing)
+			if(any(names(heads_summary) == "msLevel")){
+				if(sum(heads_summary[used_scans,"msLevel"] == 1) > 1){
+					say <- paste(say, "More than one msLevel 1 Scan types included. These will be pooled during processing!")
+				}
+			}
+			# save table to logfile ##########################################	
+			logfile$method_setup <<- heads_summary_existing
+			save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+			##################################################################
+			if(any(ls()=="logfile")){stop("\n illegal logfile detected during method saving!")}
+			shinytoastr::toastr_success(say, title = "Method setup saved");
+			output$dowhat <- renderText("Method setup saved");
+			if(logfile$parameters$verbose) cat(" done.\n")
+		}
 	}
 })
 

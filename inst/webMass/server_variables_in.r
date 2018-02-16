@@ -60,5 +60,14 @@ if(any( (measurements[,"ID"] != "-") & (measurements[,"Mode"] == "negative") & (
 }
 #########################################################################
 
+#########################################################################
+# Method setup, existing ################################################
+if(is.character(logfile$method_setup)){
+	output$heads_summary_existing <- renderTable(as.data.frame("No existing method available", optional = TRUE))
+}else{
+	output$heads_summary_existing <- renderTable(logfile$method_setup)
+}
+#########################################################################
+
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_variabels_in.r!")}
 

@@ -2348,8 +2348,10 @@ if(logfile$version < 3.453){
 	if(!any(names(logfile$parameters) == "method_use")){	
 		logfile$parameters$method_use <<- "FALSE"		
 	}	
-	
-	
+	if(!any(names(logfile) == "method_setup")){
+		logfile[[18]] <<- "Not available"
+		names(logfile)[18] <<- c("method_setup")	
+	}
 	
 	################################################################################################	
 	#logfile$version <<- 3.453
