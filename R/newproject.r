@@ -141,7 +141,8 @@ newproject <- function(
 		logfile$parameters$verbose  <-  "TRUE"
 		logfile$parameters$test  <-  "FALSE"
 		# file processing ######################################################
-		logfile$parameters$files_SIM  <-  "FALSE"		
+		logfile$parameters$method_use <-  "FALSE"
+		logfile$parameters$files_SIM <-  "FALSE"		
 		# peak picking ###########################################################
 		logfile$parameters$peak_MSlevel  <-  "1"; 	
 		logfile$parameters$peak_drtgap  <-  "300"; 

@@ -2338,15 +2338,21 @@ if(logfile$version < 3.45){
 }
 
 
-if(logfile$version < 3.452){
+if(logfile$version < 3.453){
 
-	cat("\n Updating to version 3.452 ...")
+	cat("\n Updating to version 3.453 ...")
 	################################################################################################
-	if(!any(names(logfile$parameters) == "logfile$parameters$files_SIM")){	
+	if(!any(names(logfile$parameters) == "files_SIM")){	
 		logfile$parameters$files_SIM <<- "FALSE"		
 	}
+	if(!any(names(logfile$parameters) == "method_use")){	
+		logfile$parameters$method_use <<- "FALSE"		
+	}	
+	
+	
+	
 	################################################################################################	
-	#logfile$version <<- 3.452
+	#logfile$version <<- 3.453
 	################################################################################################		
 	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 

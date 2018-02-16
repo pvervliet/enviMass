@@ -847,16 +847,23 @@
           tabsetPanel(
 			################################################################
 			tabPanel("Method setup",
-				tags$h5("The below method setup allows to define how scans from measurement files are to be distinguished and subsequently handled separately in the workflow. Note that only one such setup can be defined and applied to all processed files."),
+				HTML('<hr noshade="noshade" />'),
+				tags$p(align="justify","The below Define new method Tab specifies how individual scans are to be distinguished/combined and subsequently handled in the workflow. 
+				Note that only one such method setup can be defined and then applied to all the files of a project. The currently used method is listed in the Existing method tab below and used during workflow processing ..."),											
+				div(style = widget_style10,
+					checkboxInput("method_use", "... provided the method setup is enabled at all? (Mind the -> Apply button above)", value = FALSE, width = '610px')
+				),
+				tags$h5("Without enabling the setup, all MS1 scans of a file will otherwise be combined and all MS2 scans discarded as default. (NOTE: enviMass only utilizes the msLevel 1 scans 
+						at the time being; msLevel 2 Scan type definitions will effectively be used in future versions.)"),
+				HTML('<h1 align="center"> &#x21e9; </h1> '),
 				tabsetPanel(
 					tabPanel("Define new method",		  
 						HTML('<hr noshade="noshade" />'),
-						tags$p(align="justify","Select a file by its ID to show the properties for its individual scans. The below Scan type definition 
-						section allows to select parameters by which the different scans are to be distinguished/combined. While enviMass uses the msLevel 1 scans 
-						only at the time being, such Scan type definitions will also be used to process msLevel 2 scans in the future."),											
+						tags$p(align="justify","Select a file via its ID to show the properties for its scans. The then appearing Scan type definition 
+						section allows to select parameters by which the different scans are to be distinguished/combined."),											
 						div(style = widget_style3, numericInput("sel_scans_ID", "Type in file ID:", 0)),
 						textOutput('scan_viewer_name'),
-						conditionalPanel(			
+						conditionalPanel(
 							condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID') & (output.scan_viewer_name != 'No scan type definition parameters selected - please select at least one!') & (output.scan_viewer_name != '.mzXML file not available')",						
 							textOutput('scan_viewer_type'),
 							textOutput('scan_viewer_mode'),
@@ -864,32 +871,49 @@
 							tableOutput("instrument_Info"),
 							tableOutput("run_Info")
 						),	
-						conditionalPanel(			
+						conditionalPanel(		
 							condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID')",
 							HTML('<h1 align="center"> &#x21e9; </h1> '),
 							HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Scan type definition </font></p> '),
-							fluidRow(
-								column(width = 6, 						
-									selectInput("method_definition", label = "Parameters for defining scan types", 
-										choices = c("polarity", "msLevel", "collisionEnergy", "precursorMZ", "ionisationEnergy", "basePeakMZ"), 
-										selected = c("polarity", "msLevel", "collisionEnergy", "precursorMZ"), 
-										multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
-								),
-								column(width = 6, 								
-									checkboxInput("method_MS1_separation", "Separate consecutive MS1 scans? (msLevel definition required)", FALSE)
-								)							
+							div(style = widget_style10,
+								fluidRow(
+									column(width = 6, 						
+										selectInput("method_definition", label = "Parameters for defining Scan types", 
+											choices = c("polarity", "msLevel", "collisionEnergy", "precursorMZ", "ionisationEnergy", "basePeakMZ"), 
+											selected = c("polarity", "msLevel", "collisionEnergy", "precursorMZ"), 
+											multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
+									),
+									column(width = 6, 								
+										checkboxInput("method_MS1_separation", "Separate consecutive MS1 scans? (msLevel Parameter definition required)", FALSE)
+									)							
+								)
 							)
 						),
 						conditionalPanel(			
 							condition = "(input.sel_scans_ID != 0) & (output.scan_viewer_name != 'File name: Invalid file ID') & (output.scan_viewer_name != 'No scan type definition parameters selected - please select at least one!') & (output.scan_viewer_name != '.mzXML file not available')",
 							tableOutput("heads_summary"),
+							HTML('<hr noshade="noshade" />'),
 							HTML('<h1 align="center"> &#x21e9; </h1> '),
+							tags$p(align="justify","Choose the Scan types from the above table and Press Save method to apply this method for your project (all selected msLevel 1 scans will be pooled, msLevel 2 scan types will be handled separately):"),								
+
+							fluidRow(
+								column(width = 7,		
+									div(style = widget_style10,									
+										checkboxGroupInput("method_use_ScanTypes", label = "Select above Scan types to include:", choices = c("1", "2", "3", "4", "5"), selected = c("1"), inline = TRUE)
+									)
+								),
+								column(width = 4,
+									bsButton("save_method", "Save method", style = "success")
+								)
+							),
+
+							HTML('<h1 align="center"> &#x21e7; </h1> '),
 							HTML('<p style="background-color:darkgrey"; align="center"> <font color="#FFFFFF"> Scan viewer </font></p> '),	
 							div(style = widget_style3, numericInput("sel_scans_number", "Number of viewed scans", 50)),
 							shinyTree(outputId = "scan_tree", checkbox = FALSE, search = FALSE, dragAndDrop = FALSE)
 						)
 					),
-					tabPanel("Existing method",	
+					tabPanel("-> Existing method",	
 						HTML('<hr noshade="noshade" />')
 						
 						

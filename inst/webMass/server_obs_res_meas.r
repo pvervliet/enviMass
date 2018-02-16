@@ -981,7 +981,7 @@ observe({
 
 
 ##############################################################################
-# View scan information ######################################################
+# View &save scan / method information #######################################
 ##############################################################################
 observe({
     input$sel_scans_ID
@@ -1020,8 +1020,6 @@ observe({
 			#method_definition <- c("msLevel")			
 			polar <- c("-", "+")
 			method_definition <- isolate(input$method_definition)
-			
-			
 			heads <- mzR::header(mzXML_file)
 			method_definition2 <- method_definition[!is.na(match(method_definition, names(heads)))]
 			if(length(method_definition2) != length(method_definition)){
@@ -1089,8 +1087,8 @@ observe({
 			if(any(names(heads_summary) == "polarity")){
 				heads_summary$polarity <- polar[(heads_summary$polarity)+1]
 			}
-heads_summary <<- heads_summary
-
+			heads_summary <<- heads_summary
+			updateCheckboxGroupInput(session, "method_use_ScanTypes", choices = as.character(scanTypes2), inline = TRUE)		
 			# generate table outputs #########################################
 			output$instrument_Info <- renderTable(instrument_Info)
 			output$run_Info <- renderTable(run_Info)
@@ -1148,6 +1146,19 @@ heads_summary <<- heads_summary
 		}
 	}
 })
+
+observe({
+    input$save_method
+	if( (isolate(init$a) == "TRUE") & isolate(input$save_method) ){
+
+	
+	
+	
+	
+	
+	}
+})
+
 ##############################################################################
 
 
