@@ -4,7 +4,23 @@
 	if(any(search()=="package:nlme")){detach(package:nlme,force=TRUE);addit<-TRUE}else{addit<-FALSE}
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
     leng<-dim(measurements)[1];         
-	
+	if(logfile$parameters$cut_RT=="TRUE"){
+		use_minRT<-(as.numeric(logfile$parameters$cut_RT_min)*60)
+		use_maxRT<-(as.numeric(logfile$parameters$cut_RT_max)*60)
+		cat("(filter RT range)")
+	}else{
+		use_minRT<-FALSE
+		use_maxRT<-FALSE				
+	}		
+	if(logfile$parameters$cut_mass=="TRUE"){
+		use_minmass<-as.numeric(logfile$parameters$cut_mass_min)
+		use_maxmass<-as.numeric(logfile$parameters$cut_mass_max)
+		cat("(filter mass range)")
+	}else{
+		use_minmass<-FALSE
+		use_maxmass<-FALSE				
+	}				
+				
 	#i <- which(measurements[,"ID"] == "11") 
     for(i in 1:leng){ 
         # (measurement included & not yet picked) OR (peakpick forced) 
@@ -12,22 +28,6 @@
 
 				##################################################################
 				cat(paste("\n    Peak picking sample ",as.character(i)," of ",as.character(leng),": "));    
-				if(logfile$parameters$cut_RT=="TRUE"){
-					use_minRT<-(as.numeric(logfile$parameters$cut_RT_min)*60)
-					use_maxRT<-(as.numeric(logfile$parameters$cut_RT_max)*60)
-					cat("(filter RT range)")
-				}else{
-					use_minRT<-FALSE
-					use_maxRT<-FALSE				
-				}		
-				if(logfile$parameters$cut_mass=="TRUE"){
-					use_minmass<-as.numeric(logfile$parameters$cut_mass_min)
-					use_maxmass<-as.numeric(logfile$parameters$cut_mass_max)
-					cat("(filter mass range)")
-				}else{
-					use_minmass<-FALSE
-					use_maxmass<-FALSE				
-				}				
 				##################################################################
 				if(#logfile$parameters$is_example=="FALSE"
 					file.exists(file.path(logfile[[1]],"files",paste0(as.character(measurements[i,"ID"]),".mzXML")))

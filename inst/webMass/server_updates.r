@@ -2352,7 +2352,9 @@ if(logfile$version < 3.453){
 		logfile[[18]] <<- "Not available"
 		names(logfile)[18] <<- c("method_setup")	
 	}
-	
+	if(!any(names(logfile$parameters) == "replicate_mean_profiles")){		
+			logfile$parameters$replicate_mean_profiles <<- "FALSE"
+	}	
 	################################################################################################	
 	#logfile$version <<- 3.453
 	################################################################################################		

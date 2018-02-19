@@ -190,7 +190,8 @@ newproject <- function(
 		logfile$parameters$replicate_ppm <- "TRUE";						
 		logfile$parameters$replicate_recalib <- "FALSE";					
 		logfile$parameters$replicate_delRT <- "30";					
-		logfile$parameters$replicate_IS_dInt <- "10";						
+		logfile$parameters$replicate_IS_dInt <- "10";			
+		logfile$parameters$replicate_mean_profiles <- "TRUE";				
 		# trend detection ######################################################
 		logfile$parameters$notrend <- "TRUE";		
 		logfile$parameters$trend_lags <- "4,7,14"; 	

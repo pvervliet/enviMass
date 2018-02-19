@@ -4,45 +4,125 @@
 	if(any(search()=="package:nlme")){detach(package:nlme,force=TRUE);addit<-TRUE}else{addit<-FALSE}
     measurements <- read.csv(file = file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character");
     leng <- dim(measurements)[1];         
-	
-#measurements[,"peakpicking"]<-"FALSE"
-#i<-1
+	#measurements[,"peakpicking"]<-"FALSE"
+	#i<-1
+	if(logfile$parameters$cut_RT=="TRUE"){
+		use_minRT <- (as.numeric(logfile$parameters$cut_RT_min) * 60)
+		use_maxRT <- (as.numeric(logfile$parameters$cut_RT_max) * 60)
+		cat("(filter RT range)")
+	}else{
+		use_minRT <- FALSE
+		use_maxRT <- FALSE				
+	}
+	if(logfile$parameters$cut_mass == "TRUE"){
+		use_minmass <- as.numeric(logfile$parameters$cut_mass_min)
+		use_maxmass <- as.numeric(logfile$parameters$cut_mass_max)
+		cat("(filter mass range)")
+	}else{
+		use_minmass <- FALSE
+		use_maxmass <- FALSE				
+	}				
 
     for(i in 1:leng){ 
             if( (measurements[i,"include"]=="TRUE") & (measurements[i,"peakpicking"]=="FALSE") ){
 
 				##################################################################
 				cat(paste("\n    Peak picking sample ",as.character(i)," of ",as.character(leng)," with ID ",measurements[i,"ID"],": "));    
-				if(logfile$parameters$cut_RT=="TRUE"){
-					use_minRT <- (as.numeric(logfile$parameters$cut_RT_min)*60)
-					use_maxRT <- (as.numeric(logfile$parameters$cut_RT_max)*60)
-					cat("(filter RT range)")
-				}else{
-					use_minRT <- FALSE
-					use_maxRT <- FALSE				
-				}
-				if(logfile$parameters$cut_mass == "TRUE"){
-					use_minmass <- as.numeric(logfile$parameters$cut_mass_min)
-					use_maxmass <- as.numeric(logfile$parameters$cut_mass_max)
-					cat("(filter mass range)")
-				}else{
-					use_minmass <- FALSE
-					use_maxmass <- FALSE				
-				}				
 				##################################################################
 				if(#logfile$parameters$is_example=="FALSE"
 					file.exists(file.path(logfile[[1]], "files", paste0(as.character(measurements[i,"ID"]), ".mzXML")))
 				){
-					MSlist<-enviPick::readMSdata(
-						filepath.mzXML = file.path(logfile[[1]], "files", paste0(as.character(measurements[i,1]), ".mzXML")),
-						MSlevel = logfile$parameters$peak_MSlevel,  # MSlevel
-						progbar = logfile$parameters$progressBar, # progbar
-						minRT = use_minRT,
-						maxRT = use_maxRT,
-						minmz = use_minmass,
-						maxmz = use_maxmass,
-						ion_mode = FALSE#measurements[i,"Mode"]
-					);
+					##############################################################					
+					if(  as.logical(logfile$parameters$method_use) & !is.character(logfile$method_setup) ){	# method setup, mzR	
+					
+						##########################################################
+						# based on method setup, retrieve scanTypes ##############
+						# unused scans -> set index to NA ########################
+						polar <- c("-", "+")
+						method_setup <- logfile$method_setup[,, drop = FALSE]
+						omit_col <- c("Scan type", "Scan counts", "Centroid counts", "used_scans")
+						if(any(names(method_setup) == "MS1_consec")) omit_col <- c(omit_col, "MS1_consec")
+						omit_col <- match(omit_col, names(method_setup))
+						heads_summary <- method_setup[, -omit_col, drop = FALSE] 
+						if(any(names(heads_summary) == "polarity")){
+							heads_summary$polarity[heads_summary$polarity == "+"] <- "1"
+							heads_summary$polarity[heads_summary$polarity == "-"] <- "0"
+							heads_summary$polarity <- as.numeric(heads_summary$polarity)
+						}
+						path <- file.path(logfile[[1]], "files", paste0(as.character(measurements[i,1]), ".mzXML"))
+						# path <- "D:/Projects/Sabine/new_project_name/files/2.mzXML"
+						mzXML_file <- mzR:::openMSfile(filename = path, backend = c("Ramp"), verbose = FALSE)
+						heads <- mzR::header(mzXML_file)
+						get_heads <- match(names(heads_summary), names(heads)) # resort columns
+						if(any(is.na(get_heads))){
+							which_not_header <- names(heads_summary)[which(any(is.na(match(names(heads_summary), names(heads)))))][1]
+							stop(paste("\n", which_not_header, " from the method definition not found in the file header - revise settings! Files from different experiments?"))
+						}
+						heads_short <- heads[,get_heads, drop = FALSE]
+						scanTypes2 <- method_setup[,"Scan type"]			
+						scanTypes <- match(data.frame(t(heads_short)), data.frame(t(heads_summary))) # convert to list of vectors
+						if(any(is.na(scanTypes))) stop(
+							paste("\n Problem with File ID", measurements[i,"ID"], "while applying Method setup - one or several scans could not be matched to the existing setup. Maybe the setup was defined for a different file type?")
+						)
+						if(
+							any(names(method_setup) == "msLevel") & 
+							any(names(method_setup) == "MS1_consec")
+						){ # consecutive MS1 - scan separation
+							if(
+								any(heads_summary$msLevel == 1) &
+								any(heads_short[,"msLevel"] == 1) &
+								any(method_setup$MS1_consec > 0)
+							){
+								MS1_consec <- rep(0, length(scanTypes))
+								for(n in 2:length(scanTypes)){ # collect additional levels from consecutive scans
+									if(heads_summary[scanTypes[n], "msLevel"] != 1) next
+									if(heads_summary[scanTypes[n - 1], "msLevel"] != 1) next
+									if(scanTypes[n] != scanTypes[n - 1]) next
+									MS1_consec[n] <- (MS1_consec[n - 1] + 1)
+								}
+								if(any(MS1_consec > 0)){ # consecutive MS1 scans of otherwise same definition found?
+									scanTypes <- match(data.frame(t(cbind(heads_short, MS1_consec))), data.frame(t(cbind(heads_summary, method_setup$MS1_consec)))) # convert to list of vectors
+								}
+							}
+						}
+						if(any(is.na(logfile$method_setup$used_scans[scanTypes]))) stop("\n Unmatched Scan types detected in the methods setup - report this issue.")
+						scanTypes[!logfile$method_setup$used_scans[scanTypes]] <- NA
+						##########################################################
+						# read data ##############################################								
+						# read msLevel 1 data first 
+						if(!any(names(method_setup) == "msLevel")) stop("\n No msLevel 1 scans remaining from method definition - ate least one such Scan type required to run the workflow. Please revise!")
+						if(!any(method_setup$msLevel == 1)) stop("\n No msLevel 1 scans remaining from method definition - ate least one such Scan type required to run the workflow. Please revise!")						
+						read_scanType <- unique(scanTypes)
+						read_scanType <- read_scanType[!is.na(read_scanType)]
+						read_scanType <- read_scanType[logfile$method_setup[read_scanType, "msLevel"] == 1]
+						if(!length(read_scanType)) stop("No scanType remaining for msLevel 1 - is the method setup correct? Please revise.")
+						
+						
+						MSlist <- enviMass::convert_mzXML_MSlist(
+							mzXML_file,
+							scanTypes,
+							read_scanType,						
+							minRT = use_minRT,
+							maxRT = use_maxRT,
+							minmz = use_minmass,
+							maxmz = use_maxmass,						
+							get_acquisitionNum = FALSE			
+						)
+				
+						##########################################################
+						
+					}else{ # default: all MS1 upload		
+						MSlist <- enviPick::readMSdata(
+							filepath.mzXML = file.path(logfile[[1]], "files", paste0(as.character(measurements[i,1]), ".mzXML")),
+							MSlevel = logfile$parameters$peak_MSlevel,  # MSlevel
+							progbar = logfile$parameters$progressBar, # progbar
+							minRT = use_minRT,
+							maxRT = use_maxRT,
+							minmz = use_minmass,
+							maxmz = use_maxmass,
+							ion_mode = FALSE#measurements[i,"Mode"]
+						);
+					};
 					cat(" file read -"); 
 					##############################################################
 					if( logfile$parameters$peak_estimate == "TRUE" ){

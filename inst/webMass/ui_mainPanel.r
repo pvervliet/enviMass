@@ -881,7 +881,7 @@
 									column(width = 6, 						
 										selectInput("method_definition", label = "Parameters for defining Scan types", 
 											choices = c("polarity", "msLevel", "collisionEnergy", "precursorMZ", "ionisationEnergy", "basePeakMZ"), 
-											selected = c("polarity", "msLevel", "collisionEnergy", "precursorMZ"), 
+											selected = c("msLevel", "collisionEnergy", "precursorMZ"), 
 											multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
 									),
 									column(width = 6, 								

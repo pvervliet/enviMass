@@ -1034,7 +1034,7 @@ observe({
 			}
 			scanTypes2 <- seq(1:dim(heads_summary)[1])			
 			scanTypes <- match(data.frame(t(heads_short)), data.frame(t(heads_summary))) # convert to list of vectors
-			if(any(names(heads_summary) == "msLevel")){ # consecutive MS1 - scan seperation
+			if(any(names(heads_summary) == "msLevel")){ # consecutive MS1 - scan separation
 				if(
 					isolate(input$method_MS1_separation) & 
 					any(heads_summary$msLevel == 1) &
@@ -1155,11 +1155,20 @@ observe({
 	){
 		if(logfile$parameters$verbose) cat("\n Saving method ...")
 		use_ScanTypes <- isolate(input$method_use_ScanTypes)
+		all_ok <- TRUE
 		if(is.null(use_ScanTypes)){
 			shinytoastr::toastr_error("No Scan type to include selected. Please use the green check box field next to the Save method button for this first.", title = "Method setup error:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
 			output$dowhat <- renderText("Method setup failed");
 			if(logfile$parameters$verbose) cat(" failed.\n")
-		}else{
+			all_ok <- FALSE
+		}	
+		if(!any(names(heads_summary) == "msLevel")){
+			shinytoastr::toastr_error("No msLevel included in method definition - should be included to differentiate for msLevel 1 scans. Please revise!", title = "Method setup error:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
+			output$dowhat <- renderText("Method setup failed");
+			if(logfile$parameters$verbose) cat(" failed.\n")
+			all_ok <- FALSE
+		}			
+		if(all_ok){
 			say <- "Existing method (if any) replaced."
 			# save table to Existing method ##################################
 			used_scans <- rep(FALSE, dim(heads_summary)[1])
@@ -1168,15 +1177,26 @@ observe({
 			output$heads_summary_existing <- renderTable(heads_summary_existing)
 			if(any(names(heads_summary) == "msLevel")){
 				if(sum(heads_summary[used_scans,"msLevel"] == 1) > 1){
-					say <- paste(say, "More than one msLevel 1 Scan types included. These will be pooled during processing!")
+					say <- paste(say, "BEWARE: more than one msLevel 1 Scan types included. These will be pooled during processing!")
 				}
 			}
+			if(any(names(heads_summary) == "polarity")){
+				say <- paste(say, "BEWARE: do you process switch mode files? The polarity filter may not make sense otherwise.")			
+			}	
 			# save table to logfile ##########################################	
 			logfile$method_setup <<- heads_summary_existing
 			save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+			# adjust workflow ################################################
+			if( as.logical(logfile$parameters$method_use) ){ # reset from peakpicking
+				enviMass::workflow_set(
+					down = "peakpicking",
+					check_node = FALSE,
+					single_file = FALSE
+				)
+			}
 			##################################################################
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected during method saving!")}
-			shinytoastr::toastr_success(say, title = "Method setup saved");
+			shinytoastr::toastr_success(say, title = "Method setup saved", closeButton = TRUE);
 			output$dowhat <- renderText("Method setup saved");
 			if(logfile$parameters$verbose) cat(" done.\n")
 		}
