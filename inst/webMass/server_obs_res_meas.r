@@ -1193,6 +1193,7 @@ observe({
 					check_node = FALSE,
 					single_file = FALSE
 				)
+				output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));			
 			}
 			##################################################################
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected during method saving!")}
