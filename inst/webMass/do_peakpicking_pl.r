@@ -96,9 +96,7 @@
 						read_scanType <- read_scanType[!is.na(read_scanType)]
 						read_scanType <- read_scanType[logfile$method_setup[read_scanType, "msLevel"] == 1]
 						if(!length(read_scanType)) stop("No scanType remaining for msLevel 1 - is the method setup correct? Please revise.")
-						
-						
-						MSlist <- enviMass::convert_mzXML_MSlist(
+						MSlist <- enviMass:::convert_mzXML_MSlist(
 							mzXML_file,
 							scanTypes,
 							read_scanType,						
@@ -108,9 +106,7 @@
 							maxmz = use_maxmass,						
 							get_acquisitionNum = FALSE			
 						)
-				
 						##########################################################
-						
 					}else{ # default: all MS1 upload		
 						MSlist <- enviPick::readMSdata(
 							filepath.mzXML = file.path(logfile[[1]], "files", paste0(as.character(measurements[i,1]), ".mzXML")),
