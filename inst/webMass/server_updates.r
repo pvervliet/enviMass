@@ -2356,7 +2356,7 @@ if(logfile$version < 3.453){
 			logfile$parameters$replicate_mean_profiles <<- "FALSE"
 	}	
 	################################################################################################	
-	#logfile$version <<- 3.453
+	logfile$version <<- 3.453
 	################################################################################################		
 	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
