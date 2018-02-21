@@ -32,7 +32,7 @@
 				##########################################################################
 				# exclude files that do not end up in profiles ###########################
 				if( (mute(logfile$parameters$prof_select == "TRUE")) & (measurements$profiled[b] == "FALSE") ){
-					cat("\n Skip file - not included in profile building.");next;
+					cat("\n Skip file - not included in profile building."); next;
 				}
 				##########################################################################
 				cat(paste("\n Doing ",as.character(b)," of ",as.character(length(measurements[,"ID"]))," files: ",sep=""))	

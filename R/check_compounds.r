@@ -15,7 +15,15 @@
 #' @details enviMass workflow function; run before further calculations are started in the workflow.
 #' 
 
-check_compounds <- function(intstand_check,targets_check,isotopes,adducts,logfile,write_tables=FALSE,check_relat=TRUE){
+check_compounds <- function(
+	intstand_check,
+	targets_check,
+	isotopes,
+	adducts,
+	logfile,
+	write_tables=FALSE,
+	check_relat=TRUE
+){
 
 	say<-"Project consistent"
 	##############################################################################

@@ -19,8 +19,8 @@ refresh_compo$a <- 0
 
 observe({ # - A
 	input$sel_meas_comp 
-	if(isolate(init$a)=="TRUE"){ if(logfile$parameters$verbose) cat("\n in Comp_A")}
 	if(isolate(init$a)=="TRUE"){
+		if(logfile$parameters$verbose) cat("\n in Comp_A")
 		do_isot <- (logfile$workflow[names(logfile$workflow) == "isotopologues"] == "yes")
 		do_addu <- (logfile$workflow[names(logfile$workflow) == "adducts"] == "yes")
 		do_homol <- (logfile$workflow[names(logfile$workflow) == "homologues"] == "yes")	
@@ -29,7 +29,9 @@ observe({ # - A
 		if( 
 			(!is.na(isolate(input$sel_meas_comp))) &
 			(isolate(input$sel_meas_comp) != "") &
-			(any(measurements$ID == isolate(input$sel_meas_comp))) # check existence ...
+			(any(measurements$ID == isolate(input$sel_meas_comp))) & # check existence ...
+			file.exists(file.path(logfile[[1]], "MSlist", isolate(input$sel_meas_comp))) &
+			file.exists(file.path(logfile[[1]], "peaklist", isolate(input$sel_meas_comp)))
 		){ # ... finds emtpy folder otherwise
 			output$sel_meas_comp_state <- renderText("For this file:")
 			output$comp_file_name <- renderText(paste("File name: ", measurements[measurements[,"ID"] == as.character(isolate(input$sel_meas_comp)),"Name"],sep=""))
