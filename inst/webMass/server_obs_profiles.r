@@ -155,13 +155,13 @@ maincalc6 <- reactive({
 		if( 
 			isolate(input$search_profile_compound != "Type in compound name/ID or erase any entry to clear filter") &
 			isolate(input$search_profile_compound != "") &
-			((any(objects(envir=as.environment(".GlobalEnv")) == "compounds_targets")) | (any(objects(envir=as.environment(".GlobalEnv")) == "compounds_IS")))
+			((any(objects(envir = as.environment(".GlobalEnv")) == "compounds_targets")) | (any(objects(envir = as.environment(".GlobalEnv")) == "compounds_IS")))
 		){
 			cat("\n Searching compound profiles")
 			if(
-				(logfile$workflow[names(logfile$workflow)=="components_profiles"]=="yes") &
-				(logfile$summary[logfile$summary[,1]=="components_profiles",2]=="TRUE") &
-				(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles")) &
+				(logfile$workflow[names(logfile$workflow) == "components_profiles"] == "yes") &
+				(logfile$summary[logfile$summary[,1] == "components_profiles", 2] == "TRUE") &
+				(any(objects(envir = as.environment(".GlobalEnv")) == "links_profiles")) &
 				(dim(profpeaks2)[1] > 0)
 			){
 			
@@ -174,13 +174,14 @@ maincalc6 <- reactive({
 					if(length(this)) search_compound_ID <<- c(search_compound_ID, compounds_IS$ID[this])
 					this <- which(compounds_IS$Name == isolate(input$search_profile_compound))
 					if(length(this)) search_compound_ID <<- c(search_compound_ID, compounds_IS$ID[this])
-					len <- nchar(search_compound_ID)
+					search_compound_ID <<- paste0(search_compound_ID, "_")
+					len <<- nchar(search_compound_ID)
 					if(length(search_compound_ID)){
 						for(m in 1:dim(profpeaks2)[1]){
 							if(profpeaks2[m, "links"] == 0) next
 							if(length(links_profiles[[profpeaks2[m, "links"]]]$IS) == 0) next
 							for(mm in 1:dim(links_profiles[[profpeaks2[m, "links"]]]$IS)[1]){
-								if(substr(links_profiles[[profpeaks2[m, "links"]]]$IS[mm, "Compound"], 1, len) == search_compound_ID) keep_IDs[m] <<- TRUE
+								if(any(substr(links_profiles[[profpeaks2[m, "links"]]]$IS[mm, "Compound"], 1, len) == search_compound_ID)) keep_IDs[m] <<- TRUE
 							}
 						}
 					}
@@ -192,13 +193,14 @@ maincalc6 <- reactive({
 					if(length(this)) search_compound_ID <<- c(search_compound_ID, compounds_targets$ID[this])
 					this <- which(compounds_targets$Name == isolate(input$search_profile_compound))
 					if(length(this)) search_compound_ID <<- c(search_compound_ID, compounds_targets$ID[this])
-					len <- nchar(search_compound_ID)
+					search_compound_ID <<- paste0(search_compound_ID, "_")
+					len <<- nchar(search_compound_ID)			
 					if(length(search_compound_ID)){
 						for(m in 1:dim(profpeaks2)[1]){
 							if(profpeaks2[m, "links"] == 0) next
 							if(length(links_profiles[[profpeaks2[m, "links"]]]$targ) == 0) next
 							for(mm in 1:dim(links_profiles[[profpeaks2[m, "links"]]]$targ)[1]){
-								if(substr(links_profiles[[profpeaks2[m, "links"]]]$targ[mm, "Compound"], 1, len) == search_compound_ID) keep_IDs[m] <<- TRUE
+								if(any(substr(links_profiles[[profpeaks2[m, "links"]]]$targ[mm, "Compound"], 1, len) == search_compound_ID)) keep_IDs[m] <<- TRUE
 							}
 						}
 					}
@@ -208,7 +210,7 @@ maincalc6 <- reactive({
 					shinytoastr::toastr_warning("No profile match for this compound found - compound filter omitted!", 
 						title = "Profile filtering:", closeButton = TRUE, position = c("top-center"), timeOut = 0);					
 				}else{
-					profpeaks2 <<- profpeaks2[keep_IDs,,drop = FALSE]
+					profpeaks2 <<- profpeaks2[keep_IDs,, drop = FALSE]
 				}
 			}else{
 				shinytoastr::toastr_warning("You need to enable the workflow profile componentization to filter for specific compound profiles. Disable the compound search filter or enable the mentioned workflow step and recalculate!", 
@@ -310,13 +312,14 @@ maincalc6 <- reactive({
 		}
 		###################################################################################################		
 		if(
-			(isolate(input$filterProf_components)=="TRUE") &
-			(any(objects(envir=as.environment(".GlobalEnv"))=="profpeaks2")) 			
+			(isolate(input$filterProf_components) == "TRUE") &
+			(any(objects(envir = as.environment(".GlobalEnv")) == "profpeaks2")) 			
 		){
 			if(
 				(logfile$workflow[names(logfile$workflow) == "components_profiles"] == "yes") &
 				(logfile$summary[logfile$summary[,1] == "components_profiles", 2] == "TRUE") &
-				(any(objects(envir=as.environment(".GlobalEnv")) == "links_profiles")) 
+				(any(objects(envir = as.environment(".GlobalEnv")) == "links_profiles")) &
+				(dim(profpeaks2)[1] > 0)
 			){
 				keep_IDs <<- enviMass::analyseE_links_profiles(
 					profileList_index = profpeaks2, 
@@ -333,7 +336,8 @@ maincalc6 <- reactive({
 					stop("\nDebug server_obs_res_meas.r @ 1")
 				}
 			}else{
-				shinytoastr::toastr_warning("You need to enable the workflow profile componentization to filter 'lower-ranked profiles with redundant intensity patterns'. Disable this filter or enable the mentioned workflow step and recalculate!", 
+				shinytoastr::toastr_warning("You need to both enable and calculate the workflow profile componentization to filter 'lower-ranked profiles with redundant intensity patterns'. 
+				No lower-ranked profiles of similar pattern were omitted now!", 
 					title = "Profile filtering:", closeButton = TRUE, position = c("top-center"), timeOut = 0);
 			}
 		}
@@ -490,7 +494,9 @@ observe({
 					plot.window(xlim = c(0, 1), ylim = c(0, 1))
 					text(0.5, 0.5, labels="Invalid list entry", cex = 1.8, col = "red")
 				})			
-				output$oneproftable<-DT::renderDataTable(cbind("No date available",""));
+				output$oneproftable<-DT::renderDataTable(cbind("No profile available",""));
+				output$prof_targets <- renderText("Target matches: none");
+				output$prof_ISTD  <- renderText("ISTD matches: none") ;
 			}
 		}else{
 			updateNumericInput(session, "profID", value = 0)
@@ -499,7 +505,9 @@ observe({
 				plot.window(xlim = c(0, 1), ylim = c(0, 1))
 				text(0.5, 0.5, labels="Invalid list entry", cex = 1.8, col = "red")
 			})			
-			output$oneproftable<-DT::renderDataTable(cbind("No date available",""));
+			output$oneproftable<-DT::renderDataTable(cbind("No profile available",""));
+			output$prof_targets <- renderText("Target matches: none");
+			output$prof_ISTD  <- renderText("ISTD matches: none") ;
 		}
 	}else{
 		if(isolate(init$a) == "TRUE"){
@@ -509,7 +517,9 @@ observe({
 				plot.window(xlim = c(0, 1), ylim = c(0, 1))
 				text(0.5, 0.5, labels = "Nothing to plot - invalid ID", cex = 1.8, col = "red")
 			})			
-			output$oneproftable<-DT::renderDataTable(cbind("No date available",""));
+			output$oneproftable<-DT::renderDataTable(cbind("No profile available",""));
+			output$prof_targets <- renderText("Target matches: none");
+			output$prof_ISTD  <- renderText("ISTD matches: none") ;
 		}
 	}
 })	

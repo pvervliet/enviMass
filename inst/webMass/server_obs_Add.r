@@ -200,18 +200,18 @@ observe({
 	if(any(objects()=="targets")){rm(targets)}	
 	if(  (length(isolate(input$ISlist_path))) ){
 		if( file.exists(as.character(isolate(input$ISlist_path[[4]]))) ){ 
-			IS_in<-try({
-				read.table(file=as.character(isolate(input$ISlist_path[[4]])),header=TRUE,sep="\t",colClasses = "character")
+			IS_in <- try({
+				read.table(file = as.character(isolate(input$ISlist_path[[4]])), header = TRUE, sep = "\t", colClasses = "character")
 			})	
-			if(class(IS_in)=="try-error"){
+			if(class(IS_in) == "try-error"){
 				showModal(modalDialog(
 						title = "Selected file could not be loaded","Make sure to provide a tab-seperated .txt file for a compound list, and retry.",
-						easyClose = TRUE,footer = NULL
+						easyClose = TRUE, footer = NULL
 					  ))				
 			}else{		
-				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character")
+				targets<-read.table(file = file.path(logfile[[1]], "dataframes", "targets.txt"), header = TRUE, sep = "\t", colClasses = "character")
 				say<-enviMass::check_compounds(
-					intstand_check=IS_in,
+					intstand_check = IS_in,
 					targets,
 					isotopes,
 					adducts,
@@ -219,22 +219,22 @@ observe({
 					check_relat=FALSE
 				)
 				rm(targets)
-				if(say=="Project consistent"){
+				if(say == "Project consistent"){
 					if(isolate(input$ISlist_save_copy)){ # make copy of old IS table
-						at_time<-Sys.time()
-						at_time<-gsub(" ","_", at_time)
-						at_time<-gsub("-","", at_time)
-						at_time<-gsub(":","_", at_time)
-						IS<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character")
-						write.table(IS,file=file.path(logfile[[1]],"dataframes",paste("IS_",at_time,".txt",sep="")),row.names=FALSE,sep="\t",quote=FALSE)
+						at_time <- Sys.time()
+						at_time <- gsub(" ","_", at_time)
+						at_time <- gsub("-","", at_time)
+						at_time <- gsub(":","_", at_time)
+						IS <- read.table(file = file.path(logfile[[1]],"dataframes","IS.txt"), header = TRUE, sep = "\t", colClasses = "character")
+						write.table(IS, file = file.path(logfile[[1]],"dataframes", paste("IS_", at_time, ".txt", sep = "")), row.names = FALSE, sep = "\t", quote = FALSE)
 						rm(IS)
 					}
-					write.table(IS_in,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)
+					write.table(IS_in, file = file.path(logfile[[1]], "dataframes", "IS.txt"), row.names = FALSE, sep = "\t", quote = FALSE)
 				}else{
 					showModal(modalDialog(
 							title = "Compound list not consistent",
-							paste("Although the selected file could be loaded, the following issue arose: ",say,". Please revise.",sep=""),
-							easyClose = TRUE,footer = NULL
+							paste("Although the selected file could be loaded, the following issue arose: ", say, ". Please revise.", sep = ""),
+							easyClose = TRUE, footer = NULL
 						  ))					
 				}
 				rm(IS_in)

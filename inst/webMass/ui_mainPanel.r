@@ -2498,9 +2498,11 @@
 										selected = "peak number in samples (decreasing, zeros removed)", width = '80%'),
 									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no" = "FALSE","yes" = "TRUE"), selected = "FALSE", inline = TRUE),
 									HTML('<hr noshade="noshade" />'),
+									HTML('<h1 align="center"> &#x21e7; </h1> '),
+									HTML('<hr noshade="noshade" />'),
 									searchInput(
 									  inputId = "search_profile_compound", 
-									  label = "Search profile(s) of a compound with its full name or its ID (as used in the compound tables):",
+									  label = "Search profile(s) of a compound with its exact name or its ID (as given in the compound tables) and pressing the magnifier symbol. Use the clear symbol to omit this filter.",
 									  placeholder = "Type in compound name / ID or erase to clear filter", 
 									  btnSearch = icon("search"), 
 									  btnReset = icon("remove"), 

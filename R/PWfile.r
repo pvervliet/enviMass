@@ -10,7 +10,7 @@
 #' @param notintern Ignore
 #' @param use_format Output format
 #' 
-#' @details  enviMass workflow function. PW (not just msconvert) needs to be installed seperately, including the vendor library.
+#' @details  enviMass workflow function. PW (msconvert.exe) needs to be installed separately, including the vendor libraries.
 #' 
 
 
@@ -23,7 +23,7 @@ function(infile, folderout, msconvert_path, notintern = FALSE, use_format = "mzX
         cat("msconvert not in system path - ok if msconvert_path correct")
       }
       if(
-          sum(substr(infile,nchar(infile)-3,nchar(infile))!=".RAW",substr(infile,nchar(infile)-3,nchar(infile))!=".raw")==1
+          sum(substr(infile, nchar(infile) - 3, nchar(infile)) != ".RAW", substr(infile, nchar(infile) - 3, nchar(infile)) != ".raw") == 1
       ){cat("running .RAW file conversion.")}	  
       ##########################################################################
       # convert - no sim as scan ###############################################
@@ -48,7 +48,7 @@ function(infile, folderout, msconvert_path, notintern = FALSE, use_format = "mzX
 		  ,intern = notintern)
 	  }
       ##########################################################################
-      # convert - no sim as scan ###############################################
+      # convert - set sim as scan ##############################################
 	  if(sim_as_scan){
 		  there2 <- paste(" -o ",shQuote(folderout), sep = "")
 		  filtered0 <- paste(shQuote("--"),use_format, sep = "")
