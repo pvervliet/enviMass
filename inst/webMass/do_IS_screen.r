@@ -224,9 +224,9 @@
 								combination_matches[[k]][[10]]<-colnames(IS_pos_screen_listed[[i]][[m]])[1]
 								names(combination_matches[[k]])[10]<-"file_ID"
 							}
-							res_IS_pos_screen[[i]][[at_ID]]<-combination_matches
-							names(res_IS_pos_screen[[i]])[[at_ID]]<-combination_matches[[k]][[10]]
-							if(length(combination_matches)>1){many_unamb<-(many_unamb+1)}
+							res_IS_pos_screen[[i]][[at_ID]] <- combination_matches
+							names(res_IS_pos_screen[[i]])[[at_ID]] <- combination_matches[[k]][[10]]
+							if(length(combination_matches) > 1){many_unamb<-(many_unamb+1)}
 							many<-(many+1)
 						}
 					}

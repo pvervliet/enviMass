@@ -1404,7 +1404,7 @@
 								title = "Delete any existing model for the compound selection.",
 								content = "Target compounds without a calibration model for their linked Internal standard  (= entry into column 6 of the target compound table) will not be quantified.", 
 								placement = "bottom", trigger = "hover"),							
-							bsButton("reload_Cal","Reload data",style="info"),	
+							bsButton("reload_Cal", "Reload data", style = "info"),	
 							bsPopover("reload_Cal", 
 								title = "Refresh below plot and table for the selected compound pair of Target and Internal standard ...",
 								content = "... e.g., after you have changed the intensity bounds of the Internal standard in the tab <em> Results -> Screening& -> Ionization -> Internal standards (show all adducts) -> Characteristics for selected compound. </em>", 
@@ -1933,7 +1933,7 @@
 													fluidRow(										
 														column(3,numericInput("screen_int_pos_low", "Lower bound", 0,step=0.1)),
 														column(3,numericInput("screen_int_pos_up", "Upper bound", 10,step=0.1)),
-														column(2,bsButton("save_int_pos"," Adopt",style="warning",icon=icon("bookmark")))
+														column(2,bsButton("save_int_pos"," Adopt", style = "warning", icon = icon("bookmark")))
 													)	
 											)
 										),

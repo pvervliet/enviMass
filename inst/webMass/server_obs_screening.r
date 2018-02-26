@@ -760,15 +760,17 @@ observe({
 	input$save_int_pos
 	s<-isolate(input$Table_screening_pos_row_last_clicked)
 	if(isolate(input$save_int_pos) & length(s) & isolate(input$screen_pos_summarize=="yes") & isolate(input$Pos_compound_select=="Internal standards")) {			
-		use_comp_ID<-as.character(results_screen_pos[s,1])
-		use_comp_add<-as.character(results_screen_pos[s,3])	
-		if(compound_table[compound_table[,1]==use_comp_ID,19]==use_comp_add){ # thats the specified calibration adduct?
+		use_comp_ID<-as.character(results_screen_pos[s, 1])
+		use_comp_add<-as.character(results_screen_pos[s, 3])	
+		if(compound_table[compound_table[,1] == use_comp_ID, 19] == use_comp_add){ # thats the specified calibration adduct?
 			lower_bound<-isolate(input$screen_int_pos_low)
 			upper_bound<-isolate(input$screen_int_pos_up)
-			compound_table[compound_table[,1]==use_comp_ID,17]<<-as.character(lower_bound)
-			compound_table[compound_table[,1]==use_comp_ID,18]<<-as.character(upper_bound)				
-			write.table(compound_table,file=file.path(logfile[[1]],"dataframes","IS.txt"),row.names=FALSE,sep="\t",quote=FALSE)			
-			output$IS<<-DT::renderDataTable(read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character"));
+			compound_table[compound_table[,1] == use_comp_ID, 17] <<- as.character(lower_bound)
+			compound_table[compound_table[,1] == use_comp_ID, 18] <<- as.character(upper_bound)				
+			write.table(compound_table, file = file.path(logfile[[1]], "dataframes", "IS.txt"), row.names = FALSE, sep = "\t", quote = FALSE)			
+			output$IS <<- DT::renderDataTable(read.table(file = file.path(logfile[[1]], "dataframes", "IS.txt"), header = TRUE, sep = "\t", colClasses = "character"));
+			enviMass::workflow_set(down = "quantification", check_node = TRUE, single_file = FALSE, except = "calibration")	
+			output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));		
 		}
 	}# export intensity range for selected internal standard
 })

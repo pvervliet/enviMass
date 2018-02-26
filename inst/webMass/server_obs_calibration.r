@@ -2,8 +2,8 @@ if(any(ls()=="logfile")){stop("\n illegal logfile detected #1 in server_obs_scre
 
 ranges_cal_plot <- reactiveValues(x = NULL, y = NULL)
 dd	<-	reactiveValues() # reactive value ...
-dd$d<-matrix(ncol=2,nrow=0,0) 	# ... to indicate & contain model save / removal
-dd$entry<-"none_none"			# ... non-redundant changes in the compounds selection
+dd$d <- matrix(ncol=2,nrow=0,0) 	# ... to indicate & contain model save / removal
+dd$entry <- "none_none"			# ... non-redundant changes in the compounds selection
 redo_cal<-reactiveValues() 	# reactive value to indicate model save / removal
 redo_cal$a<-1
 
@@ -12,61 +12,68 @@ redo_cal$a<-1
 observe({ # - A
 	input$Ion_mode_Cal 
 	if(verbose){cat("\n in A")}
-	if(isolate(init$a)=="TRUE"){
-		if(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo)=="calibration"]=="FALSE"){ # e.g., if files were changed / added / ...
+	if(isolate(init$a) == "TRUE"){
+		if(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo) == "calibration"] == "FALSE"){ # e.g., if files were changed / added / ...
 			if(verbose){cat("\n in A_1")}
-			if(isolate(input$Ion_mode_Cal)=="positive"){
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
-				measurements<-measurements[measurements[,"Mode"]=="positive",,drop=FALSE]
-				measurements<<-measurements
-				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-				intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-				targets<-targets[targets[,"ion_mode"]=="positive",,drop=FALSE]
-				intstand<-intstand[intstand[,"ion_mode"]=="positive",,drop=FALSE]
-				targets<-targets[targets[,"ID_internal_standard"]!="FALSE",,drop=FALSE] # MUST have an ISTD associated!
-				targets<<-targets
-				intstand<<-intstand
-				if(length(measurements[,"ID"])>0 & length(targets[,"ID"])>0 & length(intstand[,"ID"])>0 ){
-					those<-unique(measurements$tag2)
-					if(all(those!="FALSE")){
-						those<-c("none",those)
-						updateSelectInput(session,"Cal_file_set","Specify calibration file group",choices = those, selected = those[1])
+			isolate(dd$entry <- "none_none") # reset
+			if(isolate(input$Ion_mode_Cal) == "positive"){
+				measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character");
+				measurements <- measurements[measurements[,"Type"] == "calibration",, drop = FALSE]
+				measurements <- measurements[measurements[,"Mode"] == "positive",, drop = FALSE]
+				measurements <<- measurements
+				targets <- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"), header = TRUE, sep = "\t", colClasses = "character");
+				intstand <- read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"), header = TRUE, sep = "\t", colClasses = "character");
+				targets <- targets[targets[,"ion_mode"] == "positive",, drop = FALSE]
+				intstand <- intstand[intstand[,"ion_mode"] == "positive",, drop = FALSE]
+				targets <- targets[targets[,"ID_internal_standard"] != "FALSE",,drop = FALSE] # MUST have an ISTD associated!
+				targets <<- targets
+				intstand <<- intstand
+				if(length(measurements[,"ID"]) > 0 & length(targets[,"ID"]) > 0 & length(intstand[,"ID"]) > 0 ){
+					those <- unique(measurements$tag2)
+					if(all(those != "FALSE")){
+						those <- c("none", those)
+						updateSelectInput(session, "Cal_file_set", "Specify calibration file group", choices = those, selected = those[1])
 					}else{ # trigger warning
 						cat("all calibration groups must have a tag2 other than FALSE!")
+						updateSelectInput(session, "Cal_file_set", "Specify calibration file group", choices = "none", selected = "none")
 					}
+				}else{
+					updateSelectInput(session, "Cal_file_set", "Specify calibration file group", choices = "none", selected = "none")
 				}
-				if(length(targets[,"ID"])==0 || length(intstand[,"ID"])==0 ){
-					shinyjs::info("No valid targets and/or internal standard compounds found for a quantification!");
+				if(length(targets[,"ID"]) == 0 || length(intstand[,"ID"]) == 0 ){
+					shinyjs::info("No valid targets and/or internal standard compounds found for a quantification in the positive mode!");
 				}
 			}
-			if(isolate(input$Ion_mode_Cal)=="negative"){
-				measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-				measurements<-measurements[measurements[,"Type"]=="calibration",,drop=FALSE]
-				measurements<-measurements[measurements[,"Mode"]=="negative",,drop=FALSE]
-				measurements<<-measurements
-				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-				intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-				targets<-targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
-				intstand<-intstand[intstand[,"ion_mode"]=="negative",,drop=FALSE]
-				targets<-targets[targets[,"ID_internal_standard"]!="FALSE",,drop=FALSE] # MUST have an ISTD associated!
-				targets<<-targets
-				intstand<<-intstand
+			if(isolate(input$Ion_mode_Cal) == "negative"){
+				measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+				measurements <- measurements[measurements[,"Type"]=="calibration",, drop = FALSE]
+				measurements <- measurements[measurements[,"Mode"]=="negative",, drop = FALSE]
+				measurements <<- measurements
+				targets <- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"), header = TRUE, sep = "\t", colClasses = "character");
+				intstand <- read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"), header = TRUE, sep = "\t", colClasses = "character");
+				targets <- targets[targets[,"ion_mode"]=="negative",,drop=FALSE]
+				intstand <- intstand[intstand[,"ion_mode"]=="negative",,drop=FALSE]
+				targets <- targets[targets[,"ID_internal_standard"]!="FALSE",,drop=FALSE] # MUST have an ISTD associated!
+				targets <<- targets
+				intstand <<- intstand
 				if(length(measurements[,"ID"])>0 & length(targets[,"ID"])>0 & length(intstand[,"ID"])>0 ){
 					those<-unique(measurements$tag2)
 					if(all(those!="FALSE")){
 						those<-c("none",those)
-						updateSelectInput(session,"Cal_file_set","Specify calibration file group",choices = those, selected = those[1])
+						updateSelectInput(session, "Cal_file_set", "Specify calibration file group", choices = those, selected = those[1])
 					}else{ # trigger warning
 						cat("all calibration groups must have a tag2 other than FALSE!")
+						updateSelectInput(session, "Cal_file_set", "Specify calibration file group", choices = "none", selected = "none")
 					}
+				}else{
+					updateSelectInput(session, "Cal_file_set", "Specify calibration file group", choices = "none", selected = "none")
 				}
-				if(length(targets[,"ID"])==0 || length(intstand[,"ID"])==0 ){
-					shinyjs::info("No valid targets and/or internal standard compounds found for a quantification!");
+				if(length(targets[,"ID"]) == 0 || length(intstand[,"ID"]) == 0 ){
+					shinyjs::info("No valid targets and/or internal standard compounds found for a quantification in the positive mode!");
 				}
 			}
 		}else{
-			if(isolate(input$Ion_mode_Cal)!="none"){
+			if(isolate(input$Ion_mode_Cal) != "none"){
 				shinyjs::info("Calibration files have been modified or compounds added. Workflow recalculation including the calibration step (enabled?) required.");
 				cat("\n Calibration files have been modified or compounds added. Recalculation required!")
 			}
@@ -81,7 +88,10 @@ observe({ # - B
 	input$Cal_file_set
 	if(verbose){cat("\n in B")}
 	if(isolate(init$a)=="TRUE"){
-		if(isolate(input$Cal_file_set)!="none"){
+		if(
+			(isolate(input$Cal_file_set) != "none") &
+			(logfile$Tasks_to_redo[names(logfile$Tasks_to_redo) == "calibration"] == "FALSE")
+		){
 			if(
 				(isolate(input$Ion_mode_Cal)=="positive")&
 				(file.exists(file.path(logfile[[1]],"quantification","results_screen_IS_pos_cal")))&
@@ -204,21 +214,21 @@ observe({ # - B
 						,sep="")
 					})	
 				}else{
-					output$number_missing_models<-renderText({
+					output$number_missing_models <- renderText({
 						paste("Number of Targets with missing calibration models: ",
 							as.character(length(targets[,1]))
-						,sep="")
+						,sep = "")
 					})				
 				}
 			}else{ # not available
-				if((isolate(input$Ion_mode_Cal)!="positive")){
-					updateSelectInput(session,inputId="Cal_IS_name",choices="none",selected = "none")
-					updateSelectInput(session,inputId="Cal_IS_ID",choices="none",selected = "none")			
-					updateSelectInput(session,inputId="Cal_target_name",choices="none",selected = "none")
-					updateSelectInput(session,inputId="Cal_target_ID",choices="none",selected = "none")	
-					updateSelectInput(session,inputId="Cal_file_set",selected = "none")	
+				if((isolate(input$Ion_mode_Cal) != "positive")){
+					updateSelectInput(session, inputId = "Cal_target_name", choices = "none", selected = "none")
+					updateSelectInput(session, inputId = "Cal_target_ID", choices = "none", selected = "none")	
+					updateSelectInput(session, inputId = "Cal_IS_name", choices = "none", selected = "none")
+					updateSelectInput(session, inputId = "Cal_IS_ID", choices = "none", selected = "none")			
+					updateSelectInput(session, inputId ="Cal_file_set", selected = "none")	
 					shinyjs::info("No screening results for this calibration file set (negative mode) found - have you run the workflow with the calibration step enabled before?")
-					output$number_missing_models<-renderText({"Screening results are missing."})					
+					output$number_missing_models <- renderText({"Screening results are missing."})					
 				}
 			}
 		}
@@ -268,7 +278,7 @@ observe({ # Update target name & IS_ID - C
 					if(new_IS_ID!=isolate(input$Cal_IS_ID)){
 						updateSelectInput(session,inputId="Cal_IS_ID",selected = as.character(new_IS_ID))
 					}else{ # if IS_ID the same; update on dd$d must be made here, not in observer for input$Cal_IS_ID which would remain unresponise (no value change)
-						isolate(dd$entry<-paste("_",input$Cal_IS_ID,"_",input$Cal_target_ID,"_",sep=""))
+						isolate(dd$entry <- paste("_",input$Cal_IS_ID,"_",input$Cal_target_ID,"_",sep=""))
 					}	
 				}
 			}		
@@ -281,9 +291,9 @@ observe({ # Update target name & IS_ID - C
 observe({ # Update target ID - D
 	input$Cal_target_name
 	if(verbose){cat("\n in D")}
-	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name)!="none")){
-		use_this_ID<-use_this_name<-targets[targets[,2]==isolate(input$Cal_target_name),1]
-		updateSelectInput(session,inputId="Cal_target_ID",selected = as.character(use_this_ID))
+	if((isolate(init$a)=="TRUE")&(isolate(input$Cal_target_name) != "none")){
+		use_this_ID <- targets[targets[,2] == isolate(input$Cal_target_name), 1]
+		updateSelectInput(session,inputId = "Cal_target_ID", selected = as.character(use_this_ID))
 	}	
 })
 
@@ -566,13 +576,13 @@ observe({ # - Reload
 			if(
 				(isolate(input$Ion_mode_Cal)=="positive")
 			){
-				targets<-read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
-				intstand<-read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
-				targets<-targets[targets[,8]=="positive",,drop=FALSE]
-				intstand<-intstand[intstand[,7]=="positive",,drop=FALSE]
-				targets<-targets[targets[,6]!="FALSE",,drop=FALSE]
-				targets<<-targets
-				intstand<<-intstand
+				targets <- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character");
+				intstand <- read.table(file=file.path(logfile[[1]],"dataframes","IS.txt"),header=TRUE,sep="\t",colClasses = "character");
+				targets <- targets[targets[,8]=="positive",,drop=FALSE]
+				intstand <- intstand[intstand[,7]=="positive",,drop=FALSE]
+				targets <- targets[targets[,6]!="FALSE",,drop=FALSE]
+				targets <<- targets
+				intstand <<- intstand
 				if(verbose){cat(" positive")}
 			}
 			if(
@@ -604,63 +614,64 @@ observe({ # - K
 	if(verbose){cat("\n in K")}
 		if(isolate(init$a)=="TRUE"){
 		# anything available from calibration screening? Results still in measurements?
-		something<-FALSE
+		something <- FALSE
 		if(isolate(input$Ion_mode_Cal)=="positive"){ # check if compounds in tables are also found in screening outcomes!
 			if(
-				any(as.character(results_screen_target_pos_cal[[1]][,1])==isolate(input$Cal_target_ID)) &
-				any(as.character(results_screen_IS_pos_cal[[1]][,1])==isolate(input$Cal_IS_ID)) 
+				any(as.character(results_screen_target_pos_cal[[1]][,1]) == isolate(input$Cal_target_ID)) &
+				any(as.character(results_screen_IS_pos_cal[[1]][,1]) == isolate(input$Cal_IS_ID)) 
 			){
-				something<-TRUE
+				something <- TRUE
 			}
 		}
-		if(isolate(input$Ion_mode_Cal)=="negative"){ # check if compounds in tables are also found in screening outcomes!
+		if(isolate(input$Ion_mode_Cal) == "negative"){ # check if compounds in tables are also found in screening outcomes!
 			if(
-				any(as.character(results_screen_target_neg_cal[[1]][,1])==isolate(input$Cal_target_ID)) &
-				any(as.character(results_screen_IS_neg_cal[[1]][,1])==isolate(input$Cal_IS_ID))
+				any(as.character(results_screen_target_neg_cal[[1]][,1]) == isolate(input$Cal_target_ID)) &
+				any(as.character(results_screen_IS_neg_cal[[1]][,1]) == isolate(input$Cal_IS_ID))
 			){
-				something<-TRUE
+				something <- TRUE
 			}
 		}	
 		if(verbose){cat(something)}
 		if(
-			(isolate(init$a)=="TRUE") & 
+			(isolate(init$a) == "TRUE") & 
 			(something) & 
-			(isolate(input$Cal_IS_ID)!="none") & 
-			(isolate(input$Cal_target_ID)!="none") &  
-			(isolate(input$Cal_file_set)!="none")
+			(isolate(input$Cal_IS_ID) != "none") & 
+			(isolate(input$Cal_target_ID) != "none") &  
+			(isolate(input$Cal_file_set) != "none")
 		){	
 			# POSITIVE ##################################################################
-			if(isolate(input$Ion_mode_Cal)=="positive"){	
+			if(isolate(input$Ion_mode_Cal) == "positive"){	
 				if(verbose){cat("\n in K_1")}
-				IS_ID<-isolate(input$Cal_IS_ID)
-				target_ID<-isolate(input$Cal_target_ID)
-				at_Cal<-isolate(input$Cal_file_set)
+				IS_ID <- isolate(input$Cal_IS_ID)
+				target_ID <- isolate(input$Cal_target_ID)
+				at_Cal <- isolate(input$Cal_file_set)
 				#target_ID<-"315"; IS_ID<-"74";at_Cal<-"A"			
 				# extract IS peaks ######################################################
-				IS_adduct<-intstand[intstand[,1]==IS_ID,19]
-				IS_peak<-as.numeric(intstand[intstand[,1]==IS_ID,20])
-				at_entry<-FALSE
+				IS_adduct <- intstand[intstand[,1] == IS_ID, "Quant_adduct"]
+				IS_peak <- as.numeric(intstand[intstand[,1] == IS_ID, "Quant_peak"])
+				at_entry <- FALSE
 				for(i in 1:length(names(res_IS_pos_screen_cal))){ # where?
 					if(
-						(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][1]==IS_ID) &
-						(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][2]==IS_adduct)
+						(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][1] == IS_ID) &
+						(strsplit(names(res_IS_pos_screen_cal)[i],"_")[[1]][2] == IS_adduct)
 					){
-						at_entry<-i;break;
+						at_entry <- i;
+						break;
 					}
 				}
-				IS_in_file<-c()
-				IS_with_peak<-c()
-				IS_with_score<-c()
-				if(length(res_IS_pos_screen_cal[[at_entry]])>0){
+				IS_in_file <- c()
+				IS_with_peak <- c()
+				IS_with_score <- c()
+				if(length(res_IS_pos_screen_cal[[at_entry]]) > 0){
 					for(j in 1:length(res_IS_pos_screen_cal[[at_entry]])){
-						if(length(res_IS_pos_screen_cal[[at_entry]][[j]])>0){						
-							if(measurements[measurements[,"ID"]==res_IS_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+						if(length(res_IS_pos_screen_cal[[at_entry]][[j]]) > 0){						
+							if(measurements[measurements[,"ID"] == res_IS_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2 == at_Cal){
 								for(k in 1:length(res_IS_pos_screen_cal[[at_entry]][[j]])){
-									if(any(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)){
-										that<-which(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==IS_peak)
-										IS_in_file<-c(IS_in_file,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
-										IS_with_peak<-c(IS_with_peak,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
-										IS_with_score<-c(IS_with_score,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)	
+									if(any(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1] == IS_peak)){
+										that <- which(res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1] == IS_peak)
+										IS_in_file <- c(IS_in_file, res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+										IS_with_peak <- c(IS_with_peak, res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that, 2])
+										IS_with_score <- c(IS_with_score,res_IS_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)	
 									}
 								}
 							}
@@ -669,31 +680,32 @@ observe({ # - K
 				}
 				if(verbose){cat("\n in K_2")}
 				# extract target peaks ##################################################
-				target_adduct<-targets[targets[,1]==target_ID,20]
-				target_peak<-as.numeric(targets[targets[,1]==target_ID,21])
-				at_entry<-FALSE
+				target_adduct <- targets[targets[,1] == target_ID,20]
+				target_peak <- as.numeric(targets[targets[,1] == target_ID,21])
+				at_entry <- FALSE
 				for(i in 1:length(names(res_target_pos_screen_cal))){ # where?
 					if(
-						(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][1]==target_ID) &
-						(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][2]==target_adduct)
+						(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][1] == target_ID) &
+						(strsplit(names(res_target_pos_screen_cal)[i],"_")[[1]][2] == target_adduct)
 					){
-						at_entry<-i;break;
+						at_entry <- i;
+						break;
 					}
 				}
 				if(verbose){cat("\n in K_2_1")}
-				target_in_file<-c()
-				target_with_peak<-c()
-				target_with_score<-c()
-				if(length(res_target_pos_screen_cal[[at_entry]])>0){
+				target_in_file <- c()
+				target_with_peak <- c()
+				target_with_score <- c()
+				if(length(res_target_pos_screen_cal[[at_entry]]) > 0){
 					for(j in 1:length(res_target_pos_screen_cal[[at_entry]])){
-						if(length(res_target_pos_screen_cal[[at_entry]][[j]])>0){						
-							if(measurements[measurements[,"ID"]==res_target_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2==at_Cal){
+						if(length(res_target_pos_screen_cal[[at_entry]][[j]]) > 0){						
+							if(measurements[measurements[,"ID"] == res_target_pos_screen_cal[[at_entry]][[j]][[1]]$file_ID,]$tag2 == at_Cal){
 								for(k in 1:length(res_target_pos_screen_cal[[at_entry]][[j]])){
-									if(any(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)){
-										that<-which(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1]==target_peak)
-										target_in_file<-c(target_in_file,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
-										target_with_peak<-c(target_with_peak,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that,2])
-										target_with_score<-c(target_with_score,res_target_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)
+									if(any(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1] == target_peak)){
+										that <- which(res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[,1] == target_peak)
+										target_in_file <- c(target_in_file, res_target_pos_screen_cal[[at_entry]][[j]][[k]]$file_ID)
+										target_with_peak <- c(target_with_peak, res_target_pos_screen_cal[[at_entry]][[j]][[k]]$Peaks[that, 2])
+										target_with_score <- c(target_with_score, res_target_pos_screen_cal[[at_entry]][[j]][[k]]$score_1)
 									}
 								}
 							}
@@ -702,42 +714,42 @@ observe({ # - K
 				}
 				if(verbose){cat("\n in K_3")}
 				# derive pairs ##########################################################
-				mat_cal<-matrix(nrow=0,ncol=13)
-				colnames(mat_cal)<-c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?",
+				mat_cal <- matrix(nrow=0,ncol=13)
+				colnames(mat_cal) <- c("Pair #","Target intensity","IS intensity","Intensity ratio","Concentration","Target score","IS score","Used?",
 					"Target RT [s]","IS RT [s]","Target peak ID","IS peak ID","File ID")
-				if(	(length(target_in_file)>0) & (length(IS_in_file)>0)	){
+				if(	(length(target_in_file) > 0) & (length(IS_in_file) > 0)	){
 					for(i in 1:length(target_in_file)){
-						if(any(IS_in_file==target_in_file[i])){
-							those<-which(IS_in_file==target_in_file[i])
-							mat_cal<-rbind(mat_cal,
+						if(any(IS_in_file == target_in_file[i])){
+							those <- which(IS_in_file == target_in_file[i])
+							mat_cal <- rbind(mat_cal,
 								cbind(
-									rep(1,length(those)),
-									round(rep(profileList_pos_cal[[2]][target_with_peak[i],2],length(those)),digits=0), # intensity target
-									round(profileList_pos_cal[[2]][IS_with_peak[those],2],digits=0), 					# intensity IS
-									round((profileList_pos_cal[[2]][target_with_peak[i],2]/(profileList_pos_cal[[2]][IS_with_peak[those],2])),digits=5), # ratio									
+									rep(1, length(those)),
+									round(rep(profileList_pos_cal[[2]][target_with_peak[i],2], length(those)), digits = 0), # intensity target
+									round(profileList_pos_cal[[2]][IS_with_peak[those],2], digits = 0), 					# intensity IS
+									round((profileList_pos_cal[[2]][target_with_peak[i],2] / (profileList_pos_cal[[2]][IS_with_peak[those],2])),digits=5), # ratio									
 									rep(as.numeric(
-										measurements[measurements[,"ID"]==target_in_file[i],]$tag1	
-									),length(those)), # concentration
-									rep(target_with_score[i],length(those)), # score target
+										measurements[measurements[,"ID"] == target_in_file[i],]$tag1	
+									), length(those)), # concentration
+									rep(target_with_score[i], length(those)), # score target
 									IS_with_score[those],
-									rep(1,length(those)), # used?
-									round(rep(profileList_pos_cal[[2]][target_with_peak[i],3],length(those)),digits=2), # Target RT
-									round(rep(profileList_pos_cal[[2]][IS_with_peak[those],3],length(those)),digits=2),	# IS RT
-									round(rep(profileList_pos_cal[[2]][target_with_peak[i],4],length(those)),digits=0),	# Target peak ID
-									round(rep(profileList_pos_cal[[2]][IS_with_peak[those],4],length(those)),digits=0),	# IS peak ID
-									round(rep(profileList_pos_cal[[2]][target_with_peak[i],6],length(those)),digits=0)	# File ID
+									rep(1, length(those)), # used?
+									round(rep(profileList_pos_cal[[2]][target_with_peak[i],3], length(those)), digits = 2), # Target RT
+									round(rep(profileList_pos_cal[[2]][IS_with_peak[those],3], length(those)), digits = 2),	# IS RT
+									round(rep(profileList_pos_cal[[2]][target_with_peak[i],4], length(those)), digits = 0),	# Target peak ID
+									round(rep(profileList_pos_cal[[2]][IS_with_peak[those],4], length(those)), digits = 0),	# IS peak ID
+									round(rep(profileList_pos_cal[[2]][target_with_peak[i],6], length(those)), digits = 0)	# File ID
 								,deparse.level = 0),
 							deparse.level = 0)
 						}
 					}
 				}
-				rownames(mat_cal)<-NULL
+				rownames(mat_cal) <- NULL
 				if(verbose){cat("\n in K_4")}
 				# filter ################################################################
-				mat_cal<-mat_cal[!duplicated(mat_cal),, drop = FALSE] # same entries? - remove
-				mat_cal<-mat_cal[
+				mat_cal <- mat_cal[!duplicated(mat_cal),, drop = FALSE] # same entries? - remove
+				mat_cal <- mat_cal[
 					order(mat_cal[,5], mat_cal[,11], mat_cal[,12], mat_cal[,7], mat_cal[,6], decreasing = TRUE)
-				,,drop=FALSE]
+				,,drop = FALSE]
 				mat_cal <- mat_cal[!duplicated(mat_cal[,c(11,12), drop = FALSE]),, drop = FALSE] # same peaks in different combinations - remove
 				mat_cal[,1] <- (1:length(mat_cal[,1]))
 				min_int <- as.numeric(intstand[intstand[,1] == IS_ID,17])
@@ -747,43 +759,46 @@ observe({ # - K
 				mat_cal[mat_cal[,3] < min_int,8] <- 0
 				mat_cal[mat_cal[,3] > max_int,8] <- 0
 				# adapt point selection to existing model (if any) ######################
-				use_cal<-which(names(cal_models_pos)==at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
-				if(length(names(cal_models_pos[[use_cal]]))>0){				
-					use_precision<-isolate(input$use_precision)
-					at_model<-which(names(cal_models_pos[[use_cal]])==paste("_",IS_ID,"_",target_ID,"_",sep=""))
-					if(length(at_model)>0){
+				use_cal <- which(names(cal_models_pos) == at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
+				if(
+					(length(names(cal_models_pos[[use_cal]])) > 0) &
+					(dim(mat_cal)[1] > 0)
+				){				
+					use_precision <- isolate(input$use_precision)
+					at_model <- which(names(cal_models_pos[[use_cal]]) == paste("_", IS_ID, "_", target_ID, "_", sep = ""))
+					if(length(at_model) > 0){
 						cal_models_pos[[use_cal]][[at_model]]$data
 						for(k in 1:length(mat_cal[,1])){
 							if(!any(
-								(cal_models_pos[[use_cal]][[at_model]]$data$resp==mat_cal[k,"Concentration"]) &
-								(abs(cal_models_pos[[use_cal]][[at_model]]$data$lin-mat_cal[k,"Intensity ratio"])<use_precision)	
+								(cal_models_pos[[use_cal]][[at_model]]$data$resp == mat_cal[k,"Concentration"]) &
+								(abs(cal_models_pos[[use_cal]][[at_model]]$data$lin - mat_cal[k,"Intensity ratio"]) < use_precision)	
 							)){
-								mat_cal[k,"Used?"]<-0
+								mat_cal[k, "Used?"] <- 0
 								if(verbose){cat(".")}
 							}else{
-								mat_cal[k,"Used?"]<-1
+								mat_cal[k,"Used?"] <- 1
 								if(verbose){cat("*")}							
 							}
 						}
 					}
+					# adapt point selection also to new ratio bounds ########################
+					if(isolate(input$cal_model_bound_low)){	
+						mat_cal[
+							mat_cal[,"Intensity ratio"] < isolate(input$cal_model_bound_low_value)
+						,"Used?"] <- 0
+					}
+					if(isolate(input$cal_model_bound_up)){
+						mat_cal[
+							mat_cal[,"Intensity ratio"] > isolate(input$cal_model_bound_up_value)
+						,"Used?"] <- 0					
+					}						
 				}
-				# adapt point selection also to new ratio bounds ########################
-				if(isolate(input$cal_model_bound_low)){	
-					mat_cal[
-						mat_cal[,"Intensity ratio"]<isolate(input$cal_model_bound_low_value)
-					,"Used?"]<-0
-				}
-				if(isolate(input$cal_model_bound_up)){
-					mat_cal[
-						mat_cal[,"Intensity ratio"]>isolate(input$cal_model_bound_up_value)
-					,"Used?"]<-0					
-				}						
 				#########################################################################
-				mat_cal<<-mat_cal
-				isolate(dd$d<-mat_cal)
+				mat_cal <<- mat_cal
+				isolate(dd$d <- mat_cal)
 			}
 			# NEGATIVE ##################################################################
-			if(isolate(input$Ion_mode_Cal)=="negative"){	
+			if(isolate(input$Ion_mode_Cal) == "negative"){	
 				if(verbose){cat("\n in K_negative_1")}
 				IS_ID<-isolate(input$Cal_IS_ID)
 				target_ID<-isolate(input$Cal_target_ID)
@@ -903,7 +918,10 @@ observe({ # - K
 				mat_cal[mat_cal[,3] > max_int,8] <- 0
 				# adapt point selection to existing model (if any) ######################
 				use_cal <- which(names(cal_models_neg) == at_Cal) # well, the first entry ... just in case different calibration groups are merged into a list at some point (= makes saving too slow).
-				if(length(names(cal_models_neg[[use_cal]])) > 0){				
+				if(
+					(length(names(cal_models_neg[[use_cal]])) > 0) &
+					(dim(mat_cal)[1] > 0)
+				){				
 					use_precision <- isolate(input$use_precision)
 					at_model <- which(names(cal_models_neg[[use_cal]])==paste("_",IS_ID,"_",target_ID,"_",sep=""))
 					if(length(at_model) > 0){
@@ -917,11 +935,22 @@ observe({ # - K
 								if(verbose){cat(".")}
 							}
 						}
+					}					
+					# adapt point selection also to new ratio bounds ########################
+					if(isolate(input$cal_model_bound_low)){	
+						mat_cal[
+							mat_cal[,"Intensity ratio"] < isolate(input$cal_model_bound_low_value)
+						,"Used?"] <- 0
 					}
+					if(isolate(input$cal_model_bound_up)){
+						mat_cal[
+							mat_cal[,"Intensity ratio"] > isolate(input$cal_model_bound_up_value)
+						,"Used?"] <- 0					
+					}						
 				}
 				#########################################################################
-				mat_cal<<-mat_cal
-				isolate(dd$d<-mat_cal)
+				mat_cal <<- mat_cal
+				isolate(dd$d <- mat_cal)
 			}
 		}else{
 			isolate(dd$d<-matrix(ncol=2,nrow=0,0))
@@ -941,13 +970,13 @@ observe({ # - L output table
 		if(length(isolate(dd$d[,1]))>0){
 			output$cal_table <- DT::renderDataTable(
 				datatable(
-					isolate(dd$d),selection =c('single'),options = list(lengthMenu = c(25,50,100))
+					isolate(dd$d), selection = c('single'), options = list(lengthMenu = c(25, 50, 100))
 				)%>%
 				formatStyle('Used?',backgroundColor = styleInterval(0.5, c('orange', 'lightgreen')))
 			)
 		}else{
 			output$cal_table <- renderDataTable(
-				DT::datatable(as.data.frame(cbind("")),selection = 'single',rownames=FALSE,colnames="No target screening results available")
+				DT::datatable(as.data.frame(cbind("")), selection = 'single', rownames = FALSE, colnames = "No screening results available")
 			)
 		}	
 	}	
@@ -966,36 +995,42 @@ observe({ # - M plot
 	if(verbose){cat("\n in M: plotting")}
 	if((isolate(init$a)=="TRUE") & (isolate(input$Cal_IS_ID)!="none") & (isolate(input$Cal_target_ID)!="none")& (isolate(input$Cal_file_set)!="none")){					
 		# generate outputs ######################################################
-		if(length(isolate(dd$d[,1]))>1){
-			output$cal_plot <- renderPlot({
+		if(length(isolate(dd$d[,1])) > 1){
+			if(is.null(ranges_cal_plot$x)){ use_xlim <- c(0, max(dd$d[,"Concentration"])) }else{use_xlim <- ranges_cal_plot$y}
+			if(is.null(ranges_cal_plot$y)){ use_ylim <- c(0, max(dd$d[,"Intensity ratio"])) }else{use_ylim <- ranges_cal_plot$x}		
+		
+			output$cal_plot <- renderPlot({	
 				plot(isolate(dd$d[,"Concentration"]), isolate(dd$d[,"Intensity ratio"]),
-					xlab="Concentration",ylab="Intensity ratio",pch=19,
-					xlim=ranges_cal_plot$y,ylim=ranges_cal_plot$x,
-					main="Draw rectangles and double-click into them to zoom, double-click again to zoom out.",cex.main=1,col="white")#,yaxs="i",xaxs="i")
-				abline(h=0,col="lightgrey")
-				abline(v=0,col="lightgrey")				
-				points(isolate(dd$d[dd$d[,"Used?"]==1,"Concentration"]), isolate(dd$d[dd$d[,"Used?"]==1,"Intensity ratio"]),col="black",pch=19)
-				points(isolate(dd$d[dd$d[,"Used?"]==0,"Concentration"]), isolate(dd$d[dd$d[,"Used?"]==0,"Intensity ratio"]),col="gray",pch=19)		
+					xlab = "Concentration",
+					ylab = "Intensity ratio",
+					pch = 19,
+					xlim = use_xlim,
+					ylim = use_ylim,
+					main = "Draw rectangles and double-click into them to zoom, double-click again to zoom out.",cex.main=1,col="white")#,yaxs="i",xaxs="i")
+				abline(h = 0, col = "lightgrey")
+				abline(v = 0, col = "lightgrey")				
+				points(isolate(dd$d[dd$d[,"Used?"] == 1, "Concentration"]), isolate(dd$d[dd$d[,"Used?"] == 1, "Intensity ratio"]), col = "black", pch = 19)
+				points(isolate(dd$d[dd$d[,"Used?"] == 0, "Concentration"]), isolate(dd$d[dd$d[,"Used?"] == 0, "Intensity ratio"]), col = "gray", pch = 19)		
 				# add lower & upper bounds
 				if(isolate(input$cal_model_bound_low)){
-					abline(h=isolate(input$cal_model_bound_low_value),col="red",lty=2)
+					abline(h = isolate(input$cal_model_bound_low_value), col = "red", lty = 2)
 				}
 				if(isolate(input$cal_model_bound_up)){
-					abline(h=isolate(input$cal_model_bound_up_value),col="red",lty=3)
+					abline(h = isolate(input$cal_model_bound_up_value), col = "red", lty = 3)
 				}					
 				if((!is.null(ranges_cal_plot$x))||(!is.null(ranges_cal_plot$y))){
-					mtext("Now zoomed in",side=3,col="gray")
+					mtext("Now zoomed in", side = 3, col = "gray")
 				}
-				if(sum(isolate(dd$d[,"Used?"]))>=2){ # at least two data points!
-					resp<-(isolate(dd$d[dd$d[,"Used?"]==1,"Concentration"]))	# concentration
-					lin<-(isolate(dd$d[dd$d[,"Used?"]==1,"Intensity ratio"])) 	# Intensity ratio target/IS
+				if(sum(isolate(dd$d[,"Used?"])) >= 2){ # at least two data points!
+					resp<-(isolate(dd$d[dd$d[,"Used?"] == 1, "Concentration"]))	# concentration
+					lin<-(isolate(dd$d[dd$d[,"Used?"] == 1, "Intensity ratio"])) 	# Intensity ratio target/IS
 					if(isolate(input$cal_model_weight)){
-						use_weights<-(isolate(dd$d[dd$d[,"Used?"]==1,"Target intensity"])) 
-						use_weights<-(1/use_weights)
+						use_weights <- (isolate(dd$d[dd$d[,"Used?"] == 1, "Target intensity"])) 
+						use_weights <- (1 / use_weights)
 					}else{
-						use_weights<-NULL
+						use_weights <- NULL
 					}
-					if(isolate(input$cal_model)=="linear"){
+					if(isolate(input$cal_model) == "linear"){
 						if(isolate(input$cal_model_0intercept)){
 							cal_model<<-lm(resp~0+lin,weights=use_weights)
 							abline(
@@ -1193,7 +1228,7 @@ observe({ # - M plot
 				plot(0.5,0.5,col="white",xlim=c(0,1),ylim=c(0,1))
 				text(0.5,0.5,"Not enough calibration data available")
 			})
-			output$cal_model_summary<-renderText({"Not enough calibration data available"})
+			output$cal_model_summary <- renderText({"Not enough calibration data available"})
 			cal_model<<-NA
 		}	
 	}	
