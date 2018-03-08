@@ -1,14 +1,14 @@
 
-	measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	measurements <- measurements[measurements[,"include"]=="TRUE",]
-	ppm<-logfile$parameters$replicate_ppm
-	mz_tol<-as.numeric(logfile$parameters$replicate_dmz)
-	rt_tol<-as.numeric(logfile$parameters$replicate_delRT)
-	int_tol<-10^(as.numeric(logfile$parameters$replicate_IS_dInt))
-	with_test<-TRUE # Run a test along!
-	replic<-(measurements$tag3[measurements$tag3!="FALSE"])
-	replic<-replic[duplicated(replic)]
-	replic<-unique(replic)
+	measurements <- read.csv(file=file.path(logfile[[1]], "dataframes", "measurements"), colClasses = "character");
+	measurements <- measurements[measurements[,"include"] == "TRUE",]
+	ppm <- logfile$parameters$replicate_ppm
+	mz_tol <- as.numeric(logfile$parameters$replicate_dmz)
+	rt_tol <- as.numeric(logfile$parameters$replicate_delRT)
+	int_tol <- 10^(as.numeric(logfile$parameters$replicate_IS_dInt))
+	with_test <- TRUE # Run a test along!
+	replic <- (measurements$tag3[measurements$tag3 != "FALSE"])
+	replic <- replic[duplicated(replic)]
+	replic <- unique(replic)
 	
 
 	# clean old entries #####################################################################################################
@@ -17,8 +17,8 @@
 		for(i in 1:length(IDs)){
 			if(any(measurements[,"ID"]==IDs[i])){
 				load(file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])),envir=as.environment(".GlobalEnv"),verbose=FALSE);
-				keep<-rep(1,length(peaklist[,1])) # 1 == TRUE
-				peaklist[,colnames(peaklist)=="keep"]<-keep
+				keep <- rep(1,length(peaklist[,1])) # 1 == TRUE
+				peaklist[,colnames(peaklist) == "keep"]<-keep
 				save(peaklist,file=file.path(logfile[[1]],"peaklist",as.character(IDs[i])))
 				rm(peaklist)
 			}else{
@@ -34,7 +34,7 @@
 		#i <- which(replic == "2017-03-14 P")
 		#i <- which(replic == "2017-04-03 P")
 				cat(paste("\n    Replicate intersection",replic[i],":"));
-				IDs<-measurements$ID[measurements$tag3==replic[i]]			
+				IDs <- measurements$ID[measurements$tag3==replic[i]]			
 				if(any(duplicated(IDs))){stop("replicates: non-unique IDs found!")} # should not happen anyway
 				# initialize intersection rectangles with first peaklist ################################
 				if(any(objects(envir=as.environment(".GlobalEnv"))=="peaklist")){rm(peaklist,envir=as.environment(".GlobalEnv"))}
