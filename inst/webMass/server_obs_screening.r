@@ -606,8 +606,9 @@ observe({ ####################################################################
 				}
 			}
 		}
-		tab_screening_selected_pos <<- as.data.frame(cbind(which_where, sample_type, which_peaks, score_1, score_2, delppm, delRT, delRT_min, inte, with_peaks),
-				row.names = NULL,stringsAsFactors=FALSE)
+		tab_screening_selected_pos <<- as.data.frame(cbind(as.numeric(which_where), sample_type, which_peaks, score_1, score_2, delppm, delRT, delRT_min, inte, with_peaks),
+				row.names = NULL, stringsAsFactors = FALSE)
+		tab_screening_selected_pos[,1] <<- as.numeric(tab_screening_selected_pos[,1])		
 		output$Table_screening_selected_pos <- DT::renderDataTable({
 			DT::datatable(
 				tab_screening_selected_pos,
@@ -617,8 +618,7 @@ observe({ ####################################################################
 				selection = list(mode = 'single', target = 'row'),		
 	            extensions = c('Buttons','FixedHeader','ColReorder'),
 				options = list(
-					lengthMenu = c(15, 30, 50, 100),
-					lengthMenu = list(c(15, 30, 50, 100, -1), list('15', '30', '50', '100', 'All')),
+					lengthMenu = list(c(50, 100, 250, -1), list('50', '100', '250', 'All')),
 					fixedHeader = FALSE,
 					ordering=TRUE,
 					dom = 'Blfrtip',
@@ -1580,6 +1580,7 @@ observe({ ####################################################################
 		}
 		tab_screening_selected_neg<<-as.data.frame(cbind(which_where,sample_type,which_peaks,score_1,score_2,delppm,delRT,delRT_min,inte,with_peaks),
 				row.names = NULL,stringsAsFactors=FALSE)
+		tab_screening_selected_neg[,1] <<- as.numeric(tab_screening_selected_neg[,1])
 		output$Table_screening_selected_neg<-DT::renderDataTable({
 			DT::datatable(
 				tab_screening_selected_neg,
@@ -1589,7 +1590,7 @@ observe({ ####################################################################
 				selection = list(mode = 'single', target = 'row'),
 	            extensions = c('Buttons','FixedHeader','ColReorder'),
 				options = list(
-					lengthMenu = list(c(15, 30, 50, 100, -1), list('15', '30', '50', '100', 'All')),
+					lengthMenu = list(c(50, 100, 250, -1), list('50', '100', '250', 'All')),
 					fixedHeader = FALSE,
 					ordering=TRUE,
 					dom = 'Blfrtip',
