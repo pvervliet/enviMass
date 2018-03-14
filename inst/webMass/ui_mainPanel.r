@@ -284,9 +284,9 @@
 							column(width = 4, 
 								selectInput("ISadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
 								checkboxInput("ISadd_rest_adduct", "Restrict screening to main adduct?", FALSE)),
-							column(width = 8, helpText("A compound-specific adduct can be defined here; general adducts to be considered for all compounds can be defined in the Settings/Screening/Adducts tab. 	
-														Unless the below restriction, the compound-specific adduct is used alongside the general ones. 
-														Seperate compound entries have to be made when including more than one compound-specific adduct."))							
+							column(width = 8, helpText("An additional compound-specific 'Main adduct' can be defined here; non-specific adducts to be considered for all compounds can be defined in the 
+														Settings -> Screening -> Adducts tab. Uncheck 'Restrict screening to main adduct' to use this compound-specific adduct alongside the non-specific 
+														ones for this compound. None (FALSE) or exactly one 'Main adduct' can be defined here; several compound entries have to be used to include several 'Main adducts'"))							
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(	
@@ -454,9 +454,9 @@
 							column(width = 4, 
 								selectInput("targetsadd_add", label="Main adduct:", choices= "FALSE", selected = "FALSE", multiple = FALSE),
 								checkboxInput("targetsadd_rest_adduct", "Restrict screening to main adduct?", FALSE)),
-							column(width = 8, helpText("A compound-specific adduct can be defined here; general adducts to be considered for all compounds can be defined in the Settings/Screening/Adducts tab. 	
-														Unless the below restriction, the compound-specific adduct is used alongside the general ones. 
-														Seperate compound entries have to be made when including more than one compound-specific adduct."))							
+							column(width = 8, helpText("An additional compound-specific 'Main adduct' can be defined here; non-specific adducts to be considered for all compounds can be defined in the 
+														Settings -> Screening -> Adducts tab. Uncheck 'Restrict screening to main adduct' to use this compound-specific adduct alongside the non-specific 
+														ones for this compound. None (FALSE) or exactly one 'Main adduct' can be defined here; several compound entries have to be used to include several 'Main adducts'"))							
 						),
 						HTML('<hr noshade="noshade" />'),
 						fluidRow(	
@@ -1969,14 +1969,8 @@
 								),
 								HTML('<hr noshade="noshade" />'),
 								tags$p(align="justify","The below Sample and Blank matches show the number of files with screening matches above the cutoff score, 
-								with multiple matches per file above this cutoff merged."),
-###								
-								DT::dataTableOutput('Table_screening_pos'),
-								
-								
-								
-								
-###															
+									with multiple matches per file above this cutoff merged."),
+								DT::dataTableOutput('Table_screening_pos'),					
 								HTML('<hr noshade="noshade" />'),
 								bsCollapse(multiple = FALSE, open = NULL, id = "collapse_screen_pos_all",
 									bsCollapsePanel(title="Summary plots",

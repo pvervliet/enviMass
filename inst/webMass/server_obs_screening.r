@@ -908,34 +908,40 @@ observe({
 		if(length(screen_dev_pos)>0){
 			use_x<-input$Summ_pos_x
 			use_y<-input$Summ_pos_y
-			if(use_x!=use_y){
-				par(mar=c(4,4,.5,.5))
+			use_x_axis <- use_x
+			if(use_x_axis %in%  c("RT deviation within", "Expected RT", "Measured RT")) use_x_axis <- paste(use_x_axis, "[s]")
+			use_y_axis <- use_y
+			if(use_y_axis %in%  c("RT deviation within", "Expected RT", "Measured RT")) use_y_axis <- paste(use_y_axis, "[s]")
+				
+				
+			if(use_x != use_y){
+				par(mar = c(4,4,.5,.5))
 				plot(
-					screen_dev_pos[,colnames(screen_dev_pos)==use_x],
-					screen_dev_pos[,colnames(screen_dev_pos)==use_y],
-					pch=19,cex=.3,xlab=use_x,ylab=use_y,col="lightgrey"
+					screen_dev_pos[,colnames(screen_dev_pos) == use_x],
+					screen_dev_pos[,colnames(screen_dev_pos) == use_y],
+					pch = 19, cex = .3, xlab = use_x_axis, ylab = use_y_axis, col = "lightgrey"
 				)
 				points(
-					screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_x],
-					screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_y],
-					pch=19,cex=.4,xlab=use_x,ylab=use_y,col="black"
+					screen_dev_pos[screen_dev_pos[,6] == 1, colnames(screen_dev_pos) == use_x],
+					screen_dev_pos[screen_dev_pos[,6] == 1, colnames(screen_dev_pos) == use_y],
+					pch = 19, cex = .4, col = "black"
 				)					
-				if(use_x=="m/z deviation [ppm]" | use_x=="RT deviation within"){abline(v=0,col="red")}
-				if(use_y=="m/z deviation [ppm]" | use_y=="RT deviation within"){abline(h=0,col="red")}
-				if(use_y=="Expected RT" | use_y=="Measured RT"){abline(0,1,col="red")}
-				if(use_y=="Measured RT" | use_y=="Expected RT"){abline(0,1,col="red")}						
-				plot.window(xlim=c(0,1),ylim=c(0,1))
-				legend(0.9,1,title="Cutoff score",legend=c("below","above"),fill=c("lightgrey","black"),border=c("lightgrey","black"))
+				if(use_x == "m/z deviation [ppm]" | use_x == "RT deviation within"){abline(v = 0, col = "red")}
+				if(use_y == "m/z deviation [ppm]" | use_y == "RT deviation within"){abline(h = 0, col = "red")}
+				if(use_y == "Expected RT" | use_y == "Measured RT"){abline(0, 1, col = "red")}
+				if(use_y == "Measured RT" | use_y == "Expected RT"){abline(0, 1, col = "red")}						
+				plot.window(xlim = c(0, 1), ylim = c(0, 1))
+				legend(0.9, 1, title = "Cutoff score", legend = c("below", "above"), fill = c("lightgrey", "black"), border = c("lightgrey", "black"))
 			}else{
-				par(mar=c(4,4,.5,.5))
+				par(mar = c(4, 4, .5, .5))
 				plot.new()
-				plot.window(xlim=c(min(screen_dev_pos[,colnames(screen_dev_pos)==use_x]),max(screen_dev_pos[,colnames(screen_dev_pos)==use_x])),ylim=c(0,3.3))
-				boxplot(screen_dev_pos[screen_dev_pos[,6]==1,colnames(screen_dev_pos)==use_x],
-				horizontal=TRUE,xlab=use_x,width=1.3,at=2,add=TRUE)				
-				boxplot(screen_dev_pos[screen_dev_pos[,6]==0,colnames(screen_dev_pos)==use_x],
-				horizontal=TRUE,xlab=use_x,width=1.3,at=1,add=TRUE,col="grey")			
-				plot.window(xlim=c(0,1),ylim=c(0,1))
-				legend(0.8,1,title="Cutoff score",legend=c("above","below"),fill=c("white","lightgrey","black"),border=c("black","lightgrey"))
+				plot.window(xlim = c(min(screen_dev_pos[,colnames(screen_dev_pos) == use_x]), max(screen_dev_pos[,colnames(screen_dev_pos) == use_x])), ylim = c(0, 3.3))
+				boxplot(screen_dev_pos[screen_dev_pos[,6] == 1, colnames(screen_dev_pos) == use_x],
+					horizontal=TRUE,xlab=use_x_axis,width = 1.3, at = 2, add = TRUE)				
+				boxplot(screen_dev_pos[screen_dev_pos[,6] == 0, colnames(screen_dev_pos) == use_x],
+					horizontal = TRUE, xlab = use_x_axis, width = 1.3, at = 1, add = TRUE, col = "grey")			
+				plot.window(xlim = c(0, 1), ylim = c(0,1))
+				legend(0.8, 1, title = "Cutoff score", legend = c("above", "below"), fill = c("white", "lightgrey", "black"), border = c("black","lightgrey"))
 			}
 		}
 	})			
@@ -943,14 +949,14 @@ observe({
 observe({
 	refresh_screening$plots_pos
 	output$plot_aboveBlank_pos <- renderPlot({
-		if(any(rat_sam_blank_pos>0)){
-			par(mar=c(4,4,.5,.5))
-			if(input$screen_pos_log_rat=="yes"){
-				boxplot(log10(rat_sam_blank_pos[rat_sam_blank_pos>0]),
-				horizontal=TRUE,xlab="log10 intensity ratio",width=1.3)
+		if(any(rat_sam_blank_pos > 0)){
+			par(mar = c(4, 4, .5, .5))
+			if(input$screen_pos_log_rat == "yes"){
+				boxplot(log10(rat_sam_blank_pos[rat_sam_blank_pos > 0]),
+				horizontal = TRUE, xlab = "log10 intensity ratio", width = 1.3)
 			}else{
-				boxplot((rat_sam_blank_pos[rat_sam_blank_pos>0]),
-				horizontal=TRUE,xlab="Intensity ratio",width=1.3)
+				boxplot((rat_sam_blank_pos[rat_sam_blank_pos > 0]),
+				horizontal = TRUE, xlab = "Intensity ratio", width = 1.3)
 			}
 		}else{
 			plot.new();plot.window(xlim=c(0,1),ylim=c(0,1));text(.5,.5,labels="No ratios available",col="red",cex=1.6)

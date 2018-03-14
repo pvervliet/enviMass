@@ -209,8 +209,9 @@
 							#if(colnames(target_pos_screen_listed[[i]][[m]])[1] == "29")  stop()
 							if(do_LOD){							
 								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(target_pos_screen_listed[[i]][[m]])[1],sep=""))						
-								if(length(with_model)>0){						
-									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
+								if(length(with_model)>0){					
+									at_RT <- profileList_pos[["peaks"]][target_pos_screen_listed[[i]][[m]][1,2], 3]									
+									use_cutint<-10^(predict(LOD_splined[[with_model]], at_RT)$y)
 								}else{
 									cat("\n Missing LOD model; using default intensity threshold. Debug?")
 									use_cutint<-cutint;
@@ -516,8 +517,9 @@
 						if(length(target_neg_screen_listed[[i]][[m]])>0){
 							if(do_LOD){							
 								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(target_neg_screen_listed[[i]][[m]])[1],sep=""))						
-								if(length(with_model)>0){						
-									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
+								if(length(with_model)>0){	
+									at_RT <- profileList_neg[["peaks"]][target_neg_screen_listed[[i]][[m]][1,2], 3]									
+									use_cutint<-10^(predict(LOD_splined[[with_model]], at_RT)$y)
 								}else{
 									cat("\n Missing LOD model; using default intensity threshold. Debug?")
 									use_cutint<-cutint;

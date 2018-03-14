@@ -93,10 +93,16 @@
 		}
 		rm(measurements)
 
-		peaks<-profileList_pos[["index_prof"]];
-		peaklist<-peaks[,c("mean_mz","mean_int","mean_RT")];
+		if(FALSE){
+			keep_which <- which(names(pattern) == "148_M+H_none_none_none")
+			pattern <- pattern[keep_which]
+			pattern_delRT <- pattern_delRT[keep_which]
+			pattern_RT <- pattern_RT[keep_which]
+		}
+		peaks <- profileList_pos[["index_prof"]];
+		peaklist <- peaks[,c("mean_mz","mean_int","mean_RT")];
 		# screen centroids
-		count_nonmax<-0
+		count_nonmax <- 0
 		for(i in 1:length(pattern)){
 			count_nonmax<-(count_nonmax+
 				length(pattern[[i]][,1])
@@ -144,31 +150,31 @@
 				target_pos_screen_listed[[i]]<-list() # m-level		
 				for(j in 1:length(screen_list[[i]])){ # over its centroids = j
 					if(screen_list[[i]][[j]]!="FALSE"){ 
-						profs<-as.numeric(strsplit(screen_list[[i]][[j]]," / ")[[1]])
+						profs <- as.numeric(strsplit(screen_list[[i]][[j]]," / ")[[1]])
 						for(k in 1:length(profs)){ # over their matched profile peaks = k
-							if(profileList_pos[[7]][profs[k],4]!=profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
+							if(profileList_pos[[7]][profs[k],4] != profs[k]){cat("\n debug me: profile ID mismatch");stop();} # just a check
 							for(m in profileList_pos[[7]][profs[k],1]:profileList_pos[[7]][profs[k],2]){ # over their sample peaks
-								if(retain_sample[profileList_pos[[2]][m,"sampleIDs"]]==FALSE){next} # Is this file among the latest ones?
-								delmass<-abs(profileList_pos[[2]][m,1]-pattern[[i]][j,1])		
+								if(retain_sample[profileList_pos[[2]][m,"sampleIDs"]] == FALSE){next} # Is this file among the latest ones?
+								delmass <- abs(profileList_pos[[2]][m, 1] - pattern[[i]][j,1])		
 								if(!ppm){
-									if(delmass>(mztol/1000)){next}
+									if(delmass > (mztol / 1000)) next 
 								}else{
-									if(delmass*1E6/pattern[[i]][j,1]>mztol){next}
+									if(delmass * 1E6 / pattern[[i]][j,1] > mztol) next
 								}
 								delRT <- abs(profileList_pos[[2]][m,3] - pattern_RT[i])	
 								if(delRT > pattern_delRT[i]) next
-								at_ID<-set_ID[profileList_pos[[4]]==as.character(profileList_pos[[2]][m,6])]								
-								if(length(target_pos_screen_listed[[i]])<at_ID){							
-									target_pos_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
+								at_ID <- set_ID[profileList_pos[[4]] == as.character(profileList_pos[[2]][m,6])]								
+								if(length(target_pos_screen_listed[[i]]) < at_ID){							
+									target_pos_screen_listed[[i]][[at_ID]] <- matrix(ncol = 2, nrow = 0)	
 								}else{
-									if(length(target_pos_screen_listed[[i]][[at_ID]])==0){
-										target_pos_screen_listed[[i]][[at_ID]]<-matrix(ncol=2,nrow=0)	
+									if(length(target_pos_screen_listed[[i]][[at_ID]]) == 0){
+										target_pos_screen_listed[[i]][[at_ID]] <- matrix(ncol = 2, nrow = 0)	
 									}
 								}
-								target_pos_screen_listed[[i]][[at_ID]]<-rbind(
-									target_pos_screen_listed[[i]][[at_ID]],c(j,m)
+								target_pos_screen_listed[[i]][[at_ID]] <- rbind(
+									target_pos_screen_listed[[i]][[at_ID]], c(j, m)
 								)					
-								colnames(target_pos_screen_listed[[i]][[at_ID]])<-c(as.character(profileList_pos[[4]][at_ID]),"")			
+								colnames(target_pos_screen_listed[[i]][[at_ID]]) <- c(as.character(profileList_pos[[4]][at_ID]),"")			
 							}							
 						}
 					}
@@ -187,27 +193,28 @@
 			use_score_cut<-FALSE;
 			score_cut<-0		
 		}
-		many<-0
-		many_unamb<-0
-		res_target_pos_screen<-list()  # default: no match at all
-		do_at<-1
-		if(length(target_pos_screen_listed)>0){
+		many <- 0
+		many_unamb <- 0
+		res_target_pos_screen <- list()  # default: no match at all
+		do_at <- 1
+		if(length(target_pos_screen_listed) > 0){
 			for(i in do_at:length(target_pos_screen_listed)){ # i - on compound_adduct
-				if(length(target_pos_screen_listed[[i]])>0){	
-					res_target_pos_screen[[i]]<-list()
+				if(length(target_pos_screen_listed[[i]]) > 0){	
+					res_target_pos_screen[[i]] <- list()
 					for(m in 1:length(target_pos_screen_listed[[i]])){ # m - sample		
-						at_ID<-set_ID[profileList_pos[[4]]==colnames(target_pos_screen_listed[[i]][[m]])[1]]
-						if(length(target_pos_screen_listed[[i]][[m]])>0){
+						at_ID <- set_ID[profileList_pos[[4]]==colnames(target_pos_screen_listed[[i]][[m]])[1]]
+						if(length(target_pos_screen_listed[[i]][[m]]) > 0){
 							if(do_LOD){							
-								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(target_pos_screen_listed[[i]][[m]])[1],sep=""))						
-								if(length(with_model)>0){						
-									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
+								with_model <- which(names(LOD_splined) == paste("LOD_", colnames(target_pos_screen_listed[[i]][[m]])[1],sep=""))						
+								if(length(with_model) > 0){						
+									at_RT <- profileList_pos[["peaks"]][target_pos_screen_listed[[i]][[m]][1,2], 3]
+									use_cutint <- 10 ^ (predict(LOD_splined[[with_model]], at_RT)$y)
 								}else{
 									cat("\n Missing LOD model; using default intensity threshold. Debug?")
-									use_cutint<-cutint;
+									use_cutint <- cutint;
 								}
 							}else{
-								use_cutint<-cutint
+								use_cutint <- cutint
 							}							
 							combination_matches <- recomb_score_pl(
 								cent_peak_mat = target_pos_screen_listed[[i]][[m]],
@@ -505,8 +512,9 @@
 						if(length(target_neg_screen_listed[[i]][[m]])>0){
 							if(do_LOD){							
 								with_model<-which(names(LOD_splined)==paste("LOD_",colnames(target_neg_screen_listed[[i]][[m]])[1],sep=""))						
-								if(length(with_model)>0){						
-									use_cutint<-10^(predict(LOD_splined[[with_model]],pattern_RT[i])$y)
+								if(length(with_model)>0){		
+									at_RT <- profileList_neg[["peaks"]][target_neg_screen_listed[[i]][[m]][1,2], 3]								
+									use_cutint<-10^(predict(LOD_splined[[with_model]], at_RT)$y)
 								}else{
 									cat("\n Missing LOD model; using default intensity threshold. Debug?")
 									use_cutint<-cutint;
