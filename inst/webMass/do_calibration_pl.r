@@ -107,6 +107,7 @@
 		#RT_tol_outside<-as.numeric(logfile$parameters$IS_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s] - incorporated via pattern_delRT during isotopologue pattern generation
 		RT_tol_inside<-as.numeric(logfile$parameters$IS_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
+		mztol_prof <- as.numeric(logfile$parameters$prof_dmz) # (mztol + 2 * mztol_prof)
 		# include: restrict pattern only to the adducts used for screening! - but then they dont show up the screening results ...
 		
 		peaks<-profileList_pos_cal[[7]];
@@ -140,7 +141,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*2, # precheck for profiles
+			dmz= (mztol + 2 * mztol_prof), # precheck for profiles
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT=centro_dRT
@@ -290,6 +291,7 @@
 		#RT_tol_outside<-as.numeric(logfile$parameters$target_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s] - incorporated via pattern_delRT during isotopologue pattern generation
 		RT_tol_inside<-as.numeric(logfile$parameters$tar_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$tar_w1)	
+		mztol_prof <- as.numeric(logfile$parameters$prof_dmz) # (mztol + 2 * mztol_prof)
 		
 		peaks<-profileList_pos_cal[[7]];
 		peaklist<-peaks[,c(14,16,15)];
@@ -325,10 +327,10 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*2, # precheck for profiles
-			ppm=ppm, 
-			RT=centro_RT, 
-			dRT=centro_dRT
+			dmz = (mztol + 2 * mztol_prof), # precheck for profiles
+			ppm = ppm, 
+			RT = centro_RT, 
+			dRT = centro_dRT
 		)	
 		if( as.character(logfile$parameters$screen_target_maxonly)=="TRUE" ){ # only retain max_peak-results?
 			getit[!centro_maxpeak]<-"FALSE"
@@ -550,6 +552,7 @@
 		#RT_tol_outside<-as.numeric(logfile$parameters$IS_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s] - incorporated via pattern_delRT during isotopologue pattern generation
 		RT_tol_inside<-as.numeric(logfile$parameters$IS_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
+		mztol_prof <- as.numeric(logfile$parameters$prof_dmz) # (mztol + 2 * mztol_prof)
 		
 		peaks<-profileList_neg_cal[[7]];
 		peaklist<-peaks[,c(14,16,15)];
@@ -582,7 +585,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*2, # precheck for profiles
+			dmz=(mztol + 2 * mztol_prof), # precheck for profiles
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT=centro_dRT
@@ -733,6 +736,7 @@
 		#RT_tol_outside<-as.numeric(logfile$parameters$target_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s] - incorporated via pattern_delRT during isotopologue pattern generation
 		RT_tol_inside<-as.numeric(logfile$parameters$tar_drt2)		# RT tolerance of peaks within an isotope pattern [s]
 		cut_score<-as.numeric(logfile$parameters$tar_w1)	
+		mztol_prof <- as.numeric(logfile$parameters$prof_dmz) # (mztol + 2 * mztol_prof)
 		
 		peaks<-profileList_neg_cal[[7]];
 		peaklist<-peaks[,c(14,16,15)];
@@ -768,7 +772,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*2, # precheck for profiles
+			dmz=(mztol + 2 * mztol_prof), # precheck for profiles
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT=centro_dRT

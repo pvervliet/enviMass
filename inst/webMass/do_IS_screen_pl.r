@@ -65,6 +65,7 @@
 		int_tol<-as.numeric(logfile$parameters$IS_inttol)			# Intensity tolerance %
 		#RT_tol_outside<-as.numeric(logfile$parameters$IS_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s] - incorporated via pattern_delRT during isotopologue pattern generation
 		RT_tol_inside<-as.numeric(logfile$parameters$IS_drt2)		# RT tolerance of peaks within an isotope pattern [s]
+		mztol_prof <- as.numeric(logfile$parameters$prof_dmz) 		# (mztol + 2 * mztol_prof)
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
 
 		###############################################################################################
@@ -123,7 +124,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz = mztol*2, # precheck for profiles
+			dmz = (mztol + 2 * mztol_prof), # precheck for profiles
 			ppm = ppm, 
 			RT = centro_RT, 
 			dRT = (centro_dRT + as.numeric(logfile$parameters$prof_drt))
@@ -384,6 +385,7 @@
 		int_tol<-as.numeric(logfile$parameters$IS_inttol)			# Intensity tolerance %
 		#RT_tol_outside<-as.numeric(logfile$parameters$IS_drt1)		# RT tolerance of peaks in sample relative to their expected RT [s] - incorporated via pattern_delRT during isotopologue pattern generation
 		RT_tol_inside<-as.numeric(logfile$parameters$IS_drt2)		# RT tolerance of peaks within an isotope pattern [s]
+		mztol_prof <- as.numeric(logfile$parameters$prof_dmz) 		# (mztol + 2 * mztol_prof)
 		cut_score<-as.numeric(logfile$parameters$IS_w1)	
 
 		###############################################################################################
@@ -442,7 +444,7 @@
 		getit <- search_peak( 
 			peaklist, 
 			centro_mass, 
-			dmz=mztol*2, # precheck for profiles
+			dmz=(mztol + 2 * mztol_prof), # precheck for profiles
 			ppm=ppm, 
 			RT=centro_RT, 
 			dRT = (centro_dRT + as.numeric(logfile$parameters$prof_drt))
