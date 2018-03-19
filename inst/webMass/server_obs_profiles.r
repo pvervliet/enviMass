@@ -41,13 +41,19 @@ maincalc3<-reactive({
 		compounds_targets <<- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character")
 		compounds_targets <<- compounds_targets[compounds_targets$ion_mode == "positive",,drop = FALSE]
 		if(!dim(compounds_targets)[1]) rm(compounds_targets, envir = as.environment(".GlobalEnv"))
+		######################################################################	
+		if(dim(profileList_pos[["index_prof"]])[2] > 26){
+			updateSelectInput(session, "filterProf_comparison", 
+				choices = c("None", colnames(profileList_pos[["index_prof"]])[27:dim(profileList_pos[["index_prof"]])[2]]), selected = "None")
+		}
 		######################################################################
 		if(any(objects() == "profileList")){stop("illegal profileList found, #1");}
 		if(any(objects() == "profpeaks2")){stop("illegal profpeaks2 found, #1");}
 		if(any(objects() == "profpeaks3")){stop("illegal profpeaks3 found, #1");}
 		if(any(objects() == "compounds_targets")){stop("illegal compounds_targets found, #1");}
 		if(any(objects() == "compounds_IS")){stop("illegal compounds_IS found, #1");}
-		return("Select ionization (switch to negative):\n")
+		return("Select ionization (switch to negative):\n")		
+		
 	}
 	##########################################################################
 	if( (isolate(init$a) == "TRUE") &  (isolate(input$Ion_mode) == "negative") ){
@@ -82,6 +88,11 @@ maincalc3<-reactive({
 		compounds_targets <<- read.table(file=file.path(logfile[[1]],"dataframes","targets.txt"),header=TRUE,sep="\t",colClasses = "character")
 		compounds_targets <<- compounds_targets[compounds_targets$ion_mode == "negative",,drop = FALSE]
 		if(!dim(compounds_targets)[1]) rm(compounds_targets, envir = as.environment(".GlobalEnv"))
+		######################################################################	
+		if(dim(profileList_neg[["index_prof"]])[2] > 26){
+			updateSelectInput(session, "filterProf_comparison", 
+				choices = c("None", colnames(profileList_neg[["index_prof"]])[27:dim(profileList_neg[["index_prof"]])[2]]), selected = "None")
+		}
 		######################################################################
 		if(any(objects() == "profileList")){stop("illegal profileList found, #1");}
 		if(any(objects() == "profpeaks2")){stop("illegal profpeaks2 found, #1");}
@@ -116,6 +127,7 @@ maincalc6 <- reactive({
 	input$filterProf_minMD
 	input$filterProf_maxMD
 	input$filterProf_components
+	input$filterProf_comparison
 	input$search_profile_compound
 	cat("\n profileList filtered and sorted_1")
     if( 
@@ -342,13 +354,19 @@ maincalc6 <- reactive({
 			}
 		}
 		###################################################################################################	
-
-
-		
-		
-		
-		
-		
+		if(isolate(input$filterProf_comparison) != "None"){ # on comparisons
+			use_comparison <- isolate(input$filterProf_comparison)
+			use_comparison <- which(colnames(profpeaks2) == use_comparison)
+			is_bool <- FALSE
+			if(length(unique(profpeaks2[,use_comparison])) < 3){
+				if(all(!is.na(match(unique(profpeaks2[,use_comparison]), c(0, 1))))) is_bool <- TRUE
+			}
+			if(is_bool){
+				profpeaks2 <<- profpeaks2[profpeaks2[,use_comparison] == 1,, drop = FALSE]
+			}else{
+				profpeaks2 <<- profpeaks2[order(profpeaks2[,use_comparison], na.last = TRUE, decreasing = TRUE),, drop = FALSE]
+			}
+		}
 		###################################################################################################			
 		if(dim(profpeaks2)[1] > 0){
 			atit1 <- sum(profpeaks2[,"number_peaks_total"]) 

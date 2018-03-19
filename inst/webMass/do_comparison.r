@@ -10,9 +10,9 @@ if(length(logfile$comparisons)){
 		if(any(objects() == "profileList_pos")){rm(profileList_pos)}	
 		if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList_neg")){rm(profileList_neg, envir = as.environment(".GlobalEnv"))}
 		if(any(objects() == "profileList_neg")){rm(profileList_neg)}	
-
 		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character");
-	
+		comparisons_pos <- c()		
+		comparisons_neg <- c()
 		for(i in at_comparisons){
 			if(!logfile$comparisons[[i]][[1]]) next; # comparison defined, but not used in project
 			# parse comparison, find file entries, get ionization mode
@@ -43,7 +43,7 @@ if(length(logfile$comparisons)){
 				# insert parsed timeset row entries to evaluate
 				for(j in 1:length(is_file)){
 					if(is_file[j] == 0) next;
-					at_timeset <- which(timeset[,2] == is_file[j])
+					at_timeset <- which(timeset[,2] == as.numeric(measurements$ID[is_file[j]]))
 					parsed[j] <- paste0( 
 					"timeset[", at_timeset, ",4]")
 				}	
@@ -73,6 +73,7 @@ if(length(logfile$comparisons)){
 				profileList_pos[["index_prof"]] <- cbind(profileList_pos[["index_prof"]], store_comparison)
 				colnames(profileList_pos[["index_prof"]]) <- c(named, names(logfile$comparisons)[i])
 				save(profileList_pos, file = file.path(as.character(logfile[[1]]),"results","profileList_pos"), compress = FALSE);
+				comparisons_pos <- c(comparisons_pos, names(logfile$comparisons)[i])
 				if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList_pos")){rm(profileList_pos, envir = as.environment(".GlobalEnv"))}
 				if(any(objects() == "profileList_pos")){rm(profileList_pos)}	
 			}
@@ -91,7 +92,7 @@ if(length(logfile$comparisons)){
 				# insert parsed timeset row entries to evaluate
 				for(j in 1:length(is_file)){
 					if(is_file[j] == 0) next;
-					at_timeset <- which(timeset[,2] == is_file[j])
+					at_timeset <- which(timeset[,2] == as.numeric(measurements$ID[is_file[j]]))
 					parsed[j] <- paste0( 
 					"timeset[", at_timeset, ",4]")
 				}	
@@ -121,11 +122,30 @@ if(length(logfile$comparisons)){
 				profileList_neg[["index_prof"]] <- cbind(profileList_neg[["index_prof"]], store_comparison)
 				colnames(profileList_neg[["index_prof"]]) <- c(named, names(logfile$comparisons)[i])
 				save(profileList_neg, file = file.path(as.character(logfile[[1]]),"results","profileList_neg"), compress = FALSE);
+				comparisons_neg <- c(comparisons_neg, names(logfile$comparisons)[i])
 				if(any(objects(envir = as.environment(".GlobalEnv")) == "profileList_neg")){rm(profileList_neg, envir = as.environment(".GlobalEnv"))}
 				if(any(objects() == "profileList_neg")){rm(pprofileList_neg)}	
 			}
 		}
+		if( (isolate(input$Ion_mode) == "positive") & (length(comparisons_pos)) ){
+			updateSelectInput(session, "filterProf_comparison", choices = c("None", comparisons_pos), selected = "None")
+		}
+		if( (isolate(input$Ion_mode) == "negative") & (length(comparisons_neg)) ){
+			updateSelectInput(session, "filterProf_comparison", choices = c("None", comparisons_neg), selected = "None")
+		}
 	}
 }
 
-#store_comparison[order(store_comparison, na.last = FALSE)]
+
+
+
+
+
+
+
+
+
+
+
+
+

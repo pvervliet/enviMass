@@ -433,6 +433,13 @@ maincalc2<-reactive({
 				}
 			}
 			#updateCheckboxGroupInput(session, "isos", "Select relevant isotopes:", choices = as.character(isotopos),selected=c("13C","34S","81Br","37Cl"))               		
+			# (9) Comparisons ######################################################
+			if(length(logfile$comparisons)){
+				at_comparisons <- which(names(logfile$comparisons) != "")
+				if(length(at_comparisons)){
+					updateSelectInput(session, "load_comparison", choices = c("None", names(logfile$comparisons)[at_comparisons]), selected = "None")
+				}
+			}
 			########################################################################  
 			cat(objects())
 			if(any(ls()=="logfile")){stop("\n illegal logfile detected #3b in server_startup.r!")}
