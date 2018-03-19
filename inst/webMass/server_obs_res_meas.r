@@ -918,17 +918,16 @@ observe({
 ##############################################################################
 observe({
     input$reset_1
-    if( (isolate(init$a)=="TRUE") & isolate(input$reset_1) ){
-
-		if(any(ls()=="logfile")){stop(paste("\n illegal logfile detected in server_obs_res_mean.r #1"))}
-		logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,-1,TRUE)
+    if( (isolate(init$a) == "TRUE") & isolate(input$reset_1) ){
+		if(any(ls() == "logfile")){stop(paste("\n illegal logfile detected in server_obs_res_mean.r #1"))}
+		logfile$Tasks_to_redo <<- replace(logfile$Tasks_to_redo,-1, TRUE)
 		#logfile$Tasks_to_redo<<-replace(logfile$Tasks_to_redo,1,FALSE)
-		measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+		measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"), colClasses = "character");
 		measurements[,c("qc","recal","align","norm", "LOD","isotopologues","adducts","homologues","EIC_correlation","blind","components_files")]<-"FALSE"
-		write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
-		createAlert(session,anchorId = "reset", alertId="reset1", title = NULL, content="Project reset w/o peak picking",style = "warning",append=FALSE,dismiss=TRUE)
+		write.csv(measurements, file = file.path(logfile[[1]],"dataframes","measurements"), row.names = FALSE);
+		createAlert(session, anchorId = "reset", alertId = "reset1", title = NULL, content = "Project reset w/o peak picking", style = "warning",append=FALSE,dismiss=TRUE)
 		output$summa_html <- renderText(enviMass::summary_html(logfile$summary, logfile$Tasks_to_redo));
-		save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));
+		save(logfile, file = file.path(as.character(logfile[[1]]),"logfile.emp"));
 		if(logfile$parameters$verbose) cat("\nReset without peak picking \n")
 	}
 })
@@ -945,7 +944,7 @@ observe({
 		rm(measurements)
 		# delete all peaklists
 		those <- list.files(file.path(logfile$project_folder,"peaklist"))
-		if(length(those)>0){
+		if(length(those) > 0){
 			for(i in 1:length(those)){
 				file.remove(file.path(logfile$project_folder,"peaklist",those[i]))
 			}

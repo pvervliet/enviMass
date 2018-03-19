@@ -228,9 +228,7 @@ maincalc2<-reactive({
 			#	expr_peak<-list(src=file.path(logfile$project_folder,"pics","EIC1",sep=""));
 			#	output$EIC1<-renderImage(expr_peak, deleteFile = FALSE);
 			#	output$EIC2<-renderImage(expr_peak, deleteFile = FALSE);
-			# (2) QC ###############################################################		
-			
-# > BAUSTELLE			
+			# (2) QC ###############################################################				
 			if(
 				(file.exists(file.path(as.character(logfile[[1]]), "results", "int_distrib"))) &
 				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
@@ -316,8 +314,6 @@ maincalc2<-reactive({
 				})		
 				####################################################				
 			}
-# < BAUSTELLE			
-			
 			# (3) Normalization ####################################################
 			if(file.exists(file.path(logfile$project_folder, "pics", "int_distr_pos"))){
 			  expr3p <- list(src = file.path(logfile$project_folder, "pics", "int_distr_pos"))
@@ -335,15 +331,11 @@ maincalc2<-reactive({
 				exprrec <- list(src = path)
 				output$recal_pic <- renderImage(exprrec, deleteFile = FALSE);		
 				output$peakhist_pic <- renderImage(exprrec, deleteFile = FALSE);
-
-			
 			# (4) Available measurements ###########################################	
 			# SelectInput - bad: only 999 choices possible	
 			# (5) RT Alignment #####################################################
 						
 			# (6) IS-Normalization #################################################
-
-# > BAUSTELLE
 			if(file.exists(
 				file.path(as.character(logfile[[1]]), "results", "int_norm_ISTD_pos")) &
 				!any(objects(envir = as.environment(".GlobalEnv")) == "no_load")
@@ -406,9 +398,7 @@ maincalc2<-reactive({
 					plot.new()
 				})					
 			}
-# < BAUSTELLE	
-
-			# (X) Profiling, trends, blind #########################################		
+			# (7) Profiling, trends, blind #########################################		
 			if(file.exists(file.path(logfile$project_folder,"pics","boxprofile_pos"))){
 				if(isolate(input$Ion_mode)=="positive"){
 					expr4p<-list(src=file.path(logfile$project_folder,"pics","boxprofile_pos"))
@@ -431,7 +421,7 @@ maincalc2<-reactive({
 				expr6<-list(src=file.path(logfile$project_folder,"pics","profilehisto.png"))
 				output$profilehisto<-renderImage(expr6, deleteFile = FALSE)
 			}		
-			# Parse selectable isotopes ###########################################
+			# (8) Parse selectable isotopes #########################################
 			elements<-unique(as.character(isotopes[1:295,1]))
 			elements<-elements[order(elements)]
 			isotopos<-c()

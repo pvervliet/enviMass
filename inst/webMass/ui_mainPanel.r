@@ -822,6 +822,17 @@
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/trends.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),				
+					
+				HTML('<p style="background-color:darkred"; align="center"> <font color="#FFFFFF"> Comparisons </font></p> '),
+					fluidRow(
+						column(width = 2, radioButtons("comparison", "Include? ", c("yes"="yes","no"="no")) ),
+						column(width = 10, offset = 0.3,
+							tags$p(align="justify","Under construction"),
+							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/comparisons.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
+						)
+					),				
+					
+					
 				HTML('<hr noshade="noshade" />'),
 				HTML('<h1 align="center"> &#x21e9; </h1> '),					
 				HTML('<p style="background-color:black"; align="center"> <font color="#FFFFFF"> Profile componentization </font></p> '),
@@ -1295,6 +1306,28 @@
 					)
 				)
             ),			
+			# COMPARISONS ######################################################
+            tabPanel("Comparisons",			
+				HTML('<hr noshade="noshade" />'),
+				textInput("comparison_name", "Name of comparison", value = "Enter short name"),
+				aceEditor(outputId = "comparison_editor", 
+					value = "Add comparison here", mode = "r", theme = "katzenmilch", vimKeyBinding = FALSE,
+					readOnly = FALSE, height = "300px", fontSize = 12, debounce = 1000,
+					wordWrap = FALSE, showLineNumbers = TRUE, highlightActiveLine = TRUE,
+					selectionId = NULL, cursorId = NULL, hotkeys = NULL,
+					autoComplete = c("disabled", "enabled", "live"), autoCompleteList = NULL),				
+				fluidRow(
+					column(3, bsButton("save_comparison", "Save comparison", style = "success")),
+					#column(4, selectInput("mode_comparison", "Apply for ionization:", choices = c("positive", "negative"), selected = "positive")),
+					column(4, checkboxInput("apply_comparison", "Apply this comparison to the project?", FALSE) )#,
+					#column(3, bsButton("check_comparison", "Check comparison", style = "success"))
+				),			
+				HTML('<hr noshade="noshade" />'),
+				fluidRow(
+					column(5, selectInput("load_comparison", "Load existing comparison", choices = c("None"), selected = "None")),
+					column(4, bsButton("delete_comparison", "Delete loaded comparison", style = "danger"))
+				)			
+			),
             # GENERAL SETTINGS #################################################
             tabPanel("General",
 				div(style = widget_style10,
@@ -2423,7 +2456,7 @@
 				tabPanel("Profiles",
 					div(style = widget_style5,
 						textOutput("had_ion"),	
-						selectInput("Ion_mode", label=NULL, c("positive","negative"), selected = ("positive"), multiple = FALSE)
+						selectInput("Ion_mode", label=NULL, c("positive", "negative"), selected = ("positive"), multiple = FALSE)
 					),
 					conditionalPanel(			
 					condition = "output.had_ion != 'No profiles available for this ionization mode'",
@@ -2491,6 +2524,12 @@
 											), 
 										selected = "peak number in samples (decreasing, zeros removed)", width = '80%'),
 									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no" = "FALSE","yes" = "TRUE"), selected = "FALSE", inline = TRUE),
+									conditionalPanel(			
+										condition = "input.comparison == 'yes'",																		
+										HTML('<hr noshade="noshade" />'),									
+										selectInput("filterProf_comparison", "Filter or sort profile list by comparison:", 
+											choices = "None", selected = "None", width = '80%')					
+									),				
 									HTML('<hr noshade="noshade" />'),
 									HTML('<h1 align="center"> &#x21e7; </h1> '),
 									HTML('<hr noshade="noshade" />'),

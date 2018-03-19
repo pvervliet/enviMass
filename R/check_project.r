@@ -81,7 +81,8 @@ check_project <- function(
 		"adducts_pos_group",
 		"adducts_neg_group",
 		"UI_options",
-		"method_setup"))
+		"method_setup",
+		"comparisons"))
 	){
 		say <- "Your logfile is corrupted_1,  project debug required!"
 	}

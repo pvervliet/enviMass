@@ -78,6 +78,8 @@ shinyServer(function(input, output, session){
   source("server_force.r", local = TRUE)    
   # output parameter warnings ##################################################
   source("server_warnings.r", local = TRUE)    
+  # observe comparisons ########################################################
+  source("server_comparison.r", local = TRUE)    
   ##############################################################################  
   # run calculations ###########################################################
   source("server_calculation.r", local = TRUE)

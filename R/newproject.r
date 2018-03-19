@@ -411,7 +411,10 @@ newproject <- function(
 		logfile$UI_options$filterProf_components <- "TRUE"			
 	# Method setup table #######################################################
 	logfile[[18]] <- "Not available"
-	names(logfile)[18] <- c("method_setup")
+	names(logfile)[18] <- "method_setup"
+	# Comparisons filtering ####################################################
+	logfile[[19]] <- list()
+	names(logfile)[19] <- "comparisons"
 	# calibration model ########################################################
 	cal_models_pos <- list()
 	save(cal_models_pos, file = file.path(logfile$project_folder, "quantification", "cal_models_pos"));	

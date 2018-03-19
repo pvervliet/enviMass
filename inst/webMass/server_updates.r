@@ -2365,6 +2365,87 @@ if(logfile$version < 3.453){
 }
 
 
+
+if(logfile$version < 3.46){
+
+	cat("\n Updating to version 3.46 ...")
+	################################################################################################
+	if(!any(names(logfile) == "comparisons")){
+		logfile[[19]] <<- list()
+		names(logfile)[19] <<- "comparisons"
+	}	
+	################################################################################################
+	# update workflow ##############################################################################	
+	if(	!any(names(logfile$Tasks_to_redo) == "comparison") ){
+
+		############################################################################################	
+		# update workflow ##########################################################################		
+		workflow_depend <- read.table(file = "workflow_depend")
+		workflow_depend <- as.matrix(workflow_depend)
+		workflow_must <- read.table(file = "workflow_must")
+		workflow_must <- as.matrix(workflow_must)
+		logfile[[11]] <<- workflow_depend
+		names(logfile)[11] <<- "workflow_depend"	
+		logfile[[12]] <<- workflow_must
+		names(logfile)[12] <<- "workflow_must"	
+		# update logfile$Tasks_to_redo ############################################################
+		old_Tasks_to_redo <- logfile$Tasks_to_redo
+		logfile[[2]] <<- rep(FALSE, length(colnames(workflow_must)));
+		names(logfile[[2]]) <<- colnames(workflow_must)
+		names(logfile)[2] <<- c("Tasks_to_redo");    
+		for(i in 1:length(old_Tasks_to_redo)){
+			if(any(names(logfile$Tasks_to_redo) == names(old_Tasks_to_redo)[i])){
+				logfile$Tasks_to_redo[names(logfile$Tasks_to_redo) == names(old_Tasks_to_redo)[i]] <<- old_Tasks_to_redo[i]
+			}
+		}
+		# update workflow ##########################################################################
+		old_workflow <- logfile$workflow
+		logfile$workflow <<- 0    # based on above Tasks_to_redo
+		names(logfile)[6] <<- c("workflow")
+		for(i in 1:length(names(logfile[[2]]))){
+			logfile$workflow[i] <<- "no"; 
+			names(logfile$workflow)[i] <<- names(logfile[[2]])[i]
+		}
+		for(i in 1:length(old_workflow)){
+			if(any(names(logfile$workflow) == names(old_workflow)[i])){
+				logfile$workflow[names(logfile$workflow) == names(old_workflow)[i]] <<- old_workflow[i]
+			}
+		}	
+		# update summary ###########################################################################
+		old_summary <- logfile$summary
+		tasks <- names(logfile[[2]]) # based on above Tasks_to_redo
+		doneit <- rep(FALSE,length(tasks))
+		summar <- data.frame(tasks, doneit, stringsAsFactors = FALSE)
+		names(summar) <- c("Tasks","Done?")
+		logfile[[3]] <<- summar
+		names(logfile)[3] <<- c("summary")
+		for(i in 1:length(old_summary[,1])){	
+			if(any(logfile$summary[,1] == as.character(old_summary[i,1]))){
+				logfile$summary[logfile$summary[,1] == as.character(old_summary[i,1]),2] <<- as.character(old_summary[i,2])
+			}
+		}
+		############################################################################################	
+		# reorder summary into workflow ############################################################
+		schedule <- enviMass::workflow_schedule(logfile$workflow_depend,logfile$workflow_must)
+		set_order <- match(schedule[,1],logfile$summary[,1])
+		logfile$summary <<- logfile$summary[set_order,]
+		############################################################################################		
+	}
+	################################################################################################
+	
+	
+	
+	
+	################################################################################################	
+	logfile$version <<- 3.46
+	################################################################################################		
+	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
+	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
+	################################################################################################
+	
+}
+
+
 if(any(ls()=="logfile")){stop("\n illegal logfile detected #2 in server_updates.r!")}
 #logfile$parameters$is_example<-"TRUE"
 #save(logfile,file=file.path(as.character(logfile[[1]]),"logfile.emp"));

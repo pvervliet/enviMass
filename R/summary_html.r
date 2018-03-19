@@ -83,7 +83,8 @@ summary_html <- function(
 	use_summary[use_summary[,1] == "components_files",1] <- "File componentization"		
 	use_summary[use_summary[,1] == "components_profiles",1] <- "Profile componentiz."
 	use_summary[use_summary[,1] == "profblind",1] <- "Blind detection #2"
-	
+	use_summary[use_summary[,1] == "comparison",1] <- "Comparisons"	
+	use_summary[use_summary[,1] == "EIC_correlation",1] <- "EIC correlation"		
 
 	for(i in 1:len_init){
 		if(i%%2 == 0){
