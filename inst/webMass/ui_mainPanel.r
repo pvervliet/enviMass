@@ -795,7 +795,7 @@
 							radioButtons("subtr_blind", "Subtract?", c("yes"="yes","no"="no"),inline=TRUE)
 						)
 					),	
-					HTML('<hr noshade="noshade" />') ,
+					HTML('<hr noshade="noshade" />'),
 					fluidRow(
 						column(width = 10, offset = 0.3,
 							tags$p(align="justify","... peaks from spiked files?")
@@ -808,7 +808,7 @@
 					fluidRow(
 						column(width = 2, radioButtons("profblind", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Calculate median intensity ratio of sample vs. blank/blind peaks across each profile?"),
+							tags$p(align="justify","Calculate mean intensity ratio of sample vs. blank/blind peaks across each profile?"),
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/blind.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),						
@@ -827,7 +827,8 @@
 					fluidRow(
 						column(width = 2, radioButtons("comparison", "Include? ", c("yes"="yes","no"="no")) ),
 						column(width = 10, offset = 0.3,
-							tags$p(align="justify","Under construction"),
+							tags$p(align="justify","Compares presence, absence or any other (multi-level) process-based changes in intensities across files (= peaks) in each profile.
+							Different comparisons can be defined in the tab 'Settings -> Comparisons' and applied for profile filtering/sorting in the tab 'Results -> Profiles -> Overview and Filtering'."),
 							HTML('<p><a href="http://www.looscomputing.ch/eng/enviMass/topics/comparisons.htm" style="color:rgb(60, 100, 60); text-decoration: none"; target="_blank"><p align="right">&#8594; More info.</a></p>')	
 						)
 					),				
@@ -1307,7 +1308,16 @@
 				)
             ),			
 			# COMPARISONS ######################################################
-            tabPanel("Comparisons",			
+            tabPanel("Comparisons",	
+				HTML('<hr noshade="noshade" />'),			
+				tags$p(align = "justify", "Use the below text field to define comparisons or statistical tests that can be used to filter or sort profiles for their individual peak intensity patterns. 
+				Comparisons must be defined in regular R syntax and can additionally include AND, OR, MUST and NOT (see examples further below). 
+				In these comparisons, the intensities of peaks in a specific profile are to be set with placeholders, namely the IDs of the concerned files set in quotes (e.g., \"5\" for 
+				any profile intensities detected in the file with ID = 5). 
+				Comparisons must result in a single numeric value (used for profile sorting, decreasing values) or a single logic value (used for profile filtering, TRUE remaining) and are applied to 
+				each profile during calculations including the 'Comparison' step.
+				The comparison results can be applied during profile filtering/sorting in the tab 'Results -> Profiles -> Overview and Filtering'.
+				"),
 				HTML('<hr noshade="noshade" />'),
 				textInput("comparison_name", "Name of comparison", value = "Enter short name"),
 				aceEditor(outputId = "comparison_editor", 
@@ -1319,14 +1329,72 @@
 				fluidRow(
 					column(3, bsButton("save_comparison", "Save comparison", style = "success")),
 					#column(4, selectInput("mode_comparison", "Apply for ionization:", choices = c("positive", "negative"), selected = "positive")),
-					column(4, checkboxInput("apply_comparison", "Apply this comparison to the project?", FALSE) )#,
+					column(6, checkboxInput("apply_comparison", "Apply this comparison to the project?", FALSE) )#,
 					#column(3, bsButton("check_comparison", "Check comparison", style = "success"))
 				),			
 				HTML('<hr noshade="noshade" />'),
 				fluidRow(
 					column(5, selectInput("load_comparison", "Load existing comparison", choices = c("None"), selected = "None")),
 					column(4, bsButton("delete_comparison", "Delete loaded comparison", style = "danger"))
-				)			
+				),
+				HTML('<hr noshade="noshade" />'),
+				tags$h4("Comparison examples"),
+				div(style = widget_style12, 
+					tags$p(align = "justify", "Present in sample files with ID 4:"),
+					div(style = widget_style11, tags$p(align = "justify", "MUST \"4\""))				
+				),
+				div(style = widget_style12, 
+					tags$p(align = "justify", "Present in sample files with IDs 4 and 5:"),
+					div(style = widget_style11, tags$p(align = "justify", "MUST \"4\" AND MUST \"5\""))				
+				),
+				div(style = widget_style12, 
+					tags$p(align = "justify", "Present in sample files with IDs 4 or 5:"),
+					div(style = widget_style11, tags$p(align = "justify", "MUST \"4\" OR MUST \"5\""))				
+				),
+				div(style = widget_style12, 
+					tags$p(align = "justify", "Present in sample file with ID 5 but not in sample file with ID 6:"),
+					div(style = widget_style11, tags$p(align = "justify", "MUST \"5\" AND NOT \"6\"")),
+					tags$p(align = "justify", "... and the equivalent in regular R syntax:"),
+					div(style = widget_style11, tags$p(align = "justify", "\"5\" != 0 && \"6\" == 0"))					
+				),
+				div(style = widget_style12, 
+					tags$p(align = "justify", "Sort by decreasing mean intensities in sample files with ID 5 and 6:"),
+					div(style = widget_style11, tags$p(align = "justify", "mean(c(\"5\", \"6\"))")),
+					tags$p(align = "justify", "... or median intensity:"),
+					div(style = widget_style11, tags$p(align = "justify", "median(c(\"5\", \"6\"))")),
+					tags$p(align = "justify", "... or maximum intensity:"),
+					div(style = widget_style11, tags$p(align = "justify", "max(c(\"5\", \"6\"))")),
+					tags$p(align = "justify", "... or minimum intensity:"),
+					div(style = widget_style11, tags$p(align = "justify", "min(c(\"5\", \"6\"))"))					
+				),				
+				div(style = widget_style12, 
+					tags$p(align = "justify", "Filter for profiles with intensities in sample files 5 or 6 at least ten-fold higher than in sample with ID 4:"),
+					div(style = widget_style11, tags$p(align = "justify", "(\"5\" / 10 > 4\"\") OR (\"6\" / 10 > 4\"\")"))
+				),				
+				HTML('<hr noshade="noshade" />'),
+				tags$h4("Error examples"),
+				div(style = widget_style13, 
+					tags$p(align = "justify", "Missing quote, ERROR during calculations:"),
+					div(style = widget_style11, tags$p(align = "justify", "MUST \"4"))
+				),
+				div(style = widget_style13, 
+					tags$p(align = "justify", "MUST applied to several IDs instead of one ID, ERROR during calculations:"),
+					div(style = widget_style11, tags$p(align = "justify", "MUST c(\"4\", \"5\")")),
+					tags$p(align = "justify", "... and the correction:"),
+					div(style = widget_style11, tags$p(align = "justify", "MUST \"4\" AND MUST \"5\""))
+				),
+				div(style = widget_style13, 
+					tags$p(align = "justify", "Produces several numeric values instead of a single one, ERROR during calculations:"),
+					div(style = widget_style11, tags$p(align = "justify", "c(\"4\", \"5\") > \"6\""))
+				),
+				div(style = widget_style13, 
+					tags$p(align = "justify", "Produces several logical values, ERROR during calculations:"),
+					div(style = widget_style11, tags$p(align = "justify", "c(\"4\", \"5\") > 1E6")),
+					tags$p(align = "justify", "... possible solution (any higher or all higher in intensity):"),
+					div(style = widget_style11, tags$p(align = "justify", "any(c(\"4\", \"5\") > 1E6)")),	
+					div(style = widget_style11, tags$p(align = "justify", "all(c(\"4\", \"5\") > 1E6)"))					
+				),				
+				HTML('<hr noshade="noshade" />')
 			),
             # GENERAL SETTINGS #################################################
             tabPanel("General",

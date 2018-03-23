@@ -27,7 +27,7 @@ if(length(logfile$comparisons)){
 			}	
 			for_mode <- unique(measurements$Mode[is_file])
 			# check if specified files are all from the same ionization mode
-			if(length(for_mode) > 1) stop(paste("\n NOTE: the comparison", names(logfile$comparisons)[i], "involves positive and negative file IDs - please revise."))
+			if(length(for_mode) > 1) stop(paste("\n NOTE: the comparison ", names(logfile$comparisons)[i], " involves positive and negative file IDs - please revise."))
 			# POSITIVE IONIZATION comparisons #####################################################
 			if(for_mode == "positive"){
 				load(file.path(as.character(logfile[[1]]),"results","profileList_pos"), envir = as.environment(".GlobalEnv"))
@@ -38,7 +38,7 @@ if(length(logfile$comparisons)){
 				# check if specified files are all included	
 				if(any(is.na(match(measurements$ID[is_file[is_file != 0]], sampleID)))){
 					prob_file <- which(is.na(match(measurements$ID[is_file[is_file != 0]], sampleID)))
-					stop(paste("\nNOTE: problem in comparison", names(logfile$comparisons)[i], "for file IDs: ", measurements$ID[is_file[is_file != 0]][prob_file])," - not found in profiles; revise!")
+					stop(paste("\nNOTE: problem in comparison ", names(logfile$comparisons)[i], " for file IDs: ", measurements$ID[is_file[is_file != 0]][prob_file])," - not found in profiles; revise!")
 				}
 				# insert parsed timeset row entries to evaluate
 				for(j in 1:length(is_file)){
@@ -48,6 +48,10 @@ if(length(logfile$comparisons)){
 					"timeset[", at_timeset, ",4]")
 				}	
 				parsed_expression <- paste0(parsed, collapse = "")
+				parsed_expression <- gsub("AND", "&&", parsed_expression)
+				parsed_expression <- gsub("OR", "||", parsed_expression)				
+				parsed_expression <- gsub("MUST", "0<", parsed_expression)	
+				parsed_expression <- gsub("NOT", "0==", parsed_expression)	
 				parsed_expression <- parse(text = parsed_expression)
 				m <- 1
 				n <- dim(profileList_pos[["index_prof"]])[1]
@@ -63,6 +67,7 @@ if(length(logfile$comparisons)){
 										)	
 					outcome <- eval(parsed_expression)
 					if(is.logical(outcome)) outcome <- as.numeric(outcome)
+					if(length(outcome) > 1) stop(paste("\nNOTE: problem in comparison ", names(logfile$comparisons)[i], ": produces several instead of one single value. Please revise!"))
 					if(is.numeric(outcome)){
 						store_comparison[k] <- outcome
 					}else{
@@ -87,7 +92,7 @@ if(length(logfile$comparisons)){
 				# check if specified files are all included	
 				if(any(is.na(match(measurements$ID[is_file[is_file != 0]], sampleID)))){
 					prob_file <- which(is.na(match(measurements$ID[is_file[is_file != 0]], sampleID)))
-					stop(paste("\nNOTE: problem in comparison", names(logfile$comparisons)[i], "for file IDs: ", measurements$ID[is_file[is_file != 0]][prob_file])," - not found in profiles; revise!")
+					stop(paste("\nNOTE: problem in comparison ", names(logfile$comparisons)[i], " for file IDs: ", measurements$ID[is_file[is_file != 0]][prob_file])," - not found in profiles; revise!")
 				}
 				# insert parsed timeset row entries to evaluate
 				for(j in 1:length(is_file)){
@@ -97,6 +102,10 @@ if(length(logfile$comparisons)){
 					"timeset[", at_timeset, ",4]")
 				}	
 				parsed_expression <- paste0(parsed, collapse = "")
+				parsed_expression <- gsub("AND", "&&", parsed_expression)
+				parsed_expression <- gsub("OR", "||", parsed_expression)				
+				parsed_expression <- gsub("MUST", "0<", parsed_expression)	
+				parsed_expression <- gsub("NOT", "0==", parsed_expression)	
 				parsed_expression <- parse(text = parsed_expression)
 				m <- 1
 				n <- dim(profileList_neg[["index_prof"]])[1]
@@ -112,6 +121,7 @@ if(length(logfile$comparisons)){
 										)	
 					outcome <- eval(parsed_expression)
 					if(is.logical(outcome)) outcome <- as.numeric(outcome)
+					if(length(outcome) > 1) stop(paste("\nNOTE: problem in comparison ", names(logfile$comparisons)[i], ": produces several instead of one single value. Please revise!"))
 					if(is.numeric(outcome)){
 						store_comparison[k] <- outcome
 					}else{

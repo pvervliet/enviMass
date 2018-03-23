@@ -101,7 +101,37 @@ widget_style11 <-
   border-radius: 4px;
   border-color: #003300;
   background-color: #cce0ff"
+  
+widget_style11 <-
+  "display: inline-block;
+  vertical-align: text-top;
+  padding: 7px;
+  border: solid;
+  border-width: 2px;
+  border-radius: 4px;
+  border-color: lightgrey;
+  background-color: lightgrey"
 
+widget_style12 <-
+  "display: inline-block;
+  vertical-align: text-top;
+  padding: 7px;
+  border: solid;
+  border-width: 1px;
+  border-radius: 1px;
+  border-color: green;
+  background-color: white"  
+
+  widget_style13 <-
+  "display: inline-block;
+  vertical-align: text-top;
+  padding: 7px;
+  border: solid;
+  border-width: 1px;
+  border-radius: 1px;
+  border-color: red;
+  background-color: white" 
+  
 shinyUI(
 	fluidPage(
 	################################################################################
