@@ -1218,7 +1218,7 @@
 								HTML('<hr noshade="noshade" />'),
 								numericInput("isotop_mztol", "+/- m/z tolerance ...", 3), 
 								selectInput("isotop_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
-								numericInput("isotop_rttol", "RT tolerance [s]:", 60),       
+								numericInput("isotop_rttol", "RT tolerance of peaks within an isotopologue pattern [s]:", 60),       
 								#sliderInput("isotop_inttol", "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2)
 								knobInput("isotop_inttol", label = "Intensity tolerance %", min = 0, max = 100, value = 30, step= .2, 
 											thickness = .3, width = 160, height = 160, fgColor = "#7499AB", inputColor = "#428BCA", displayPrevious = TRUE),
@@ -1234,7 +1234,7 @@
 								HTML('<hr noshade="noshade" />'),
 								numericInput("adducts_mztol", "+/- m/z tolerance ...", 3), 
 								selectInput("adducts_ppm", "... given in:", choices = c("ppm"="TRUE","absolute [mmu]"="FALSE"), "TRUE"),				
-								numericInput("adducts_rttol", "RT tolerance [s]:", 60),       
+								numericInput("adducts_rttol", "RT tolerance of peaks within an adduct pattern [s]:", 60),       
 								HTML('<hr noshade="noshade" />'),
 								div(style = widget_style3,checkboxGroupInput("adducts_pos_group", "Positive mode:", "none")),
 								div(style = widget_style3,checkboxGroupInput("adducts_neg_group", "Negative mode:", "none"))						
@@ -2592,6 +2592,8 @@
 											), 
 										selected = "peak number in samples (decreasing, zeros removed)", width = '80%'),
 									radioButtons("filterProf_components", "Omit lower-ranked profiles with redundant intensity patterns?", c("no" = "FALSE","yes" = "TRUE"), selected = "FALSE", inline = TRUE),
+									HTML('<hr noshade="noshade" />'),
+									bsButton("save_profile_filter", "Save above filter options as project default?", style = "success"),
 									conditionalPanel(			
 										condition = "input.comparison == 'yes'",																		
 										HTML('<hr noshade="noshade" />'),									
@@ -2609,8 +2611,6 @@
 									  btnReset = icon("remove"), 
 									  width = "100%"
 									),
-									HTML('<hr noshade="noshade" />'),
-									bsButton("save_profile_filter","Save above filter options as project default?",style="success"),
 									#HTML('<hr noshade="noshade" />'),
 									#div(style = widget_style3,numericInput("filterProf_count", "Restrict size of filtered profile list table:", 500, min=1)),
 									#conditionalPanel( # IS filter				

@@ -181,7 +181,7 @@
 			cat(" pairs corrrelated - ");
 			rm(paired,EIC_pairs,peaklist,MSlist);
 			##########################################################################	
-			measurements[b,names(measurements)=="EIC_correlation"]<-"TRUE"
+			measurements[b, names(measurements)=="EIC_correlation"] <- "TRUE"
 			write.csv(measurements,file=file.path(logfile[[1]],"dataframes","measurements"),row.names=FALSE);
 			cat("done.")
 			##########################################################################		

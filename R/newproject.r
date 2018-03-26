@@ -148,7 +148,7 @@ newproject <- function(
 		logfile$parameters$peak_drtgap  <-  "300"; 
 		logfile$parameters$peak_dmzdens  <-  "3.5"; 
 		logfile$parameters$peak_minpeak  <-  "4"; 		
-		logfile$parameters$peak_drtsmall2  <-  "20"; 		
+		logfile$parameters$peak_drtsmall2  <-  "8"; 		
 		logfile$parameters$peak_drtfill  <-  "10"; 		
 		logfile$parameters$peak_drtdens2  <-  "120";
 		logfile$parameters$peak_minint_log10  <-  "4"; 	 
@@ -175,18 +175,18 @@ newproject <- function(
 		# recalibration ########################################################
 		logfile$parameters$recal_include_pos <- "TRUE"
 		logfile$parameters$recal_use_pos <- "Internal standards"; 	
-		logfile$parameters$recal_dmz_pos <- "3"; 					
-		logfile$parameters$recal_ppm_pos <- "TRUE"; 				
+		logfile$parameters$recal_dmz_pos <- "2"; 					
+		logfile$parameters$recal_ppm_pos <- "FALSE"; 				
 		logfile$parameters$recal_drt_pos <- "30"; 					
-		logfile$parameters$recal_maxdmz_pos <- "30";					
+		logfile$parameters$recal_maxdmz_pos <- "2";					
 		logfile$parameters$recal_include_neg <- "TRUE"		
 		logfile$parameters$recal_use_neg <- "Internal standards"; 	
-		logfile$parameters$recal_dmz_neg <- "3"; 					
-		logfile$parameters$recal_ppm_neg <- "TRUE"; 				
+		logfile$parameters$recal_dmz_neg <- "2"; 					
+		logfile$parameters$recal_ppm_neg <- "FALSE"; 				
 		logfile$parameters$recal_drt_neg <- "30"; 					
-		logfile$parameters$recal_maxdmz_neg <- "30";			
+		logfile$parameters$recal_maxdmz_neg <- "2";			
 		# replicate intersection ################################################
-		logfile$parameters$replicate_dmz <- "3";						
+		logfile$parameters$replicate_dmz <- "12";						
 		logfile$parameters$replicate_ppm <- "TRUE";						
 		logfile$parameters$replicate_recalib <- "FALSE";					
 		logfile$parameters$replicate_delRT <- "30";					
@@ -199,7 +199,7 @@ newproject <- function(
 		# blind subtraction ####################################################	
 		logfile$parameters$trend_blind <- "yes";				
 		logfile$parameters$blind_threshold <- "100";			
-		logfile$parameters$blind_dmz <- "3";			
+		logfile$parameters$blind_dmz <- "12";			
 		logfile$parameters$blind_ppm <- "TRUE";			
 		logfile$parameters$blind_drt <- "30";				
 		logfile$parameters$subtract_pos_bydate <- "FALSE";		
@@ -210,7 +210,7 @@ newproject <- function(
 		# profiling ############################################################
 		logfile$parameters$prof_maxfiles <- "100";		
 		logfile$parameters$upto_file <- "FALSE";		
-		logfile$parameters$prof_dmz <- "3";		
+		logfile$parameters$prof_dmz <- "12";		
 		logfile$parameters$prof_ppm <- "TRUE";		
 		logfile$parameters$prof_drt <- "60";			
 		logfile$parameters$prof_comp_maxfiles <- "15"
@@ -219,27 +219,27 @@ newproject <- function(
 		logfile$parameters$replicates_mean_prof <- "TRUE";				
 		# IS screening #########################################################
 		logfile$parameters$IS_drt1 <- "30"; 			# RT tolerance of peaks in sample relative to their expected RT [s]
-		logfile$parameters$IS_drt2 <- "10"; 			# RT tolerance of peaks within an isotope pattern [s]
-		logfile$parameters$IS_dmz <- "3";				# m/z tolerance ...
+		logfile$parameters$IS_drt2 <- "2"; 				# RT tolerance of peaks within an isotope pattern [s]
+		logfile$parameters$IS_dmz <- "8";				# m/z tolerance ...
 		logfile$parameters$IS_ppm <- "TRUE";			# ... given in pppm?
 		logfile$parameters$IS_inttol <- "30";			# Intensity tolerance %
 		logfile$parameters$IS_intcut <- "50000";		# Lower intensity threhold
-		logfile$parameters$IS_w1 <- "0.8";    		# Matching score
+		logfile$parameters$IS_w1 <- "0.8";    			# Matching score
 		logfile$parameters$screen_IS_cutit <- "FALSE";    	# Cut off match combiantions below matching score?	
-		logfile$parameters$screen_IS_maxonly <- "FALSE";    	# Screen only most intense isotopologue peak?	
-		logfile$parameters$screen_IS_restrict <- "FALSE";		# Restrict screening to the latest ...
+		logfile$parameters$screen_IS_maxonly <- "FALSE";    # Screen only most intense isotopologue peak?	
+		logfile$parameters$screen_IS_restrict <- "FALSE";	# Restrict screening to the latest ...
 		logfile$parameters$screen_IS_restrict_many <- "10";	# ... number of files only?	
 		# target screening #####################################################
 		logfile$parameters$tar_drt1 <- "30"; 		# RT tolerance of peaks in sample relative to their expected RT [s]
-		logfile$parameters$tar_drt2 <- "10"; 		# RT tolerance of peaks within an isotope pattern [s]
-		logfile$parameters$tar_dmz <- "3";		# m/z tolerance ...
+		logfile$parameters$tar_drt2 <- "2"; 		# RT tolerance of peaks within an isotope pattern [s]
+		logfile$parameters$tar_dmz <- "8";			# m/z tolerance ...
 		logfile$parameters$tar_ppm <- "TRUE";		# ... given in pppm?
-		logfile$parameters$tar_inttol <- "30";	# Intensity tolerance %
+		logfile$parameters$tar_inttol <- "30";		# Intensity tolerance %
 		logfile$parameters$tar_intcut <- "50000";	# Lower intensity threhold
-		logfile$parameters$tar_w1 <- "0.8";    	# Matching score	
+		logfile$parameters$tar_w1 <- "0.8";    		# Matching score	
 		logfile$parameters$screen_target_cutit <- "FALSE";    	# Cut off match combiantions below matching score?		
-		logfile$parameters$screen_target_maxonly <- "FALSE";    	# Screen only most intense isotopologue peak?		
-		logfile$parameters$screen_target_restrict <- "FALSE";		# Restrict screening to the latest ...
+		logfile$parameters$screen_target_maxonly <- "FALSE";    # Screen only most intense isotopologue peak?		
+		logfile$parameters$screen_target_restrict <- "FALSE";	# Restrict screening to the latest ...
 		logfile$parameters$screen_target_restrict_many <- "10";	# ... number of files only?			
 		# IS-based normalization ###############################################
 		logfile$parameters$ISnorm_include_pos <-"TRUE"
@@ -272,14 +272,14 @@ newproject <- function(
 		logfile$parameters$recov_files_included <- "20"
 		logfile$parameters$quant_digits <- "2"		
 		# isotopologue grouping ################################################		
-		logfile$parameters$isotop_mztol <- "2.5"
+		logfile$parameters$isotop_mztol <- "8"
 		logfile$parameters$isotop_ppm <- "TRUE"
-		logfile$parameters$isotop_inttol <- "30"
-		logfile$parameters$isotop_rttol <- "5"
+		logfile$parameters$isotop_inttol <- "50"
+		logfile$parameters$isotop_rttol <- "2"
 		logfile$parameters$isotop_use_charges <- "FALSE"
 		# adduct grouping ######################################################
-		logfile$parameters$adducts_rttol <- "5"
-		logfile$parameters$adducts_mztol <- "2.5"
+		logfile$parameters$adducts_rttol <- "2"
+		logfile$parameters$adducts_mztol <- "8"
 		logfile$parameters$adducts_ppm <- "TRUE"		
 		# automatic atom bound estimation ######################################
 		logfile$parameters$do_atom_bounds_components <- "FALSE"
@@ -294,14 +294,14 @@ newproject <- function(
 		logfile$parameters$homol_minrt <- "10"
 		logfile$parameters$homol_maxrt <- "60"
 		logfile$parameters$homol_ppm <- "TRUE"
-		logfile$parameters$homol_mztol <- "2.5"
+		logfile$parameters$homol_mztol <- "8"
 		logfile$parameters$homol_rttol <- "20"
 		logfile$parameters$homol_minlength <- "6"
 		logfile$parameters$homol_vec_size <- "1E8"
 		logfile$parameters$homol_blind <- "FALSE"
 		logfile$parameters$homol_blind_value <- "10"		
 		# EIC correlation ######################################################
-		logfile$parameters$EICor_delRT <- "5"		
+		logfile$parameters$EICor_delRT <- "2"		
 		logfile$parameters$EICor_minpeaks <- "15" 	
 		logfile$parameters$EICor_mincor <- ".95"
 		# Is this an example project? ##########################################

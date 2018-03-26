@@ -12,8 +12,12 @@
 #' @details enviMass workflow function. 
 #' 
 
-cleanB_links_profiles<-function(links_profiles, profileList, cut_delRT_adduc = 5, cut_frac_adduc = .9){
-
+cleanB_links_profiles <- function(
+	links_profiles, 
+	profileList, 
+	cut_delRT_adduc = 5, 
+	cut_frac_adduc = .9
+){
 
 	################################################################
 	for_profs<-(1:length(links_profiles))

@@ -34,7 +34,7 @@ if(
 	ord<-order(peaks[,"sampleIDs"],peaks[,"peakIDs"],peaks[,"profileIDs"],decreasing=FALSE)
 	peaks<-peaks[ord,]
 	use_entries_profiles<-enviMass::find_empty(links_profiles_pos) # also finds gaps
-	profileList_pos[["index_prof"]][,"links"]<-0
+	profileList_pos[["index_prof"]][,"links"] <- 0
 	with_bar<-TRUE
 	##############################################################################	
 
@@ -174,13 +174,13 @@ if(
 		for_files <- list.files(file.path(logfile[[1]],"results","componentization","EIC_corr"))
 		keep <- match(forIDs,for_files) # which files are available?
 		if(any(is.na(keep))){cat("\n Just note: not all files found in profiles have EIC correlation results (1). \n")}
-		TRUE_IDs <- (measurements$ID[measurements$EIC_correlation=="TRUE"]) # for files which have run through that step
+		TRUE_IDs <- (measurements$ID[measurements$EIC_correlation == "TRUE"]) # for files which have run through that step
 		keep2 <- match(forIDs, TRUE_IDs) # ensure file availability
 		forIDs <- forIDs[!is.na(keep) & !is.na(keep2)]
 		if(logfile$parameters$dofile_latest_profcomp == "TRUE"){ # restrict to latest files
-			atPOSIX<-profileList_pos[["datetime"]];
-			matchID<-profileList_pos[["sampleID"]];
-			atdate<-c();attime<-c();
+			atPOSIX <- profileList_pos[["datetime"]];
+			matchID <- profileList_pos[["sampleID"]];
+			atdate <- c(); attime <- c();
 			for(i in 1:length(atPOSIX)){
 				atdate <- c(atdate, strsplit(atPOSIX[i]," ")[[1]][1]);
 				attime <- c(attime, strsplit(atPOSIX[i]," ")[[1]][2]);
@@ -210,48 +210,48 @@ if(
 				get1 <- cbind(
 					rep(forIDs[i], length(EIC_pairs[,1])), EIC_pairs[,1] # first column sorted correctly
 				)
-				found1<-enviMass::rows_compare(get1,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=FALSE,column_order_b=FALSE,get_index=TRUE)
+				found1 <- enviMass::rows_compare(get1, peaks[,c("sampleIDs","peakIDs")], row_order = FALSE, column_order_a = FALSE, column_order_b = FALSE, get_index = TRUE)
 				# find profiles for second peak
-				get2<-cbind(
-					rep(forIDs[i],length(EIC_pairs[,2])),EIC_pairs[,2] # second column requires sorting
+				get2 <- cbind(
+					rep(forIDs[i],length(EIC_pairs[,2])), EIC_pairs[,2] # second column requires sorting
 				)
-				found2<-enviMass::rows_compare(get2,peaks[,c("sampleIDs","peakIDs")],row_order=FALSE,column_order_a=TRUE,column_order_b=FALSE,get_index=TRUE)
+				found2 <- enviMass::rows_compare(get2, peaks[,c("sampleIDs", "peakIDs")], row_order = FALSE, column_order_a = TRUE, column_order_b = FALSE, get_index = TRUE)
 				for(j in 1:length(found1)){ # insert links
 					# insert PROFILE LINKS ########################################
-					if(found1[j]==0){not_found1<-(not_found1+1); next} # e.g., peak blind-removed 
-					if(found2[j]==0){not_found1<-(not_found1+1); next}		
-					inserted1<-(inserted1+1);				
+					if(found1[j] == 0){not_found1 <- (not_found1 + 1); next} # e.g., peak blind-removed 
+					if(found2[j] == 0){not_found1 <- (not_found1 + 1); next}		
+					inserted1 <- (inserted1+1);				
 					# (1) insert link to second profile for the first profile
-					prof1<-peaks[found1[j],"profileIDs"][[1]]
-					prof2<-peaks[found2[j],"profileIDs"][[1]]
-					# enable check ... pairs musst have very similar retention times
+					prof1 <- peaks[found1[j], "profileIDs"][[1]]
+					prof2 <- peaks[found2[j], "profileIDs"][[1]]
+					# enable check ... pairs must have very similar retention times
 					if(FALSE){
 						cat("\n");
-						cat(peaks[found1[j],"RT"]);cat(" - ")
+						cat(peaks[found1[j],"RT"]); cat(" - ")
 						cat(peaks[found2[j],"RT"])
 					}
-					if(profileList_pos[["index_prof"]][prof1,"profile_ID"]!=prof1){stop("\nComponentization: debug me, #1!")}				
-					if(profileList_pos[["index_prof"]][prof1,"links"]==0){ 	# establish a new link ...
-						if(length(use_entries_profiles)>0){
-							at_entry_1<-use_entries_profiles[1]
-							use_entries<-use_entries_profiles[-1]
+					if(profileList_pos[["index_prof"]][prof1,"profile_ID"] != prof1){stop("\nComponentization: debug me, #1!")}				
+					if(profileList_pos[["index_prof"]][prof1,"links"] == 0){ 	# establish a new link ...
+						if(length(use_entries_profiles) > 0){
+							at_entry_1 <- use_entries_profiles[1]
+							use_entries <- use_entries_profiles[-1]
 						}else{
-							at_entry_1<-(length(links_profiles_pos)+1)
+							at_entry_1 <- (length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
-						names(links_profiles_pos)[at_entry_1]<-as.character(prof1)
-						profileList_pos[["index_prof"]][prof1,"links"]<-at_entry_1						
+						links_profiles_pos[[at_entry_1]] <- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						names(links_profiles_pos)[at_entry_1] <- as.character(prof1)
+						profileList_pos[["index_prof"]][prof1,"links"] <- at_entry_1						
 					}else{
-						at_entry_1<-profileList_pos[["index_prof"]][prof1,"links"]
+						at_entry_1 <- profileList_pos[["index_prof"]][prof1,"links"]
 					}
-					here1<-which(links_profiles_pos[[at_entry_1]][["EIC"]][,"linked profile"]==prof2)
-					if(length(here1)==0){			
-						links_profiles_pos[[at_entry_1]][["EIC"]]<-rbind(
+					here1 <- which(links_profiles_pos[[at_entry_1]][["EIC"]][,"linked profile"] == prof2)
+					if(length(here1) == 0){			
+						links_profiles_pos[[at_entry_1]][["EIC"]] <- rbind(
 							links_profiles_pos[[at_entry_1]][["EIC"]], c(prof2,1,0,0,0,0,1,NA)
 						)
-						here1<-dim(links_profiles_pos[[at_entry_1]][["EIC"]])[1]
+						here1 <- dim(links_profiles_pos[[at_entry_1]][["EIC"]])[1]
 					}else{
-						links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"]<-(links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"]+1)
+						links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"] <- (links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"] + 1)
 					}
 					# (2) insert link to first profile for the second profile
 					if(profileList_pos[["index_prof"]][prof2,"profile_ID"]!=prof2){stop("\nCross-profile componentization: debug me, EIC_1!")}				
@@ -708,7 +708,7 @@ if(
 	if( # run filering & insert values or ...
 		(logfile$parameters$filter_profcomp_pos == "TRUE") &
 		( 	(logfile$workflow[names(logfile$workflow) == "isotopologues"] == "yes") || 
-			(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes") )
+			(logfile$workflow[names(logfile$workflow)=="adducts"]=="yes")	)
 	){
 		# (6.1) get characteristics on delRT and correl. #########################
 		anaA <- enviMass:::analyseA_links_profiles(
@@ -842,7 +842,7 @@ if(
 	}
 	######################
 	if(with_bar){pBar <- txtProgressBar(min = 0, max = length(along), style = 3)}
-	found<-0
+	found <- 0
 	for(i in 1:length(along)){
 		if(with_bar){setTxtProgressBar(pBar, i, title = NULL, label = NULL)}
 		if( logfile$parameters$prof_comp_link_only == "TRUE" ){

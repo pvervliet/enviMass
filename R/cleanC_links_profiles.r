@@ -13,7 +13,7 @@
 #' @details enviMass workflow function. 
 #' 
 
-cleanC_links_profiles<-function(
+cleanC_links_profiles <- function(
 	links_profiles, 
 	profileList, 
 	cut_EIC = .9, 
@@ -66,7 +66,7 @@ cleanC_links_profiles<-function(
 					,"intensity"])
 				links_profiles[[for_profs[n]]]$EIC[m,"int_ratio"] <- mean(int_1 / int_2)
 				if(links_profiles[[for_profs[n]]]$EIC[m,"ref_1"] > 2){
-					int_cor <- cor(int_1,int_2)
+					int_cor <- cor(int_1, int_2)
 					links_profiles[[for_profs[n]]]$EIC[m,"correl"] <- (round(int_cor * 1000))
 				}
 				at_entry_2 <- profileList[["index_prof"]][prof2,"links"]

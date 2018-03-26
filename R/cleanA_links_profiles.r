@@ -13,7 +13,7 @@
 #' @details enviMass workflow function. 
 #' 
 
-cleanA_links_profiles<-function(
+cleanA_links_profiles <- function(
 	links_profiles, 
 	profileList, 
 	cut_delRT_isot = 5, 
