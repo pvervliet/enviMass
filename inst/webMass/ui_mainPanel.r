@@ -1369,7 +1369,7 @@
 				),				
 				div(style = widget_style12, 
 					tags$p(align = "justify", "Filter for profiles with intensities in sample files 5 or 6 at least ten-fold higher than in sample with ID 4:"),
-					div(style = widget_style11, tags$p(align = "justify", "(\"5\" / 10 > 4\"\") OR (\"6\" / 10 > 4\"\")"))
+					div(style = widget_style11, tags$p(align = "justify", "(\"5\" / 10 > \"4\") OR (\"6\" / 10 > \"4\")"))
 				),				
 				HTML('<hr noshade="noshade" />'),
 				tags$h4("Error examples"),
