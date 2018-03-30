@@ -2366,9 +2366,9 @@ if(logfile$version < 3.453){
 
 
 
-if(logfile$version < 3.46){
+if(logfile$version < 3.47){
 
-	cat("\n Updating to version 3.46 ...")
+	cat("\n Updating to versions 3.46 / 3.47 ...")
 	################################################################################################
 	if(!any(names(logfile) == "comparisons")){
 		logfile[[19]] <<- list()
@@ -2376,7 +2376,7 @@ if(logfile$version < 3.46){
 	}	
 	################################################################################################
 	# update workflow ##############################################################################	
-	if(	!any(names(logfile$Tasks_to_redo) == "comparison") ){
+	#if(	!any(names(logfile$Tasks_to_redo) == "comparison") ){ # must be redone to have IS_normalize downstream of profile filtering -> otherwise links lost!
 
 		############################################################################################	
 		# update workflow ##########################################################################		
@@ -2430,14 +2430,9 @@ if(logfile$version < 3.46){
 		set_order <- match(schedule[,1],logfile$summary[,1])
 		logfile$summary <<- logfile$summary[set_order,]
 		############################################################################################		
-	}
-	################################################################################################
-	
-	
-	
-	
+	#}	
 	################################################################################################	
-	logfile$version <<- 3.46
+	logfile$version <<- 3.47
 	################################################################################################		
 	save(logfile, file = file.path(as.character(logfile[["project_folder"]]), "logfile.emp"));
 	load(file.path(logfile$project_folder,"logfile.emp"), envir = as.environment(".GlobalEnv")) 
