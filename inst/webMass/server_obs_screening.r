@@ -216,15 +216,17 @@ observe({
 		} # if(found_table)
 		######################################################################
 		if(isolate(input$Pos_compound_select=="File-wise counts")){
-			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[
- 				(measurements[,"include"]=="TRUE") & # included?
-				(measurements[,"Mode"]=="positive") &
-				(
-					(measurements[,"profiled"]=="TRUE") | # profiled?
-					(measurements[,"Type"]=="calibration")
-				)
-			,,drop=FALSE]		
+			measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+			measurements <- measurements[
+ 				(measurements[,"include"] == "TRUE") & # included?
+				(measurements[,"Mode"] == "positive") 
+			,, drop = FALSE]	
+			if(isolate(logfile$parameters$prof_select) == "TRUE"){	
+				measurements <- measurements[
+					((measurements[,"profiled"] == "TRUE") | # profiled?
+					(measurements[,"Type"] == "calibration"))
+				,, drop = FALSE]
+			}
 			if(length(measurements[,"ID"])>0 ){
 				IDs<-measurements[,"ID"]
 				count_file_compound_pos<-measurements[,c(1,2,3)]
@@ -1188,14 +1190,16 @@ observe({
 		######################################################################
 		if(isolate(input$Neg_compound_select=="File-wise counts")){
 			measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-			measurements<-measurements[
- 				(measurements[,"include"]=="TRUE") & # included?
-				(measurements[,"Mode"]=="negative") &
-				(
-					(measurements[,"profiled"]=="TRUE") | # profiled?
-					(measurements[,"Type"]=="calibration")
-				)
-			,,drop=FALSE]		
+			measurements <- measurements[
+ 				(measurements[,"include"] == "TRUE") & # included?
+				(measurements[,"Mode"] == "negative") 
+			,, drop = FALSE]	
+			if(isolate(logfile$parameters$prof_select) == "TRUE"){	
+				measurements <- measurements[
+					((measurements[,"profiled"] == "TRUE") | # profiled?
+					(measurements[,"Type"] == "calibration"))
+				,, drop = FALSE]
+			}	
 			if(length(measurements[,"ID"])>0 ){
 				IDs<-measurements[,"ID"]
 				count_file_compound_neg<-measurements[,c(1,2,3)]

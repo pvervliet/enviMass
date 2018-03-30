@@ -27,14 +27,14 @@ if(
 	if(any(objects()=="links_profiles_pos")){rm(links_profiles_pos)}					
 	load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));
 	# links_peaks_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol - defined in do_profiling.r
-	load(file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"));	
-	links_profiles_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	peaks<-profileList_pos[["peaks"]][,c("sampleIDs","peakIDs","profileIDs","RT")] # to retrieve relations with, sampleID, peakID, profileID, RT
-	ord<-order(peaks[,"sampleIDs"],peaks[,"peakIDs"],peaks[,"profileIDs"],decreasing=FALSE)
-	peaks<-peaks[ord,]
-	use_entries_profiles<-enviMass::find_empty(links_profiles_pos) # also finds gaps
-	profileList_pos[["index_prof"]][,"links"] <- 0
+	load(file.path(as.character(logfile[[1]]),"results","links_peaks_pos"), envir = as.environment(".GlobalEnv"));	
+	assign("links_profiles_pos", list(), envir = as.environment(".GlobalEnv")) # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
+	measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	peaks <- profileList_pos[["peaks"]][,c("sampleIDs","peakIDs","profileIDs","RT")] # to retrieve relations with, sampleID, peakID, profileID, RT
+	ord <- order(peaks[,"sampleIDs"], peaks[,"peakIDs"], peaks[,"profileIDs"], decreasing = FALSE)
+	peaks <- peaks[ord,]
+	use_entries_profiles <- enviMass::find_empty(links_profiles_pos) # also finds gaps
+	profileList_pos[["index_prof"]][,"links"] <<- 0
 	with_bar<-TRUE
 	##############################################################################	
 
@@ -69,9 +69,9 @@ if(
 					}else{
 						at_entry<-(length(links_profiles_pos)+1)
 					}
-					links_profiles_pos[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][i,"number_peaks_total"][[1]])
-					names(links_profiles_pos)[at_entry]<-as.character(i)
-					profileList_pos[["index_prof"]][i,"links"]<-at_entry						
+					links_profiles_pos[[at_entry]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][i,"number_peaks_total"][[1]])
+					names(links_profiles_pos)[at_entry] <<- as.character(i)
+					profileList_pos[["index_prof"]][i,"links"] <<- at_entry						
 				}else{
 					at_entry<-profileList_pos[["index_prof"]][i,"links"]
 				}				
@@ -83,23 +83,23 @@ if(
 						if(	length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]]) > 0 ){
 							for(k in 1:length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_pos[[at_entry]][[2]]) == 0 ){ # make a new entry for profile link to IS
-									links_profiles_pos[[at_entry]][[2]] <-
+									links_profiles_pos[[at_entry]][[2]] <<-
 										data.frame(
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[1]],
 											1,
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_pos[[at_entry]][[2]]) <- c("Compound","Counts","max_score")
+									names(links_profiles_pos[[at_entry]][[2]]) <<- c("Compound","Counts","max_score")
 								}else{
 									at<-which(links_profiles_pos[[at_entry]][[2]][,1] == links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[1]])
 									if(length(at) > 0){ 	# increment existing link ...
-										links_profiles_pos[[at_entry]][[2]][at,2] <- (links_profiles_pos[[at_entry]][[2]][at,2]+1)
+										links_profiles_pos[[at_entry]][[2]][at,2] <<- (links_profiles_pos[[at_entry]][[2]][at,2]+1)
 										if(links_profiles_pos[[at_entry]][[2]][at,2] < links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]] ){
-											links_profiles_pos[[at_entry]][[2]][at,2] <- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]]
+											links_profiles_pos[[at_entry]][[2]][at,2] <<- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_pos[[at_entry]][[2]] <- data.frame(
+										links_profiles_pos[[at_entry]][[2]] <<- data.frame(
 											c(
 												links_profiles_pos[[at_entry]][[2]][,1], 
 												links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[1]]
@@ -111,7 +111,7 @@ if(
 											),
 											stringsAsFactors = FALSE
 										)									
-										names(links_profiles_pos[[at_entry]][[2]]) <- c("Compound","Counts","max_score")
+										names(links_profiles_pos[[at_entry]][[2]]) <<- c("Compound","Counts","max_score")
 									}
 								}
 							}
@@ -120,23 +120,23 @@ if(
 						if(	length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]]) > 0 ){
 							for(k in 1:length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_pos[[at_entry]][[1]])==0 ){ # make a new entry for profile link to IS
-									links_profiles_pos[[at_entry]][[1]] <-
+									links_profiles_pos[[at_entry]][[1]] <<-
 										data.frame(
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]],
 											1,
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_pos[[at_entry]][[1]]) <- c("Compound","Counts","max_score")
+									names(links_profiles_pos[[at_entry]][[1]]) <<- c("Compound","Counts","max_score")
 								}else{
 									at <- which(links_profiles_pos[[at_entry]][[1]][,1] == links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]])
 									if(length(at) > 0){ 	# increment existing link ...
-										links_profiles_pos[[at_entry]][[1]][at,2] <- (links_profiles_pos[[at_entry]][[1]][at,2]+1)
+										links_profiles_pos[[at_entry]][[1]][at,2] <<- (links_profiles_pos[[at_entry]][[1]][at,2]+1)
 										if(links_profiles_pos[[at_entry]][[1]][at,2] < links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]] ){
-											links_profiles_pos[[at_entry]][[1]][at,2] <- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]]
+											links_profiles_pos[[at_entry]][[1]][at,2] <<- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_pos[[at_entry]][[1]] <- data.frame(
+										links_profiles_pos[[at_entry]][[1]] <<- data.frame(
 											c(
 												links_profiles_pos[[at_entry]][[1]][,1], 
 												links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]]
@@ -148,7 +148,7 @@ if(
 											),
 											stringsAsFactors = FALSE
 										)									
-										names(links_profiles_pos[[at_entry]][[1]])<-c("Compound","Counts","max_score")
+										names(links_profiles_pos[[at_entry]][[1]]) <<- c("Compound","Counts","max_score")
 									}
 								}
 							}					
@@ -238,20 +238,20 @@ if(
 						}else{
 							at_entry_1 <- (length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_1]] <- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
-						names(links_profiles_pos)[at_entry_1] <- as.character(prof1)
-						profileList_pos[["index_prof"]][prof1,"links"] <- at_entry_1						
+						links_profiles_pos[[at_entry_1]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						names(links_profiles_pos)[at_entry_1] <<- as.character(prof1)
+						profileList_pos[["index_prof"]][prof1,"links"] <<- at_entry_1						
 					}else{
 						at_entry_1 <- profileList_pos[["index_prof"]][prof1,"links"]
 					}
 					here1 <- which(links_profiles_pos[[at_entry_1]][["EIC"]][,"linked profile"] == prof2)
 					if(length(here1) == 0){			
-						links_profiles_pos[[at_entry_1]][["EIC"]] <- rbind(
+						links_profiles_pos[[at_entry_1]][["EIC"]] <<- rbind(
 							links_profiles_pos[[at_entry_1]][["EIC"]], c(prof2,1,0,0,0,0,1,NA)
 						)
 						here1 <- dim(links_profiles_pos[[at_entry_1]][["EIC"]])[1]
 					}else{
-						links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"] <- (links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"] + 1)
+						links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"] <<- (links_profiles_pos[[at_entry_1]][["EIC"]][here1,"link counts"] + 1)
 					}
 					# (2) insert link to first profile for the second profile
 					if(profileList_pos[["index_prof"]][prof2,"profile_ID"]!=prof2){stop("\nCross-profile componentization: debug me, EIC_1!")}				
@@ -262,41 +262,41 @@ if(
 						}else{
 							at_entry_2<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])		
-						names(links_profiles_pos)[at_entry_2]<-as.character(prof2)
-						profileList_pos[["index_prof"]][prof2,"links"]<-at_entry_2						
+						links_profiles_pos[[at_entry_2]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])		
+						names(links_profiles_pos)[at_entry_2] <<- as.character(prof2)
+						profileList_pos[["index_prof"]][prof2,"links"] <<- at_entry_2						
 					}else{
 						at_entry_2<-profileList_pos[["index_prof"]][prof2,"links"]
 					}
 					here2<-which(links_profiles_pos[[at_entry_2]][["EIC"]][,"linked profile"]==prof1)
 					if(length(here2)==0){
-						links_profiles_pos[[at_entry_2]][["EIC"]]<-rbind(
+						links_profiles_pos[[at_entry_2]][["EIC"]] <<- rbind(
 							links_profiles_pos[[at_entry_2]][["EIC"]], c(prof1,1,0,0,0,0,0,NA)
 						)
 						here2<-dim(links_profiles_pos[[at_entry_2]][["EIC"]])[1]
 					}else{
-						links_profiles_pos[[at_entry_2]][["EIC"]][here2,"link counts"]<-(links_profiles_pos[[at_entry_2]][["EIC"]][here2,"link counts"]+1)
+						links_profiles_pos[[at_entry_2]][["EIC"]][here2,"link counts"] <<- (links_profiles_pos[[at_entry_2]][["EIC"]][here2,"link counts"]+1)
 					}				
 					# (3) insert ref_1: total number of co-occurences ############
 					# (4) insert EIC correlation #################################
 					if(links_profiles_pos[[at_entry_1]][["EIC"]][here1,"use"]==1){
-						if(length(links_profiles_pos[[at_entry_1]]$EIC_cor)<here1){
-							links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]]<-EIC_pairs[j,4]
+						if(length(links_profiles_pos[[at_entry_1]]$EIC_cor) < here1){
+							links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]] <<- EIC_pairs[j,4]
 						}else{
 							if(is.null(links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]])){
-								links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]]<-EIC_pairs[j,4]
+								links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]] <<- EIC_pairs[j,4]
 							}else{
-								links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]]<-c(links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]],EIC_pairs[j,4])
+								links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]] <<- c(links_profiles_pos[[at_entry_1]]$EIC_cor[[here1]],EIC_pairs[j,4])
 							}
 						}
 					}else{
-						if(length(links_profiles_pos[[at_entry_2]]$EIC_cor)<here2){
-							links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]]<-EIC_pairs[j,4]
+						if(length(links_profiles_pos[[at_entry_2]]$EIC_cor) < here2){
+							links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]] <<- EIC_pairs[j,4]
 						}else{
 							if(is.null(links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]])){
-								links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]]<-EIC_pairs[j,4]
+								links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]] <<- EIC_pairs[j,4]
 							}else{
-								links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]]<-c(links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]],EIC_pairs[j,4])
+								links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]] <<- c(links_profiles_pos[[at_entry_2]]$EIC_cor[[here2]],EIC_pairs[j,4])
 							}
 						}
 					}
@@ -376,21 +376,21 @@ if(
 						}else{
 							at_entry_1 <- (length(links_profiles_pos) + 1)
 						}
-						links_profiles_pos[[at_entry_1]] <- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1, "number_peaks_total"][[1]])
-						names(links_profiles_pos)[at_entry_1]<-as.character(prof1)
-						profileList_pos[["index_prof"]][prof1, "links"] <- at_entry_1						
+						links_profiles_pos[[at_entry_1]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1, "number_peaks_total"][[1]])
+						names(links_profiles_pos)[at_entry_1] <<- as.character(prof1)
+						profileList_pos[["index_prof"]][prof1, "links"] <<- at_entry_1						
 					}else{
 						at_entry_1<-profileList_pos[["index_prof"]][prof1, "links"]
 					}
 					here1 <- which(links_profiles_pos[[at_entry_1]][["isot"]][, "linked profile"] == prof2)
 					if(length(here1)==0){
-						links_profiles_pos[[at_entry_1]][["isot"]] <- rbind(
+						links_profiles_pos[[at_entry_1]][["isot"]] <<- rbind(
 							links_profiles_pos[[at_entry_1]][["isot"]], c(prof2,1,0,1,NA)
 						)
 						here1 <- dim(links_profiles_pos[[at_entry_1]][["isot"]])[1]	
 						is_new1 <- TRUE
 					}else{
-						links_profiles_pos[[at_entry_1]][["isot"]][here1, "link counts"] <- (links_profiles_pos[[at_entry_1]][["isot"]][here1,"link counts"] + 1)
+						links_profiles_pos[[at_entry_1]][["isot"]][here1, "link counts"] <<- (links_profiles_pos[[at_entry_1]][["isot"]][here1,"link counts"] + 1)
 						is_new1 <- FALSE
 					}
 					# (2) insert link to first profile for the second profile ####
@@ -402,21 +402,21 @@ if(
 						}else{							
 							at_entry_2 <- (length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_2]] <- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
-						names(links_profiles_pos)[at_entry_2] <- as.character(prof2)
-						profileList_pos[["index_prof"]][prof2,"links"] <- at_entry_2						
+						links_profiles_pos[[at_entry_2]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						names(links_profiles_pos)[at_entry_2] <<- as.character(prof2)
+						profileList_pos[["index_prof"]][prof2,"links"] <<- at_entry_2						
 					}else{
 						at_entry_2 <- profileList_pos[["index_prof"]][prof2,"links"]
 					}
 					here2<-which(links_profiles_pos[[at_entry_2]][["isot"]][,"linked profile"] == prof1)
 					if(length(here2) == 0){
-						links_profiles_pos[[at_entry_2]][["isot"]] <- rbind(
+						links_profiles_pos[[at_entry_2]][["isot"]] <<- rbind(
 							links_profiles_pos[[at_entry_2]][["isot"]], c(prof1,1,0,0,NA)
 						)
 						here2 <- dim(links_profiles_pos[[at_entry_2]][["isot"]])[1]
 						is_new2 <- TRUE
 					}else{
-						links_profiles_pos[[at_entry_2]][["isot"]][here2,"link counts"] <- (links_profiles_pos[[at_entry_2]][["isot"]][here2,"link counts"]+1)
+						links_profiles_pos[[at_entry_2]][["isot"]][here2,"link counts"] <<- (links_profiles_pos[[at_entry_2]][["isot"]][here2,"link counts"]+1)
 						is_new2 <- FALSE
 					}						
 					# (3) insert ref_1: total number of co-occurences ############
@@ -433,8 +433,8 @@ if(
 						
 						matched <- match(these,those)
 						not_NA <- sum(!is.na(matched))
-						links_profiles_pos[[at_entry_1]]$isot[here1,"ref_1"] <- not_NA
-						links_profiles_pos[[at_entry_2]]$isot[here2,"ref_1"] <- not_NA
+						links_profiles_pos[[at_entry_1]]$isot[here1,"ref_1"] <<- not_NA
+						links_profiles_pos[[at_entry_2]]$isot[here2,"ref_1"] <<- not_NA
 					}
 					if(any(links_profiles_pos[[at_entry_1]]$isot[,"ref_1"] == 0)){stop("\n DEBUG ME ! FOUND_1")}
 					if(any(links_profiles_pos[[at_entry_2]]$isot[,"ref_1"] == 0)){stop("\n DEBUG ME ! FOUND_2")}
@@ -514,21 +514,21 @@ if(
 						}else{
 							at_entry_1<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
-						names(links_profiles_pos)[at_entry_1]<-as.character(prof1)
-						profileList_pos[["index_prof"]][prof1,"links"]<-at_entry_1						
+						links_profiles_pos[[at_entry_1]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						names(links_profiles_pos)[at_entry_1] <<- as.character(prof1)
+						profileList_pos[["index_prof"]][prof1,"links"] <<- at_entry_1						
 					}else{
 						at_entry_1<-profileList_pos[["index_prof"]][prof1,"links"]
 					}
 					here1<-which(links_profiles_pos[[at_entry_1]][["adduc"]][,"linked profile"]==prof2)
 					if(length(here1)==0){
-						links_profiles_pos[[at_entry_1]][["adduc"]]<-rbind(
+						links_profiles_pos[[at_entry_1]][["adduc"]] <<- rbind(
 							links_profiles_pos[[at_entry_1]][["adduc"]], c(prof2,1,0,1,NA)
 						)
 						here1<-dim(links_profiles_pos[[at_entry_1]][["adduc"]])[1]
 						is_new1 <- TRUE
 					}else{
-						links_profiles_pos[[at_entry_1]][["adduc"]][here1,"link counts"]<-(links_profiles_pos[[at_entry_1]][["adduc"]][here1,"link counts"]+1)
+						links_profiles_pos[[at_entry_1]][["adduc"]][here1,"link counts"] <<- (links_profiles_pos[[at_entry_1]][["adduc"]][here1,"link counts"]+1)
 						is_new1 <- FALSE
 					}
 					# (2) insert link to first profile for the second profile
@@ -540,21 +540,21 @@ if(
 						}else{
 							at_entry_2<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
-						names(links_profiles_pos)[at_entry_2]<-as.character(prof2)
-						profileList_pos[["index_prof"]][prof2,"links"]<-at_entry_2						
+						links_profiles_pos[[at_entry_2]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						names(links_profiles_pos)[at_entry_2] <<- as.character(prof2)
+						profileList_pos[["index_prof"]][prof2,"links"] <<- at_entry_2						
 					}else{
-						at_entry_2<-profileList_pos[["index_prof"]][prof2,"links"]
+						at_entry_2 <- profileList_pos[["index_prof"]][prof2,"links"]
 					}
-					here2<-which(links_profiles_pos[[at_entry_2]][["adduc"]][,"linked profile"]==prof1)
+					here2 <- which(links_profiles_pos[[at_entry_2]][["adduc"]][,"linked profile"]==prof1)
 					if(length(here2)==0){
-						links_profiles_pos[[at_entry_2]][["adduc"]]<-rbind(
+						links_profiles_pos[[at_entry_2]][["adduc"]] <<- rbind(
 							links_profiles_pos[[at_entry_2]][["adduc"]], c(prof1,1,0,0,NA)
 						)
-						here2<-dim(links_profiles_pos[[at_entry_2]][["adduc"]])[1]
+						here2 <- dim(links_profiles_pos[[at_entry_2]][["adduc"]])[1]
 						is_new2 <- TRUE
 					}else{
-						links_profiles_pos[[at_entry_2]][["adduc"]][here2,"link counts"]<-(links_profiles_pos[[at_entry_2]][["adduc"]][here2,"link counts"]+1)
+						links_profiles_pos[[at_entry_2]][["adduc"]][here2,"link counts"] <<- (links_profiles_pos[[at_entry_2]][["adduc"]][here2,"link counts"]+1)
 						is_new2 <- FALSE
 					}		
 					# (3) insert ref_1: total number of co-occurences ############
@@ -569,11 +569,11 @@ if(
 						those <- those[!is.na(match(those,forIDs))]
 						matched <- match(these,those)
 						not_NA <- sum(!is.na(matched))
-						links_profiles_pos[[at_entry_1]]$adduc[here1,"ref_1"]<-not_NA
-						links_profiles_pos[[at_entry_2]]$adduc[here2,"ref_1"]<-not_NA
+						links_profiles_pos[[at_entry_1]]$adduc[here1,"ref_1"] <<- not_NA
+						links_profiles_pos[[at_entry_2]]$adduc[here2,"ref_1"] <<- not_NA
 					}
-					if(any(links_profiles_pos[[at_entry_1]]$adduc[,"ref_1"]==0)){stop("\n DEBUG ME ! FOUND_3")}
-					if(any(links_profiles_pos[[at_entry_2]]$adduc[,"ref_1"]==0)){stop("\n DEBUG ME ! FOUND_4")}
+					if(any(links_profiles_pos[[at_entry_1]]$adduc[,"ref_1"] == 0)){stop("\n DEBUG ME ! FOUND_3")}
+					if(any(links_profiles_pos[[at_entry_2]]$adduc[,"ref_1"] == 0)){stop("\n DEBUG ME ! FOUND_4")}
 					# insert PEAK LINKS? ########################################
 				}
 			}
@@ -656,19 +656,19 @@ if(
 						}else{
 							at_entry<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
-						names(links_profiles_pos)[at_entry]<-as.character(prof1)
-						profileList_pos[["index_prof"]][prof1,"links"]<-at_entry						
+						links_profiles_pos[[at_entry]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						names(links_profiles_pos)[at_entry] <<- as.character(prof1)
+						profileList_pos[["index_prof"]][prof1,"links"] <<- at_entry						
 					}else{
-						at_entry<-profileList_pos[["index_prof"]][prof1,"links"]
+						at_entry <- profileList_pos[["index_prof"]][prof1,"links"]
 					}
-					here<-which(links_profiles_pos[[at_entry]][["homol"]][,"linked profile"]==prof2)
+					here <- which(links_profiles_pos[[at_entry]][["homol"]][,"linked profile"]==prof2)
 					if(length(here)==0){
-						links_profiles_pos[[at_entry]][["homol"]]<-rbind(
+						links_profiles_pos[[at_entry]][["homol"]] <<- rbind(
 							links_profiles_pos[[at_entry]][["homol"]], c(prof2,1,0)
 						)
 					}else{
-						links_profiles_pos[[at_entry]][["homol"]][here,"link counts"]<-(links_profiles_pos[[at_entry]][["homol"]][here,"link counts"]+1)
+						links_profiles_pos[[at_entry]][["homol"]][here,"link counts"] <<- (links_profiles_pos[[at_entry]][["homol"]][here,"link counts"]+1)
 					}
 					# (2) insert link to first profile for the second profile
 					if(profileList_pos[["index_prof"]][prof2,"profile_ID"]!=prof2){stop("\nComponentization: debug me, #1!")}				
@@ -679,19 +679,19 @@ if(
 						}else{
 							at_entry<-(length(links_profiles_pos)+1)
 						}
-						links_profiles_pos[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
-						names(links_profiles_pos)[at_entry]<-as.character(prof2)
-						profileList_pos[["index_prof"]][prof2,"links"]<-at_entry						
+						links_profiles_pos[[at_entry]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						names(links_profiles_pos)[at_entry] <<- as.character(prof2)
+						profileList_pos[["index_prof"]][prof2,"links"] <<- at_entry						
 					}else{
-						at_entry<-profileList_pos[["index_prof"]][prof2,"links"]
+						at_entry <- profileList_pos[["index_prof"]][prof2,"links"]
 					}
-					here<-which(links_profiles_pos[[at_entry]][["homol"]][,"linked profile"]==prof1)
+					here <- which(links_profiles_pos[[at_entry]][["homol"]][,"linked profile"]==prof1)
 					if(length(here)==0){
-						links_profiles_pos[[at_entry]][["homol"]]<-rbind(
+						links_profiles_pos[[at_entry]][["homol"]] <<- rbind(
 							links_profiles_pos[[at_entry]][["homol"]], c(prof1,1,0)
 						)
 					}else{
-						links_profiles_pos[[at_entry]][["homol"]][here,"link counts"]<-(links_profiles_pos[[at_entry]][["homol"]][here,"link counts"]+1)
+						links_profiles_pos[[at_entry]][["homol"]][here,"link counts"] <<- (links_profiles_pos[[at_entry]][["homol"]][here,"link counts"]+1)
 					}				
 				}	
 			}
@@ -726,7 +726,7 @@ if(
 		cut_cor_isot <<- (boxplot.stats(c(anaA$int_cor_isot))$stats[1])
 		if(!is.na(cut_delRT_isot) & !is.na(cut_cor_isot)){
 			#	links_profiles = links_profiles_pos; profileList = profileList_pos
-			links_profiles_pos <- enviMass::cleanA_links_profiles(
+			links_profiles_pos <<- enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_delRT_isot = cut_delRT_isot, 
@@ -736,7 +736,7 @@ if(
 			
 		}else{
 			cat("\n No isotopologue linkage filtering feasible")
-			links_profiles_pos <- enviMass::cleanA_links_profiles(
+			links_profiles_pos <<- enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_delRT_isot = Inf, 
@@ -748,7 +748,7 @@ if(
 		#cut_delRT_adduc<-median(anaA$delRT_adduc)
 		cut_delRT_adduc <<- boxplot.stats(c(anaA$delRT_adduc))$stats[5]
 		if(!is.na(cut_delRT_adduc)){
-			links_profiles_pos <- enviMass::cleanB_links_profiles( 
+			links_profiles_pos <<- enviMass::cleanB_links_profiles( 
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_delRT_adduc = cut_delRT_adduc, 
@@ -756,7 +756,7 @@ if(
 			)
 		}else{
 			cat("\n No adduct linkage filtering feasible")
-			links_profiles_pos <- enviMass::cleanB_links_profiles( 
+			links_profiles_pos <<- enviMass::cleanB_links_profiles( 
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_delRT_adduc = Inf, 
@@ -775,7 +775,7 @@ if(
 		cut_EIC <<- (boxplot.stats(use_EIC)$stats[1])
 		cut_delRT_EIC <<- max(cut_delRT_isot,cut_delRT_adduc)
 		if(!is.na(cut_EIC) & !is.na(cut_delRT_EIC)){	
-			links_profiles_pos <- enviMass::cleanC_links_profiles(
+			links_profiles_pos <<- enviMass::cleanC_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_EIC = cut_EIC, 
@@ -784,7 +784,7 @@ if(
 			)
 		}else{
 			cat("\n No EIC linkage filtering feasible")
-			links_profiles_pos <- enviMass::cleanC_links_profiles(
+			links_profiles_pos <<- enviMass::cleanC_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_EIC = 0, 
@@ -796,13 +796,13 @@ if(
 		for(n in 1:length(links_profiles_pos)){
 			is_empty <- enviMass::analyseC_links_profiles(links_profiles_pos, at_entry = n)
 			if(is_empty){
-				links_profiles_pos[[n]] <- NA
-				profileList_pos[["index_prof"]][as.numeric(names(links_profiles_pos)[n]),"links"] <- 0
+				links_profiles_pos[[n]] <<- NA
+				profileList_pos[["index_prof"]][as.numeric(names(links_profiles_pos)[n]),"links"] <<- 0
 			}
 		}	
 	}else{ # ... only insert values
 			# insert isotopologues ###############################################
-			links_profiles_pos <- enviMass::cleanA_links_profiles(
+			links_profiles_pos <<- enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_delRT_isot = Inf, 
@@ -810,14 +810,14 @@ if(
 				cut_frac_iso = 0
 			)
 			# insert adducts ####################################################
-			links_profiles_pos <- enviMass::cleanB_links_profiles( 
+			links_profiles_pos <<- enviMass::cleanB_links_profiles( 
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_delRT_adduc = Inf, 
 				cut_frac_adduc = 0
 			)
 			# insert EICs #######################################################
-			links_profiles_pos <- enviMass::cleanC_links_profiles(
+			links_profiles_pos <<- enviMass::cleanC_links_profiles(
 				links_profiles = links_profiles_pos, 
 				profileList = profileList_pos,
 				cut_EIC = 0, 
@@ -916,7 +916,7 @@ if(
 			found <- (found + 1)
 			if(with_test){if(prof_all_IDs[1] != along[i]){stop("\n\nDebug_not_first!")}}	
 			at_entry <- profileList_pos[["index_prof"]][prof_all_IDs[1], "links"]
-			links_profiles_pos[[at_entry]][["group"]] <- prof_all_IDs[-1]
+			links_profiles_pos[[at_entry]][["group"]] <<- prof_all_IDs[-1]
 		}
 		##############################################################################		
 	}
@@ -927,8 +927,10 @@ if(
 	# save! ######################################################################
 	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
 	save(links_profiles_pos,file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"));	
+	if(any(ls()=="profileList_pos")){stop("\n illegal profileList_pos detected #1 in do_components_profiles_pl!")}
+	if(any(ls()=="links_profiles_pos")){stop("\n illegal links_profiles_pos detected #1 in do_components_profiles_pl!")}	
+	rm(links_profiles_pos, profileList_pos, envir=as.environment(".GlobalEnv"))	
 	##############################################################################	
-	rm(links_profiles_pos,profileList_pos)
 
 }
 
@@ -949,14 +951,14 @@ if(
 	load(file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));
 	# links_peaks_neg<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol - defined in do_profiling.r
 	load(file.path(as.character(logfile[[1]]),"results","links_peaks_neg"),envir=as.environment(".GlobalEnv"));	
-	links_profiles_neg<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	peaks<-profileList_neg[["peaks"]][,c("sampleIDs","peakIDs","profileIDs","RT")] # to retrieve relations with, sampleID, peakID, profileID, RT
-	ord<-order(peaks[,"sampleIDs"],peaks[,"peakIDs"],peaks[,"profileIDs"],decreasing=FALSE)
-	peaks<-peaks[ord,]
-	use_entries_profiles<-enviMass::find_empty(links_profiles_neg) # also finds gaps
-	profileList_neg[["index_prof"]][,"links"]<-0
-	with_bar<-TRUE
+	assign("links_profiles_neg", list(), envir = as.environment(".GlobalEnv")) # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol	
+	measurements <- read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	peaks <- profileList_neg[["peaks"]][,c("sampleIDs","peakIDs","profileIDs","RT")] # to retrieve relations with, sampleID, peakID, profileID, RT
+	ord <- order(peaks[,"sampleIDs"],peaks[,"peakIDs"],peaks[,"profileIDs"],decreasing=FALSE)
+	peaks <- peaks[ord,]
+	use_entries_profiles <- enviMass::find_empty(links_profiles_neg) # also finds gaps
+	profileList_neg[["index_prof"]][,"links"] <<- 0
+	with_bar <- TRUE
 	##############################################################################	
 
 	##############################################################################	
@@ -990,9 +992,9 @@ if(
 					}else{
 						at_entry<-(length(links_profiles_neg)+1)
 					}
-					links_profiles_neg[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][i,"number_peaks_total"][[1]])
-					names(links_profiles_neg)[at_entry]<-as.character(i)
-					profileList_neg[["index_prof"]][i,"links"]<-at_entry						
+					links_profiles_neg[[at_entry]]<<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][i,"number_peaks_total"][[1]])
+					names(links_profiles_neg)[at_entry]<<-as.character(i)
+					profileList_neg[["index_prof"]][i,"links"]<<-at_entry						
 				}else{
 					at_entry<-profileList_neg[["index_prof"]][i,"links"]
 				}				
@@ -1004,23 +1006,23 @@ if(
 						if(	length(links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]]) > 0 ){
 							for(k in 1:length(links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_neg[[at_entry]][[2]])==0 ){ # make a new entry for profile link to IS
-									links_profiles_neg[[at_entry]][[2]]<-
+									links_profiles_neg[[at_entry]][[2]]<<-
 										data.frame(
 											links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[1]],
 											1,
 											links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_neg[[at_entry]][[2]])<-c("Compound","Counts","max_score")
+									names(links_profiles_neg[[at_entry]][[2]])<<-c("Compound","Counts","max_score")
 								}else{
 									at<-which(links_profiles_neg[[at_entry]][[2]][,1] == links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[1]])
 									if(length(at)>0){ 	# increment existing link ...
-										links_profiles_neg[[at_entry]][[2]][at,2]<-(links_profiles_neg[[at_entry]][[2]][at,2]+1)
+										links_profiles_neg[[at_entry]][[2]][at,2]<<-(links_profiles_neg[[at_entry]][[2]][at,2]+1)
 										if(links_profiles_neg[[at_entry]][[2]][at,2] < links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[2]] ){
-											links_profiles_neg[[at_entry]][[2]][at,2] <- links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[2]]
+											links_profiles_neg[[at_entry]][[2]][at,2] <<- links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_neg[[at_entry]][[2]]<-data.frame(
+										links_profiles_neg[[at_entry]][[2]]<<-data.frame(
 											c(
 												links_profiles_neg[[at_entry]][[2]][,1], 
 												links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[1]]
@@ -1032,7 +1034,7 @@ if(
 											),
 											stringsAsFactors = FALSE
 										)									
-										names(links_profiles_neg[[at_entry]][[2]])<-c("Compound","Counts","max_score")
+										names(links_profiles_neg[[at_entry]][[2]])<<-c("Compound","Counts","max_score")
 									}
 								}
 							}	
@@ -1041,23 +1043,23 @@ if(
 						if(	length(links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]])>0 ){
 							for(k in 1:length(links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_neg[[at_entry]][[1]])==0 ){ # make a new entry for profile link to IS
-									links_profiles_neg[[at_entry]][[1]]<-
+									links_profiles_neg[[at_entry]][[1]]<<-
 										data.frame(
 											links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[1]],
 											1,
 											links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_neg[[at_entry]][[1]])<-c("Compound","Counts","max_score")
+									names(links_profiles_neg[[at_entry]][[1]])<<-c("Compound","Counts","max_score")
 								}else{
 									at<-which(links_profiles_neg[[at_entry]][[1]][,1] == links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[1]])
 									if(length(at)>0){ 	# increment existing link ...
-										links_profiles_neg[[at_entry]][[1]][at,2]<-(links_profiles_neg[[at_entry]][[1]][at,2]+1)
+										links_profiles_neg[[at_entry]][[1]][at,2]<<-(links_profiles_neg[[at_entry]][[1]][at,2]+1)
 										if(links_profiles_neg[[at_entry]][[1]][at,2] < links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[2]] ){
-											links_profiles_neg[[at_entry]][[1]][at,2] <- links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[2]]
+											links_profiles_neg[[at_entry]][[1]][at,2] <<- links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_neg[[at_entry]][[1]]<-data.frame(
+										links_profiles_neg[[at_entry]][[1]]<<-data.frame(
 											c(
 												links_profiles_neg[[at_entry]][[1]][,1], 
 												links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[1]]
@@ -1069,7 +1071,7 @@ if(
 											),
 											stringsAsFactors = FALSE
 										)									
-										names(links_profiles_neg[[at_entry]][[1]])<-c("Compound","Counts","max_score")
+										names(links_profiles_neg[[at_entry]][[1]])<<-c("Compound","Counts","max_score")
 									}
 								}
 							}					
@@ -1160,20 +1162,20 @@ if(
 						}else{
 							at_entry_1<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
-						names(links_profiles_neg)[at_entry_1]<-as.character(prof1)
-						profileList_neg[["index_prof"]][prof1,"links"]<-at_entry_1						
+						links_profiles_neg[[at_entry_1]]<<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						names(links_profiles_neg)[at_entry_1]<<-as.character(prof1)
+						profileList_neg[["index_prof"]][prof1,"links"]<<-at_entry_1						
 					}else{
 						at_entry_1<-profileList_neg[["index_prof"]][prof1,"links"]
 					}
 					here1<-which(links_profiles_neg[[at_entry_1]][["EIC"]][,"linked profile"]==prof2)
 					if(length(here1)==0){			
-						links_profiles_neg[[at_entry_1]][["EIC"]]<-rbind(
+						links_profiles_neg[[at_entry_1]][["EIC"]]<<-rbind(
 							links_profiles_neg[[at_entry_1]][["EIC"]], c(prof2,1,0,0,0,0,1,NA)
 						)
 						here1<-dim(links_profiles_neg[[at_entry_1]][["EIC"]])[1]
 					}else{
-						links_profiles_neg[[at_entry_1]][["EIC"]][here1,"link counts"]<-(links_profiles_neg[[at_entry_1]][["EIC"]][here1,"link counts"]+1)
+						links_profiles_neg[[at_entry_1]][["EIC"]][here1,"link counts"]<<-(links_profiles_neg[[at_entry_1]][["EIC"]][here1,"link counts"]+1)
 					}
 					# (2) insert link to first profile for the second profile
 					if(profileList_neg[["index_prof"]][prof2,"profile_ID"]!=prof2){stop("\nCross-profile componentization: debug me, EIC_1!")}				
@@ -1184,41 +1186,41 @@ if(
 						}else{
 							at_entry_2<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])		
-						names(links_profiles_neg)[at_entry_2]<-as.character(prof2)
-						profileList_neg[["index_prof"]][prof2,"links"]<-at_entry_2						
+						links_profiles_neg[[at_entry_2]]<<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])		
+						names(links_profiles_neg)[at_entry_2]<<-as.character(prof2)
+						profileList_neg[["index_prof"]][prof2,"links"]<<-at_entry_2						
 					}else{
 						at_entry_2<-profileList_neg[["index_prof"]][prof2,"links"]
 					}
 					here2<-which(links_profiles_neg[[at_entry_2]][["EIC"]][,"linked profile"]==prof1)
 					if(length(here2)==0){
-						links_profiles_neg[[at_entry_2]][["EIC"]]<-rbind(
+						links_profiles_neg[[at_entry_2]][["EIC"]]<<-rbind(
 							links_profiles_neg[[at_entry_2]][["EIC"]], c(prof1,1,0,0,0,0,0,NA)
 						)
 						here2<-dim(links_profiles_neg[[at_entry_2]][["EIC"]])[1]
 					}else{
-						links_profiles_neg[[at_entry_2]][["EIC"]][here2,"link counts"]<-(links_profiles_neg[[at_entry_2]][["EIC"]][here2,"link counts"]+1)
+						links_profiles_neg[[at_entry_2]][["EIC"]][here2,"link counts"]<<-(links_profiles_neg[[at_entry_2]][["EIC"]][here2,"link counts"]+1)
 					}				
 					# (3) insert ref_1: total number of co-occurences ############
 					# (4) insert EIC correlation #################################
-					if(links_profiles_neg[[at_entry_1]][["EIC"]][here1,"use"]==1){
-						if(length(links_profiles_neg[[at_entry_1]]$EIC_cor)<here1){
-							links_profiles_neg[[at_entry_1]]$EIC_cor[[here1]]<-EIC_pairs[j,4]
+					if(links_profiles_neg[[at_entry_1]][["EIC"]][here1,"use"] == 1){
+						if(length(links_profiles_neg[[at_entry_1]]$EIC_cor) < here1){
+							links_profiles_neg[[at_entry_1]]$EIC_cor[[here1]] <<- EIC_pairs[j,4]
 						}else{
 							if(is.null(links_profiles_neg[[at_entry_1]]$EIC_cor[[here1]])){
-								links_profiles_neg[[at_entry_1]]$EIC_cor[[here1]]<-EIC_pairs[j,4]
+								links_profiles_neg[[at_entry_1]]$EIC_cor[[here1]] <<- EIC_pairs[j,4]
 							}else{
-								links_profiles_neg[[at_entry_1]]$EIC_cor[[here1]]<-c(links_profiles_neg[[at_entry_1]]$EIC_cor[[here1]],EIC_pairs[j,4])
+								links_profiles_neg[[at_entry_1]]$EIC_cor[[here1]] <<- c(links_profiles_neg[[at_entry_1]]$EIC_cor[[here1]],EIC_pairs[j,4])
 							}
 						}
 					}else{
-						if(length(links_profiles_neg[[at_entry_2]]$EIC_cor)<here2){
-							links_profiles_neg[[at_entry_2]]$EIC_cor[[here2]]<-EIC_pairs[j,4]
+						if(length(links_profiles_neg[[at_entry_2]]$EIC_cor) < here2){
+							links_profiles_neg[[at_entry_2]]$EIC_cor[[here2] ]<<- EIC_pairs[j,4]
 						}else{
 							if(is.null(links_profiles_neg[[at_entry_2]]$EIC_cor[[here2]])){
-								links_profiles_neg[[at_entry_2]]$EIC_cor[[here2]]<-EIC_pairs[j,4]
+								links_profiles_neg[[at_entry_2]]$EIC_cor[[here2]] <<- EIC_pairs[j,4]
 							}else{
-								links_profiles_neg[[at_entry_2]]$EIC_cor[[here2]]<-c(links_profiles_neg[[at_entry_2]]$EIC_cor[[here2]],EIC_pairs[j,4])
+								links_profiles_neg[[at_entry_2]]$EIC_cor[[here2]] <<- c(links_profiles_neg[[at_entry_2]]$EIC_cor[[here2]],EIC_pairs[j,4])
 							}
 						}
 					}
@@ -1298,21 +1300,21 @@ if(
 						}else{
 							at_entry_1 <- (length(links_profiles_neg) + 1)
 						}
-						links_profiles_neg[[at_entry_1]] <- enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1, "number_peaks_total"][[1]])
-						names(links_profiles_neg)[at_entry_1]<-as.character(prof1)
-						profileList_neg[["index_prof"]][prof1, "links"] <- at_entry_1						
+						links_profiles_neg[[at_entry_1]] <<- enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1, "number_peaks_total"][[1]])
+						names(links_profiles_neg)[at_entry_1] <<- as.character(prof1)
+						profileList_neg[["index_prof"]][prof1, "links"] <<- at_entry_1						
 					}else{
 						at_entry_1<-profileList_neg[["index_prof"]][prof1, "links"]
 					}
 					here1 <- which(links_profiles_neg[[at_entry_1]][["isot"]][, "linked profile"] == prof2)
 					if(length(here1)==0){
-						links_profiles_neg[[at_entry_1]][["isot"]] <- rbind(
+						links_profiles_neg[[at_entry_1]][["isot"]] <<- rbind(
 							links_profiles_neg[[at_entry_1]][["isot"]], c(prof2,1,0,1,NA)
 						)
 						here1 <- dim(links_profiles_neg[[at_entry_1]][["isot"]])[1]	
 						is_new1 <- TRUE
 					}else{
-						links_profiles_neg[[at_entry_1]][["isot"]][here1, "link counts"] <- (links_profiles_neg[[at_entry_1]][["isot"]][here1,"link counts"] + 1)
+						links_profiles_neg[[at_entry_1]][["isot"]][here1, "link counts"] <<- (links_profiles_neg[[at_entry_1]][["isot"]][here1,"link counts"] + 1)
 						is_new1 <- FALSE
 					}
 					# (2) insert link to first profile for the second profile ####
@@ -1324,21 +1326,21 @@ if(
 						}else{							
 							at_entry_2 <- (length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_2]] <- enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
-						names(links_profiles_neg)[at_entry_2] <- as.character(prof2)
-						profileList_neg[["index_prof"]][prof2,"links"] <- at_entry_2						
+						links_profiles_neg[[at_entry_2]] <<- enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						names(links_profiles_neg)[at_entry_2] <<- as.character(prof2)
+						profileList_neg[["index_prof"]][prof2,"links"] <<- at_entry_2						
 					}else{
 						at_entry_2 <- profileList_neg[["index_prof"]][prof2,"links"]
 					}
 					here2<-which(links_profiles_neg[[at_entry_2]][["isot"]][,"linked profile"] == prof1)
 					if(length(here2) == 0){
-						links_profiles_neg[[at_entry_2]][["isot"]] <- rbind(
+						links_profiles_neg[[at_entry_2]][["isot"]] <<- rbind(
 							links_profiles_neg[[at_entry_2]][["isot"]], c(prof1,1,0,0,NA)
 						)
 						here2 <- dim(links_profiles_neg[[at_entry_2]][["isot"]])[1]
 						is_new2 <- TRUE
 					}else{
-						links_profiles_neg[[at_entry_2]][["isot"]][here2,"link counts"] <- (links_profiles_neg[[at_entry_2]][["isot"]][here2,"link counts"]+1)
+						links_profiles_neg[[at_entry_2]][["isot"]][here2,"link counts"] <<- (links_profiles_neg[[at_entry_2]][["isot"]][here2,"link counts"]+1)
 						is_new2 <- FALSE
 					}						
 					# (3) insert ref_1: total number of co-occurences ############
@@ -1355,8 +1357,8 @@ if(
 						
 						matched <- match(these,those)
 						not_NA <- sum(!is.na(matched))
-						links_profiles_neg[[at_entry_1]]$isot[here1,"ref_1"] <- not_NA
-						links_profiles_neg[[at_entry_2]]$isot[here2,"ref_1"] <- not_NA
+						links_profiles_neg[[at_entry_1]]$isot[here1,"ref_1"] <<- not_NA
+						links_profiles_neg[[at_entry_2]]$isot[here2,"ref_1"] <<- not_NA
 					}
 					if(any(links_profiles_neg[[at_entry_1]]$isot[,"ref_1"] == 0)){stop("\n DEBUG ME ! FOUND_1")}
 					if(any(links_profiles_neg[[at_entry_2]]$isot[,"ref_1"] == 0)){stop("\n DEBUG ME ! FOUND_2")}
@@ -1436,21 +1438,21 @@ if(
 						}else{
 							at_entry_1<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_1]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
-						names(links_profiles_neg)[at_entry_1]<-as.character(prof1)
-						profileList_neg[["index_prof"]][prof1,"links"]<-at_entry_1						
+						links_profiles_neg[[at_entry_1]] <<- enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						names(links_profiles_neg)[at_entry_1] <<- as.character(prof1)
+						profileList_neg[["index_prof"]][prof1,"links"] <<- at_entry_1						
 					}else{
 						at_entry_1<-profileList_neg[["index_prof"]][prof1,"links"]
 					}
 					here1<-which(links_profiles_neg[[at_entry_1]][["adduc"]][,"linked profile"]==prof2)
 					if(length(here1)==0){
-						links_profiles_neg[[at_entry_1]][["adduc"]]<-rbind(
+						links_profiles_neg[[at_entry_1]][["adduc"]] <<- rbind(
 							links_profiles_neg[[at_entry_1]][["adduc"]], c(prof2,1,0,1,NA)
 						)
 						here1<-dim(links_profiles_neg[[at_entry_1]][["adduc"]])[1]
 						is_new1 <- TRUE
 					}else{
-						links_profiles_neg[[at_entry_1]][["adduc"]][here1,"link counts"]<-(links_profiles_neg[[at_entry_1]][["adduc"]][here1,"link counts"]+1)
+						links_profiles_neg[[at_entry_1]][["adduc"]][here1,"link counts"] <<- (links_profiles_neg[[at_entry_1]][["adduc"]][here1,"link counts"]+1)
 						is_new1 <- FALSE
 					}
 					# (2) insert link to first profile for the second profile
@@ -1462,21 +1464,21 @@ if(
 						}else{
 							at_entry_2<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry_2]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
-						names(links_profiles_neg)[at_entry_2]<-as.character(prof2)
-						profileList_neg[["index_prof"]][prof2,"links"]<-at_entry_2						
+						links_profiles_neg[[at_entry_2]] <<- enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						names(links_profiles_neg)[at_entry_2] <<- as.character(prof2)
+						profileList_neg[["index_prof"]][prof2,"links"] <<- at_entry_2						
 					}else{
 						at_entry_2<-profileList_neg[["index_prof"]][prof2,"links"]
 					}
 					here2<-which(links_profiles_neg[[at_entry_2]][["adduc"]][,"linked profile"]==prof1)
 					if(length(here2)==0){
-						links_profiles_neg[[at_entry_2]][["adduc"]]<-rbind(
+						links_profiles_neg[[at_entry_2]][["adduc"]]<<-rbind(
 							links_profiles_neg[[at_entry_2]][["adduc"]], c(prof1,1,0,0,NA)
 						)
 						here2<-dim(links_profiles_neg[[at_entry_2]][["adduc"]])[1]
 						is_new2 <- TRUE
 					}else{
-						links_profiles_neg[[at_entry_2]][["adduc"]][here2,"link counts"]<-(links_profiles_neg[[at_entry_2]][["adduc"]][here2,"link counts"]+1)
+						links_profiles_neg[[at_entry_2]][["adduc"]][here2,"link counts"]<<-(links_profiles_neg[[at_entry_2]][["adduc"]][here2,"link counts"]+1)
 						is_new2 <- FALSE
 					}		
 					# (3) insert ref_1: total number of co-occurences ############
@@ -1491,8 +1493,8 @@ if(
 						those <- those[!is.na(match(those,forIDs))]
 						matched <- match(these,those)
 						not_NA <- sum(!is.na(matched))
-						links_profiles_neg[[at_entry_1]]$adduc[here1,"ref_1"]<-not_NA
-						links_profiles_neg[[at_entry_2]]$adduc[here2,"ref_1"]<-not_NA
+						links_profiles_neg[[at_entry_1]]$adduc[here1,"ref_1"]<<-not_NA
+						links_profiles_neg[[at_entry_2]]$adduc[here2,"ref_1"]<<-not_NA
 					}
 					if(any(links_profiles_neg[[at_entry_1]]$adduc[,"ref_1"]==0)){stop("\n DEBUG ME ! FOUND_3")}
 					if(any(links_profiles_neg[[at_entry_2]]$adduc[,"ref_1"]==0)){stop("\n DEBUG ME ! FOUND_4")}
@@ -1577,19 +1579,19 @@ if(
 						}else{
 							at_entry<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
-						names(links_profiles_neg)[at_entry]<-as.character(prof1)
-						profileList_neg[["index_prof"]][prof1,"links"]<-at_entry						
+						links_profiles_neg[[at_entry]]<<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof1,"number_peaks_total"][[1]])
+						names(links_profiles_neg)[at_entry]<<-as.character(prof1)
+						profileList_neg[["index_prof"]][prof1,"links"]<<-at_entry						
 					}else{
 						at_entry<-profileList_neg[["index_prof"]][prof1,"links"]
 					}
 					here<-which(links_profiles_neg[[at_entry]][["homol"]][,"linked profile"]==prof2)
 					if(length(here)==0){
-						links_profiles_neg[[at_entry]][["homol"]]<-rbind(
+						links_profiles_neg[[at_entry]][["homol"]]<<-rbind(
 							links_profiles_neg[[at_entry]][["homol"]], c(prof2,1,0)
 						)
 					}else{
-						links_profiles_neg[[at_entry]][["homol"]][here,"link counts"]<-(links_profiles_neg[[at_entry]][["homol"]][here,"link counts"]+1)
+						links_profiles_neg[[at_entry]][["homol"]][here,"link counts"]<<-(links_profiles_neg[[at_entry]][["homol"]][here,"link counts"]+1)
 					}
 					# (2) insert link to first profile for the second profile
 					if(profileList_neg[["index_prof"]][prof2,"profile_ID"]!=prof2){stop("\nComponentization: debug me, #1!")}				
@@ -1600,19 +1602,19 @@ if(
 						}else{
 							at_entry<-(length(links_profiles_neg)+1)
 						}
-						links_profiles_neg[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
-						names(links_profiles_neg)[at_entry]<-as.character(prof2)
-						profileList_neg[["index_prof"]][prof2,"links"]<-at_entry						
+						links_profiles_neg[[at_entry]]<<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][prof2,"number_peaks_total"][[1]])
+						names(links_profiles_neg)[at_entry]<<-as.character(prof2)
+						profileList_neg[["index_prof"]][prof2,"links"]<<-at_entry						
 					}else{
 						at_entry<-profileList_neg[["index_prof"]][prof2,"links"]
 					}
 					here<-which(links_profiles_neg[[at_entry]][["homol"]][,"linked profile"]==prof1)
 					if(length(here)==0){
-						links_profiles_neg[[at_entry]][["homol"]]<-rbind(
+						links_profiles_neg[[at_entry]][["homol"]]<<-rbind(
 							links_profiles_neg[[at_entry]][["homol"]], c(prof1,1,0)
 						)
 					}else{
-						links_profiles_neg[[at_entry]][["homol"]][here,"link counts"]<-(links_profiles_neg[[at_entry]][["homol"]][here,"link counts"]+1)
+						links_profiles_neg[[at_entry]][["homol"]][here,"link counts"]<<-(links_profiles_neg[[at_entry]][["homol"]][here,"link counts"]+1)
 					}				
 				}	
 			}
@@ -1645,7 +1647,7 @@ if(
 		cut_delRT_isot<<-boxplot.stats(c(fil1$delRT_isot))$stats[5]
 		cut_cor_isot<<-(boxplot.stats(c(fil1$int_cor_isot))$stats[1])
 		if(!is.na(cut_delRT_isot)&!is.na(cut_cor_isot)){
-			links_profiles_neg <- enviMass::cleanA_links_profiles(
+			links_profiles_neg <<- enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_delRT_isot = cut_delRT_isot, 
@@ -1654,7 +1656,7 @@ if(
 			)
 		}else{
 			cat("\n No isotopologue linkage filtering feasible")
-			links_profiles_neg <- enviMass::cleanA_links_profiles(
+			links_profiles_neg <<- enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_delRT_isot = Inf, 
@@ -1666,7 +1668,7 @@ if(
 		#cut_delRT_adduc<-median(fil1$delRT_adduc)
 		cut_delRT_adduc<<-boxplot.stats(c(fil1$delRT_adduc))$stats[5]
 		if(!is.na(cut_delRT_adduc)){
-			links_profiles_neg <- enviMass::cleanB_links_profiles( 
+			links_profiles_neg <<- enviMass::cleanB_links_profiles( 
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_delRT_adduc = cut_delRT_adduc, 
@@ -1674,7 +1676,7 @@ if(
 			)
 		}else{
 			cat("\n No adduct linkage filtering feasible")
-			links_profiles_neg <- enviMass::cleanB_links_profiles( 
+			links_profiles_neg <<- enviMass::cleanB_links_profiles( 
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_delRT_adduc = Inf, 
@@ -1692,7 +1694,7 @@ if(
 		cut_EIC<<-(boxplot.stats(use_EIC)$stats[1])
 		cut_delRT_EIC<<-max(cut_delRT_isot,cut_delRT_adduc)
 		if(!is.na(cut_EIC)&!is.na(cut_delRT_EIC)){	
-			links_profiles_neg <- enviMass::cleanC_links_profiles(
+			links_profiles_neg <<- enviMass::cleanC_links_profiles(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_EIC = cut_EIC, 
@@ -1701,7 +1703,7 @@ if(
 			)
 		}else{
 			cat("\n No EIC linkage filtering feasible")
-			links_profiles_neg <- enviMass::cleanC_links_profiles(
+			links_profiles_neg <<- enviMass::cleanC_links_profiles(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_EIC = 0, 
@@ -1713,13 +1715,13 @@ if(
 		for(n in 1:length(links_profiles_neg)){
 			is_empty<-enviMass::analyseC_links_profiles(links_profiles_neg, at_entry = n)
 			if(is_empty){
-				links_profiles_neg[[n]]<-NA
-				profileList_neg[["index_prof"]][as.numeric(names(links_profiles_neg)[n]),"links"]<-0
+				links_profiles_neg[[n]] <<- NA
+				profileList_neg[["index_prof"]][as.numeric(names(links_profiles_neg)[n]),"links"] <<- 0
 			}
 		}
 	}else{ # ... only insert values
 			# insert isotopologues ###############################################
-			links_profiles_neg <- enviMass::cleanA_links_profiles(
+			links_profiles_neg <<- enviMass::cleanA_links_profiles(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_delRT_isot = Inf, 
@@ -1727,14 +1729,14 @@ if(
 				cut_frac_iso = 0
 			)
 			# insert adducts ####################################################
-			links_profiles_neg <- enviMass::cleanB_links_profiles( 
+			links_profiles_neg <<- enviMass::cleanB_links_profiles( 
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_delRT_adduc = Inf, 
 				cut_frac_adduc = 0
 			)
 			# insert EICs #######################################################
-			links_profiles_neg <- enviMass::cleanC_links_profiles(
+			links_profiles_neg <<- enviMass::cleanC_links_profiles(
 				links_profiles = links_profiles_neg, 
 				profileList = profileList_neg,
 				cut_EIC = 0, 
@@ -1831,7 +1833,7 @@ if(
 		if(length(prof_all_IDs)>1){
 			if(with_test){if(prof_all_IDs[1]!=along[i]){stop("\n\nDebug_not_first!")}}	
 			at_entry<-profileList_neg[["index_prof"]][prof_all_IDs[1],"links"]
-			links_profiles_neg[[at_entry]][["group"]]<-prof_all_IDs[-1]
+			links_profiles_neg[[at_entry]][["group"]] <<- prof_all_IDs[-1]
 		}
 		##########################################################################	
 	}
@@ -1842,7 +1844,9 @@ if(
 	# save! ######################################################################
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 	save(links_profiles_neg,file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"));	
+	if(any(ls()=="profileList_neg")){stop("\n illegal profileList_neg detected #1 in do_IS_normaliz.r!")}
+	if(any(ls()=="links_profiles_neg")){stop("\n illegal links_profiles_neg detected #1 in do_IS_normaliz.r!")}			
+	rm(links_profiles_neg, profileList_neg, envir=as.environment(".GlobalEnv"))
 	##############################################################################	
-	rm(links_profiles_neg,profileList_neg)
 
 }

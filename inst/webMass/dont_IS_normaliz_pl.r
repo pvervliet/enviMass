@@ -63,10 +63,10 @@ if(
 	load(file.path(as.character(logfile[[1]]),"results","profileList_pos"),envir=as.environment(".GlobalEnv"));
 	# links_peaks_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol - defined in do_profiling.r
 	load(file.path(as.character(logfile[[1]]),"results","links_peaks_pos"),envir=as.environment(".GlobalEnv"));	
-	links_profiles_pos<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
+	assign("links_profiles_pos", list(), envir = as.environment(".GlobalEnv")) # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
 	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	use_entries_profiles <- enviMass::find_empty(links_profiles_pos) # also finds gaps
-	profileList_pos[["index_prof"]][,"links"]<-0
+	profileList_pos[["index_prof"]][,"links"] <<- 0
 	with_bar<-FALSE
 	####################################################################################
 
@@ -100,11 +100,11 @@ if(
 					}else{
 						at_entry<-(length(links_profiles_pos)+1)
 					}
-					links_profiles_pos[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][i,"number_peaks_total"][[1]])
-					names(links_profiles_pos)[at_entry]<-as.character(i)
-					profileList_pos[["index_prof"]][i,"links"]<-at_entry						
+					links_profiles_pos[[at_entry]] <<- enviMass::new_entry_links_profiles(profileList_pos[["index_prof"]][i,"number_peaks_total"][[1]])
+					names(links_profiles_pos)[at_entry] <<- as.character(i)
+					profileList_pos[["index_prof"]][i,"links"] <<- at_entry						
 				}else{
-					at_entry<-profileList_pos[["index_prof"]][i,"links"]
+					at_entry <- profileList_pos[["index_prof"]][i,"links"]
 				}				
 				###################################################################
 				# search peaks & their links to compounds #########################
@@ -114,23 +114,23 @@ if(
 						if(	length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]]) > 0 ){
 							for(k in 1:length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_pos[[at_entry]][[2]])==0 ){ # make a new entry for profile link to IS
-									links_profiles_pos[[at_entry]][[2]]<-
+									links_profiles_pos[[at_entry]][[2]] <<-
 										data.frame(
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[1]],
 											1,
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_pos[[at_entry]][[2]])<-c("Compound","Counts","max_score")
+									names(links_profiles_pos[[at_entry]][[2]]) <<- c("Compound","Counts","max_score")
 								}else{
 									at<-which(links_profiles_pos[[at_entry]][[2]][,1] == links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[1]])
 									if(length(at)>0){ 	# increment existing link ...
-										links_profiles_pos[[at_entry]][[2]][at,2]<-(links_profiles_pos[[at_entry]][[2]][at,2]+1)
+										links_profiles_pos[[at_entry]][[2]][at,2] <<- (links_profiles_pos[[at_entry]][[2]][at,2]+1)
 										if(links_profiles_pos[[at_entry]][[2]][at,2] < links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]] ){
-											links_profiles_pos[[at_entry]][[2]][at,2] <- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]]
+											links_profiles_pos[[at_entry]][[2]][at,2] <<- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_pos[[at_entry]][[2]]<-data.frame(
+										links_profiles_pos[[at_entry]][[2]] <<- data.frame(
 											c(
 												links_profiles_pos[[at_entry]][[2]][,1], 
 												links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[2]][[k]][[1]]
@@ -142,7 +142,7 @@ if(
 											),
 											stringsAsFactors = FALSE
 										)									
-										names(links_profiles_pos[[at_entry]][[2]])<-c("Compound","Counts","max_score")
+										names(links_profiles_pos[[at_entry]][[2]]) <<- c("Compound","Counts","max_score")
 									}
 								}
 							}	
@@ -151,23 +151,23 @@ if(
 						if(	length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]])>0 ){
 							for(k in 1:length(links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_pos[[at_entry]][[1]])==0 ){ # make a new entry for profile link to IS
-									links_profiles_pos[[at_entry]][[1]]<-
+									links_profiles_pos[[at_entry]][[1]] <<-
 										data.frame(
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]],
 											1,
 											links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_pos[[at_entry]][[1]])<-c("Compound","Counts","max_score")
+									names(links_profiles_pos[[at_entry]][[1]]) <<- c("Compound","Counts","max_score")
 								}else{
 									at<-which(links_profiles_pos[[at_entry]][[1]][,1] == links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]])
 									if(length(at)>0){ 	# increment existing link ...
-										links_profiles_pos[[at_entry]][[1]][at,2]<-(links_profiles_pos[[at_entry]][[1]][at,2]+1)
+										links_profiles_pos[[at_entry]][[1]][at,2] <<- (links_profiles_pos[[at_entry]][[1]][at,2]+1)
 										if(links_profiles_pos[[at_entry]][[1]][at,2] < links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]] ){
-											links_profiles_pos[[at_entry]][[1]][at,2] <- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]]
+											links_profiles_pos[[at_entry]][[1]][at,2] <<- links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_pos[[at_entry]][[1]]<-data.frame(
+										links_profiles_pos[[at_entry]][[1]] <<- data.frame(
 											c(
 												links_profiles_pos[[at_entry]][[1]][,1], 
 												links_peaks_pos[[profileList_pos[["peaks"]][j,"links"]]][[1]][[k]][[1]]
@@ -179,7 +179,7 @@ if(
 											),
 											stringsAsFactors = FALSE
 										)									
-										names(links_profiles_pos[[at_entry]][[1]])<-c("Compound","Counts","max_score")
+										names(links_profiles_pos[[at_entry]][[1]]) <<- c("Compound","Counts","max_score")
 									}
 								}
 							}					
@@ -206,9 +206,11 @@ if(
 	####################################################################################
 	save(profileList_pos,file=file.path(as.character(logfile[[1]]),"results","profileList_pos"));
 	save(links_profiles_pos,file=file.path(as.character(logfile[[1]]),"results","links_profiles_pos"));	
-	rm(links_profiles_pos,profileList_pos)
+	if(any(ls()=="profileList_pos")){stop("\n illegal profileList_pos detected #1 in do_IS_normaliz.r!")}
+	if(any(ls()=="links_profiles_pos")){stop("\n illegal links_profiles_pos detected #1 in do_IS_normaliz.r!")}
+	rm(links_profiles_pos, profileList_pos, envir=as.environment(".GlobalEnv"))
 	####################################################################################
-
+	
 }
 ########################################################################################
 
@@ -227,13 +229,13 @@ if(
 	if(any(objects()=="links_peaks_neg")){rm(links_peaks_neg)}				
 	if(any(objects(envir=as.environment(".GlobalEnv"))=="links_profiles_neg")){rm(links_profiles_neg,envir=as.environment(".GlobalEnv"))}
 	if(any(objects()=="links_profiles_neg")){rm(links_profiles_neg)}					
-	load(file.path(as.character(logfile[[1]]),"results","profileList_neg"),envir=as.environment(".GlobalEnv"));
+	load(file.path(as.character(logfile[[1]]),"results","profileList_neg"), envir = as.environment(".GlobalEnv"));
 	# links_peaks_neg<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol - defined in do_profiling.r
-	load(file.path(as.character(logfile[[1]]),"results","links_peaks_neg"),envir=as.environment(".GlobalEnv"));	
-	links_profiles_neg<-list(); # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol
-	measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
-	use_entries_profiles<-enviMass::find_empty(links_profiles_neg) # also finds gaps
-	profileList_neg[["index_prof"]][,"links"]<-0
+	load(file.path(as.character(logfile[[1]]),"results","links_peaks_neg"), envir = as.environment(".GlobalEnv"));	
+	assign("links_profiles_neg", list(), envir = as.environment(".GlobalEnv")) # each entry with 6 lists itself: targets, IS, EIC_correl, isotop, adducts, homol	
+	measurements <- read.csv(file = file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
+	use_entries_profiles <- enviMass::find_empty(links_profiles_neg) # also finds gaps
+	profileList_neg[["index_prof"]][,"links"] <<- 0
 	with_bar<-FALSE
 	####################################################################################
 
@@ -263,15 +265,15 @@ if(
 				if( profileList_neg[["index_prof"]][i,"links"]==0 ){ 	# establish a new link ...
 					if(length(use_entries_profiles)>0){
 						at_entry<-use_entries_profiles[1]
-						use_entries<-use_entries_profiles[-1]
+						use_entries <- use_entries_profiles[-1]
 					}else{
-						at_entry<-(length(links_profiles_neg)+1)
+						at_entry <- (length(links_profiles_neg)+1)
 					}
-					links_profiles_neg[[at_entry]]<-enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][i,"number_peaks_total"][[1]])
-					names(links_profiles_neg)[at_entry]<-as.character(i)
-					profileList_neg[["index_prof"]][i,"links"]<-at_entry						
+					links_profiles_neg[[at_entry]] <<- enviMass::new_entry_links_profiles(profileList_neg[["index_prof"]][i,"number_peaks_total"][[1]])
+					names(links_profiles_neg)[at_entry] <<- as.character(i)
+					profileList_neg[["index_prof"]][i,"links"] <<- at_entry						
 				}else{
-					at_entry<-profileList_neg[["index_prof"]][i,"links"]
+					at_entry <- profileList_neg[["index_prof"]][i,"links"]
 				}				
 				###################################################################
 				# search peaks & their links to compounds #########################
@@ -281,23 +283,23 @@ if(
 						if(	length(links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]]) > 0 ){
 							for(k in 1:length(links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_neg[[at_entry]][[2]])==0 ){ # make a new entry for profile link to IS
-									links_profiles_neg[[at_entry]][[2]]<-
+									links_profiles_neg[[at_entry]][[2]] <<-
 										data.frame(
 											links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[1]],
 											1,
 											links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_neg[[at_entry]][[2]])<-c("Compound","Counts","max_score")
+									names(links_profiles_neg[[at_entry]][[2]]) <<- c("Compound","Counts","max_score")
 								}else{
 									at<-which(links_profiles_neg[[at_entry]][[2]][,1] == links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[1]])
 									if(length(at)>0){ 	# increment existing link ...
-										links_profiles_neg[[at_entry]][[2]][at,2]<-(links_profiles_neg[[at_entry]][[2]][at,2]+1)
+										links_profiles_neg[[at_entry]][[2]][at,2] <<- (links_profiles_neg[[at_entry]][[2]][at,2]+1)
 										if(links_profiles_neg[[at_entry]][[2]][at,2] < links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[2]] ){
-											links_profiles_neg[[at_entry]][[2]][at,2] <- links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[2]]
+											links_profiles_neg[[at_entry]][[2]][at,2] <<- links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_neg[[at_entry]][[2]]<-data.frame(
+										links_profiles_neg[[at_entry]][[2]] <<- data.frame(
 											c(
 												links_profiles_neg[[at_entry]][[2]][,1], 
 												links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[2]][[k]][[1]]
@@ -309,7 +311,7 @@ if(
 											),
 											stringsAsFactors = FALSE
 										)									
-										names(links_profiles_neg[[at_entry]][[2]])<-c("Compound","Counts","max_score")
+										names(links_profiles_neg[[at_entry]][[2]]) <<- c("Compound","Counts","max_score")
 									}
 								}
 							}	
@@ -318,23 +320,23 @@ if(
 						if(	length(links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]])>0 ){
 							for(k in 1:length(links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]])){ # if several compound matches exist for this peak
 								if( length(links_profiles_neg[[at_entry]][[1]])==0 ){ # make a new entry for profile link to IS
-									links_profiles_neg[[at_entry]][[1]]<-
+									links_profiles_neg[[at_entry]][[1]] <<-
 										data.frame(
 											links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[1]],
 											1,
 											links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[2]],
 											stringsAsFactors = FALSE
 										)
-									names(links_profiles_neg[[at_entry]][[1]])<-c("Compound","Counts","max_score")
+									names(links_profiles_neg[[at_entry]][[1]]) <<- c("Compound","Counts","max_score")
 								}else{
 									at<-which(links_profiles_neg[[at_entry]][[1]][,1] == links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[1]])
 									if(length(at)>0){ 	# increment existing link ...
-										links_profiles_neg[[at_entry]][[1]][at,2]<-(links_profiles_neg[[at_entry]][[1]][at,2]+1)
+										links_profiles_neg[[at_entry]][[1]][at,2] <<- (links_profiles_neg[[at_entry]][[1]][at,2]+1)
 										if(links_profiles_neg[[at_entry]][[1]][at,2] < links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[2]] ){
-											links_profiles_neg[[at_entry]][[1]][at,2] <- links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[2]]
+											links_profiles_neg[[at_entry]][[1]][at,2] <<- links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[2]]
 										}
 									}else{	# ... or add a new one?
-										links_profiles_neg[[at_entry]][[1]]<-data.frame(
+										links_profiles_neg[[at_entry]][[1]] <<- data.frame(
 											c(
 												links_profiles_neg[[at_entry]][[1]][,1], 
 												links_peaks_neg[[profileList_neg[["peaks"]][j,"links"]]][[1]][[k]][[1]]
@@ -346,7 +348,7 @@ if(
 											),
 											stringsAsFactors = FALSE
 										)									
-										names(links_profiles_neg[[at_entry]][[1]])<-c("Compound","Counts","max_score")
+										names(links_profiles_neg[[at_entry]][[1]]) <<- c("Compound","Counts","max_score")
 									}
 								}
 							}					
@@ -362,10 +364,10 @@ if(
 	####################################################################################
 
 	####################################################################################
-	output$int_norm_ISTD_neg_median <- renderPlot({ 
+	output$int_norm_ISTD_neg_median <- renderPlot({
 		plot.new()
 	})
-	output$int_norm_ISTD_neg_counts <- renderPlot({ 
+	output$int_norm_ISTD_neg_counts <- renderPlot({
 		plot.new()
 	})					
 	####################################################################################
@@ -373,9 +375,11 @@ if(
 	####################################################################################
 	save(profileList_neg,file=file.path(as.character(logfile[[1]]),"results","profileList_neg"));
 	save(links_profiles_neg,file=file.path(as.character(logfile[[1]]),"results","links_profiles_neg"));	
-	rm(links_profiles_neg,profileList_neg)
+	if(any(ls()=="profileList_neg")){stop("\n illegal profileList_neg detected #1 in do_IS_normaliz.r!")}
+	if(any(ls()=="links_profiles_neg")){stop("\n illegal links_profiles_neg detected #1 in do_IS_normaliz.r!")}			
+	rm(links_profiles_neg, profileList_neg, envir=as.environment(".GlobalEnv"))
 	####################################################################################
-
+	
 }
 
 ########################################################################################
