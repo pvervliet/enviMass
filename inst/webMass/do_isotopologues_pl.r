@@ -4,6 +4,7 @@
 
     measurements<-read.csv(file=file.path(logfile[[1]],"dataframes","measurements"),colClasses = "character");
 	cat("Isotopologue grouping: ")
+	if(!file.exists(file.path(logfile[[1]], "dataframes", "quantiz"))){stop("\nNo isotopologue space available.")}
 	load(file.path(logfile[[1]],"dataframes","quantiz"))
 	if((quantiz$R_set!=logfile$parameters$resolution) & (quantiz$R_set!="Sciex_all")){
 		cat("\n WARNING: seems the quantized data for isotopologue grouping does NOT MATCH your selected resolution! Please resolve this issue.")
