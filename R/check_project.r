@@ -529,30 +529,37 @@ check_project <- function(
 		(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes") &
 		file.exists(file.path(logfile[[1]],"dataframes","quantiz") )
 	){
-		load_quantiz<-try(load(file.path(logfile[[1]],"dataframes","quantiz")))  
-		if(class(load_quantiz)=="try-error"){
-			redo_load_quantiz<-TRUE
+		load_quantiz <- try(load(file.path(logfile[[1]],"dataframes","quantiz")))  
+		if(class(load_quantiz) == "try-error"){
+			redo_load_quantiz <- TRUE
 		}else{
 			if(quantiz$R_set!="Sciex_all"){
 				if(quantiz$R_set!=logfile$parameters$resolution){
-					redo_load_quantiz<-TRUE
+					redo_load_quantiz <- TRUE
 				}
 			}else{ # Sciex instruments all set by one quantiz simulation
 				if(!grepl("Sciex",logfile$parameters$resolution)){
-					redo_load_quantiz<-TRUE
+					redo_load_quantiz <- TRUE
 				}
 			}
 		}
-	}
+	}	
 	if( # quantiz not available or not correct?
-		(logfile$workflow[names(logfile$workflow)=="isotopologues"]=="yes") &
-		( !file.exists(file.path(logfile[[1]],"dataframes","quantiz") ) || redo_load_quantiz)
+		(logfile$workflow[names(logfile$workflow) == "isotopologues"] == "yes") &
+		( !file.exists(file.path(logfile[[1]], "dataframes", "quantiz") ) || redo_load_quantiz)
 	){
-		avail<-c(
+		if(file.exists(file.path(logfile[[1]], "dataframes", "quantiz"))){
+			file.remove(file.path(logfile[[1]], "dataframes", "quantiz"))
+		}
+		avail <- c(
 			"OrbitrapXL,Velos,VelosPro_R60000@400",
 			"Q-Exactive,ExactivePlus_280K@200",
 			"Q-Exactive,ExactivePlus_R140000@200",
 			"Q-Exactive,ExactivePlus_R70000@200",
+			"Q-Exactive,ExactivePlus_R35000@200",
+			"OTFusion,QExactiveHF_480000@200",
+			"OTFusion,QExactiveHF_240000@200",
+			"OTFusion,QExactiveHF_120000@200",
 			"Sciex_TripleTOF5600_R25000@200",
 			"Sciex_TripleTOF6600_R25000@200",
 			"Sciex_QTOFX500R_R25000@200",
@@ -560,47 +567,29 @@ check_project <- function(
 			"Agilent_QTOF6550_low_highRes4GHz_highRes"
 		)
 		if(any(avail == logfile$parameters$resolution)){ # available on www.envimass.ch
-			if(logfile$parameters$resolution == "OrbitrapXL,Velos,VelosPro_R60000@400"){
-				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/OrbitrapXL_Velos_VelosPro_R60K@400/quantiz"
-			}
-			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_280K@200"){
-				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_280K@200/quantiz"
-			}			
-			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R140000@200"){
-				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R140K@200/quantiz"
-			}				
-			if(logfile$parameters$resolution=="Q-Exactive,ExactivePlus_R70000@200"){
-				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Q-Exactive_ExactivePlus_R70K@200/quantiz"
-			}				
-			if(logfile$parameters$resolution=="Sciex_TripleTOF5600_R25000@200"){
-				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
-			}
-			if(logfile$parameters$resolution=="Sciex_TripleTOF6600_R25000@200"){
-				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
-			}
-			if(logfile$parameters$resolution=="Sciex_QTOFX500R_R25000@200"){
-				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Sciex_all/quantiz"
-			}
-			if(logfile$parameters$resolution=="Agilent_QTOF6550_low_extended2GHz_highRes"){
-				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Agilent_QTOF6550_low_extended2GHz_highRes/quantiz"
-			}			
-			if(logfile$parameters$resolution=="Agilent_QTOF6550_low_highRes4GHz_highRes"){
-				get_url <- "http://www.looscomputing.ch/eng/enviMass/inputs/quantiz/Agilent_QTOF6550_low_highRes4GHz_highRes/quantiz"
-			}	
-			dest_file <- file.path(logfile[[1]], "dataframes", "quantiz")
-			url_quantiz <- try(download.file(url=get_url, destfile = dest_file, mode = "wb"))
-			if(class(url_quantiz) == "try-error"){
-				cat("\n Download of missing isotopologue space failed.")
-				say <- "Unable to download missing isotopologue space. Please either check your internet connection and retry or
-				proceed manually as described on www.enviMass.ch -> Data input -> Download available isotopologue spaces." 
-			}else{
-				cat("\n Download of missing isotopologue space completed.\n")			  
-				load_quantiz <- try(load(file.path(logfile[[1]], "dataframes", "quantiz")) )
-				if(class(load_quantiz) == "try-error"){
-					cat("\n Loading of missing isotopologue space failed.\n")	
-					say <- "Loading failure of downloaded isotopologue space. Please proceed manually as described on www.enviMass.ch -> Data input -> Download available isotopologue spaces."
-				}
-			}
+			showModal(modalDialog(
+				title = "Download of isotopologue space",
+				div("You have included a grouping of isotopologues in the workflow and therefore require a so-called instrument-specific isotopologue space to be part of your enviMass project. 
+					Before proceeding with the automatic download of such an isotopologue space, please read and agree to the following enviMass isotopologue spaces LICENSE and LIABILITY terms:", style = "color: red;"),
+				HTML("<br><b>Copyright © 2018 www.looscomputing.ch. All rights reserved.</b>
+					<i>Permission to download and use the enviMass isotopologue spaces as part of the enviMass workflow and for setting up and calculating an unrestricted number of enviMass 
+					projects is hereby granted for <b>NON-COMMERCIAL USAGE</b>, without fee and without a signed licensing agreement. <br><br>
+					Permission to download and use enviMass isotopologue spaces as part of the enviMass workflow and while setting up new enviMass projects for <b>COMMERCIAL USAGE</b> is only
+					granted during the time of coverage by an enviMass Software- and Support-Package.
+					Recalculation of existing enviMass projects containing enviMass isotopologue spaces outside such coverage is permitted for commercial purposes at any time.<br><br>
+					Permission is <b>NOT GRANTED TO COPY OR TO REDISTRIBUTE</b> enviMass isotopologue spaces outside their enviMass projects, or to modify them, for any type of usage.
+					The enviMass isotopologue spaces are distributed without warranties of any kind, either implied or expressed.	Under no circumstances shall the authors of the enviMass 
+					isotopologue spaces be liable to any direct, indirect or consequential damages arising from their download, usage or redistribution as part of enviMass projects.
+					The authors have no legal obligation to maintain, update, support or enhance the provided enviMass isotopologue spaces.<br>"),
+				footer = div(fluidRow(
+						column(width = 4, actionButton("isotop_license_ok", "I agree, start download.")),
+						column(width = 2, modalButton("Cancel"))
+					),					
+					helpText( a("Request Software- & Support-Package information", 
+						href = "http://www.looscomputing.ch/eng/contact.htm", target="_blank"))								
+				)			
+			))
+			say <- "Download of isotopologue space required."
 		}else{	# not available on www.wnvimass.ch
 			say <- "The isotopologue grouping step is enabled in the workflow. We regret that no data set for the isotopologue space for the selected instrument and resolution is at present available for enviMass. Please remove the isotopologue grouping step from the workflow." 
 		} 
