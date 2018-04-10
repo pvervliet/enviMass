@@ -266,6 +266,233 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// init_MSraw
+bool init_MSraw(StringVector file_path, int sep_dim, int type);
+RcppExport SEXP _enviMass_init_MSraw(SEXP file_pathSEXP, SEXP sep_dimSEXP, SEXP typeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< int >::type sep_dim(sep_dimSEXP);
+    Rcpp::traits::input_parameter< int >::type type(typeSEXP);
+    rcpp_result_gen = Rcpp::wrap(init_MSraw(file_path, sep_dim, type));
+    return rcpp_result_gen;
+END_RCPP
+}
+// MSraw_size
+IntegerVector MSraw_size();
+RcppExport SEXP _enviMass_MSraw_size() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(MSraw_size());
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_header_MSraw_num
+IntegerVector read_header_MSraw_num(StringVector file_path);
+RcppExport SEXP _enviMass_read_header_MSraw_num(SEXP file_pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_header_MSraw_num(file_path));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_checksum_MSraw
+bool write_checksum_MSraw(StringVector file_path, StringVector checksum);
+RcppExport SEXP _enviMass_write_checksum_MSraw(SEXP file_pathSEXP, SEXP checksumSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< StringVector >::type checksum(checksumSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_checksum_MSraw(file_path, checksum));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_checksum_MSraw
+CharacterVector read_checksum_MSraw(StringVector file_path);
+RcppExport SEXP _enviMass_read_checksum_MSraw(SEXP file_pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_checksum_MSraw(file_path));
+    return rcpp_result_gen;
+END_RCPP
+}
+// erase_checksum_MSraw
+bool erase_checksum_MSraw(StringVector file_path);
+RcppExport SEXP _enviMass_erase_checksum_MSraw(SEXP file_pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(erase_checksum_MSraw(file_path));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_centroids_MSraw
+bool write_centroids_MSraw(StringVector file_path, NumericVector scan_RTs, IntegerVector scan_IDs, NumericMatrix centroids, IntegerVector match_scans_RT, bool skip_prof_index);
+RcppExport SEXP _enviMass_write_centroids_MSraw(SEXP file_pathSEXP, SEXP scan_RTsSEXP, SEXP scan_IDsSEXP, SEXP centroidsSEXP, SEXP match_scans_RTSEXP, SEXP skip_prof_indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type scan_RTs(scan_RTsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type scan_IDs(scan_IDsSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type centroids(centroidsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type match_scans_RT(match_scans_RTSEXP);
+    Rcpp::traits::input_parameter< bool >::type skip_prof_index(skip_prof_indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_centroids_MSraw(file_path, scan_RTs, scan_IDs, centroids, match_scans_RT, skip_prof_index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_scanRTs_MSraw
+NumericVector read_scanRTs_MSraw(StringVector file_path);
+RcppExport SEXP _enviMass_read_scanRTs_MSraw(SEXP file_pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_scanRTs_MSraw(file_path));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_scanIDs_MSraw
+IntegerVector read_scanIDs_MSraw(StringVector file_path);
+RcppExport SEXP _enviMass_read_scanIDs_MSraw(SEXP file_pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_scanIDs_MSraw(file_path));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_centroids_MSraw
+NumericMatrix read_centroids_MSraw(StringVector file_path, bool insert_RT, bool use_ID, bool read_all, bool get_index);
+RcppExport SEXP _enviMass_read_centroids_MSraw(SEXP file_pathSEXP, SEXP insert_RTSEXP, SEXP use_IDSEXP, SEXP read_allSEXP, SEXP get_indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< bool >::type insert_RT(insert_RTSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_ID(use_IDSEXP);
+    Rcpp::traits::input_parameter< bool >::type read_all(read_allSEXP);
+    Rcpp::traits::input_parameter< bool >::type get_index(get_indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_centroids_MSraw(file_path, insert_RT, use_ID, read_all, get_index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_partition_MSraw
+bool write_partition_MSraw(StringVector file_path, NumericMatrix partition_index);
+RcppExport SEXP _enviMass_write_partition_MSraw(SEXP file_pathSEXP, SEXP partition_indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type partition_index(partition_indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_partition_MSraw(file_path, partition_index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_partition_MSraw
+NumericMatrix read_partition_MSraw(StringVector file_path, bool insert_RT, bool index_convert);
+RcppExport SEXP _enviMass_read_partition_MSraw(SEXP file_pathSEXP, SEXP insert_RTSEXP, SEXP index_convertSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< bool >::type insert_RT(insert_RTSEXP);
+    Rcpp::traits::input_parameter< bool >::type index_convert(index_convertSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_partition_MSraw(file_path, insert_RT, index_convert));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_EIC_MSraw
+bool write_EIC_MSraw(StringVector file_path, NumericMatrix EIC_index);
+RcppExport SEXP _enviMass_write_EIC_MSraw(SEXP file_pathSEXP, SEXP EIC_indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type EIC_index(EIC_indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_EIC_MSraw(file_path, EIC_index));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_EIC_MSraw
+NumericMatrix read_EIC_MSraw(StringVector file_path, bool index_convert);
+RcppExport SEXP _enviMass_read_EIC_MSraw(SEXP file_pathSEXP, SEXP index_convertSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< bool >::type index_convert(index_convertSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_EIC_MSraw(file_path, index_convert));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_peaks_MSraw
+bool write_peaks_MSraw(StringVector file_path, NumericMatrix peak_index, NumericMatrix peak_info);
+RcppExport SEXP _enviMass_write_peaks_MSraw(SEXP file_pathSEXP, SEXP peak_indexSEXP, SEXP peak_infoSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type peak_index(peak_indexSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type peak_info(peak_infoSEXP);
+    rcpp_result_gen = Rcpp::wrap(write_peaks_MSraw(file_path, peak_index, peak_info));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_peaks_MSraw
+NumericMatrix read_peaks_MSraw(StringVector file_path, bool index_convert);
+RcppExport SEXP _enviMass_read_peaks_MSraw(SEXP file_pathSEXP, SEXP index_convertSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< bool >::type index_convert(index_convertSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_peaks_MSraw(file_path, index_convert));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_single_EIC_MSraw
+List read_single_EIC_MSraw(StringVector file_path, IntegerVector EIC_indices, bool insert_RT, bool use_ID);
+RcppExport SEXP _enviMass_read_single_EIC_MSraw(SEXP file_pathSEXP, SEXP EIC_indicesSEXP, SEXP insert_RTSEXP, SEXP use_IDSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type EIC_indices(EIC_indicesSEXP);
+    Rcpp::traits::input_parameter< bool >::type insert_RT(insert_RTSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_ID(use_IDSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_single_EIC_MSraw(file_path, EIC_indices, insert_RT, use_ID));
+    return rcpp_result_gen;
+END_RCPP
+}
+// filter_centroids_MSraw
+NumericMatrix filter_centroids_MSraw(StringVector file_path, int min_RT, int max_RT, int min_mass, int max_mass, bool insert_RT, bool read_all, bool use_partitions);
+RcppExport SEXP _enviMass_filter_centroids_MSraw(SEXP file_pathSEXP, SEXP min_RTSEXP, SEXP max_RTSEXP, SEXP min_massSEXP, SEXP max_massSEXP, SEXP insert_RTSEXP, SEXP read_allSEXP, SEXP use_partitionsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< int >::type min_RT(min_RTSEXP);
+    Rcpp::traits::input_parameter< int >::type max_RT(max_RTSEXP);
+    Rcpp::traits::input_parameter< int >::type min_mass(min_massSEXP);
+    Rcpp::traits::input_parameter< int >::type max_mass(max_massSEXP);
+    Rcpp::traits::input_parameter< bool >::type insert_RT(insert_RTSEXP);
+    Rcpp::traits::input_parameter< bool >::type read_all(read_allSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_partitions(use_partitionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(filter_centroids_MSraw(file_path, min_RT, max_RT, min_mass, max_mass, insert_RT, read_all, use_partitions));
+    return rcpp_result_gen;
+END_RCPP
+}
 // extractProfiles
 IntegerVector extractProfiles(NumericMatrix peaks, IntegerVector in_order, double dmass, bool ppm, double dret);
 RcppExport SEXP _enviMass_extractProfiles(SEXP peaksSEXP, SEXP in_orderSEXP, SEXP dmassSEXP, SEXP ppmSEXP, SEXP dretSEXP) {
@@ -332,6 +559,24 @@ static const R_CallMethodDef CallEntries[] = {
     {"_enviMass_plot_prof", (DL_FUNC) &_enviMass_plot_prof, 11},
     {"_enviMass_binRT_prof", (DL_FUNC) &_enviMass_binRT_prof, 5},
     {"_enviMass_binmz_prof", (DL_FUNC) &_enviMass_binmz_prof, 4},
+    {"_enviMass_init_MSraw", (DL_FUNC) &_enviMass_init_MSraw, 3},
+    {"_enviMass_MSraw_size", (DL_FUNC) &_enviMass_MSraw_size, 0},
+    {"_enviMass_read_header_MSraw_num", (DL_FUNC) &_enviMass_read_header_MSraw_num, 1},
+    {"_enviMass_write_checksum_MSraw", (DL_FUNC) &_enviMass_write_checksum_MSraw, 2},
+    {"_enviMass_read_checksum_MSraw", (DL_FUNC) &_enviMass_read_checksum_MSraw, 1},
+    {"_enviMass_erase_checksum_MSraw", (DL_FUNC) &_enviMass_erase_checksum_MSraw, 1},
+    {"_enviMass_write_centroids_MSraw", (DL_FUNC) &_enviMass_write_centroids_MSraw, 6},
+    {"_enviMass_read_scanRTs_MSraw", (DL_FUNC) &_enviMass_read_scanRTs_MSraw, 1},
+    {"_enviMass_read_scanIDs_MSraw", (DL_FUNC) &_enviMass_read_scanIDs_MSraw, 1},
+    {"_enviMass_read_centroids_MSraw", (DL_FUNC) &_enviMass_read_centroids_MSraw, 5},
+    {"_enviMass_write_partition_MSraw", (DL_FUNC) &_enviMass_write_partition_MSraw, 2},
+    {"_enviMass_read_partition_MSraw", (DL_FUNC) &_enviMass_read_partition_MSraw, 3},
+    {"_enviMass_write_EIC_MSraw", (DL_FUNC) &_enviMass_write_EIC_MSraw, 2},
+    {"_enviMass_read_EIC_MSraw", (DL_FUNC) &_enviMass_read_EIC_MSraw, 2},
+    {"_enviMass_write_peaks_MSraw", (DL_FUNC) &_enviMass_write_peaks_MSraw, 3},
+    {"_enviMass_read_peaks_MSraw", (DL_FUNC) &_enviMass_read_peaks_MSraw, 2},
+    {"_enviMass_read_single_EIC_MSraw", (DL_FUNC) &_enviMass_read_single_EIC_MSraw, 4},
+    {"_enviMass_filter_centroids_MSraw", (DL_FUNC) &_enviMass_filter_centroids_MSraw, 8},
     {"_enviMass_extractProfiles", (DL_FUNC) &_enviMass_extractProfiles, 5},
     {"_enviMass_extractProfiles_replicates", (DL_FUNC) &_enviMass_extractProfiles_replicates, 6},
     {"_enviMass_while_checked", (DL_FUNC) &_enviMass_while_checked, 6},

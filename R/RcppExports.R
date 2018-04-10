@@ -69,6 +69,78 @@ binmz_prof <- function(mz, intensity, binmzs, colorit) {
     .Call('_enviMass_binmz_prof', PACKAGE = 'enviMass', mz, intensity, binmzs, colorit)
 }
 
+init_MSraw <- function(file_path, sep_dim, type) {
+    .Call('_enviMass_init_MSraw', PACKAGE = 'enviMass', file_path, sep_dim, type)
+}
+
+MSraw_size <- function() {
+    .Call('_enviMass_MSraw_size', PACKAGE = 'enviMass')
+}
+
+read_header_MSraw_num <- function(file_path) {
+    .Call('_enviMass_read_header_MSraw_num', PACKAGE = 'enviMass', file_path)
+}
+
+write_checksum_MSraw <- function(file_path, checksum) {
+    .Call('_enviMass_write_checksum_MSraw', PACKAGE = 'enviMass', file_path, checksum)
+}
+
+read_checksum_MSraw <- function(file_path) {
+    .Call('_enviMass_read_checksum_MSraw', PACKAGE = 'enviMass', file_path)
+}
+
+erase_checksum_MSraw <- function(file_path) {
+    .Call('_enviMass_erase_checksum_MSraw', PACKAGE = 'enviMass', file_path)
+}
+
+write_centroids_MSraw <- function(file_path, scan_RTs, scan_IDs, centroids, match_scans_RT, skip_prof_index) {
+    .Call('_enviMass_write_centroids_MSraw', PACKAGE = 'enviMass', file_path, scan_RTs, scan_IDs, centroids, match_scans_RT, skip_prof_index)
+}
+
+read_scanRTs_MSraw <- function(file_path) {
+    .Call('_enviMass_read_scanRTs_MSraw', PACKAGE = 'enviMass', file_path)
+}
+
+read_scanIDs_MSraw <- function(file_path) {
+    .Call('_enviMass_read_scanIDs_MSraw', PACKAGE = 'enviMass', file_path)
+}
+
+read_centroids_MSraw <- function(file_path, insert_RT, use_ID, read_all, get_index) {
+    .Call('_enviMass_read_centroids_MSraw', PACKAGE = 'enviMass', file_path, insert_RT, use_ID, read_all, get_index)
+}
+
+write_partition_MSraw <- function(file_path, partition_index) {
+    .Call('_enviMass_write_partition_MSraw', PACKAGE = 'enviMass', file_path, partition_index)
+}
+
+read_partition_MSraw <- function(file_path, insert_RT, index_convert) {
+    .Call('_enviMass_read_partition_MSraw', PACKAGE = 'enviMass', file_path, insert_RT, index_convert)
+}
+
+write_EIC_MSraw <- function(file_path, EIC_index) {
+    .Call('_enviMass_write_EIC_MSraw', PACKAGE = 'enviMass', file_path, EIC_index)
+}
+
+read_EIC_MSraw <- function(file_path, index_convert) {
+    .Call('_enviMass_read_EIC_MSraw', PACKAGE = 'enviMass', file_path, index_convert)
+}
+
+write_peaks_MSraw <- function(file_path, peak_index, peak_info) {
+    .Call('_enviMass_write_peaks_MSraw', PACKAGE = 'enviMass', file_path, peak_index, peak_info)
+}
+
+read_peaks_MSraw <- function(file_path, index_convert) {
+    .Call('_enviMass_read_peaks_MSraw', PACKAGE = 'enviMass', file_path, index_convert)
+}
+
+read_single_EIC_MSraw <- function(file_path, EIC_indices, insert_RT, use_ID) {
+    .Call('_enviMass_read_single_EIC_MSraw', PACKAGE = 'enviMass', file_path, EIC_indices, insert_RT, use_ID)
+}
+
+filter_centroids_MSraw <- function(file_path, min_RT, max_RT, min_mass, max_mass, insert_RT, read_all, use_partitions) {
+    .Call('_enviMass_filter_centroids_MSraw', PACKAGE = 'enviMass', file_path, min_RT, max_RT, min_mass, max_mass, insert_RT, read_all, use_partitions)
+}
+
 extractProfiles <- function(peaks, in_order, dmass, ppm, dret) {
     .Call('_enviMass_extractProfiles', PACKAGE = 'enviMass', peaks, in_order, dmass, ppm, dret)
 }
