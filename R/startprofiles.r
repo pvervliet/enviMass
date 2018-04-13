@@ -19,8 +19,7 @@
 #' @details  enviMass workflow function
 #' 
 #' @seealso \code{agglomer}, \code{partcluster} 
-
-startprofiles<-function(
+startprofiles <- function(
 	logfile,
 	frac=FALSE,
 	sets=FALSE,
@@ -31,7 +30,6 @@ startprofiles<-function(
 	types=FALSE,
 	blind_omit=FALSE
 ){
-
     ############################################################################
     # check inputs #############################################################
     if(frac!=FALSE){if((frac<0)||(frac>=1)){stop("\n invalid frac argument. FALSE or 0<frac<=1")}}
@@ -212,6 +210,4 @@ startprofiles<-function(
     rm(peaks)
     ############################################################################
     return(profiles)
-
 }
-

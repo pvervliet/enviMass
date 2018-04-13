@@ -387,6 +387,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// read_scan_MSraw
+NumericMatrix read_scan_MSraw(StringVector file_path, int scan_ID, bool read_all);
+RcppExport SEXP _enviMass_read_scan_MSraw(SEXP file_pathSEXP, SEXP scan_IDSEXP, SEXP read_allSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type file_path(file_pathSEXP);
+    Rcpp::traits::input_parameter< int >::type scan_ID(scan_IDSEXP);
+    Rcpp::traits::input_parameter< bool >::type read_all(read_allSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_scan_MSraw(file_path, scan_ID, read_all));
+    return rcpp_result_gen;
+END_RCPP
+}
 // write_partition_MSraw
 bool write_partition_MSraw(StringVector file_path, NumericMatrix partition_index);
 RcppExport SEXP _enviMass_write_partition_MSraw(SEXP file_pathSEXP, SEXP partition_indexSEXP) {
@@ -476,8 +489,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // filter_centroids_MSraw
-NumericMatrix filter_centroids_MSraw(StringVector file_path, int min_RT, int max_RT, int min_mass, int max_mass, bool insert_RT, bool read_all, bool use_partitions);
-RcppExport SEXP _enviMass_filter_centroids_MSraw(SEXP file_pathSEXP, SEXP min_RTSEXP, SEXP max_RTSEXP, SEXP min_massSEXP, SEXP max_massSEXP, SEXP insert_RTSEXP, SEXP read_allSEXP, SEXP use_partitionsSEXP) {
+List filter_centroids_MSraw(StringVector file_path, int min_RT, int max_RT, int min_mass, int max_mass, bool insert_RT, bool read_all, bool use_partitions, bool get_XIC);
+RcppExport SEXP _enviMass_filter_centroids_MSraw(SEXP file_pathSEXP, SEXP min_RTSEXP, SEXP max_RTSEXP, SEXP min_massSEXP, SEXP max_massSEXP, SEXP insert_RTSEXP, SEXP read_allSEXP, SEXP use_partitionsSEXP, SEXP get_XICSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -489,7 +502,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type insert_RT(insert_RTSEXP);
     Rcpp::traits::input_parameter< bool >::type read_all(read_allSEXP);
     Rcpp::traits::input_parameter< bool >::type use_partitions(use_partitionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(filter_centroids_MSraw(file_path, min_RT, max_RT, min_mass, max_mass, insert_RT, read_all, use_partitions));
+    Rcpp::traits::input_parameter< bool >::type get_XIC(get_XICSEXP);
+    rcpp_result_gen = Rcpp::wrap(filter_centroids_MSraw(file_path, min_RT, max_RT, min_mass, max_mass, insert_RT, read_all, use_partitions, get_XIC));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -569,6 +583,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_enviMass_read_scanRTs_MSraw", (DL_FUNC) &_enviMass_read_scanRTs_MSraw, 1},
     {"_enviMass_read_scanIDs_MSraw", (DL_FUNC) &_enviMass_read_scanIDs_MSraw, 1},
     {"_enviMass_read_centroids_MSraw", (DL_FUNC) &_enviMass_read_centroids_MSraw, 5},
+    {"_enviMass_read_scan_MSraw", (DL_FUNC) &_enviMass_read_scan_MSraw, 3},
     {"_enviMass_write_partition_MSraw", (DL_FUNC) &_enviMass_write_partition_MSraw, 2},
     {"_enviMass_read_partition_MSraw", (DL_FUNC) &_enviMass_read_partition_MSraw, 3},
     {"_enviMass_write_EIC_MSraw", (DL_FUNC) &_enviMass_write_EIC_MSraw, 2},
@@ -576,7 +591,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_enviMass_write_peaks_MSraw", (DL_FUNC) &_enviMass_write_peaks_MSraw, 3},
     {"_enviMass_read_peaks_MSraw", (DL_FUNC) &_enviMass_read_peaks_MSraw, 2},
     {"_enviMass_read_single_EIC_MSraw", (DL_FUNC) &_enviMass_read_single_EIC_MSraw, 4},
-    {"_enviMass_filter_centroids_MSraw", (DL_FUNC) &_enviMass_filter_centroids_MSraw, 8},
+    {"_enviMass_filter_centroids_MSraw", (DL_FUNC) &_enviMass_filter_centroids_MSraw, 9},
     {"_enviMass_extractProfiles", (DL_FUNC) &_enviMass_extractProfiles, 5},
     {"_enviMass_extractProfiles_replicates", (DL_FUNC) &_enviMass_extractProfiles_replicates, 6},
     {"_enviMass_while_checked", (DL_FUNC) &_enviMass_while_checked, 6},

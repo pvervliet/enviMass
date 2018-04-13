@@ -35,7 +35,6 @@
 #' @docType package
 #' @name enviMass
 NULL
-
 #' Exemplary data set of internal standard (IS) compounds.
 #'
 #' \itemize{
@@ -63,7 +62,6 @@ NULL
 #' @usage data(IS)
 #' @format A data frame with 19 rows and 16 variables
 NULL
-
 #' Exemplary data set of target compounds.
 #'
 #' \itemize{
@@ -94,7 +92,6 @@ NULL
 #' @usage data(targets)
 #' @format A data frame with 68 rows and 19 variables
 NULL
-
 #' @import enviPick
 #' @import enviPat
 #' @import nontarget
@@ -106,8 +103,6 @@ NULL
 #' @useDynLib enviMass extractProfiles neighbour agglom indexed fill_timeset meandel intdiff plot_prof binRT_prof binmz_prof
 #'
 #'
-
-
 .onAttach <- function(lib, pkg)
 {
 	
@@ -130,4 +125,3 @@ NULL
 	
 	
 }
-

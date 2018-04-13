@@ -1,42 +1,36 @@
-##########
 if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"))){
-	file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"))
-}  
+file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_pos"))
+}
 if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))){
-	file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))
-} 
+file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_neg"))
+}
 if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))){
-	file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))
-}  
+file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_pos_copy"))
+}
 if(file.exists(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"))){
-	file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"))
-}   
+file.remove(file=file.path(as.character(logfile[[1]]),"results","profileList_neg_copy"))
+}
 if(file.exists(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))){
-	file.remove(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))
+file.remove(file=file.path(as.character(logfile[[1]]),"results","links_peaks_pos"))
 }
 if(file.exists(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"))){
-	file.remove(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"))
+file.remove(file=file.path(as.character(logfile[[1]]),"results","links_peaks_neg"))
 }
-#########
 if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_pos")){
-	rm(profileList_pos,envir=as.environment(".GlobalEnv"))
-} 
+rm(profileList_pos,envir=as.environment(".GlobalEnv"))
+}
 if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList_neg")){
-	rm(profileList_neg,envir=as.environment(".GlobalEnv"))
-} 
+rm(profileList_neg,envir=as.environment(".GlobalEnv"))
+}
 if(any(objects(envir=as.environment(".GlobalEnv"))=="profileList")){
-	rm(profileList,envir=as.environment(".GlobalEnv"))
-} 
-##########
+rm(profileList,envir=as.environment(".GlobalEnv"))
+}
 if(any(objects()=="profileList_pos")){
-	rm(profileList_pos)
-} 
+rm(profileList_pos)
+}
 if(any(objects()=="profileList_neg")){
-	rm(profileList_neg)
-} 
+rm(profileList_neg)
+}
 if(any(objects()=="profileList")){
-	rm(profileList)
-} 
-##########
-
-
+rm(profileList)
+}

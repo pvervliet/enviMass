@@ -14,14 +14,12 @@
 #' @details enviMass workflow function
 #' 
 #' @seealso  \code{startprofiles}, \code{partcluster} 
-
-agglomer<-function(
+agglomer <- function(
 	profileList,
 	dmass=2,
 	ppm=TRUE,
 	dret=60
 ){
-
   ##############################################################################
   if(!is.loaded("agglom")){stop(".Call to agglom failed; aborted.")}
   if(!is.loaded("indexed")){stop(".Call to indexed failed; aborted.")}
@@ -56,5 +54,3 @@ agglomer<-function(
   return(profileList)
   
 }
-
-

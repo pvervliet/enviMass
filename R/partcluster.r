@@ -24,9 +24,7 @@
 #' are first extracted in each replicate level and these profiles than further merged.
 #' 
 #' @seealso \code{\link{startprofiles}}, \code{\link{agglomer}}
-
-
-partcluster<-function(
+partcluster <- function(
 	profileList,
 	dmass = 3,
 	ppm = TRUE,
@@ -39,7 +37,6 @@ partcluster<-function(
 	IDs = FALSE,
 	with_test = FALSE
 ){
-
 	########################################################################################
 	if(!profileList[[1]][[2]]){stop("run agglom first on that profileList; aborted.")}
 	if(!is.numeric(dmass)){stop("dmass must be numeric; aborted.")}
@@ -87,7 +84,6 @@ partcluster<-function(
 			delRT <- (max(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),3])-min(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),3]))
 			if( (delmz > (dmass * 2)) || (delRT > dret) || (any(duplicated(profileList[["peaks"]][(profileList[["index_agglom"]][k,1]:profileList[["index_agglom"]][k,2]),6]))) ){  # check dmass & dret & uniqueness & replicates
 				if(!do_replicates){
-
 					#######################################################################				
 					# profiling without replicates #########################################
 					often <- c(often+1)
@@ -197,7 +193,6 @@ partcluster<-function(
 					########################################################################
 					
 				}else{	
-
 					#######################################################################				
 					# profiling with replicates (1) - profiling within replicates only #####				
 					those <- (profileList[["index_agglom"]][k,1] : profileList[["index_agglom"]][k,2])
@@ -309,7 +304,7 @@ partcluster<-function(
 			if(
 				(profileList[["peaks"]][j,"profileIDs"]-profileList[["peaks"]][(j-1),"profileIDs"])>1
 			){
-				stop("Debug partcluster.r #1")
+				stop("Debug partcluster.r _1")
 			}
 		}
 	}
@@ -384,9 +379,4 @@ partcluster<-function(
 	profileList[[1]][[3]] <- TRUE
 	########################################################################################
 	return(profileList)
-
 }
-
-
-
-

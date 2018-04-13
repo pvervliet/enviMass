@@ -7,8 +7,6 @@
 #' @details Requires a browser other than Internet Explorer. Has only been tested on Firefox and Google Chrome; 
 #' make sure to set the relevant browser as your default browser.
 #' 
-
-webMass<-function(){
+webMass <- function(){
   shiny::runApp(system.file('webMass', package='enviMass'))
 }
-

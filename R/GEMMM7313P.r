@@ -1,0 +1,13 @@
+GEMMM7313P <- function(Date,get_min){
+if(!is.character(Date)){stop("Date not a character string.")}
+if(!is.logical(get_min)){stop("get_min not logical.")}
+if(length(Date)==1){return(Date)}
+the_Date<-as.POSIXct(Date)
+if(get_min){
+the_Date<-min(the_Date)[1]
+}else{
+the_Date<-max(the_Date)[1]
+}
+the_Date<-strsplit(as.character(the_Date)," ")[[1]][1]
+return(the_Date);
+}

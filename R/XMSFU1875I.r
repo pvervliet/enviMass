@@ -1,0 +1,27 @@
+XMSFU1875I <- function(links_profiles, at_entry){
+is_empty<-TRUE
+if(length(links_profiles[[at_entry]]$targ)==0){
+if(length(links_profiles[[at_entry]]$IS)==0){
+if(length(links_profiles[[at_entry]]$EIC)==0){
+if(length(links_profiles[[at_entry]]$isot)==0){
+if(length(links_profiles[[at_entry]]$adduc)==0){
+if(length(links_profiles[[at_entry]]$homol)==0){
+is_empty<-FALSE
+}
+}else{
+is_empty<-FALSE
+}
+}else{
+is_empty<-FALSE
+}
+}else{
+is_empty<-FALSE
+}
+}else{
+is_empty<-FALSE
+}
+}else{
+is_empty<-FALSE
+}
+return(is_empty)
+}

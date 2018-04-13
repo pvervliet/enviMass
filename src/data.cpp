@@ -185,6 +185,9 @@ bool write_centroids_MSraw(
 	unsigned long int centroid_size = (2 * double_size + 2 * int_size);
 	unsigned long int header_entry_1, header_entry_2, header_entry_3, header_entry_4, header_entry_5, header_entry_6, header_entry_7;
 	
+	if(scan_RTs.size() != scan_IDs.size()) return false;
+	if(centroids.nrow() != match_scans_RT.size()) return false;
+	
 	ofstream outfile;
     outfile.open(file_path(0), ios::binary | ios::out | ios::in);
 	if(!outfile) return false;
@@ -234,7 +237,7 @@ bool write_centroids_MSraw(
 	for(n = 0; n < centroids_nrow; n++){	
 		outfile.write (reinterpret_cast<char *> (&centroids(n, 0)), double_size);	// m/z
 		outfile.write (reinterpret_cast<char *> (&centroids(n, 1)), double_size);	// intensity
-		outfile.write (reinterpret_cast<char *> (&match_scans_RT(n)), int_size); 				// RT index
+		outfile.write (reinterpret_cast<char *> (&match_scans_RT(n)), int_size); 	// RT index
 		measureID = (int) centroids(n, 3);
 		outfile.write (reinterpret_cast<char *> (&measureID), int_size);	// measureID		
 	}	
@@ -289,7 +292,6 @@ IntegerVector read_scanIDs_MSraw(
 	ifstream infile;
     infile.open(file_path(0), ios::binary | ios::in); 	
 	if(!infile) return 0;
-
 	infile.seekg (2 * unsignedlongint_size, ios::beg);
 	infile.read (reinterpret_cast<char *> (&header_entries_start), unsignedlongint_size);
 	infile.read (reinterpret_cast<char *> (&header_entries_end), unsignedlongint_size);
@@ -458,6 +460,89 @@ NumericMatrix read_centroids_MSraw(
 
 	return reading;
 }
+
+
+// -> Read data for individual scan ID from MSraw file
+// [[Rcpp::export]]
+NumericMatrix read_scan_MSraw(
+	StringVector file_path,
+	int scan_ID,
+	bool read_all
+){
+
+	int int_size = sizeof (int), double_size = sizeof (double), unsignedlongint_size = sizeof (unsigned long int);
+	int at_entry = 0, get_entry, found_centroids = 0, skip_1;
+	unsigned long int header_entries_start, header_entries_end, scans_size, centroids_nrow = 0; 
+	unsigned long int centroid_size = (unsigned long int) (2 * double_size + 2 * int_size);
+	size_t n;
+	
+	ifstream infile;
+    infile.open(file_path(0), ios::binary | ios::in); 	
+	if(!infile) return 0;
+	infile.seekg (2 * unsignedlongint_size, ios::beg);
+	infile.read (reinterpret_cast<char *> (&header_entries_start), unsignedlongint_size);
+	infile.read (reinterpret_cast<char *> (&header_entries_end), unsignedlongint_size);
+	if(header_entries_end <= header_entries_start) return 0;
+	scans_size = ((header_entries_end - header_entries_start) / int_size);
+	infile.seekg (header_entries_start, ios::beg);
+	for(n = 0; n < scans_size; n++){		
+		infile.read (reinterpret_cast<char *> (&get_entry), int_size);
+		if(get_entry == scan_ID){
+			at_entry = (n + 1);
+			break;
+		}
+	}
+	if(at_entry == 0){ // invalid scan_ID
+		NumericMatrix no_reading(0, 1);
+		colnames(no_reading) = CharacterVector::create("invalid scan ID");
+		infile.close();	
+		return no_reading; 
+	}
+	// find centroids with that scan number_centroids
+	if(read_all){ 	// include filtered centroids
+		infile.seekg (4 * unsignedlongint_size, ios::beg);
+		infile.read (reinterpret_cast<char *> (&header_entries_start), unsignedlongint_size);
+	}else{			// omit filtered centroids
+		infile.seekg (5 * unsignedlongint_size, ios::beg);
+		infile.read (reinterpret_cast<char *> (&header_entries_start), unsignedlongint_size);	
+	}
+	infile.seekg (6 * unsignedlongint_size, ios::beg);
+	infile.read (reinterpret_cast<char *> (&header_entries_end), unsignedlongint_size);	
+	centroids_nrow = ((header_entries_end - header_entries_start) / centroid_size);
+	infile.seekg (header_entries_start, ios::beg);
+	infile.ignore(2 * double_size);
+	skip_1 = (int_size + 2 * double_size); 
+	IntegerVector keep_centroids(centroids_nrow);
+	for(n = 0; n < centroids_nrow; n++){		
+		infile.read (reinterpret_cast<char *> (&get_entry), int_size);
+		if(get_entry == at_entry){
+			keep_centroids(n) = 1;
+			found_centroids++;
+		}else{
+			keep_centroids(n) = 0;			
+		}	
+		infile.ignore(skip_1);
+	}
+	NumericMatrix reading(found_centroids, 2);
+	colnames(reading) = CharacterVector::create("m/z", "intensity");	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	infile.close();
+	
+	return reading;	
+}
+
+
+
+
 
 // -> Write partition index to MSraw file
 // [[Rcpp::export]]
@@ -921,7 +1006,7 @@ List read_single_EIC_MSraw(
 
 // -> Filter centroids from MSraw file
 // [[Rcpp::export]]
-NumericMatrix filter_centroids_MSraw(
+List filter_centroids_MSraw(
 	StringVector file_path,
 	int min_RT,
 	int max_RT,
@@ -929,7 +1014,8 @@ NumericMatrix filter_centroids_MSraw(
 	int max_mass,
 	bool insert_RT,
 	bool read_all,
-	bool use_partitions
+	bool use_partitions,
+	bool get_XIC
 ){
 
 	int int_size = sizeof (int), double_size = sizeof (double), unsignedlongint_size = sizeof (unsigned long int);
@@ -941,6 +1027,8 @@ NumericMatrix filter_centroids_MSraw(
 	unsigned long int MSlist_centroids_nrow, MSlist_scans_size, number_keep_centroids = 0, partition_index_size;
 	double store_data_double;
 	unsigned int partition_size = (3 * unsignedlongint_size + 2 * int_size + 2 * double_size);
+	List reading_list(2);
+	
 	ifstream infile;
     infile.open(file_path(0), ios::binary | ios::in); 
 	if(!infile) return 0;
@@ -949,19 +1037,22 @@ NumericMatrix filter_centroids_MSraw(
 	infile.read (reinterpret_cast<char *> (&header_entries_start), unsignedlongint_size);
 	infile.read (reinterpret_cast<char *> (&header_entries_end), unsignedlongint_size);
 	MSlist_scans_size = ((header_entries_end - header_entries_start) / double_size);
-	NumericVector readScans(MSlist_scans_size);
+	NumericMatrix read_XIC(MSlist_scans_size, 2);
 	infile.seekg (header_entries_start, ios::beg);
-	for(n = 0; n < MSlist_scans_size; n++) infile.read (reinterpret_cast<char *> (&readScans[n]), double_size);
+	for(n = 0; n < MSlist_scans_size; n++){ 
+		infile.read (reinterpret_cast<char *> (&read_XIC(n, 0)), double_size);
+		read_XIC(n, 1) = 0;
+	};
 	min_RT_ind = MSlist_scans_size;
 	for(n = 0; n < MSlist_scans_size; n++){			
-		if(readScans[n] >= min_RT){ 
+		if(read_XIC(n, 0) >= min_RT){ 
 			min_RT_ind = (n + 1);
 			break;
 		}
 	}
 	max_RT_ind = 1;
 	for(n = (MSlist_scans_size - 1); n >= 0; n--){	
-		if(readScans[n] <= max_RT){ 	
+		if(read_XIC(n, 0) <= max_RT){ 	
 			max_RT_ind = (n + 1);
 			break;
 		}
@@ -1067,16 +1158,25 @@ NumericMatrix filter_centroids_MSraw(
 			at_entry++;
 		}
 	}
+	// derive XIC sum intensities ------------------------------------ //
+	if(get_XIC){
+		for(m = 0; m < number_keep_centroids; m++){
+			read_XIC((((int) reading(m, 2)) - 1), 1) = (read_XIC((((int) reading(m, 2)) - 1), 1)  + reading(m, 1));
+		}
+	}
 	// insert RTs ---------------------------------------------------- //
 	if(insert_RT){
-		for(n = 0; n < number_keep_centroids; n++){		
-			reading(n, 2) = readScans(((int) reading(n, 2)) -1);
+		for(m = 0; m < number_keep_centroids; m++){		
+			reading(m, 2) = read_XIC((((int) reading(m, 2)) - 1), 0);
 		}
 	}
 	colnames(reading) = CharacterVector::create("m/z", "intensity", "RT", "measureID");
 	infile.close();	
 	
-	return reading;
+	reading_list[0] = reading;
+	reading_list[1] = read_XIC;	
+	
+	return reading_list;
 }
 
 

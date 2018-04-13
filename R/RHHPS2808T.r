@@ -1,0 +1,23 @@
+RHHPS2808T <- function(a){
+list_entry<-list()
+list_entry[[1]]<-list()
+list_entry[[2]]<-list()
+list_entry[[3]]<-list()
+list_entry[[3]]<-matrix(ncol=8,nrow=0)
+colnames(list_entry[[3]])<-c("linked profile","link counts","no-link counts","ref_1","ref_2","int_ratio","use","correl")
+list_entry[[4]]<-list()
+list_entry[[4]]<-matrix(ncol=5,nrow=0)
+colnames(list_entry[[4]])<-c("linked profile","link counts","ref_1","use","correl")
+list_entry[[5]]<-list()
+list_entry[[5]]<-matrix(ncol=5,nrow=0)
+colnames(list_entry[[5]])<-c("linked profile","link counts","ref_1","use","correl")
+list_entry[[6]]<-list()
+list_entry[[6]]<-matrix(ncol=3,nrow=0)
+colnames(list_entry[[6]])<-c("linked profile","link counts","ref_1")
+list_entry[[7]]<-list()
+list_entry[[8]]<-list()
+list_entry[[8]][[1]]<-a
+list_entry[[9]]<-list()
+names(list_entry)<-c("targ","IS","EIC","isot","adduc","homol","group","total","EIC_cor")
+return(list_entry)
+}

@@ -11,7 +11,7 @@
 #' @param n_profiles Integer. How many of the most sort_by profiles to include? Set to NULL to include all.
 #' @param only_sample_peaks. Logical. TRUE = should peaks of sample files (and not, e.g., blank files) be included only?
 #' @param n_latest_peaks. NULL or Integer. If integer, number of latest file peaks to include.
-#' @param median_above_blind. NULL or Integer. If integer, only profiles with a median sample-to-blank intensity >= median_above_blind are used. Set to Inf to only retain profiles entirely unaffected by blind/blank signals.
+#' @param mean_above_blind. NULL or Integer. If integer, only profiles with a mean sample-to-blank intensity >= median_above_blind are used. Set to Inf to only retain profiles entirely unaffected by blind/blank signals.
 #' @param normalize. Logical. TRUE = should intensities of each profile be divided by their maximum to range in [0,1]?
 #'
 #' @return Matrix with intensities, cp. value section.
@@ -31,7 +31,6 @@
 #'
 #'
 #'
-
 profiles_to_matrix <- function(
 	profileList,
 	links_profiles = NULL,
@@ -44,7 +43,6 @@ profiles_to_matrix <- function(
 	mean_above_blind = NULL,
     normalize = FALSE
 ){
-
 	############################################################################
 	if(any(is.na(match(sort_by, colnames(profileList[["index_prof"]]))))){stop("Argument sort_by not matching column names - abort.")}
     if(!profileList[["state"]]["profiling"][[1]]){stop("\nprofileList not profiled - abort.")}
@@ -55,7 +53,6 @@ profiles_to_matrix <- function(
     if(!is.logical(normalize)){stop("\nArgument normalize must be logical - abort.")}
 	if((reduce_comp) & (!is.list(links_profiles))){stop("\n Either set reduce_comp=FALSE or provide a valid links_profiles list - abort.")}
 	############################################################################
-
     ############################################################################    
     # get sample IDs ###########################################################
     ord <- order(as.POSIXct(profileList[["datetime"]]), decreasing = TRUE)
@@ -79,12 +76,11 @@ profiles_to_matrix <- function(
 		keep[profileList[["index_prof"]][,"above_blind?"] < mean_above_blind] <- FALSE
 	}
     ############################################################################ 
-
     ############################################################################    
 	# based on sorting, remove correlated components files with a lower rank ###
 	if(reduce_comp){
 		# BEWARE: must include use_profiles argument to account for above filtering
-		keep_IDs <- enviMass::analyseE_links_profiles(
+		keep_IDs <- enviMass::RPCSM5420B(
 				profileList_index = profileList[["index_prof"]], 
 				links_profiles, 
 				sort_what = sort_by, 	# internally sorted in function - again sorted below
@@ -103,7 +99,6 @@ profiles_to_matrix <- function(
 	max_int_ord <- rev(do.call(order,as.data.frame(max_ord))) # ordering for multiple columns
 	profile_IDs <- profile_IDs[max_int_ord]
     ############################################################################    
-
     ############################################################################    
     # write to matrix ##########################################################	
 	if(is.null(n_profiles)){
@@ -147,12 +142,10 @@ profiles_to_matrix <- function(
 		stop("Sth went wrong in function profiles_to_matrix - debug_2!")
 	}
     ############################################################################ 	
-
     ############################################################################
     # (0,1)-normalize ##########################################################
     if(normalize) mat <- sweep(mat,2,apply(mat,2,max),"/")
     ############################################################################
-
     ############################################################################
     return(mat)
 	

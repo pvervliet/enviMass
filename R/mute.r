@@ -6,10 +6,8 @@
 #' 
 #' @details enviMass workflow function. The parameter must directly be embraced by the function brackets, i.e., mute(logfile$parameters$x) or mute(logfile$parameters$external$x)
 #' 
-
-mute<-function(parameter){
+mute <- function(parameter){
 	
 	eval(parameter)
 	
 }
-
