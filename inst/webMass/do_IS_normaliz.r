@@ -348,11 +348,11 @@ timeset[i,3]<-as.numeric(sampleID[i]);
 }
 if(as.logical(logfile$parameters$screen_IS_restrict)){
 min_count <- min(c(
-floor(as.numeric(logfile$parameters$screen_IS_restrict_many) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100),
-floor(length(profileList_pos[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100)
+floor(as.numeric(logfile$parameters$screen_IS_restrict_many) * as.numeric(logfile$parameters$ISnorm_percfiles_neg) / 100),
+floor(length(profileList_neg[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_neg) / 100)
 ))
 }else{
-min_count <- floor(length(profileList_pos[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_pos) / 100);
+min_count <- floor(length(profileList_neg[[4]]) * as.numeric(logfile$parameters$ISnorm_percfiles_neg) / 100);
 }
 lis_delint_IS<-list(0)
 lis_median_IS<-list(0)

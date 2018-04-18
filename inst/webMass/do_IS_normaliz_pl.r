@@ -528,7 +528,7 @@ lis_median_nb[[at_file]] <- c(lis_median_nb[[at_file]], median_intensity)
 }
 }
 }
-if((logfile$parameters$ISnorm_medblank_neg == "TRUE") & (any(profileList_pos[["type"]] == "blank"))){
+if((logfile$parameters$ISnorm_medblank_neg == "TRUE") & (any(profileList_neg[["type"]] == "blank"))){
 for(p in 1:length(profileList_neg[["sampleID"]])){
 lis_delint_b[[p]] <- numeric(0)
 lis_median_b[[p]] <- numeric(0)

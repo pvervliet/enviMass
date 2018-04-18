@@ -2766,7 +2766,7 @@
 			helpText( a("For further help, instructions, topics, examples and requests please visit the enviMass website", href="http://www.envimass.ch/",target="_blank")),
 			HTML('<hr noshade="noshade" />'),							
 			tags$h4("Citing enviMass"),
-			HTML('<p> Martin Loos, 2016, enviMass version 3.1. Zenodo. http://doi.org/10.5281/zenodo.48164 </p> '),
+			HTML('<p> Martin Loos, 2018, enviMass version 3.5 LC-HRMS trend detection workflow - R package. Zenodo. https://doi.org/10.5281/zenodo.1213098  </p> '),
 			HTML('<hr noshade="noshade" />'),	
 			tags$h4("Contact, author, maintainer:"),
 			helpText( a("Martin Loos, mloos@looscomputing.ch", href="http://looscomputing.ch/eng/contact.htm",target="_blank") ),
